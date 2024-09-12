@@ -14,14 +14,14 @@ defmodule CaseManager.Alerts.Alert do
       accept [:alert_id, :title, :risk_level, :link, :team_id]
 
       validate fn changeset, _context ->
-          team_id = Ash.Changeset.get_attribute(changeset, :team_id)
+        team_id = Ash.Changeset.get_attribute(changeset, :team_id)
 
-          if CaseManager.Repo.get(CaseManager.Teams.Team, team_id) do
-            :ok
-          else
-            {:error, "Team not found"}
-          end
+        if CaseManager.Repo.get(CaseManager.Teams.Team, team_id) do
+          :ok
+        else
+          {:error, "Team not found"}
         end
+      end
     end
 
     read :read do
@@ -50,8 +50,13 @@ defmodule CaseManager.Alerts.Alert do
       allow_nil? false
     end
 
-    attribute :start_time, :utc_datetime
-    attribute :end_time, :utc_datetime
+    attribute :start_time, :utc_datetime do
+      allow_nil? false
+    end
+
+    attribute :end_time, :utc_datetime do
+      allow_nil? false
+    end
 
     attribute :link, :string do
       allow_nil? false
