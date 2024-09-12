@@ -71,7 +71,8 @@ defmodule CaseManager.MixProject do
       {:picosat_elixir, "~> 0.2"},
       {:ash_postgres, "~> 2.3"},
       {:ash_phoenix, "~> 2.1"},
-      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
