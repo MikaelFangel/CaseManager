@@ -11,7 +11,7 @@ defmodule CaseManager.Alerts.Alert do
 
   actions do
     create :create do
-      accept [:alert_id, :title, :risk_level, :link]
+      accept [:alert_id, :title, :risk_level, :link, :team_id]
     end
 
     read :read do
@@ -26,7 +26,9 @@ defmodule CaseManager.Alerts.Alert do
       allow_nil? false
     end
 
-    attribute :team, :uuid
+    attribute :team_id, :uuid do
+      allow_nil? false
+    end
 
     attribute :title, :string do
       allow_nil? false
@@ -47,6 +49,14 @@ defmodule CaseManager.Alerts.Alert do
 
     attribute :additional_data, :map
     timestamps()
+  end
+
+  relationships do
+    belongs_to :team, CaseManager.Teams.Team do
+      attribute_type :uuid
+      attribute_writable? true
+      allow_nil? false
+    end
   end
 
   json_api do

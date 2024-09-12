@@ -28,4 +28,8 @@ defmodule CaseManager.Teams.Team do
 
     timestamps()
   end
+
+  relationships do
+    has_many :alerts, CaseManager.Alerts.Alert
+  end
 end
