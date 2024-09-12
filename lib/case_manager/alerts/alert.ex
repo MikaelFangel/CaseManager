@@ -11,7 +11,7 @@ defmodule CaseManager.Alerts.Alert do
 
   actions do
     create :create do
-      accept [:alert_id, :title, :risk_level, :link, :team_id]
+      accept [:alert_id, :title, :risk_level, :start_time, :end_time, :link, :team_id]
 
       validate fn changeset, _context ->
         team_id = Ash.Changeset.get_attribute(changeset, :team_id)
