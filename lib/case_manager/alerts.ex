@@ -8,7 +8,7 @@ defmodule CaseManager.Alerts do
   json_api do
     routes do
       base_route "/alerts", CaseManager.Alerts.Alert do
-        post :create 
+        post :create
       end
     end
   end
