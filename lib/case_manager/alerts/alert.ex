@@ -13,6 +13,7 @@ defmodule CaseManager.Alerts.Alert do
     create :create do
       accept [:alert_id, :title, :risk_level, :start_time, :end_time, :link, :team_id]
 
+      # Ensure the team exists
       validate fn changeset, _context ->
         team_id = Ash.Changeset.get_attribute(changeset, :team_id)
 
@@ -20,6 +21,18 @@ defmodule CaseManager.Alerts.Alert do
           :ok
         else
           {:error, "Team not found"}
+        end
+      end
+
+      # Ensure the start time is before the end time
+      validate fn changeset, _context ->
+        start_time = Ash.Changeset.get_attribute(changeset, :start_time)
+        end_time = Ash.Changeset.get_attribute(changeset, :end_time)
+
+        if DateTime.before?(start_time, end_time) do
+          :ok
+        else
+          {:error, "Start time must be before end time"}
         end
       end
     end
