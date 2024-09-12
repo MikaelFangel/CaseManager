@@ -10,7 +10,6 @@ defmodule CaseManager.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-
       name: "Case Manager",
       soruce_url: "https://github.com/MikaelFangel/CaseManager",
       docs: [
@@ -40,6 +39,8 @@ defmodule CaseManager.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:open_api_spex, "~> 3.0"},
+      {:ash_json_api, "~> 1.0"},
       {:phoenix, "~> 1.7.11"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
