@@ -9,7 +9,15 @@ defmodule CaseManager.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      name: "Case Manager",
+      soruce_url: "https://github.com/MikaelFangel/CaseManager",
+      docs: [
+        main: "CaseManager",
+        output: "docs",
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -61,7 +69,8 @@ defmodule CaseManager.MixProject do
       {:ash, "~> 3.4"},
       {:picosat_elixir, "~> 0.2"},
       {:ash_postgres, "~> 2.3"},
-      {:ash_phoenix, "~> 2.1"}
+      {:ash_phoenix, "~> 2.1"},
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false}
     ]
   end
 
