@@ -1,5 +1,8 @@
 defmodule CaseManager.Alerts.Alert do
-  use Ash.Resource, domain: CaseManager.Alerts, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    domain: CaseManager.Alerts,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshJsonApi.Resource]
 
   postgres do
     table "alerts"
@@ -7,11 +10,18 @@ defmodule CaseManager.Alerts.Alert do
   end
 
   actions do
-    create :create
+    create :create do
+      accept [:alert_id, :title, :risk_level, :link]
+    end
+
+    read :read do
+      primary? true
+    end
   end
 
   attributes do
     uuid_primary_key :id
+
     attribute :alert_id, :string do
       allow_nil? false
     end
@@ -26,7 +36,7 @@ defmodule CaseManager.Alerts.Alert do
 
     attribute :risk_level, :string do
       allow_nil? false
-    end 
+    end
 
     attribute :start_time, :utc_datetime
     attribute :end_time, :utc_datetime
@@ -38,5 +48,8 @@ defmodule CaseManager.Alerts.Alert do
     attribute :additional_data, :map
     timestamps()
   end
-end
 
+  json_api do
+    type "alert"
+  end
+end
