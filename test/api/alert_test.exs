@@ -48,4 +48,18 @@ defmodule CaseManager.Alerts.AlertTest do
 
     assert {:error, _changeset} = Ash.create(changeset)
   end
+
+  test "fails to create an alert where the start_time is not before the end_time", %{team: team} do
+    changeset =
+      Alert
+      |> Ash.Changeset.for_create(
+        :create,
+        @valid_alert_attrs
+        |> Map.put(:team_id, team.id)
+        |> Map.put(:start_time, "2024-09-13T12:13:12.551Z")
+        |> Map.put(:end_time, "2024-09-13T12:13:12.551Z")
+      )
+
+    assert {:error, _changeset} = Ash.create(changeset)
+  end
 end
