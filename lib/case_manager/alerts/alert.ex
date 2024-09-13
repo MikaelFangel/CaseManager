@@ -1,4 +1,8 @@
 defmodule CaseManager.Alerts.Alert do
+  @moduledoc """
+  Resource that represents an alert in the system. The Resource is to be used by the JSON API 
+  and also to view and edit alerts within the application.
+  """
   use Ash.Resource,
     domain: CaseManager.Alerts,
     data_layer: AshPostgres.DataLayer,

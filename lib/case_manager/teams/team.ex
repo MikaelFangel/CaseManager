@@ -1,4 +1,8 @@
 defmodule CaseManager.Teams.Team do
+  @moduledoc """
+  Resource for managing teams withing the application. Teams is supposed to be an
+  entity that are used to group users.
+  """
   use Ash.Resource,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer
