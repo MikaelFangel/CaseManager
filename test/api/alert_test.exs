@@ -10,6 +10,8 @@ defmodule CaseManager.Alerts.AlertTest do
     alert_id: "12345678",
     title: "Test Alert",
     risk_level: "High",
+    start_time: "2024-09-13T12:13:11.551Z",
+    end_time: "2024-09-13T12:13:12.551Z",
     link: "http://example"
   }
 
