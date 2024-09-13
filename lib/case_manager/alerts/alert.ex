@@ -29,10 +29,11 @@ defmodule CaseManager.Alerts.Alert do
         start_time = Ash.Changeset.get_attribute(changeset, :start_time)
         end_time = Ash.Changeset.get_attribute(changeset, :end_time)
 
-        if DateTime.before?(start_time, end_time) do
-          :ok
-        else
-          {:error, "Start time must be before end time"}
+        cond do
+          start_time == nil -> :ok
+          end_time == nil -> :ok
+          DateTime.before?(start_time, end_time) -> :ok
+          true -> {:error, "Start time must be before end time"}
         end
       end
     end
