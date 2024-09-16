@@ -14,15 +14,18 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <:col :let={{_id, alert}} label="Title"><%= alert.title %></:col>
       <:col :let={{_id, alert}} label="Risk Level"><%= alert.risk_level %></:col>
       <:col :let={{_id, alert}} label="Start Time"><%= alert.start_time %></:col>
-      <:col :let={{_id, alert}} label="Case ID"></:col>
-      <:col :let={{_id, alert}} label="Case Status"></:col>
-      <:col :let={{_id, alert}} label="Link"><.link navigate={alert.link} target="_blank"><%= alert.link %></.link></:col>
+      <:col :let={{_id, _alert}} label="Case ID"></:col>
+      <:col :let={{_id, _alert}} label="Case Status"></:col>
+      <:col :let={{_id, alert}} label="Link">
+        <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
+      </:col>
     </.table>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
     {:ok, stream(socket, :alerts, Ash.read!(CaseManager.Alerts.Alert))}
   end
 
@@ -35,5 +38,16 @@ defmodule CaseManagerWeb.AlertLive.Index do
     socket
     |> assign(:page_title, "Listing Alerts")
     |> assign(:alert, nil)
+  end
+
+  @impl true
+  def handle_info(
+        %Phoenix.Socket.Broadcast{
+          event: "create",
+          payload: %Ash.Notifier.Notification{data: alert}
+        },
+        socket
+      ) do
+    {:noreply, stream_insert(socket, :alerts, alert)}
   end
 end

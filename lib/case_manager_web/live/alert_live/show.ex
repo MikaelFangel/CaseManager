@@ -14,7 +14,6 @@ defmodule CaseManagerWeb.AlertLive.Show do
     </.list>
 
     <.back navigate={~p"/alerts"}>Back to alerts</.back>
-
     """
   end
 

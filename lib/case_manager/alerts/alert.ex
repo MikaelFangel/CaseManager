@@ -6,6 +6,7 @@ defmodule CaseManager.Alerts.Alert do
   use Ash.Resource,
     domain: CaseManager.Alerts,
     data_layer: AshPostgres.DataLayer,
+    notifiers: [Ash.Notifier.PubSub],
     extensions: [AshJsonApi.Resource]
 
   resource do
@@ -19,6 +20,14 @@ defmodule CaseManager.Alerts.Alert do
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "alerts_to_teams_fkey"
     end
+  end
+
+  pub_sub do
+    module CaseManagerWeb.Endpoint
+
+    prefix "alert"
+
+    publish :create, ["created"]
   end
 
   actions do
