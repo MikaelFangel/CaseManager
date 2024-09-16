@@ -16,7 +16,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <:col :let={{_id, alert}} label="Start Time"><%= alert.start_time %></:col>
       <:col :let={{_id, alert}} label="Case ID"></:col>
       <:col :let={{_id, alert}} label="Case Status"></:col>
-      <:col :let={{_id, alert}} label="Link"><%= alert.link %></:col>
+      <:col :let={{_id, alert}} label="Link"><.link navigate={alert.link} target="_blank"><%= alert.link %></.link></:col>
     </.table>
     """
   end
