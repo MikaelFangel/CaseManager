@@ -8,6 +8,10 @@ defmodule CaseManager.Alerts.Alert do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshJsonApi.Resource]
 
+  resource do
+    plural_name :alerts
+  end
+
   postgres do
     table "alerts"
     repo CaseManager.Repo

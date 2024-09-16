@@ -29,6 +29,9 @@ defmodule CaseManagerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+
+    live "/alerts", AlertLive.Index, :index
+    live "/alerts/:id", AlertLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
