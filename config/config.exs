@@ -7,6 +7,16 @@
 # General application configuration
 import Config
 
+config :mime,
+  extensions: %{"json" => "application/vnd.api+json"},
+  types: %{"application/vnd.api+json" => ["json"]}
+
+config :spark,
+  formatter: [
+    "Ash.Resource": [section_order: [:json_api]],
+    "Ash.Domain": [section_order: [:json_api]]
+  ]
+
 config :case_manager,
   ecto_repos: [CaseManager.Repo],
   generators: [timestamp_type: :utc_datetime]
@@ -64,3 +74,11 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
+
+config :case_manager, :ash_domains, [CaseManager.Alerts, CaseManager.Teams]
+
+config :ash,
+  include_embedded_source_by_default?: false,
+  default_page_type: :keyset
+
+config :ash, :policies, no_filter_static_forbidden_reads?: false
