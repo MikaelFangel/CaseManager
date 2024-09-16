@@ -15,7 +15,16 @@ defmodule CaseManager.Alerts.Alert do
 
   actions do
     create :create do
-      accept [:alert_id, :title, :risk_level, :start_time, :end_time, :link, :additional_data, :team_id]
+      accept [
+        :alert_id,
+        :title,
+        :risk_level,
+        :start_time,
+        :end_time,
+        :link,
+        :additional_data,
+        :team_id
+      ]
 
       # Ensure the team exists
       validate fn changeset, _context ->
