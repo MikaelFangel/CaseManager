@@ -10,13 +10,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
       row_click={fn {_id, alert} -> JS.navigate(~p"/alerts/#{alert}") end}
     >
       <:col :let={{_id, _alert}}></:col>
-      <:col :let={{_id, alert}} label="Customer"><%= alert.team_id %></:col>
-      <:col :let={{_id, alert}} label="Title"><%= alert.title %></:col>
-      <:col :let={{_id, alert}} label="Risk Level"><%= alert.risk_level %></:col>
-      <:col :let={{_id, alert}} label="Start Time"><%= alert.start_time %></:col>
-      <:col :let={{_id, _alert}} label="Case ID"></:col>
-      <:col :let={{_id, _alert}} label="Case Status"></:col>
-      <:col :let={{_id, alert}} label="Link">
+      <:col :let={{_id, alert}} label={gettext("Customer")}><%= alert.team_id %></:col>
+      <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+      <:col :let={{_id, alert}} label={gettext("Risk Level")}><%= alert.risk_level %></:col>
+      <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.start_time %></:col>
+      <:col :let={{_id, _alert}} label={gettext("Case ID")}></:col>
+      <:col :let={{_id, _alert}} label={gettext("Case Status")}></:col>
+      <:col :let={{_id, alert}} label={gettext("Link")}>
         <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
       </:col>
     </.table>
