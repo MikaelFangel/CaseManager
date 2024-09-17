@@ -10,7 +10,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       row_click={fn {_id, alert} -> JS.navigate(~p"/alerts/#{alert}") end}
     >
       <:col :let={{_id, _alert}}></:col>
-      <:col :let={{_id, alert}} label={gettext("Customer")}><%= alert.team_id %></:col>
+      <:col :let={{_id, alert}} label={gettext("Team")}><%= alert.team.name %></:col>
       <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")}><%= alert.risk_level %></:col>
       <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.start_time %></:col>

@@ -59,6 +59,7 @@ defmodule CaseManager.Alerts.Alert do
 
     read :read do
       primary? true
+      prepare build(load: [:team])
     end
   end
 
