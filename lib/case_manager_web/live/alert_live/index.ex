@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <.table
       id="alerts"
       rows={@streams.alerts}
-      row_click={fn {_id, alert} -> JS.navigate(~p"/alerts/#{alert}") end}
+      row_click={fn {_id, alert} -> JS.push("show_modal", value: alert) end}
     >
       <:col :let={{_id, _alert}}></:col>
       <:col :let={{_id, alert}} label={gettext("Team")}><%= alert.team.name %></:col>
@@ -20,13 +20,33 @@ defmodule CaseManagerWeb.AlertLive.Index do
         <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
       </:col>
     </.table>
+
+    <.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
+      <div class="modal-content">
+        <.header><%= @alert.title %></.header>
+        <hr class="border-t border-gray-300 my-4" />
+        <pre><%= 
+          if @alert.additional_data != %{} do
+            @alert.additional_data
+            |> Jason.encode!(pretty: true)
+          end
+          %> </pre>
+        <.button phx-click="hide_modal">Close</.button>
+        <.button phx-click="hide_modal">Search Link</.button>
+        <.button phx-click="hide_modal">Create Case</.button>
+      </div>
+    </.modal>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
-    {:ok, stream(socket, :alerts, Ash.read!(CaseManager.Alerts.Alert))}
+
+    {:ok,
+     stream(socket, :alerts, Ash.read!(CaseManager.Alerts.Alert))
+     |> assign(:show_modal, false)
+     |> assign(:alert, %{})}
   end
 
   @impl true
@@ -37,7 +57,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Alerts")
-    |> assign(:alert, nil)
+    |> assign(:alert, %{})
   end
 
   @impl true
@@ -49,5 +69,19 @@ defmodule CaseManagerWeb.AlertLive.Index do
         socket
       ) do
     {:noreply, stream_insert(socket, :alerts, alert)}
+  end
+
+  @impl true
+  def handle_event("show_modal", alert, socket) do
+    alert = Map.new(alert, fn {k, v} -> {String.to_atom(k), v} end)
+
+    {:noreply,
+     assign(socket, :show_modal, true)
+     |> assign(:alert, alert)}
+  end
+
+  @impl true
+  def handle_event("hide_modal", _params, socket) do
+    {:noreply, assign(socket, :show_modal, false)}
   end
 end

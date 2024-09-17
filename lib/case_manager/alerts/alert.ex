@@ -9,6 +9,20 @@ defmodule CaseManager.Alerts.Alert do
     notifiers: [Ash.Notifier.PubSub],
     extensions: [AshJsonApi.Resource]
 
+  @derive {Jason.Encoder,
+           only: [
+             :id,
+             :alert_id,
+             :team_id,
+             :title,
+             :description,
+             :risk_level,
+             :start_time,
+             :end_time,
+             :link,
+             :additional_data
+           ]}
+
   resource do
     plural_name :alerts
   end
