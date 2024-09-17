@@ -25,15 +25,25 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <div class="modal-content">
         <.header><%= @alert.title %></.header>
         <hr class="border-t border-gray-300 my-4" />
+        Time Range: <%= @alert.start_time %> - <%= @alert.end_time %>
+        Case ID: Case Status:
+        Risk Level: <%= @alert.risk_level %> <br />
+        Team: <%= @alert.team_id %> Alert ID: <%= @alert.id %>
+        <%= @alert.description %>
+        <br/>
+        <br/>
         <pre><%= 
           if @alert.additional_data != %{} do
             @alert.additional_data
             |> Jason.encode!(pretty: true)
           end
           %> </pre>
-        <.button phx-click="hide_modal">Close</.button>
-        <.button phx-click="hide_modal">Search Link</.button>
-        <.button phx-click="hide_modal">Create Case</.button>
+        <br/>
+        <div class="flex justify-end space-x-2">
+          <.button phx-click="hide_modal">Close</.button>
+          <.button phx-click="hide_modal">Search Link</.button>
+          <.button phx-click="hide_modal">Create Case</.button>
+        </div>
       </div>
     </.modal>
     """
