@@ -17,7 +17,7 @@ defmodule CaseManagerWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import CaseManagerWeb.Gettext
+  use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
   Renders a modal.
