@@ -11,6 +11,10 @@ defmodule CaseManager.Alerts.Alert do
   postgres do
     table "alerts"
     repo CaseManager.Repo
+
+    references do
+      reference :team, on_delete: :delete, on_update: :update, name: "alerts_to_teams_fkey"
+    end
   end
 
   actions do
@@ -25,17 +29,6 @@ defmodule CaseManager.Alerts.Alert do
         :additional_data,
         :team_id
       ]
-
-      # Ensure the team exists
-      validate fn changeset, _context ->
-        team_id = Ash.Changeset.get_attribute(changeset, :team_id)
-
-        if CaseManager.Repo.get(CaseManager.Teams.Team, team_id) do
-          :ok
-        else
-          {:error, "Team not found"}
-        end
-      end
 
       # Ensure the start time is before the end time
       validate fn changeset, _context ->
