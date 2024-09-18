@@ -82,3 +82,5 @@ config :ash,
   default_page_type: :keyset
 
 config :ash, :policies, no_filter_static_forbidden_reads?: false
+
+config :ash, :pub_sub, debug?: true
