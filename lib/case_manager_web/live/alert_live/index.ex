@@ -53,7 +53,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
 
     {:ok,
-     stream(socket, :alerts, Ash.read!(CaseManager.Alerts.Alert))
+     stream(
+       socket,
+       :alerts,
+       CaseManager.Alerts.Alert
+       |> Ash.Query.sort(inserted_at: :desc)
+       |> Ash.read!()
+     )
      |> assign(:show_modal, false)
      |> assign(:alert, %{})}
   end
@@ -77,7 +83,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         },
         socket
       ) do
-    {:noreply, stream_insert(socket, :alerts, alert)}
+    {:noreply, stream_insert(socket, :alerts, alert, at: 0)}
   end
 
   @impl true
