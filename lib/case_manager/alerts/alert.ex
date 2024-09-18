@@ -74,6 +74,13 @@ defmodule CaseManager.Alerts.Alert do
     read :read do
       primary? true
       prepare build(load: [:team])
+
+      pagination do
+        required?(true)
+        offset?(true)
+        countable(true)
+        default_limit(20)
+      end
     end
   end
 

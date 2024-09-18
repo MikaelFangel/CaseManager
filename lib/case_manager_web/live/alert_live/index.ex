@@ -21,6 +21,16 @@ defmodule CaseManagerWeb.AlertLive.Index do
       </:col>
     </.table>
 
+    <%= if @has_more_pages do %>
+      <div class="flex justify-center my-4">
+        <.button phx-click="load_more_alerts"><%= gettext("Load More") %></.button>
+      </div>
+    <% else %>
+      <div class="flex justify-center my-4">
+        <span><%= gettext("No more alerts") %></span>
+      </div>
+    <% end %>
+
     <.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
       <div class="modal-content">
         <.header><%= @alert.title %></.header>
@@ -52,16 +62,23 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
 
+    alerts_page =
+      CaseManager.Alerts.Alert
+      |> Ash.Query.sort(inserted_at: :desc)
+      |> Ash.read!()
+
+    alerts = alerts_page.results
+
     {:ok,
      stream(
        socket,
        :alerts,
-       CaseManager.Alerts.Alert
-       |> Ash.Query.sort(inserted_at: :desc)
-       |> Ash.read!()
+       alerts
      )
      |> assign(:show_modal, false)
-     |> assign(:alert, %{})}
+     |> assign(:alert, %{})
+     |> assign(:current_page, alerts_page)
+     |> assign(:has_more_pages, alerts_page.more?)}
   end
 
   @impl true
@@ -98,5 +115,22 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_event("hide_modal", _params, socket) do
     {:noreply, assign(socket, :show_modal, false)}
+  end
+
+  @impl true
+  def handle_event("load_more_alerts", _params, socket) do
+    current_page = socket.assigns.current_page
+    next_page = Ash.page!(current_page, :next)
+
+    alerts = next_page.results
+
+    {:noreply,
+     stream(
+       socket,
+       :alerts,
+       alerts
+     )
+     |> assign(:current_page, next_page)
+     |> assign(:has_more_pages, next_page.more?)}
   end
 end
