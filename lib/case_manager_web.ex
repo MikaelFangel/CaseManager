@@ -43,8 +43,7 @@ defmodule CaseManagerWeb do
         layouts: [html: CaseManagerWeb.Layouts]
 
       import Plug.Conn
-      import CaseManagerWeb.Gettext
-
+      use Gettext, backend: CaseManagerWeb.Gettext
       unquote(verified_routes())
     end
   end
@@ -85,7 +84,7 @@ defmodule CaseManagerWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import CaseManagerWeb.CoreComponents
-      import CaseManagerWeb.Gettext
+      use Gettext, backend: CaseManagerWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
