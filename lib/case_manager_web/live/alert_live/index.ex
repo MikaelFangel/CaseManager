@@ -4,7 +4,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id="alerts-container" phx-update="stream" phx-viewport-bottom={@has_more_pages && "load_more_alerts"}>
+    <div
+      id="alerts-container"
+      phx-update="stream"
+      phx-viewport-bottom={@has_more_pages && "load_more_alerts"}
+    >
       <.table
         id="alerts"
         rows={@streams.alerts}
