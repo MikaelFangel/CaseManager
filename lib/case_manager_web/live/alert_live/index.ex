@@ -4,22 +4,24 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <.table
-      id="alerts"
-      rows={@streams.alerts}
-      row_click={fn {_id, alert} -> JS.push("show_modal", value: alert) end}
-    >
-      <:col :let={{_id, _alert}}></:col>
-      <:col :let={{_id, alert}} label={gettext("Team")}><%= alert.team.name %></:col>
-      <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
-      <:col :let={{_id, alert}} label={gettext("Risk Level")}><%= alert.risk_level %></:col>
-      <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.start_time %></:col>
-      <:col :let={{_id, _alert}} label={gettext("Case ID")}></:col>
-      <:col :let={{_id, _alert}} label={gettext("Case Status")}></:col>
-      <:col :let={{_id, alert}} label={gettext("Link")}>
-        <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
-      </:col>
-    </.table>
+    <div id="alerts-container" phx-update="stream" phx-viewport-bottom={@has_more_pages && "load_more_alerts"}>
+      <.table
+        id="alerts"
+        rows={@streams.alerts}
+        row_click={fn {_id, alert} -> JS.push("show_modal", value: alert) end}
+      >
+        <:col :let={{_id, _alert}}></:col>
+        <:col :let={{_id, alert}} label={gettext("Team")}><%= alert.team.name %></:col>
+        <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+        <:col :let={{_id, alert}} label={gettext("Risk Level")}><%= alert.risk_level %></:col>
+        <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.start_time %></:col>
+        <:col :let={{_id, _alert}} label={gettext("Case ID")}></:col>
+        <:col :let={{_id, _alert}} label={gettext("Case Status")}></:col>
+        <:col :let={{_id, alert}} label={gettext("Link")}>
+          <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
+        </:col>
+      </.table>
+    </div>
 
     <%= if @has_more_pages do %>
       <div class="flex justify-center my-4">
