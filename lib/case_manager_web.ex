@@ -82,8 +82,13 @@ defmodule CaseManagerWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components and translation
+      # Core UI components
       import CaseManagerWeb.CoreComponents
+
+      # UI components
+      import CaseManagerWeb.Buttons
+
+      # Translation
       use Gettext, backend: CaseManagerWeb.Gettext
 
       # Shortcut for generating JS commands
