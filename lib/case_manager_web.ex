@@ -90,6 +90,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.TextBtn
       import CaseManagerWeb.CreateCaseBtn
       import CaseManagerWeb.IconBtn
+      import CaseManagerWeb.IconLinkBtn
       import CaseManagerWeb.Icon
 
       # Translation
