@@ -86,7 +86,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.CoreComponents
 
       # UI components
-      import CaseManagerWeb.Buttons
+      import CaseManagerWeb.Button
       import CaseManagerWeb.Icon
 
       # Translation

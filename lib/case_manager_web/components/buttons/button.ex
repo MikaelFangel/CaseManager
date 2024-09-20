@@ -1,13 +1,10 @@
-defmodule CaseManagerWeb.Buttons do
+defmodule CaseManagerWeb.Button do
   @moduledoc """
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
 
-  import CaseManagerWeb.Icon
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
-
-
 
   @doc """
   Renders a button.
@@ -35,10 +32,9 @@ defmodule CaseManagerWeb.Buttons do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-lg",
+        "text-sm text-white active:text-white/80",
         @color_classes,
-        @class
       ]}
       {@rest}
     >
@@ -50,20 +46,21 @@ defmodule CaseManagerWeb.Buttons do
   defp button_color_classes(opts) do
     opts = %{
       color: opts[:color] || "primary",
+      class: opts[:class] || ""
     }
 
     color_css = get_color_classes(opts.color)
+    custom_button_classes = opts.class
 
-    [color_css]
+    [color_css, custom_button_classes]
   end
 
   defp get_color_classes("primary"),
-    do: "bg-info-100"
+    do: "bg-stone-900 hover:bg-zinc-500"
 
   defp get_color_classes("secondary"),
-    do: "bg-stone-700"
+    do: "bg-neutral-500 hover:bg-neutral-400"
 
   defp get_color_classes("critical"),
-    do: "bg-red-600"
+    do: "bg-red-500 hover:bg-red-400"
 end
-
