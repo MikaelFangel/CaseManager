@@ -3,6 +3,7 @@ defmodule CaseManagerWeb.Buttons do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
 
+  import CaseManagerWeb.Icon
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
 
