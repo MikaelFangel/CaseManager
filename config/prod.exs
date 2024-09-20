@@ -19,3 +19,6 @@ config :logger, level: :info
 
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
+config :case_manager, CaseManagerWeb.Endpoint,
+  url: [host: "127.0.0.1"],
+  check_origin: ["//localhost", "//127.0.0.1"]
