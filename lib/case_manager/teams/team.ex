@@ -28,7 +28,10 @@ defmodule CaseManager.Teams.Team do
     attribute :name, :string
     attribute :email, :string
     attribute :phone, :string
-    attribute :is_mssp, :boolean
+
+    attribute :is_mssp, :boolean do
+      default false
+    end
 
     timestamps()
   end
