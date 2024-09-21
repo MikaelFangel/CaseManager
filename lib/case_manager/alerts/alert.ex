@@ -40,7 +40,6 @@ defmodule CaseManager.Alerts.Alert do
     module CaseManagerWeb.Endpoint
 
     prefix "alert"
-
     publish :create, ["created"]
   end
 
@@ -123,8 +122,6 @@ defmodule CaseManager.Alerts.Alert do
 
   relationships do
     belongs_to :team, CaseManager.Teams.Team do
-      attribute_type :uuid
-      attribute_writable? true
       allow_nil? false
     end
   end
