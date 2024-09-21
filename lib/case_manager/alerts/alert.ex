@@ -116,7 +116,11 @@ defmodule CaseManager.Alerts.Alert do
       allow_nil? false
     end
 
-    attribute :additional_data, :map
+    attribute :additional_data, :map do
+      default %{}
+      sortable? false
+    end
+
     timestamps()
   end
 
