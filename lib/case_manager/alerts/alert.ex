@@ -55,6 +55,18 @@ defmodule CaseManager.Alerts.Alert do
         :additional_data,
         :team_id
       ]
+
+      change fn changeset, _ ->
+        changeset
+        |> Ash.Changeset.get_attribute(:risk_level)
+        |> case do
+          nil ->
+            changeset
+
+          risk_level ->
+            Ash.Changeset.change_attribute(changeset, :risk_level, String.capitalize(risk_level))
+        end
+      end
     end
 
     read :read do

@@ -46,7 +46,20 @@ defmodule CaseManager.Alerts.AlertTest do
         Map.put(@valid_alert_attrs, :team_id, team.id)
         |> Map.put(:risk_level, "Invalid")
       )
+
     assert {:error, _changeset} = Ash.create(changeset)
+  end
+
+  test "create an alert even if the risk_level is not capitalized", %{team: team} do
+    changeset =
+      Alert
+      |> Ash.Changeset.for_create(
+        :create,
+        Map.put(@valid_alert_attrs, :team_id, team.id)
+        |> Map.put(:risk_level, "high")
+      )
+
+    assert {:ok, _alert} = Ash.create(changeset)
   end
 
   test "fails to create an alert with an invalid team_id" do
