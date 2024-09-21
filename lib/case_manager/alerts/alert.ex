@@ -56,16 +56,17 @@ defmodule CaseManager.Alerts.Alert do
         :team_id
       ]
 
-      # Ensure the start time is before the end time
+      # Ensure the start_time must be before end_time
       validate fn changeset, _context ->
         start_time = Ash.Changeset.get_attribute(changeset, :start_time)
         end_time = Ash.Changeset.get_attribute(changeset, :end_time)
 
-        cond do
-          start_time == nil -> :ok
-          end_time == nil -> :ok
-          DateTime.before?(start_time, end_time) -> :ok
-          true -> {:error, "Start time must be before end time"}
+        # If either start time or end time is nil, we don't need to validate
+        # as the allow_nil? false on the attributes will return missing_attribute error instead
+        if start_time && end_time && DateTime.before?(start_time, end_time) do
+          :ok
+        else
+          {:error, message: "start_time must be before end_time"}
         end
       end
     end
