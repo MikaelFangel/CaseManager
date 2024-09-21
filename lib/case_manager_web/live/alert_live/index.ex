@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <div
       id="alerts-container"
       phx-update="stream"
-      phx-viewport-bottom={@has_more_pages && "load_more_alerts"}
+      phx-viewport-bottom={@more_pages? && "load_more_alerts"}
     >
       <.table
         id="alerts"
@@ -27,7 +27,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       </.table>
     </div>
 
-    <%= if @has_more_pages do %>
+    <%= if @more_pages? do %>
       <div class="flex justify-center my-4">
         <.button phx-click="load_more_alerts"><%= gettext("Load More") %></.button>
       </div>
@@ -84,7 +84,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:show_modal, false)
      |> assign(:alert, %{})
      |> assign(:current_page, alerts_page)
-     |> assign(:has_more_pages, alerts_page.more?)}
+     |> assign(:more_pages?, alerts_page.more?)}
   end
 
   @impl true
@@ -137,6 +137,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
        alerts
      )
      |> assign(:current_page, next_page)
-     |> assign(:has_more_pages, next_page.more?)}
+     |> assign(:more_pages?, next_page.more?)}
   end
 end
