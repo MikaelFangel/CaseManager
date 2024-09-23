@@ -1,4 +1,4 @@
-defmodule CaseManagerWeb.TextBtn do
+defmodule CaseManagerWeb.TxtBtn do
   @moduledoc """
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
