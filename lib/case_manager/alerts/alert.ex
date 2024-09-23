@@ -40,7 +40,6 @@ defmodule CaseManager.Alerts.Alert do
     module CaseManagerWeb.Endpoint
 
     prefix "alert"
-
     publish :create, ["created"]
   end
 
@@ -57,16 +56,15 @@ defmodule CaseManager.Alerts.Alert do
         :team_id
       ]
 
-      # Ensure the start time is before the end time
-      validate fn changeset, _context ->
-        start_time = Ash.Changeset.get_attribute(changeset, :start_time)
-        end_time = Ash.Changeset.get_attribute(changeset, :end_time)
+      change fn changeset, _ ->
+        changeset
+        |> Ash.Changeset.get_attribute(:risk_level)
+        |> case do
+          nil ->
+            changeset
 
-        cond do
-          start_time == nil -> :ok
-          end_time == nil -> :ok
-          DateTime.before?(start_time, end_time) -> :ok
-          true -> {:error, "Start time must be before end time"}
+          risk_level ->
+            Ash.Changeset.change_attribute(changeset, :risk_level, String.capitalize(risk_level))
         end
       end
     end
@@ -117,15 +115,35 @@ defmodule CaseManager.Alerts.Alert do
       allow_nil? false
     end
 
-    attribute :additional_data, :map
+    attribute :additional_data, :map do
+      default %{}
+      sortable? false
+    end
+
     timestamps()
   end
 
   relationships do
     belongs_to :team, CaseManager.Teams.Team do
-      attribute_type :uuid
-      attribute_writable? true
       allow_nil? false
+    end
+  end
+
+  validations do
+    validate one_of(:risk_level, ["Informational", "Low", "Medium", "High", "Critical"])
+
+    # Ensure the start_time must be before end_time
+    validate fn changeset, _context ->
+      start_time = Ash.Changeset.get_attribute(changeset, :start_time)
+      end_time = Ash.Changeset.get_attribute(changeset, :end_time)
+
+      # If either start time or end time is nil, we don't need to validate
+      # as the allow_nil? false on the attributes will return missing_attribute error instead
+      if start_time && end_time && DateTime.before?(start_time, end_time) do
+        :ok
+      else
+        {:error, message: "start_time must be before end_time"}
+      end
     end
   end
 
