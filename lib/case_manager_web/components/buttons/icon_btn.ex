@@ -1,14 +1,11 @@
 defmodule CaseManagerWeb.IconBtn do
   @moduledoc """
-  Provides a custom button UI component.
-
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
+  Provides a custom button that only displays an icon.
   """
 
   use Phoenix.Component
   import CaseManagerWeb.Button
   import CaseManagerWeb.Icon
-  use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
   Renders a square icon button
@@ -33,8 +30,7 @@ defmodule CaseManagerWeb.IconBtn do
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
-
+  attr :rest, :global
   # If the default slot is omitted a warning will appear
   slot :inner_block, required: true
 

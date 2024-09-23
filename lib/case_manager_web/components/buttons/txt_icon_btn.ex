@@ -8,7 +8,6 @@ defmodule CaseManagerWeb.TxtIconBtn do
   use Phoenix.Component
   import CaseManagerWeb.Button
   import CaseManagerWeb.Icon
-  use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
   Renders a button with an icon and some text (or some other component)

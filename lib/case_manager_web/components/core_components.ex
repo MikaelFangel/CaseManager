@@ -214,8 +214,6 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
-
-
   @doc """
   Renders an input with label and error messages.
 
@@ -544,8 +542,6 @@ defmodule CaseManagerWeb.CoreComponents do
     </div>
     """
   end
-
-
 
   ## JS Commands
 

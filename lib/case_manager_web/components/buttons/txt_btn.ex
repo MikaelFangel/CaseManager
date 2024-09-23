@@ -5,7 +5,6 @@ defmodule CaseManagerWeb.TxtBtn do
 
   use Phoenix.Component
   import CaseManagerWeb.Button
-  use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
   Renders a button. The typical height and padding is preset, when using this button.
@@ -26,8 +25,7 @@ defmodule CaseManagerWeb.TxtBtn do
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global, include: ~w(disabled form name value)
-
+  attr :rest, :global
   slot :inner_block, required: true
 
   def txt_btn(assigns) do
