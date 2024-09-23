@@ -23,7 +23,7 @@ defmodule CaseManagerWeb.TxtBtn do
       <.txt_btn color="critical">Simple critical text button</.txt_btn>
   """
   attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
-  
+
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -31,20 +31,14 @@ defmodule CaseManagerWeb.TxtBtn do
   slot :inner_block, required: true
 
   def txt_btn(assigns) do
-    assigns = 
+    assigns =
       assigns
       |> assign(:btn_classes, btn_classes(assigns))
 
     ~H"""
-    <.button
-      color={@color}
-      type={@type}
-      class={@btn_classes}
-      {@rest}
-    >
+    <.button color={@color} type={@type} class={@btn_classes} {@rest}>
       <%= render_slot(@inner_block) %>
     </.button>
-
     """
   end
 

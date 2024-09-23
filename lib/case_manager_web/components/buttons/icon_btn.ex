@@ -39,21 +39,15 @@ defmodule CaseManagerWeb.IconBtn do
   slot :inner_block, required: true
 
   def icon_btn(%{icon_name: "hero-" <> _} = assigns) do
-    assigns = 
+    assigns =
       assigns
       |> assign(:btn_size_classes, btn_size_classes(assigns))
       |> assign(:icon_size_classes, icon_size_classes(assigns))
 
     ~H"""
-    <.button
-      color={@color}
-      type={@type}
-      class={@btn_size_classes}
-      {@rest}
-    >
-      <.icon name={@icon_name} class={@icon_size_classes}/>
+    <.button color={@color} type={@type} class={@btn_size_classes} {@rest}>
+      <.icon name={@icon_name} class={@icon_size_classes} />
     </.button>
-
     """
   end
 
@@ -93,4 +87,3 @@ defmodule CaseManagerWeb.IconBtn do
   defp get_icon_size_classes("small"),
     do: "w-4 h-4"
 end
-

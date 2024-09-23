@@ -20,7 +20,7 @@ defmodule CaseManagerWeb.Button do
   """
 
   attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
-  
+
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -28,7 +28,7 @@ defmodule CaseManagerWeb.Button do
   slot :inner_block, required: true
 
   def button(assigns) do
-    assigns = 
+    assigns =
       assigns
       |> assign(:color_classes, button_color_classes(assigns))
 
@@ -38,7 +38,7 @@ defmodule CaseManagerWeb.Button do
       class={[
         "phx-submit-loading:opacity-75 rounded-lg",
         "text-sm text-white active:text-white/80",
-        @color_classes,
+        @color_classes
       ]}
       {@rest}
     >

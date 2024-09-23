@@ -36,10 +36,9 @@ defmodule CaseManagerWeb.TxtIconBtn do
       class="h-11 align-middle text-left px-2.5 font-semibold"
       {@rest}
     >
-      <.icon name={@icon_name} class="w-6 h-6 mr-1"/>
+      <.icon name={@icon_name} class="w-6 h-6 mr-1" />
       <%= render_slot(@inner_block) %>
     </.button>
-
     """
   end
 end
