@@ -88,9 +88,8 @@ defmodule CaseManagerWeb do
       # UI components
       import CaseManagerWeb.Button
       import CaseManagerWeb.TxtBtn
-      import CaseManagerWeb.CreateCaseBtn
+      import CaseManagerWeb.TxtIconBtn
       import CaseManagerWeb.IconBtn
-      import CaseManagerWeb.IconLinkBtn
       import CaseManagerWeb.Icon
 
       # Translation

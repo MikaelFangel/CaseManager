@@ -1,5 +1,7 @@
 defmodule CaseManagerWeb.IconBtn do
   @moduledoc """
+  Provides a custom button UI component.
+
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
 
@@ -9,7 +11,7 @@ defmodule CaseManagerWeb.IconBtn do
   use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
-  Renders an Icon button
+  Renders a square icon button
 
   Icon buttons come in three colors – primary, secondary, and critical.
   By default, the primary color is used, but the color may
@@ -18,6 +20,11 @@ defmodule CaseManagerWeb.IconBtn do
   Icon buttons come in three sizes – large and small.
   By default, the large size is used, but the size may
   be applied by using the size parameter.
+
+  ## Examples
+
+      <.icon_btn icon_name="hero-pause-circle" color="critical"></.icon_btn>
+      <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="ml-0.5 mb-0.5"></.icon_btn>
   """
   attr :size, :string, default: "large", values: ["large", "small"]
   attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
@@ -31,17 +38,17 @@ defmodule CaseManagerWeb.IconBtn do
   # If the default slot is omitted a warning will appear
   slot :inner_block, required: true
 
-  def icon_button(%{icon_name: "hero-" <> _} = assigns) do
+  def icon_btn(%{icon_name: "hero-" <> _} = assigns) do
     assigns = 
       assigns
-      |> assign(:icon_button_size_classes, icon_button_size_classes(assigns))
+      |> assign(:btn_size_classes, btn_size_classes(assigns))
       |> assign(:icon_size_classes, icon_size_classes(assigns))
 
     ~H"""
     <.button
       color={@color}
       type={@type}
-      class={@icon_button_size_classes}
+      class={@btn_size_classes}
       {@rest}
     >
       <.icon name={@icon_name} class={@icon_size_classes}/>
@@ -50,22 +57,22 @@ defmodule CaseManagerWeb.IconBtn do
     """
   end
 
-  defp icon_button_size_classes(opts) do
+  defp btn_size_classes(opts) do
     opts = %{
       color: opts[:size] || "large",
       class: opts[:class] || ""
     }
 
-    color_css = get_icon_button_size_classes(opts.color)
-    custom_size_classes = opts.class
+    size_css = get_icon_btn_size_classes(opts.color)
+    custom_btn_size_classes = opts.class
 
-    [color_css, custom_size_classes]
+    [size_css, custom_btn_size_classes]
   end
 
-  defp get_icon_button_size_classes("large"),
+  defp get_icon_btn_size_classes("large"),
     do: "w-11 h-11"
 
-  defp get_icon_button_size_classes("small"),
+  defp get_icon_btn_size_classes("small"),
     do: "w-7 h-7"
 
   defp icon_size_classes(opts) do
@@ -74,10 +81,10 @@ defmodule CaseManagerWeb.IconBtn do
       class: opts[:class] || ""
     }
 
-    color_css = get_icon_size_classes(opts.color)
-    custom_size_classes = opts.class
+    icon_size_css = get_icon_size_classes(opts.color)
+    custom_icon_size_classes = opts.class
 
-    [color_css, custom_size_classes]
+    [icon_size_css, custom_icon_size_classes]
   end
 
   defp get_icon_size_classes("large"),

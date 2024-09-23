@@ -1,6 +1,6 @@
 defmodule CaseManagerWeb.Button do
   @moduledoc """
-  Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
+  Provides a very general button UI component.
   """
 
   use Phoenix.Component
@@ -8,6 +8,10 @@ defmodule CaseManagerWeb.Button do
 
   @doc """
   Renders a button.
+
+  Buttons come in three colors – primary, secondary, and critical.
+  By default, the primary color is used, but the color may
+  be applied by using the color parameter.
 
   ## Examples
 
