@@ -7,10 +7,10 @@ defmodule CaseManager.Repo.Migrations.DropOldPluralTables do
   end
 
   def down do
-      drop table(:alert)
-      drop table(:team)
+    drop table(:alert)
+    drop table(:team)
 
-      create table(:teams, primary_key: false) do
+    create table(:teams, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :ip, :text
       add :name, :text
