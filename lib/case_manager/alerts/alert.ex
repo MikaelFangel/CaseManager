@@ -28,11 +28,11 @@ defmodule CaseManager.Alerts.Alert do
   end
 
   postgres do
-    table "alerts"
+    table "alert"
     repo CaseManager.Repo
 
     references do
-      reference :team, on_delete: :delete, on_update: :update, name: "alerts_to_teams_fkey"
+      reference :team, on_delete: :delete, on_update: :update, name: "alert_to_team_fkey"
     end
   end
 

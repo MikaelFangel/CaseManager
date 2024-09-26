@@ -8,7 +8,7 @@ defmodule CaseManager.Teams.Team do
     data_layer: AshPostgres.DataLayer
 
   postgres do
-    table "teams"
+    table "team"
     repo CaseManager.Repo
   end
 
@@ -37,6 +37,6 @@ defmodule CaseManager.Teams.Team do
   end
 
   relationships do
-    has_many :alerts, CaseManager.Alerts.Alert
+    has_many :alert, CaseManager.Alerts.Alert
   end
 end
