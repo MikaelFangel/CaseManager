@@ -20,8 +20,8 @@ defmodule CaseManagerWeb.IconBtn do
 
   ## Examples
 
-      <.icon_btn icon_name="hero-pause-circle" color="critical"></.icon_btn>
-      <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="ml-0.5 mb-0.5"></.icon_btn>
+      <.icon_btn icon_name="hero-pause-circle" color="critical" />
+      <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="ml-0.5 mb-0.5" />
   """
   attr :size, :string, default: "large", values: ["large", "small"]
   attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
@@ -32,7 +32,7 @@ defmodule CaseManagerWeb.IconBtn do
   attr :class, :string, default: nil
   attr :rest, :global
   # If the default slot is omitted a warning will appear
-  slot :inner_block, required: true
+  slot :inner_block
 
   def icon_btn(%{icon_name: "hero-" <> _} = assigns) do
     assigns =
@@ -60,10 +60,10 @@ defmodule CaseManagerWeb.IconBtn do
   end
 
   defp get_icon_btn_size_classes("large"),
-    do: "w-11 h-11"
+    do: "w-11 h-11 rounded-xl"
 
   defp get_icon_btn_size_classes("small"),
-    do: "w-7 h-7"
+    do: "w-7 h-7 rounded-lg"
 
   defp icon_size_classes(opts) do
     opts = %{

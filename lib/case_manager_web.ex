@@ -87,10 +87,9 @@ defmodule CaseManagerWeb do
 
       # UI components
       import CaseManagerWeb.Button
-      import CaseManagerWeb.TxtBtn
-      import CaseManagerWeb.TxtIconBtn
-      import CaseManagerWeb.IconBtn
       import CaseManagerWeb.Icon
+      import CaseManagerWeb.IconBtn
+      import CaseManagerWeb.CustomBtn
 
       # Translation
       use Gettext, backend: CaseManagerWeb.Gettext

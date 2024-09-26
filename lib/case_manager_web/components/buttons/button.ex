@@ -18,7 +18,7 @@ defmodule CaseManagerWeb.Button do
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
 
-  attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
+  attr :color, :string, default: "primary", values: ["primary", "secondary", "disabled", "critical"]
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
@@ -35,7 +35,7 @@ defmodule CaseManagerWeb.Button do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg",
+        "phx-submit-loading:opacity-75",
         "text-sm text-white active:text-white/80",
         @color_classes
       ]}
@@ -59,11 +59,14 @@ defmodule CaseManagerWeb.Button do
   end
 
   defp get_color_classes("primary"),
-    do: "bg-stone-900 hover:bg-zinc-500"
+    do: "bg-slate-950 hover:bg-zinc-500"
 
   defp get_color_classes("secondary"),
     do: "bg-neutral-500 hover:bg-neutral-400"
 
+  defp get_color_classes("disabled"),
+    do: "bg-gray-300 hover:bg-neutral-400"
+
   defp get_color_classes("critical"),
-    do: "bg-red-500 hover:bg-red-400"
+    do: "bg-rose-500 hover:bg-red-400"
 end
