@@ -1,5 +1,6 @@
 defmodule CaseManager.Alerts.AlertTest do
   use CaseManager.DataCase
+  use ExUnitProperties
   alias CaseManager.Alerts.Alert
   alias CaseManager.Teams.Team
 
@@ -14,6 +15,7 @@ defmodule CaseManager.Alerts.AlertTest do
     end_time: "2024-09-13T12:13:12.551Z",
     link: "http://example"
   }
+  @valid_risk_levels ["Informational", "Low", "Medium", "High", "Critical"]
 
   setup do
     {:ok, team} = Team |> Ash.Changeset.for_create(:create, @valid_team_attrs) |> Ash.create()
@@ -39,15 +41,17 @@ defmodule CaseManager.Alerts.AlertTest do
   end
 
   test "fails to create an alert with an invalid risk_level", %{team: team} do
-    changeset =
-      Alert
-      |> Ash.Changeset.for_create(
-        :create,
-        Map.put(@valid_alert_attrs, :team_id, team.id)
-        |> Map.put(:risk_level, "Invalid")
-      )
+    check all(risk_level <- string(:alphanumeric) |> filter(&(&1 not in @valid_risk_levels))) do
+      changeset =
+        Alert
+        |> Ash.Changeset.for_create(
+          :create,
+          Map.put(@valid_alert_attrs, :team_id, team.id)
+          |> Map.put(:risk_level, risk_level)
+        )
 
-    assert {:error, _changeset} = Ash.create(changeset)
+      assert {:error, _changeset} = Ash.create(changeset)
+    end
   end
 
   test "create an alert even if the risk_level is not capitalized", %{team: team} do
