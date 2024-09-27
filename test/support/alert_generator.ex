@@ -1,10 +1,26 @@
 defmodule CaseManagerWeb.AlertGenerator do
+  @moduledoc """
+  Generator for alert data that can be used in tests. The generator generates valid alert data.
+  """
   use ExUnitProperties
 
+  @doc """
+  Gives a list of valid risk levels. The given risk levels are ordered by their severity
+  and is static.
+  """
   def valid_risk_levels, do: ["Informational", "Low", "Medium", "High", "Critical"]
 
+  @doc """
+  A generator for risk levels. The generator generates a random risk level from 
+  the list of valid risk levels.
+  """
   def risk_level, do: StreamData.member_of(valid_risk_levels())
 
+  @doc """
+  A generator for alert attributes. The generator generates a map with the following keys:
+  alert_id, title, risk_level, start_time, end_time, link. The values for the keys are generated
+  randomly.
+  """
   def alert_attrs do
     gen all(
           alert_id <- StreamData.string(:alphanumeric, length: 8),
