@@ -1,4 +1,4 @@
-defmodule CaseManager.Alerts.AlertTest do
+defmodule CaseManager.Alerts.AlertInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
   alias CaseManager.Alerts.Alert
