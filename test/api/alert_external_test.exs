@@ -14,7 +14,7 @@ defmodule CaseManager.AlertExternalTest do
     {:ok, team: team}
   end
 
-  test "valid alert attributes return a 201 OK response", %{team: team} do
+  property "valid alert attributes return a 201 OK response", %{team: team} do
     check all(alert_attr <- AlertGenerator.alert_attrs()) do
       data = %{data: %{type: "alert", attributes: alert_attr |> Map.put(:team_id, team.id)}}
       json_data = Jason.encode!(data)
@@ -29,7 +29,7 @@ defmodule CaseManager.AlertExternalTest do
     end
   end
 
-  test "invalid alert attributes return a 400 OK response", %{team: team} do
+  property "invalid alert attributes return a 400 OK response", %{team: team} do
     check all(alert_attr <- AlertGenerator.alert_attrs()) do
       data = %{
         data: %{

@@ -14,7 +14,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     {:ok, team: team}
   end
 
-  test "creates an alert with a valid team_id", %{team: team} do
+  property "creates an alert with a valid team_id", %{team: team} do
     check all(alert_attrs <- AlertGenerator.alert_attrs()) do
       changeset =
         Alert
@@ -24,7 +24,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     end
   end
 
-  test "fails to create an alert with missing required fields", %{team: team} do
+  property "fails to create an alert with missing required fields", %{team: team} do
     changeset =
       Alert
       |> Ash.Changeset.for_create(:create, %{
@@ -34,7 +34,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     assert {:error, _changeset} = Ash.create(changeset)
   end
 
-  test "fails to create an alert with an invalid risk_level", %{team: team} do
+  property "fails to create an alert with an invalid risk_level", %{team: team} do
     check all(
             alert_attrs <- AlertGenerator.alert_attrs(),
             risk_level <-
@@ -52,7 +52,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     end
   end
 
-  test "create an alert even if the risk_level is not capitalized", %{team: team} do
+  property "create an alert even if the risk_level is not capitalized", %{team: team} do
     check all(
             alert_attrs <- AlertGenerator.alert_attrs(),
             risk_level <- AlertGenerator.risk_level() |> map(&String.downcase/1)
@@ -69,7 +69,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     end
   end
 
-  test "fails to create an alert with an invalid team_id" do
+  property "fails to create an alert with an invalid team_id" do
     check all(alert_attrs <- AlertGenerator.alert_attrs()) do
       changeset =
         Alert
@@ -82,7 +82,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     end
   end
 
-  test "fails to create an alert where the start_time is not before the end_time", %{team: team} do
+  property "fails to create an alert where the start_time is not before the end_time", %{team: team} do
     check all(alert_attrs <- AlertGenerator.alert_attrs()) do
       changeset =
         Alert
