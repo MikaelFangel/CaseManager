@@ -1,4 +1,7 @@
 defmodule CaseManager.Alerts.AlertInternalTest do
+  @moduledoc """
+  Test cases for the internal api for the alert resource.
+  """
   use CaseManager.DataCase, async: true
   use ExUnitProperties
   alias CaseManager.Alerts.Alert
@@ -82,7 +85,9 @@ defmodule CaseManager.Alerts.AlertInternalTest do
     end
   end
 
-  property "fails to create an alert where the start_time is not before the end_time", %{team: team} do
+  property "fails to create an alert where the start_time is not before the end_time", %{
+    team: team
+  } do
     check all(alert_attrs <- AlertGenerator.alert_attrs()) do
       changeset =
         Alert

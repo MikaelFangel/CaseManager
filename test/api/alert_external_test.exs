@@ -1,4 +1,7 @@
 defmodule CaseManager.AlertExternalTest do
+  @moduledoc """
+  Module that tests the external api of the application.
+  """
   use CaseManager.DataCase, async: true
   use ExUnitProperties
   use Plug.Test
@@ -14,7 +17,7 @@ defmodule CaseManager.AlertExternalTest do
     {:ok, team: team}
   end
 
-  property "valid alert attributes return a 201 OK response", %{team: team} do
+  property "valid alert attributes return a 201 created response", %{team: team} do
     check all(alert_attr <- AlertGenerator.alert_attrs()) do
       data = %{data: %{type: "alert", attributes: alert_attr |> Map.put(:team_id, team.id)}}
       json_data = Jason.encode!(data)
@@ -29,7 +32,7 @@ defmodule CaseManager.AlertExternalTest do
     end
   end
 
-  property "invalid alert attributes return a 400 OK response", %{team: team} do
+  property "invalid alert attributes return a 400 bad request response", %{team: team} do
     check all(alert_attr <- AlertGenerator.alert_attrs()) do
       data = %{
         data: %{
