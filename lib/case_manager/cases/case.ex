@@ -91,7 +91,7 @@ defmodule CaseManager.Cases.Case do
 
     read :read do
       primary? true
-      prepare build load: [:team]
+      prepare build(load: [:team])
 
       pagination do
         required? true
@@ -107,10 +107,12 @@ defmodule CaseManager.Cases.Case do
       allow_nil? false
     end
 
-    many_to_many :alerts, CaseManager.Alerts.Alert do
+    many_to_many :alert, CaseManager.Alerts.Alert do
       through CaseManager.Relationships.CaseAlert
       source_attribute_on_join_resource :case_id
       destination_attribute_on_join_resource :alert_id
     end
+
+    has_many :comment, CaseManager.Cases.Comment
   end
 end
