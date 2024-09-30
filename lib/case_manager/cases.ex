@@ -3,5 +3,6 @@ defmodule CaseManager.Cases do
 
   resources do
     resource CaseManager.Cases.Case
+    resource CaseManager.Relationships.CaseAlert
   end
 end
