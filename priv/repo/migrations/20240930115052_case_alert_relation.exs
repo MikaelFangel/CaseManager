@@ -10,7 +10,7 @@ defmodule CaseManager.Repo.Migrations.CaseAlertRelation do
   def up do
     create table(:case_alert, primary_key: false) do
       add :case_id,
-          references(:cases,
+          references(:case,
             column: :id,
             name: "case_alert_case_id_fkey",
             type: :uuid,
