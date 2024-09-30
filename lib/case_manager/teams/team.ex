@@ -38,5 +38,6 @@ defmodule CaseManager.Teams.Team do
 
   relationships do
     has_many :alert, CaseManager.Alerts.Alert
+    has_many :case, CaseManager.Cases.Case
   end
 end
