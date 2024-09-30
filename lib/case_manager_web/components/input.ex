@@ -33,6 +33,7 @@ defmodule CaseManagerWeb.Input do
 
       <.input field={@form[:email]} type="email" />
       <.input name="my-input" errors={["oh no!"]} />
+      <.input type="checkbox" name="checkbox_name" label="Text to checkbox" />
   """
   attr :id, :any, default: nil
   attr :name, :any
