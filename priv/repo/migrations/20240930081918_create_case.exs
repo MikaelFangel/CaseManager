@@ -8,7 +8,7 @@ defmodule CaseManager.Repo.Migrations.CreateCase do
   use Ecto.Migration
 
   def up do
-    create table(:cases, primary_key: false) do
+    create table(:case, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :title, :text, null: false
       add :description, :text
@@ -39,8 +39,8 @@ defmodule CaseManager.Repo.Migrations.CreateCase do
   end
 
   def down do
-    drop constraint(:cases, "case_to_team_fkey")
+    drop constraint(:case, "case_to_team_fkey")
 
-    drop table(:cases)
+    drop table(:case)
   end
 end
