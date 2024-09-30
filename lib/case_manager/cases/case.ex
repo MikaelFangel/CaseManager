@@ -51,7 +51,7 @@ defmodule CaseManager.Cases.Case do
   end
 
   postgres do
-    table "cases"
+    table "case"
     repo CaseManager.Repo
 
     references do
