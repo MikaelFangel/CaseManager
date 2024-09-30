@@ -91,7 +91,7 @@ defmodule CaseManager.Cases.Case do
 
     read :read do
       primary? true
-      prepare build load: [:team]
+      prepare build(load: [:team])
 
       pagination do
         required? true
