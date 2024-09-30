@@ -73,7 +73,7 @@ defmodule CaseManager.MixProject do
       {:ash_phoenix, "~> 2.1"},
       {:ex_doc, "~> 0.31", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      # Unconsrained to avoid conflicts with the mix.exs from ash
+      # Unconstrained to avoid conflicts with the mix.exs from ash
       {:stream_data, "~> 1.0"}
     ]
   end
