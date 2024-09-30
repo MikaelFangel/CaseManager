@@ -24,13 +24,13 @@ defmodule CaseManagerWeb.IconBtn do
       <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="ml-0.5 mb-0.5" />
   """
   attr :size, :string, default: "large", values: ["large", "small"]
-  attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
+  attr :color, :string, default: "primary", values: ["primary", "secondary", "disabled", "critical"]
 
   attr :icon_name, :string, required: true
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(disabled)
   # If the default slot is omitted a warning will appear
   slot :inner_block
 

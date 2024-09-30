@@ -24,14 +24,14 @@ defmodule CaseManagerWeb.CustomBtn do
       <.custom_btn icon_name="hero-user-plus">Simple primary text button</.custom_btn>
       <.custom_btn color="secondary" txt="Simple secondary text button" />
   """
-  attr :color, :string, default: "primary", values: ["primary", "secondary", "critical"]
+  attr :color, :string, default: "primary", values: ["primary", "secondary", "disabled", "critical"]
 
   attr :icon_name, :string, default: nil, doc: "name of icon used lhs"
   attr :txt, :string, default: nil, doc: "txt written on btn"
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(disabled)
   slot :inner_block
 
   def custom_btn(assigns) do
