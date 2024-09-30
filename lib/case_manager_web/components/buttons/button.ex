@@ -20,11 +20,21 @@ defmodule CaseManagerWeb.Button do
 
   attr :color, :string, default: "primary", values: ["primary", "secondary", "disabled", "critical"]
 
+  attr :disabled, :boolean, default: false
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global
 
   slot :inner_block, required: true
+
+
+  def button(%{disabled: true, color: color} = assigns) when color != "disabled" do 
+    button(Map.put(assigns, :color, "disabled"))
+  end
+
+  def button(%{disabled: false, color: "disabled"} = assigns) do
+    button(Map.put(assigns, :disabled, true))
+  end
 
   def button(assigns) do
     assigns =
@@ -36,9 +46,10 @@ defmodule CaseManagerWeb.Button do
       type={@type}
       class={[
         "phx-submit-loading:opacity-75",
-        "text-sm text-white active:text-white/80",
+        "text-sm text-white",
         @color_classes
       ]}
+      disabled={@disabled}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -59,14 +70,14 @@ defmodule CaseManagerWeb.Button do
   end
 
   defp get_color_classes("primary"),
-    do: "bg-slate-950 hover:bg-zinc-500"
+    do: "bg-slate-950 hover:bg-zinc-500 active:text-white/80"
 
   defp get_color_classes("secondary"),
-    do: "bg-neutral-500 hover:bg-neutral-400"
+    do: "bg-neutral-500 hover:bg-neutral-400 active:text-white/80"
 
   defp get_color_classes("disabled"),
-    do: "bg-gray-300 hover:bg-neutral-400"
+    do: "bg-gray-300"
 
   defp get_color_classes("critical"),
-    do: "bg-rose-500 hover:bg-red-400"
+    do: "bg-rose-500 hover:bg-rose-400 active:text-white/80"
 end
