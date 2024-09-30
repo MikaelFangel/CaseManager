@@ -7,6 +7,7 @@ defmodule CaseManager.Alerts do
 
   resources do
     resource CaseManager.Alerts.Alert
+    resource CaseManager.Relationships.CaseAlert
   end
 
   json_api do
