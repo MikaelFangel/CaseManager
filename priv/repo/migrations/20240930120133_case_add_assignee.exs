@@ -8,13 +8,13 @@ defmodule CaseManager.Repo.Migrations.CaseAddAssignee do
   use Ecto.Migration
 
   def up do
-    alter table(:cases) do
+    alter table(:case) do
       add :assignee_id, :uuid
     end
   end
 
   def down do
-    alter table(:cases) do
+    alter table(:case) do
       remove :assignee_id
     end
   end
