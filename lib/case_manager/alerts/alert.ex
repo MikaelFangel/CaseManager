@@ -56,7 +56,7 @@ defmodule CaseManager.Alerts.Alert do
         :team_id
       ]
 
-      change fn changeset, _ ->
+      change fn changeset, _context ->
         changeset
         |> Ash.Changeset.get_attribute(:risk_level)
         |> case do
