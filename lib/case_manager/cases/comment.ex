@@ -25,5 +25,18 @@ defmodule CaseManager.Cases.Comment do
   postgres do
     table "comment"
     repo CaseManager.Repo
+
+    references do
+      reference :case, on_delete: :delete, on_update: :update, name: "comment_to_case_fkey"
+    end
+  end
+
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
+  end
+
+  # TODO: add relationship to a user
+  relationships do
+    belongs_to :case, CaseManager.Cases.Case
   end
 end
