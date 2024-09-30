@@ -127,6 +127,12 @@ defmodule CaseManager.Alerts.Alert do
     belongs_to :team, CaseManager.Teams.Team do
       allow_nil? false
     end
+
+    many_to_many :cases, CaseManager.Cases.Case do
+      through CaseManager.Relationships.CaseAlert
+      source_attribute_on_join_resource :alert_id
+      destination_attribute_on_join_resource :case_id
+    end
   end
 
   validations do
