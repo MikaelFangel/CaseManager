@@ -75,7 +75,12 @@ config :phoenix, :json_library, Jason
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
 
-config :case_manager, :ash_domains, [CaseManager.Cases, CaseManager.Alerts, CaseManager.Teams]
+config :case_manager, :ash_domains, [
+  CaseManager.ContactInfos,
+  CaseManager.Cases,
+  CaseManager.Alerts,
+  CaseManager.Teams
+]
 
 config :ash,
   include_embedded_source_by_default?: false,
