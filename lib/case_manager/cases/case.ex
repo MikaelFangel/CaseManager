@@ -26,6 +26,8 @@ defmodule CaseManager.Cases.Case do
       allow_nil? false
     end
 
+    attribute :assignee_id, :uuid
+
     attribute :team_id, :uuid do
       allow_nil? false
     end
@@ -70,6 +72,7 @@ defmodule CaseManager.Cases.Case do
         :status,
         :priority,
         :escalated,
+        :assignee_id,
         :team_id
       ]
 
@@ -88,7 +91,7 @@ defmodule CaseManager.Cases.Case do
 
     read :read do
       primary? true
-      prepare build(load: [:team])
+      prepare build load: [:team]
 
       pagination do
         required? true
