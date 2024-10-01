@@ -24,5 +24,4 @@ defmodule CaseManager.ContactInfos.Phone do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
-  
 end
