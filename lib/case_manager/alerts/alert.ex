@@ -128,7 +128,7 @@ defmodule CaseManager.Alerts.Alert do
       allow_nil? false
     end
 
-    many_to_many :cases, CaseManager.Cases.Case do
+    many_to_many :case, CaseManager.Cases.Case do
       through CaseManager.Relationships.CaseAlert
       source_attribute_on_join_resource :alert_id
       destination_attribute_on_join_resource :case_id
