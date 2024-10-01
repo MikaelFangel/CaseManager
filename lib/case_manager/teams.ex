@@ -6,5 +6,6 @@ defmodule CaseManager.Teams do
 
   resources do
     resource CaseManager.Teams.Team
+    resource CaseManager.Teams.User
   end
 end
