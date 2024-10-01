@@ -24,4 +24,14 @@ defmodule CaseManager.ContactInfos.Phone do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
+
+  relationships do
+    relationships do
+      many_to_many :team, CaseManager.Teams.Team do
+        through CaseManager.Relationships.TeamPhone
+        source_attribute_on_join_resource :phone_id
+        destination_attribute_on_join_resource :team_id
+      end
+    end
+  end
 end

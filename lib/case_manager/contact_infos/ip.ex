@@ -27,4 +27,12 @@ defmodule CaseManager.ContactInfos.IP do
   validations do
     validate one_of(:version, ["v4", "v6"])
   end
+
+  relationships do
+    many_to_many :team, CaseManager.Teams.Team do
+      through CaseManager.Relationships.TeamIP
+      source_attribute_on_join_resource :ip_id
+      destination_attribute_on_join_resource :team_id
+    end
+  end
 end
