@@ -22,4 +22,8 @@ defmodule CaseManager.ContactInfos.Email do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
+
+  relationships do
+    belongs_to :user, CaseManager.Teams.User
+  end
 end
