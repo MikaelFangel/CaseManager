@@ -17,10 +17,15 @@ defmodule CaseManager.TeamInternalTest do
   end
 
   describe "negative tests for creating teams" do
-    property "fails to create a team without any type" do
+    property "fails to create a team without any type or any name" do
       check all(
               team_attr <- TeamGenerator.team_attrs(),
-              team_attr_type_nil <- StreamData.constant(team_attr |> Map.put(:type, nil))
+              team_attr_type_nil <-
+                StreamData.one_of([
+                  StreamData.constant(team_attr |> Map.put(:type, nil)),
+                  StreamData.constant(team_attr |> Map.put(:name, nil)),
+                  StreamData.constant(team_attr |> Map.put(:type, nil) |> Map.put(:name, nil))
+                ])
             ) do
         changeset =
           Team
