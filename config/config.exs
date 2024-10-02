@@ -79,7 +79,8 @@ config :case_manager, :ash_domains, [
   CaseManager.ContactInfos,
   CaseManager.Cases,
   CaseManager.Alerts,
-  CaseManager.Teams
+  CaseManager.Teams,
+  CaseManager.Relationships
 ]
 
 config :ash,

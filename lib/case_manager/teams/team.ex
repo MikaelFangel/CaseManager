@@ -25,7 +25,7 @@ defmodule CaseManager.Teams.Team do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false
-    attribute :type, :string, allow_nil?: false
+    attribute :type, :string, default: "Customer", allow_nil?: false
     attribute :ip_id, :uuid
     attribute :email_id, :uuid
     attribute :phone_id, :uuid
