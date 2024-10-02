@@ -7,10 +7,11 @@ defmodule CaseManager.ContactInfos.Phone do
   attributes do
     uuid_primary_key :id
 
-    attribute :country_code, :string
+    attribute :country_code, :string, public?: true
 
     attribute :phone, :string do
       allow_nil? false
+      public? true
     end
 
     timestamps()
