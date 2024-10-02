@@ -3,7 +3,7 @@ defmodule CaseManager.Relationships.CaseAlert do
   Resource for the many-to-many relationship between cases and alerts.
   """
   use Ash.Resource,
-    domain: nil,
+    domain: CaseManager.Relationships,
     data_layer: AshPostgres.DataLayer
 
   postgres do

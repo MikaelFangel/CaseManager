@@ -3,7 +3,7 @@ defmodule CaseManager.Relationships.TeamEmail do
   Resource for the many-to-many relationship between teams and ips.
   """
   use Ash.Resource,
-    domain: nil,
+    domain: CaseManager.Relationships,
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -12,8 +12,15 @@ defmodule CaseManager.Relationships.TeamEmail do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team, primary_key?: true, allow_nil?: false
-    belongs_to :email, CaseManager.ContactInfos.Email, primary_key?: true, allow_nil?: false
+    belongs_to :team, CaseManager.Teams.Team,
+      primary_key?: true,
+      allow_nil?: false,
+      public?: true
+
+    belongs_to :email, CaseManager.ContactInfos.Email,
+      primary_key?: true,
+      allow_nil?: false,
+      public?: true
   end
 
   actions do
