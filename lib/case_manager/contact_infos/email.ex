@@ -9,6 +9,7 @@ defmodule CaseManager.ContactInfos.Email do
 
     attribute :email, :string do
       allow_nil? false
+      public? true
     end
 
     timestamps()
