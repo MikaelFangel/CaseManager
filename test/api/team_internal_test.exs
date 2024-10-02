@@ -68,5 +68,19 @@ defmodule CaseManager.TeamInternalTest do
   end
 
   describe "negative relationship test for teams" do
+    property "fails to create relationship to emails that doesn't exsist" do
+      check all(team_attr <- TeamGenerator.team_attrs(),
+      invalid_email_uuid <- StreamData.constant(Ecto.UUID.generate())) do
+        team = Team |> Ash.Changeset.for_create(:create, team_attr) |> Ash.create!()
+
+        assert {:error, _relation} =
+                 TeamEmail
+                 |> Ash.Changeset.for_create(:create, %{
+                   team_id: team.id,
+                   email_id: invalid_email_uuid
+                 })
+                 |> Ash.create()
+      end
+    end
   end
 end
