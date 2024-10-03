@@ -48,7 +48,7 @@ defmodule CaseManager.CaseInternalTest do
         email = generate_email(email_gen)
         {customer_user, mssp_user} = generate_users(email, customer_team, mssp_team, user_gen)
 
-        nil_changeset = Case |> Ash.Changeset.for_create(:create, case_attr)
+        nil_changeset = Case |> Ash.Changeset.for_create(:create, case_attr, actor: mssp_user)
 
         mssp_changeset =
           Case
@@ -56,7 +56,8 @@ defmodule CaseManager.CaseInternalTest do
             :create,
             case_attr
             |> Map.put(:team_id, mssp_team.id)
-            |> Map.put(:assignee_id, mssp_user.id)
+            |> Map.put(:assignee_id, mssp_user.id),
+            actor: mssp_user
           )
 
         customer_changeset =
@@ -65,7 +66,8 @@ defmodule CaseManager.CaseInternalTest do
             :create,
             case_attr
             |> Map.put(:team_id, customer_team.id)
-            |> Map.put(:assignee_id, customer_user.id)
+            |> Map.put(:assignee_id, customer_user.id),
+            actor: customer_user
           )
 
         assert {:ok, _case} = mssp_changeset |> Ash.create()
@@ -96,7 +98,8 @@ defmodule CaseManager.CaseInternalTest do
             :create,
             case_attr
             |> Map.put(:team_id, customer_team.id)
-            |> Map.put(:assignee_id, mssp_user.id)
+            |> Map.put(:assignee_id, mssp_user.id),
+            actor: customer_user
           )
           |> Ash.create!()
 

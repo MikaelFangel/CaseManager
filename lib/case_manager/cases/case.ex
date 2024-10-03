@@ -6,7 +6,8 @@ defmodule CaseManager.Cases.Case do
     otp_app: :case_manager,
     domain: CaseManager.Cases,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    authorizers: [Ash.Policy.Authorizer]
 
   alias CaseManager.Teams.{Team, User}
 
@@ -101,6 +102,12 @@ defmodule CaseManager.Cases.Case do
         countable true
         default_limit 20
       end
+    end
+  end
+
+  policies do
+    policy action_type(:create) do
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
     end
   end
 
