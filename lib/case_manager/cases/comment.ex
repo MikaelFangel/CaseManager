@@ -32,6 +32,7 @@ defmodule CaseManager.Cases.Comment do
 
     references do
       reference :case, on_delete: :delete, on_update: :update, name: "comment_to_case_fkey"
+      reference :user, on_delete: :delete, on_update: :update, name: "comment_to_user_fkey"
     end
   end
 
