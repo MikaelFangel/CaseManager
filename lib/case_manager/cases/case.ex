@@ -89,24 +89,6 @@ defmodule CaseManager.Cases.Case do
             Ash.Changeset.change_attribute(changeset, :priority, String.capitalize(priority))
         end
       end
-
-      validate fn changeset, _context ->
-        with assignee_id <- Ash.Changeset.get_attribute(changeset, :assignee_id),
-             {:ok, user} <- User.get_by_id(assignee_id),
-             {:ok, team} <- Team.get_team_by_id(user.team_id),
-             true <- team.type == "MSSP" do
-          :ok
-        else
-          nil ->
-            :ok
-
-          {:error, _reason} ->
-            {:error, "Failed to retrieve user or team"}
-
-          false ->
-            {:error, "Only teams of the type 'MSSP' can create cases."}
-        end
-      end
     end
 
     read :read do
