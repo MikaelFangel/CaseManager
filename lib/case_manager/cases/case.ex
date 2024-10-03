@@ -9,8 +9,6 @@ defmodule CaseManager.Cases.Case do
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer]
 
-  alias CaseManager.Teams.{Team, User}
-
   attributes do
     uuid_primary_key :id
 
@@ -103,11 +101,24 @@ defmodule CaseManager.Cases.Case do
         default_limit 20
       end
     end
+
+    read :get_by_id do
+      argument :id, :uuid
+      filter expr(id == ^arg(:id))
+    end
+  end
+
+  code_interface do
+    define :get_by_id, action: :get_by_id, args: [:id], get?: true
   end
 
   policies do
     policy action_type(:create) do
       authorize_if CaseManager.Policies.MSSPCreatePolicy
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
     end
   end
 

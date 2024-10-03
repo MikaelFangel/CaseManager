@@ -4,7 +4,6 @@ defmodule CaseManager.CaseInternalTest do
   """
   use CaseManager.DataCase, async: true
   use ExUnitProperties
-  alias CaseManager.Alerts.Alert
   alias CaseManager.Cases.{Case, Comment}
   alias CaseManager.ContactInfos.Email
   alias CaseManager.Teams.{Team, User}
@@ -87,10 +86,10 @@ defmodule CaseManager.CaseInternalTest do
               comment_body <- StreamData.string(:utf8, min_length: 1)
             ) do
         {customer_team, mssp_team} = generate_team(team_name)
-        {eve_team, _} = generate_team(team_name)
+        {eve_customer_team, eve_mssp_team} = generate_team(team_name)
         email = generate_email(email_gen)
         {customer_user, mssp_user} = generate_users(email, customer_team, mssp_team, user_gen)
-        {eve_user, _} = generate_users(email, customer_team, mssp_team, user_gen)
+        {eve_user, _} = generate_users(email, eve_customer_team, eve_mssp_team, user_gen)
 
         case =
           Case
@@ -99,19 +98,25 @@ defmodule CaseManager.CaseInternalTest do
             case_attr
             |> Map.put(:team_id, customer_team.id)
             |> Map.put(:assignee_id, mssp_user.id),
-            actor: customer_user
+            actor: mssp_user
           )
           |> Ash.create!()
 
         gen_comment = %{case_id: case.id, user_id: customer_user.id, body: comment_body}
         gen_comment_negative = %{case_id: case.id, user_id: eve_user.id, body: comment_body}
 
-        pos_changeset = Comment |> Ash.Changeset.for_create(:create, gen_comment)
-        neg_changeset = Comment |> Ash.Changeset.for_create(:create, gen_comment_negative)
+        pos_changeset =
+          Comment |> Ash.Changeset.for_create(:create, gen_comment, actor: customer_user)
 
-        assert case.team_id == customer_user.team_id
+        mssp_changeset =
+          Comment |> Ash.Changeset.for_create(:create, gen_comment, actor: mssp_user)
 
+        neg_changeset =
+          Comment |> Ash.Changeset.for_create(:create, gen_comment_negative, actor: eve_user)
+
+        refute eve_user.team_id == customer_user.team_id
         assert {:ok, _comment} = pos_changeset |> Ash.create()
+        assert {:ok, _comment} = mssp_changeset |> Ash.create()
         assert {:error, _comment} = neg_changeset |> Ash.create()
       end
     end
