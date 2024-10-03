@@ -2,7 +2,8 @@ defmodule CaseManager.Cases.Comment do
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Cases,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer]
 
   attributes do
     uuid_primary_key :id
@@ -36,6 +37,13 @@ defmodule CaseManager.Cases.Comment do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+  end
+
+  policies do
+    policy action_type(:create) do
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
+      authorize_if CaseManager.Policies.CaseOwnerPolicy
+    end
   end
 
   relationships do
