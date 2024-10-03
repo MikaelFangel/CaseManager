@@ -8,7 +8,7 @@ defmodule CaseManager.Cases.Case do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub]
 
-  alias CaseManager.Teams.Team
+  alias CaseManager.Teams.{Team, User}
 
   attributes do
     uuid_primary_key :id
@@ -91,12 +91,20 @@ defmodule CaseManager.Cases.Case do
       end
 
       validate fn changeset, _context ->
-        team_id = Ash.Changeset.get_attribute(changeset, :team_id)
-        {status, team} = Team.get_team_by_id(team_id)
+        with assignee_id <- Ash.Changeset.get_attribute(changeset, :assignee_id),
+             {:ok, user} <- User.get_by_id(assignee_id),
+             {:ok, team} <- Team.get_team_by_id(user.team_id),
+             true <- team.type == "MSSP" do
+          :ok
+        else
+          nil ->
+            :ok
 
-        case {status, team} do
-          {:ok, team} when team.type == "MSSP" -> :ok
-          _message -> {:error, "Only teams of the type 'MSSP' can create cases."}
+          {:error, _reason} ->
+            {:error, "Failed to retrieve user or team"}
+
+          false ->
+            {:error, "Only teams of the type 'MSSP' can create cases."}
         end
       end
     end
