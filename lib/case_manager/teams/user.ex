@@ -12,22 +12,27 @@ defmodule CaseManager.Teams.User do
 
     attribute :first_name, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :last_name, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :email_id, :uuid do
       allow_nil? false
+      public? true
     end
 
     attribute :team_id, :uuid do
       allow_nil? false
+      public? true
     end
 
     attribute :role, :string do
       allow_nil? false
+      public? true
     end
 
     timestamps()
@@ -45,6 +50,15 @@ defmodule CaseManager.Teams.User do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+
+    read :get_by_id do
+      argument :id, :uuid
+      filter expr(id == ^arg(:id))
+    end
+  end
+
+  code_interface do
+    define :get_by_id, action: :get_by_id, args: [:id], get?: true
   end
 
   validations do

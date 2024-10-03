@@ -9,14 +9,17 @@ defmodule CaseManager.Cases.Comment do
 
     attribute :case_id, :uuid do
       allow_nil? false
+      public? true
     end
 
     attribute :user_id, :uuid do
       allow_nil? false
+      public? true
     end
 
     attribute :body, :string do
       allow_nil? false
+      public? true
     end
 
     timestamps()
