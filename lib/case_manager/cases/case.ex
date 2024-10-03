@@ -92,12 +92,11 @@ defmodule CaseManager.Cases.Case do
 
       validate fn changeset, _context ->
         team_id = Ash.Changeset.get_attribute(changeset, :team_id)
-        team = Team.get_team_by_id!(team_id)
+        {status, team} = Team.get_team_by_id(team_id)
 
-        if team.type == "MSSP" do
-          :ok
-        else
-          {:error, "Only teams of type 'mssp' can create cases."}
+        case {status, team} do
+          {:ok, team} when team.type == "MSSP" -> :ok
+          _message -> {:error, "Only teams of the type 'MSSP' can create cases."}
         end
       end
     end

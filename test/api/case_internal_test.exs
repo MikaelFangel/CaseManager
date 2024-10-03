@@ -25,6 +25,10 @@ defmodule CaseManager.CaseInternalTest do
   describe "positive test for creating cases" do
     property "only MSSP team can create cases", %{customer: customer_team, mssp: mssp_team} do
       check all(case_attr <- CaseGenerator.case_attrs()) do
+        nil_changeset =
+          Case
+          |> Ash.Changeset.for_create(:create, case_attr)
+
         mssp_changeset =
           Case
           |> Ash.Changeset.for_create(:create, case_attr |> Map.put(:team_id, mssp_team.id))
@@ -35,6 +39,7 @@ defmodule CaseManager.CaseInternalTest do
 
         assert {:ok, _case} = mssp_changeset |> Ash.create()
         assert {:error, _case} = customer_changeset |> Ash.create()
+        assert {:error, _case} = nil_changeset |> Ash.create()
       end
     end
   end
