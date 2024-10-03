@@ -20,6 +20,11 @@ defmodule CaseManager.Teams.Team do
     read :read do
       primary? true
     end
+
+    read :get_by_id do
+      argument :id, :uuid
+      filter expr(id == ^arg(:id))
+    end
   end
 
   attributes do
@@ -31,6 +36,10 @@ defmodule CaseManager.Teams.Team do
     attribute :phone_id, :uuid
 
     timestamps()
+  end
+
+  code_interface do
+    define :get_team_by_id, action: :get_by_id, args: [:id], get?: true
   end
 
   validations do

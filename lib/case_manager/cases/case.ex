@@ -8,6 +8,8 @@ defmodule CaseManager.Cases.Case do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub]
 
+  alias CaseManager.Teams.Team
+
   attributes do
     uuid_primary_key :id
 
@@ -85,6 +87,17 @@ defmodule CaseManager.Cases.Case do
 
           priority ->
             Ash.Changeset.change_attribute(changeset, :priority, String.capitalize(priority))
+        end
+      end
+
+      validate fn changeset, _context ->
+        team_id = Ash.Changeset.get_attribute(changeset, :team_id)
+        team = Team.get_team_by_id!(team_id)
+
+        if team.type == "MSSP" do
+          :ok
+        else
+          {:error, "Only teams of type 'mssp' can create cases."}
         end
       end
     end
