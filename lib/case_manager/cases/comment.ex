@@ -38,8 +38,8 @@ defmodule CaseManager.Cases.Comment do
     defaults [:read, :destroy, create: :*, update: :*]
   end
 
-  # TODO: add relationship to a user
   relationships do
     belongs_to :case, CaseManager.Cases.Case
+    belongs_to :user, CaseManager.Teams.User
   end
 end
