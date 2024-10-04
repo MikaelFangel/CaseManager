@@ -10,6 +10,22 @@ defmodule CaseManagerWeb.Tooltip do
 
   slot :inner_block, required: true, doc: "Hoverable item, e.g. text or button"
 
+  @doc """
+  Renders a hoverable item with a tooltip.
+
+  # Example
+
+      <.tooltip pos="right" tooltip_txt="right tooltip">Hoverable text</.tooltip>
+
+  The hoverable item can be an icon button
+
+  # Example
+
+      <.tooltip pos="right" tooltip_txt="right tooltip">
+        <.icon_btn icon_name="hero-pause-circle" color="critical" />
+      </.tooltip>
+
+  """
   def tooltip(assigns) do
     assigns =
       assigns
