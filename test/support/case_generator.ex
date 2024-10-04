@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.CaseGenerator do
   @doc """
   List of valid priorities. This is list is static and not to be used as generator.
   """
-  def valid_priorities, do: ["Informational", "Low", "Medium", "High", "Critical"]
+  def valid_priorities, do: ["Info", "Low", "Medium", "High", "Critical"]
 
   @doc """
   Generator for valid priorities for a case
