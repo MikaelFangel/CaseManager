@@ -1,5 +1,6 @@
 defmodule CaseManagerWeb.Router do
   use CaseManagerWeb, :router
+  use AshAuthentication.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -8,10 +9,12 @@ defmodule CaseManagerWeb.Router do
     plug :put_root_layout, html: {CaseManagerWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :load_from_session
   end
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :load_from_bearer
   end
 
   scope "/api/json" do
@@ -28,9 +31,20 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    #get "/", PageController, :home
 
-    live "/alerts", AlertLive.Index, :index
+    # Standard controller-backed routes
+    auth_routes AuthController, CaseManager.Teams.User, path: "/auth"
+    sign_out_route AuthController
+    reset_route auth_routes_prefix: "/auth"
+
+    live "/register", AuthLive.Index, :register
+    live "/sign-in", AuthLive.Index, :sign_in
+
+    ash_authentication_live_session :authentication_required,
+      on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
+      live "/", AlertLive.Index, :index
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
