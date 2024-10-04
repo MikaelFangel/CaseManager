@@ -91,6 +91,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.IconBtn
       import CaseManagerWeb.CustomBtn
       import CaseManagerWeb.Input
+      import CaseManagerWeb.Tooltip
 
       # Translation
       use Gettext, backend: CaseManagerWeb.Gettext

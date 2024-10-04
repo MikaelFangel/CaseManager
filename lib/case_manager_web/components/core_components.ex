@@ -17,9 +17,10 @@ defmodule CaseManagerWeb.CoreComponents do
   use Phoenix.Component
   import CaseManagerWeb.Icon
 
-  alias Phoenix.HTML.Form
   alias Phoenix.LiveView.JS
   use Gettext, backend: CaseManagerWeb.Gettext
+
+  # ---------------------------------------------------------
 
   @doc """
   Renders a modal.
@@ -91,6 +92,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc """
   Renders flash notices.
 
@@ -136,6 +139,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc """
   Shows the flash group with standard titles and content.
 
@@ -178,6 +183,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc """
   Renders a simple form.
 
@@ -214,6 +221,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc """
   Renders a header with title.
   """
@@ -239,6 +248,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc ~S"""
   Renders a table with generic styling.
 
@@ -259,7 +270,7 @@ defmodule CaseManagerWeb.CoreComponents do
     doc: "the function for mapping each row before calling the :col and :action slots"
 
   slot :col, required: true do
-    attr :label, :string
+    attr :label, :any
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -317,6 +328,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc """
   Renders a data list.
 
@@ -344,6 +357,8 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
+  # ---------------------------------------------------------
+
   @doc """
   Renders a back navigation link.
 
@@ -368,7 +383,7 @@ defmodule CaseManagerWeb.CoreComponents do
     """
   end
 
-  ## JS Commands
+  ## JS Commands ---------------------------------------------------------
 
   def show(js \\ %JS{}, selector) do
     JS.show(js,
