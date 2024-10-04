@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.Input do
   """
 
   use Phoenix.Component
+  alias Phoenix.HTML.Form
   use Gettext, backend: CaseManagerWeb.Gettext
 
   import CaseManagerWeb.Error
@@ -72,7 +73,7 @@ defmodule CaseManagerWeb.Input do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""
@@ -107,7 +108,7 @@ defmodule CaseManagerWeb.Input do
         {@rest}
       >
         <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <%= Form.options_for_select(@options, @value) %>
       </select>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
@@ -128,7 +129,7 @@ defmodule CaseManagerWeb.Input do
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
-      ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
+      ><%= Form.normalize_value("textarea", @value) %></textarea>
       <.error :for={msg <- @errors}><%= msg %></.error>
     </div>
     """
@@ -143,7 +144,7 @@ defmodule CaseManagerWeb.Input do
         type={@type}
         name={@name}
         id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        value={Form.normalize_value(@type, @value)}
         class={[
           "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
           "phx-no-feedback:border-zinc-300 phx-no-feedback:focus:border-zinc-400",
