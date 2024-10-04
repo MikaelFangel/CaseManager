@@ -6,7 +6,7 @@ defmodule CaseManagerWeb.Tooltip do
   use Phoenix.Component
 
   attr :pos, :string, default: "top", values: ["top", "bottom", "left", "right"]
-  attr :tooltip_txt, :string, required: true, default: nil, doc: "tooltip text"
+  attr :tooltip_txt, :string, required: true, doc: "tooltip text"
 
   slot :inner_block, required: true, doc: "Hoverable item, e.g. text or button"
 
