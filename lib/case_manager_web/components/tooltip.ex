@@ -17,12 +17,12 @@ defmodule CaseManagerWeb.Tooltip do
 
       <.tooltip pos="right" tooltip_txt="right tooltip">Hoverable text</.tooltip>
 
-  The hoverable item can be an icon button
+  The hoverable item can be a clickable text
 
-  # Example
-
-      <.tooltip pos="right" tooltip_txt="right tooltip">
-        <.icon_btn icon_name="hero-pause-circle" color="critical" />
+  # Example 
+    
+      <.tooltip pos="top" tooltip_txt="right tooltip">
+        <.txt_link phx-click="go" txt="I am clickable text" />
       </.tooltip>
 
   """
