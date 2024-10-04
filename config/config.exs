@@ -90,3 +90,5 @@ config :ash,
 config :ash, :policies, no_filter_static_forbidden_reads?: false
 
 config :ash, :pub_sub, debug?: true
+
+config :case_manager, :token_signing_secret, "some_super_secret_random_value"

@@ -5,9 +5,47 @@ defmodule CaseManager.CaseInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
   alias CaseManager.Cases.{Case, Comment}
-  alias CaseManager.ContactInfos.Email
   alias CaseManager.Teams.{Team, User}
-  alias CaseManagerWeb.{CaseGenerator, UserGenerator}
+  alias CaseManagerWeb.CaseGenerator
+
+  setup do
+    {customer_team, mssp_team} = generate_team("setup")
+    {eve_team, _} = generate_team("eve")
+
+    gen_map = %{
+      first_name: "Testing",
+      last_name: "Testing",
+      password: "12345678",
+      password_confirmation: "12345678"
+    }
+
+    mssp_user_attrs =
+      gen_map
+      |> Map.put(:team_id, mssp_team.id)
+      |> Map.put(:email, "mssp@mail.dk")
+
+    customer_user_attrs =
+      gen_map
+      |> Map.put(:team_id, customer_team.id)
+      |> Map.put(:email, "customer@mail.dk")
+
+    eve_user_attrs =
+      gen_map
+      |> Map.put(:team_id, eve_team.id)
+      |> Map.put(:email, "eve@mail.dk")
+
+    customer_user =
+      Ash.Changeset.for_create(User, :register_with_password, customer_user_attrs)
+      |> Ash.create!()
+
+    mssp_user =
+      Ash.Changeset.for_create(User, :register_with_password, mssp_user_attrs) |> Ash.create!()
+
+    eve_user =
+      Ash.Changeset.for_create(User, :register_with_password, eve_user_attrs) |> Ash.create!()
+
+    %{customer_user: customer_user, mssp_user: mssp_user, eve_user: eve_user}
+  end
 
   defp generate_team(name) do
     customer_team =
@@ -19,34 +57,12 @@ defmodule CaseManager.CaseInternalTest do
     {customer_team, mssp_team}
   end
 
-  defp generate_email(email_gen) do
-    Ash.Changeset.for_create(Email, :create, %{email: email_gen}) |> Ash.create!()
-  end
-
-  defp generate_users(email, customer_team, mssp_team, user_gen) do
-    mssp_user_attrs = Map.put(user_gen, :email_id, email.id) |> Map.put(:team_id, mssp_team.id)
-
-    customer_user_attrs =
-      Map.put(user_gen, :email_id, email.id) |> Map.put(:team_id, customer_team.id)
-
-    customer_user = Ash.Changeset.for_create(User, :create, customer_user_attrs) |> Ash.create!()
-    mssp_user = Ash.Changeset.for_create(User, :create, mssp_user_attrs) |> Ash.create!()
-
-    {customer_user, mssp_user}
-  end
-
   describe "positive test for creating cases" do
-    property "only MSSP team users can create cases" do
-      check all(
-              team_name <- StreamData.string(:printable, min_length: 1),
-              email_gen <- StreamData.string(:printable, min_length: 1),
-              user_gen <- UserGenerator.user_attrs(),
-              case_attr <- CaseGenerator.case_attrs()
-            ) do
-        {customer_team, mssp_team} = generate_team(team_name)
-        email = generate_email(email_gen)
-        {customer_user, mssp_user} = generate_users(email, customer_team, mssp_team, user_gen)
-
+    property "only MSSP team users can create cases", %{
+      customer_user: customer_user,
+      mssp_user: mssp_user
+    } do
+      check all(case_attr <- CaseGenerator.case_attrs()) do
         nil_changeset = Case |> Ash.Changeset.for_create(:create, case_attr, actor: mssp_user)
 
         mssp_changeset =
@@ -54,7 +70,7 @@ defmodule CaseManager.CaseInternalTest do
           |> Ash.Changeset.for_create(
             :create,
             case_attr
-            |> Map.put(:team_id, mssp_team.id)
+            |> Map.put(:team_id, mssp_user.team_id)
             |> Map.put(:assignee_id, mssp_user.id),
             actor: mssp_user
           )
@@ -64,7 +80,7 @@ defmodule CaseManager.CaseInternalTest do
           |> Ash.Changeset.for_create(
             :create,
             case_attr
-            |> Map.put(:team_id, customer_team.id)
+            |> Map.put(:team_id, customer_user.team_id)
             |> Map.put(:assignee_id, customer_user.id),
             actor: customer_user
           )
@@ -77,26 +93,21 @@ defmodule CaseManager.CaseInternalTest do
   end
 
   describe "positive tests for relationships" do
-    property "only user where their team_id is the same as the case team_id can comment" do
+    property "only user where their team_id is the same as the case team_id can comment", %{
+      customer_user: customer_user,
+      mssp_user: mssp_user,
+      eve_user: eve_user
+    } do
       check all(
-              team_name <- StreamData.string(:printable, min_length: 1),
-              email_gen <- StreamData.string(:printable, min_length: 1),
-              user_gen <- UserGenerator.user_attrs(),
               case_attr <- CaseGenerator.case_attrs(),
               comment_body <- StreamData.string(:utf8, min_length: 1)
             ) do
-        {customer_team, mssp_team} = generate_team(team_name)
-        {eve_customer_team, eve_mssp_team} = generate_team(team_name)
-        email = generate_email(email_gen)
-        {customer_user, mssp_user} = generate_users(email, customer_team, mssp_team, user_gen)
-        {eve_user, _} = generate_users(email, eve_customer_team, eve_mssp_team, user_gen)
-
         case =
           Case
           |> Ash.Changeset.for_create(
             :create,
             case_attr
-            |> Map.put(:team_id, customer_team.id)
+            |> Map.put(:team_id, customer_user.team_id)
             |> Map.put(:assignee_id, mssp_user.id),
             actor: mssp_user
           )

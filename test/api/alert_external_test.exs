@@ -25,7 +25,8 @@ defmodule CaseManager.AlertExternalTest do
           conn(:post, "/api/json/alerts", json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
-          |> CaseManagerWeb.Router.call(CaseManagerWeb.Endpoint)
+          |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
+          |> CaseManagerWeb.Router.call(%{})
 
         assert conn.status == 201
       end
@@ -46,7 +47,8 @@ defmodule CaseManager.AlertExternalTest do
           conn(:post, "/api/json/alerts", json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
-          |> CaseManagerWeb.Router.call(CaseManagerWeb.Endpoint)
+          |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
+          |> CaseManagerWeb.Router.call(%{})
 
         assert conn.status == 400
       end

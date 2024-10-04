@@ -9,7 +9,8 @@ module.exports = {
   content: [
     "./js/**/*.js",
     "../lib/case_manager_web.ex",
-    "../lib/case_manager_web/**/*.*ex"
+    "../lib/case_manager_web/**/*.*ex",
+    "../deps/ash_authentication_phoenix/**/*.*ex"
   ],
   theme: {
     extend: {
