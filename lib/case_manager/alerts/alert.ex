@@ -136,7 +136,7 @@ defmodule CaseManager.Alerts.Alert do
   end
 
   validations do
-    validate one_of(:risk_level, ["Informational", "Low", "Medium", "High", "Critical"])
+    validate one_of(:risk_level, ["Info", "Low", "Medium", "High", "Critical"])
 
     # Ensure the start_time must be before end_time
     validate fn changeset, _context ->

@@ -62,7 +62,7 @@ defmodule CaseManager.Cases.Case do
 
   validations do
     validate one_of(:status, ["In Progress", "Pending", "Closed", "Benign"])
-    validate one_of(:priority, ["Informational", "Low", "Medium", "High", "Critical"])
+    validate one_of(:priority, ["Info", "Low", "Medium", "High", "Critical"])
   end
 
   actions do
