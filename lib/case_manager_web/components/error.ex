@@ -2,7 +2,7 @@ defmodule CaseManagerWeb.Error do
   @moduledoc """
   Provides a generic error message.
   """
-  
+
   use Phoenix.Component
   import CaseManagerWeb.Icon
 

@@ -18,7 +18,9 @@ defmodule CaseManagerWeb.Button do
       <.button phx-click="go" class="ml-2">Send!</.button>
   """
 
-  attr :color, :string, default: "primary", values: ["primary", "secondary", "disabled", "critical"]
+  attr :color, :string,
+    default: "primary",
+    values: ["primary", "secondary", "disabled", "critical"]
 
   attr :disabled, :boolean, default: false
   attr :type, :string, default: nil
@@ -27,8 +29,7 @@ defmodule CaseManagerWeb.Button do
 
   slot :inner_block, required: true
 
-
-  def button(%{disabled: true, color: color} = assigns) when color != "disabled" do 
+  def button(%{disabled: true, color: color} = assigns) when color != "disabled" do
     button(Map.put(assigns, :color, "disabled"))
   end
 

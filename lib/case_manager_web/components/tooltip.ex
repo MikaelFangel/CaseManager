@@ -24,13 +24,12 @@ defmodule CaseManagerWeb.Tooltip do
         "hidden",
         "group-hover:block",
         "transform",
-        @tooltip_body, 
+        @tooltip_body,
         @tooltip_arrow,
         @tooltip_pos
       ]}>
         <%= @tooltip_txt %>
       </span>
-
       <!-- Hoverable item -->
       <%= render_slot(@inner_block) %>
     </div>
@@ -49,7 +48,7 @@ defmodule CaseManagerWeb.Tooltip do
 
   defp tooltip_arrow(opts) do
     opts = %{
-      pos: opts[:pos] || "top",
+      pos: opts[:pos] || "top"
     }
 
     tooltip_css = get_tooltip_arrow(opts.pos)
