@@ -25,10 +25,7 @@ defmodule CaseManagerWeb.Badge do
 
     ~H"""
     <%= unless txt_blank?(@txt, @inner_block) do %>
-      <span
-        class={@badge_classes}
-        {@rest}
-      >
+      <span class={@badge_classes} {@rest}>
         <%= if @icon_name && String.starts_with?(@icon_name, "hero-") do %>
           <.icon name={@icon_name} class={@icon_classes} />
         <% end %>

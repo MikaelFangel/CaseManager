@@ -33,12 +33,7 @@ defmodule CaseManagerWeb.StatusBadge do
       |> assign(:badge_classes, badge_classes(assigns))
 
     ~H"""
-    <.badge
-      class={@badge_classes}
-      icon_name={@icon_name}
-      txt={@txt}
-      {@rest}
-    />
+    <.badge class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
     """
   end
 
