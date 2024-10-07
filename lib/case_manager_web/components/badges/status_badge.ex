@@ -30,19 +30,28 @@ defmodule CaseManagerWeb.StatusBadge do
       assigns
       |> assign(:icon_name, icon_name(assigns))
       |> assign(:txt, txt(assigns))
-      |> assign(:color_classes, color_classes(assigns))
+      |> assign(:badge_classes, badge_classes(assigns))
 
     ~H"""
     <.badge
-      class={[
-        @color_classes,
-        @class
-      ]}
+      class={@badge_classes}
       icon_name={@icon_name}
       txt={@txt}
       {@rest}
     />
     """
+  end
+
+  defp badge_classes(opts) do
+    opts = %{
+      color: opts[:color],
+      class: opts[:class]
+    }
+
+    color_classes = color_classes(opts)
+    custom_classes = opts.class
+
+    [color_classes, custom_classes]
   end
 
   defp icon_name(opts) do

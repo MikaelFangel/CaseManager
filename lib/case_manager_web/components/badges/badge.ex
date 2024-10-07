@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.Badge do
   import CaseManagerWeb.Icon
 
   @doc """
-  Renders a generic badge
+  Renders a badge template
   """
   attr :icon_name, :string, default: nil, doc: "name of icon used lhs"
   attr :txt, :string, default: nil, doc: "txt written on badge"
@@ -20,18 +20,13 @@ defmodule CaseManagerWeb.Badge do
   def badge(assigns) do
     assigns =
       assigns
-      |> assign(:container_class, get_container_classes())
-      |> assign(:txt_classes, get_txt_classes())
+      |> assign(:badge_classes, badge_classes(assigns))
       |> assign(:icon_classes, get_icon_classes())
 
     ~H"""
     <%= unless txt_blank?(@txt, @inner_block) do %>
       <span
-        class={[
-          @container_class,
-          @txt_classes,
-          @class
-        ]}
+        class={@badge_classes}
         {@rest}
       >
         <%= if @icon_name && String.starts_with?(@icon_name, "hero-") do %>
@@ -42,6 +37,18 @@ defmodule CaseManagerWeb.Badge do
       </span>
     <% end %>
     """
+  end
+
+  defp badge_classes(opts) do
+    opts = %{
+      class: opts[:class] || ""
+    }
+
+    container_class = get_container_classes()
+    txt_class = get_txt_classes()
+    custom_classes = opts.class
+
+    [container_class, txt_class, custom_classes]
   end
 
   defp get_container_classes,
