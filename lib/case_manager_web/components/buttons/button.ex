@@ -6,7 +6,7 @@ defmodule CaseManagerWeb.Button do
   use Phoenix.Component
 
   @doc """
-  Renders a button.
+  Renders a button template.
 
   Buttons come in three colors – primary, secondary, and critical.
   By default, the primary color is used, but the color may
