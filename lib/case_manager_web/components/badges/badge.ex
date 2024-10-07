@@ -44,7 +44,9 @@ defmodule CaseManagerWeb.Badge do
     """
   end
 
-  defp get_container_classes, do: "inline-flex items-center justify-center rounded-[5px] focus:outline-none h-6 px-[5px] gap-[5px]"
+  defp get_container_classes,
+    do:
+      "inline-flex items-center justify-center rounded-[5px] focus:outline-none h-6 px-[5px] gap-[5px]"
 
   defp get_txt_classes, do: "text-black text-xs font-semibold"
 

@@ -39,5 +39,6 @@ defmodule CaseManagerWeb.TxtLink do
     """
   end
 
-  defp get_txt_style, do: "text-sm text-black font-semibold underline active:text-black/60 hover:opacity-60"
+  defp get_txt_style,
+    do: "text-sm text-black font-semibold underline active:text-black/60 hover:opacity-60"
 end
