@@ -21,8 +21,9 @@ defmodule CaseManagerWeb.CustomBtn do
   # Examples
         
       <.custom_btn txt="Simple primary text button" />
-      <.custom_btn icon_name="hero-user-plus">Simple primary button</.custom_btn>
+      <.custom_btn icon_name="hero-user-plus">Simple primary button with icon</.custom_btn>
       <.custom_btn color="secondary" txt="Simple secondary text button" />
+      <.custom_btn color="critical" txt="Simple critical text button" />
       <.custom_btn disabled txt="Simple disabled text button" phx-click="show_modal" />
       <.custom_btn color="disabled" txt="Simple disabled text button" phx-click="show_modal" />
   """

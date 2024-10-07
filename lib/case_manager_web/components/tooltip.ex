@@ -16,6 +16,9 @@ defmodule CaseManagerWeb.Tooltip do
   # Example
 
       <.tooltip pos="right" tooltip_txt="right tooltip">Hoverable text</.tooltip>
+      <.tooltip pos="left" tooltip_txt="left tooltip">Hoverable text</.tooltip>
+      <.tooltip pos="top" tooltip_txt="top tooltip">Hoverable text</.tooltip>
+      <.tooltip pos="bottom" tooltip_txt="bottom tooltip">Hoverable text</.tooltip>
 
   The hoverable item can be a clickable text
 
