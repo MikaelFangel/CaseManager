@@ -6,6 +6,9 @@ defmodule CaseManagerWeb.Badge do
   use Phoenix.Component
   import CaseManagerWeb.Icon
 
+  @doc """
+  Renders a generic badge
+  """
   attr :icon_name, :string, default: nil, doc: "name of icon used lhs"
   attr :txt, :string, default: nil, doc: "txt written on badge"
 

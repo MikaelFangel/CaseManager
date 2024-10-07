@@ -6,6 +6,21 @@ defmodule CaseManagerWeb.RiskBadge do
   use Phoenix.Component
   import CaseManagerWeb.Badge
 
+  @doc """
+  Renders a badge showing risk or severity level.
+
+  Severity come in five level – critical, high, medium, low and info.
+  This attribute is required.
+
+  # Example
+
+      <.risk_badge color="critical" />
+      <.risk_badge color="high" />
+      <.risk_badge color="medium" />
+      <.risk_badge color="low" />
+      <.risk_badge color="info" />
+  """
+
   attr :color, :string, required: true, values: ["critical", "high", "medium", "low", "info"]
 
   attr :class, :string, default: nil

@@ -6,6 +6,20 @@ defmodule CaseManagerWeb.StatusBadge do
   use Phoenix.Component
   import CaseManagerWeb.Badge
 
+  @doc """
+  Renders a badge showing a status.
+
+  Status come in five categories – tpos (true-positive), benign, pend (pending), fpos (false-positive) and inprog (in progress).
+  This attribute is required.
+
+  # Example
+
+      <.status_badge color="tpos" />
+      <.status_badge color="benign" />
+      <.status_badge color="pend" />
+      <.status_badge color="fpos" />
+      <.status_badge color="inprog" />
+  """
   attr :color, :string, required: true, values: ["tpos", "benign", "pend", "fpos", "inprog"]
 
   attr :class, :string, default: nil
