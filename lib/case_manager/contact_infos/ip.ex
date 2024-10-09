@@ -19,10 +19,11 @@ defmodule CaseManager.ContactInfos.IP do
   attributes do
     uuid_primary_key :id
 
-    attribute :ip, :string, allow_nil?: false
+    attribute :ip, :string, allow_nil?: false, public?: true
 
     attribute :version, :atom do
       constraints one_of: [:v4, :v6]
+      public? true
     end
 
     timestamps()
