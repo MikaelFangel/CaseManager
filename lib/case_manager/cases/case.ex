@@ -7,7 +7,8 @@ defmodule CaseManager.Cases.Case do
     domain: CaseManager.Cases,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshStateMachine]
 
   attributes do
     uuid_primary_key :id
@@ -18,12 +19,14 @@ defmodule CaseManager.Cases.Case do
 
     attribute :description, :string
 
-    attribute :status, :string do
+    attribute :status, :atom do
+      constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign]
+      default :in_progress
       allow_nil? false
-      default "In Progress"
     end
 
-    attribute :priority, :string do
+    attribute :priority, :atom do
+      constraints one_of: [:info, :low, :medium, :high, :critical]
       allow_nil? false
     end
 
@@ -60,9 +63,16 @@ defmodule CaseManager.Cases.Case do
     end
   end
 
-  validations do
-    validate one_of(:status, ["In Progress", "Pending", "Closed", "Benign"])
-    validate one_of(:priority, ["Info", "Low", "Medium", "High", "Critical"])
+  state_machine do
+    initial_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
+    default_initial_state :in_progress
+    state_attribute :status
+
+    transitions do
+      transition :*, from: :in_progress, to: [:pending, :t_positive, :f_positive, :benign]
+      transition :*, from: :pending, to: [:in_progress, :t_positive, :f_positive, :benign]
+      transition :*, from: :benign, to: [:t_positive, :f_positive]
+    end
   end
 
   actions do
@@ -76,18 +86,6 @@ defmodule CaseManager.Cases.Case do
         :assignee_id,
         :team_id
       ]
-
-      change fn changeset, _context ->
-        changeset
-        |> Ash.Changeset.get_attribute(:priority)
-        |> case do
-          nil ->
-            changeset
-
-          priority ->
-            Ash.Changeset.change_attribute(changeset, :priority, String.capitalize(priority))
-        end
-      end
     end
 
     read :read do

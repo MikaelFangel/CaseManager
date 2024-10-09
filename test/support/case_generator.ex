@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.CaseGenerator do
   @doc """
   List of valid priorities. This is list is static and not to be used as generator.
   """
-  def valid_priorities, do: ["Info", "Low", "Medium", "High", "Critical"]
+  def valid_priorities, do: [:info, :low, :medium, :high, :critical]
 
   @doc """
   Generator for valid priorities for a case
@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.CaseGenerator do
   List of valid statusses. The list should no be used diretly as a genrator
   becuase it's a static list.
   """
-  def valid_statusses, do: ["In Progress", "Pending", "Closed", "Benign"]
+  def valid_statusses, do: [:in_progress, :pending, :t_positive, :f_positive, :benign]
 
   @doc """
   Generator valid statusses that adhere to the contraints of the database.

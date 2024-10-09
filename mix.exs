@@ -76,7 +76,8 @@ defmodule CaseManager.MixProject do
       # Unconstrained to avoid conflicts with the mix.exs from ash
       {:stream_data, "~> 1.0"},
       {:ash_authentication, "~> 4.0"},
-      {:ash_authentication_phoenix, "~> 2.1"}
+      {:ash_authentication_phoenix, "~> 2.1"},
+      {:ash_state_machine, "~> 0.2.6"}
     ]
   end
 
