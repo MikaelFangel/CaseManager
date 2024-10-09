@@ -10,48 +10,8 @@ defmodule CaseManager.Cases.Case do
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshStateMachine]
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :title, :string do
-      allow_nil? false
-    end
-
-    attribute :description, :string
-
-    attribute :status, :atom do
-      constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign]
-      default :in_progress
-      allow_nil? false
-    end
-
-    attribute :priority, :atom do
-      constraints one_of: [:info, :low, :medium, :high, :critical]
-      allow_nil? false
-    end
-
-    attribute :assignee_id, :uuid
-
-    attribute :team_id, :uuid do
-      allow_nil? false
-    end
-
-    attribute :escalated, :boolean do
-      allow_nil? false
-    end
-
-    timestamps()
-  end
-
   resource do
     plural_name :cases
-  end
-
-  pub_sub do
-    module CaseManagerWeb.Endpoint
-
-    prefix "case"
-    publish :create, ["created"]
   end
 
   postgres do
@@ -63,16 +23,11 @@ defmodule CaseManager.Cases.Case do
     end
   end
 
-  state_machine do
-    initial_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
-    default_initial_state :in_progress
-    state_attribute :status
+  pub_sub do
+    module CaseManagerWeb.Endpoint
 
-    transitions do
-      transition :*, from: :in_progress, to: [:pending, :t_positive, :f_positive, :benign]
-      transition :*, from: :pending, to: [:in_progress, :t_positive, :f_positive, :benign]
-      transition :*, from: :benign, to: [:t_positive, :f_positive]
-    end
+    prefix "case"
+    publish :create, ["created"]
   end
 
   actions do
@@ -110,14 +65,27 @@ defmodule CaseManager.Cases.Case do
     define :get_by_id, action: :get_by_id, args: [:id], get?: true
   end
 
-  policies do
-    policy action_type(:create) do
-      authorize_if CaseManager.Policies.MSSPCreatePolicy
+  attributes do
+    uuid_primary_key :id
+
+    attribute :title, :string, allow_nil?: false
+    attribute :description, :string
+    attribute :assignee_id, :uuid
+    attribute :team_id, :uuid, allow_nil?: false
+    attribute :escalated, :boolean, allow_nil?: false
+
+    attribute :status, :atom do
+      constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign]
+      default :in_progress
+      allow_nil? false
     end
 
-    policy action_type(:read) do
-      authorize_if always()
+    attribute :priority, :atom do
+      constraints one_of: [:info, :low, :medium, :high, :critical]
+      allow_nil? false
     end
+
+    timestamps()
   end
 
   relationships do
@@ -132,5 +100,27 @@ defmodule CaseManager.Cases.Case do
     end
 
     has_many :comment, CaseManager.Cases.Comment
+  end
+
+  state_machine do
+    initial_states([:in_progress, :pending, :t_positive, :f_positive, :benign])
+    default_initial_state(:in_progress)
+    state_attribute(:status)
+
+    transitions do
+      transition(:*, from: :in_progress, to: [:pending, :t_positive, :f_positive, :benign])
+      transition(:*, from: :pending, to: [:in_progress, :t_positive, :f_positive, :benign])
+      transition(:*, from: :benign, to: [:t_positive, :f_positive])
+    end
+  end
+
+  policies do
+    policy action_type(:create) do
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
+    end
   end
 end

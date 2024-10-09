@@ -30,11 +30,13 @@ defmodule CaseManager.Teams.Team do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false
+
     attribute :type, :atom do
       default :customer
       allow_nil? false
       constraints one_of: [:customer, :mssp]
     end
+
     attribute :ip_id, :uuid
     attribute :email_id, :uuid
     attribute :phone_id, :uuid

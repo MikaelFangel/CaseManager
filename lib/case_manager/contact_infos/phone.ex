@@ -1,21 +1,11 @@
 defmodule CaseManager.ContactInfos.Phone do
+  @moduledoc """
+  Resource that represents a phone number.
+  """
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.ContactInfos,
     data_layer: AshPostgres.DataLayer
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :country_code, :string, public?: true
-
-    attribute :phone, :string do
-      allow_nil? false
-      public? true
-    end
-
-    timestamps()
-  end
 
   postgres do
     table "phone"
@@ -24,6 +14,15 @@ defmodule CaseManager.ContactInfos.Phone do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :country_code, :string, public?: true
+    attribute :phone, :string, allow_nil?: false, public?: true
+
+    timestamps()
   end
 
   relationships do

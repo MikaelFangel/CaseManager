@@ -9,27 +9,32 @@ defmodule CaseManager.Teams.User do
     extensions: [AshAuthentication],
     authorizers: [Ash.Policy.Authorizer]
 
+  postgres do
+    table "user"
+    repo CaseManager.Repo
+
+    references do
+      reference :team, on_delete: :delete, on_update: :update, name: "user_to_team_fkey"
+    end
+  end
+
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
+
+    read :get_by_id do
+      argument :id, :uuid
+      filter expr(id == ^arg(:id))
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
-    attribute :first_name, :string do
-      public? true
-    end
-
-    attribute :last_name, :string do
-      public? true
-    end
-
-    attribute :email, :ci_string do
-      allow_nil? false
-      public? true
-    end
-
+    attribute :first_name, :string, public?: true
+    attribute :last_name, :string, public?: true
+    attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-
-    attribute :team_id, :uuid do
-      public? true
-    end
+    attribute :team_id, :uuid, public?: true
 
     attribute :role, :atom do
       constraints one_of: [:admin, :analyst]
@@ -51,7 +56,7 @@ defmodule CaseManager.Teams.User do
       enabled? true
       token_resource CaseManager.Teams.Token
 
-      signing_secret fn _, _ ->
+      signing_secret fn _module, _map ->
         Application.fetch_env(:case_manager, :token_signing_secret)
       end
     end
@@ -64,24 +69,6 @@ defmodule CaseManager.Teams.User do
   policies do
     policy always() do
       authorize_if always()
-    end
-  end
-
-  postgres do
-    table "user"
-    repo CaseManager.Repo
-
-    references do
-      reference :team, on_delete: :delete, on_update: :update, name: "user_to_team_fkey"
-    end
-  end
-
-  actions do
-    defaults [:read, :destroy, create: :*, update: :*]
-
-    read :get_by_id do
-      argument :id, :uuid
-      filter expr(id == ^arg(:id))
     end
   end
 

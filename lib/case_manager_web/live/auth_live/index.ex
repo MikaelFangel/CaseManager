@@ -5,7 +5,7 @@ defmodule CaseManagerWeb.AuthLive.Index do
   alias CaseManager.Teams.User
 
   @impl true
-  def mount(_, _, socket) do
+  def mount(_params, _session, socket) do
     {:ok, socket}
   end
 
@@ -44,16 +44,16 @@ defmodule CaseManagerWeb.AuthLive.Index do
   def render(assigns) do
     ~H"""
     <div class="auth-page">
-            <.live_component
-              module={CaseManagerWeb.AuthForm}
-              id={@form_id}
-              form={@form}
-              is_register?={@live_action == :register}
-              action={@action}
-              alternative={@alternative}
-              alternative_path={@alternative_path}
-              cta={@cta}
-            />
+      <.live_component
+        module={CaseManagerWeb.AuthForm}
+        id={@form_id}
+        form={@form}
+        is_register?={@live_action == :register}
+        action={@action}
+        alternative={@alternative}
+        alternative_path={@alternative_path}
+        cta={@cta}
+      />
     </div>
     """
   end

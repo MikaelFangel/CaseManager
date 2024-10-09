@@ -1,4 +1,7 @@
 defmodule CaseManager.Teams.Token do
+  @moduledoc """
+  Resource representing a user token.
+  """
   use Ash.Resource,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer,

@@ -1,4 +1,7 @@
 defmodule CaseManager.ContactInfos do
+  @moduledoc """
+  Domain for representing contact informations.
+  """
   use Ash.Domain
 
   resources do

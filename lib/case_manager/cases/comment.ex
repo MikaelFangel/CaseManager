@@ -1,4 +1,7 @@
 defmodule CaseManager.Cases.Comment do
+  @moduledoc """
+  Resource that represents a comment belonging to a case in the system.
+  """
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Cases,
@@ -8,20 +11,9 @@ defmodule CaseManager.Cases.Comment do
   attributes do
     uuid_primary_key :id
 
-    attribute :case_id, :uuid do
-      allow_nil? false
-      public? true
-    end
-
-    attribute :user_id, :uuid do
-      allow_nil? false
-      public? true
-    end
-
-    attribute :body, :string do
-      allow_nil? false
-      public? true
-    end
+    attribute :case_id, :uuid, allow_nil?: false, public?: true
+    attribute :user_id, :uuid, allow_nil?: false, public?: true
+    attribute :body, :string, allow_nil?: false, public?: true
 
     timestamps()
   end

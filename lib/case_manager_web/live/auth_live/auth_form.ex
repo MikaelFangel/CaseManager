@@ -1,4 +1,7 @@
 defmodule CaseManagerWeb.AuthForm do
+  @moduledoc """
+  LiveComponent to show authentication form.
+  """
   use CaseManagerWeb, :live_component
   use PhoenixHTMLHelpers
   alias AshPhoenix.Form

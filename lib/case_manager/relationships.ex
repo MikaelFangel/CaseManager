@@ -1,6 +1,6 @@
 defmodule CaseManager.Relationships do
   @moduledoc """
-  Domain that reprensents teams and their related resources.
+  Domain that represents teams and their related resources.
   """
   use Ash.Domain
   alias CaseManager.Relationships.{CaseAlert, TeamEmail, TeamIP, TeamPhone}

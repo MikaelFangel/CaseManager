@@ -1,19 +1,11 @@
 defmodule CaseManager.ContactInfos.IP do
+  @moduledoc """
+  Resource to represents an IP address of either version v4 og v6.
+  """
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.ContactInfos,
     data_layer: AshPostgres.DataLayer
-
-  attributes do
-    uuid_primary_key :id
-
-    attribute :ip, :string do
-      allow_nil? false
-    end
-
-    attribute :version, :string
-    timestamps()
-  end
 
   postgres do
     table "ip"
@@ -24,8 +16,16 @@ defmodule CaseManager.ContactInfos.IP do
     defaults [:read, :destroy, create: :*, update: :*]
   end
 
-  validations do
-    validate one_of(:version, ["v4", "v6"])
+  attributes do
+    uuid_primary_key :id
+
+    attribute :ip, :string, allow_nil?: false
+
+    attribute :version, :atom do
+      constraints one_of: [:v4, :v6]
+    end
+
+    timestamps()
   end
 
   relationships do

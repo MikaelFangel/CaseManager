@@ -31,7 +31,7 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through :browser
 
-    #get "/", PageController, :home
+    # get "/", PageController, :home
 
     # Standard controller-backed routes
     auth_routes AuthController, CaseManager.Teams.User, path: "/auth"

@@ -23,6 +23,10 @@ defmodule CaseManager.Alerts.Alert do
              :additional_data
            ]}
 
+  json_api do
+    type "alert"
+  end
+
   resource do
     plural_name :alerts
   end
@@ -73,34 +77,16 @@ defmodule CaseManager.Alerts.Alert do
   attributes do
     uuid_primary_key :id
 
-    attribute :alert_id, :string do
-      allow_nil? false
-    end
-
-    attribute :team_id, :uuid do
-      allow_nil? false
-    end
-
-    attribute :title, :string do
-      allow_nil? false
-    end
-
+    attribute :alert_id, :string, allow_nil?: false
+    attribute :team_id, :uuid, allow_nil?: false
+    attribute :title, :string, allow_nil?: false
     attribute :description, :string
+    attribute :start_time, :utc_datetime, allow_nil?: false
+    attribute :end_time, :utc_datetime, allow_nil?: false
+    attribute :link, :string, allow_nil?: false
 
     attribute :risk_level, :atom do
       constraints one_of: [:info, :low, :medium, :high, :critical]
-      allow_nil? false
-    end
-
-    attribute :start_time, :utc_datetime do
-      allow_nil? false
-    end
-
-    attribute :end_time, :utc_datetime do
-      allow_nil? false
-    end
-
-    attribute :link, :string do
       allow_nil? false
     end
 
@@ -110,18 +96,6 @@ defmodule CaseManager.Alerts.Alert do
     end
 
     timestamps()
-  end
-
-  relationships do
-    belongs_to :team, CaseManager.Teams.Team do
-      allow_nil? false
-    end
-
-    many_to_many :case, CaseManager.Cases.Case do
-      through CaseManager.Relationships.CaseAlert
-      source_attribute_on_join_resource :alert_id
-      destination_attribute_on_join_resource :case_id
-    end
   end
 
   validations do
@@ -140,7 +114,15 @@ defmodule CaseManager.Alerts.Alert do
     end
   end
 
-  json_api do
-    type "alert"
+  relationships do
+    belongs_to :team, CaseManager.Teams.Team do
+      allow_nil? false
+    end
+
+    many_to_many :case, CaseManager.Cases.Case do
+      through CaseManager.Relationships.CaseAlert
+      source_attribute_on_join_resource :alert_id
+      destination_attribute_on_join_resource :case_id
+    end
   end
 end
