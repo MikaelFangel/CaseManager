@@ -5,6 +5,7 @@ defmodule CaseManagerWeb.StatusBadge do
 
   use Phoenix.Component
   import CaseManagerWeb.Badge
+  use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
   Renders a badge showing a status.
@@ -71,11 +72,11 @@ defmodule CaseManagerWeb.StatusBadge do
     get_txt(opts.color)
   end
 
-  defp get_txt("tpos"), do: "T. Positive"
-  defp get_txt("benign"), do: "Benign"
-  defp get_txt("pend"), do: "Pending"
-  defp get_txt("fpos"), do: "F. Positive"
-  defp get_txt("inprog"), do: "In Progress"
+  defp get_txt("tpos"), do: gettext("T. Positive")
+  defp get_txt("benign"), do: gettext("Benign")
+  defp get_txt("pend"), do: gettext("Pending")
+  defp get_txt("fpos"), do: gettext("F. Positive")
+  defp get_txt("inprog"), do: gettext("In Progress")
 
   defp color_classes(opts) do
     opts = %{

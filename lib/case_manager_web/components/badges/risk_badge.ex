@@ -5,6 +5,7 @@ defmodule CaseManagerWeb.RiskBadge do
 
   use Phoenix.Component
   import CaseManagerWeb.Badge
+  use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
   Renders a badge showing risk or severity level.
@@ -72,11 +73,11 @@ defmodule CaseManagerWeb.RiskBadge do
     get_txt(opts.color)
   end
 
-  defp get_txt("critical"), do: "Critical"
-  defp get_txt("high"), do: "High"
-  defp get_txt("medium"), do: "Medium"
-  defp get_txt("low"), do: "Low"
-  defp get_txt("info"), do: "Info"
+  defp get_txt("critical"), do: gettext("Critical")
+  defp get_txt("high"), do: gettext("High")
+  defp get_txt("medium"), do: gettext("Medium")
+  defp get_txt("low"), do: gettext("Low")
+  defp get_txt("info"), do: gettext("Info")
 
   defp color_classes(opts) do
     opts = %{
