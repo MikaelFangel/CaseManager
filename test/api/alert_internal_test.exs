@@ -25,23 +25,6 @@ defmodule CaseManager.Alerts.AlertInternalTest do
         assert {:ok, _alert} = Ash.create(changeset)
       end
     end
-
-    property "create an alert even if the risk_level is not capitalized", %{team: team} do
-      check all(
-              alert_attrs <- AlertGenerator.alert_attrs(),
-              risk_level <- AlertGenerator.risk_level() |> map(&String.downcase/1)
-            ) do
-        changeset =
-          Alert
-          |> Ash.Changeset.for_create(
-            :create,
-            Map.put(alert_attrs, :team_id, team.id)
-            |> Map.put(:risk_level, risk_level)
-          )
-
-        assert {:ok, _alert} = Ash.create(changeset)
-      end
-    end
   end
 
   describe "negative tests for creating alerts" do

@@ -55,18 +55,6 @@ defmodule CaseManager.Alerts.Alert do
         :additional_data,
         :team_id
       ]
-
-      change fn changeset, _context ->
-        changeset
-        |> Ash.Changeset.get_attribute(:risk_level)
-        |> case do
-          nil ->
-            changeset
-
-          risk_level ->
-            Ash.Changeset.change_attribute(changeset, :risk_level, String.capitalize(risk_level))
-        end
-      end
     end
 
     read :read do
@@ -99,7 +87,8 @@ defmodule CaseManager.Alerts.Alert do
 
     attribute :description, :string
 
-    attribute :risk_level, :string do
+    attribute :risk_level, :atom do
+      constraints one_of: [:info, :low, :medium, :high, :critical]
       allow_nil? false
     end
 
@@ -136,8 +125,6 @@ defmodule CaseManager.Alerts.Alert do
   end
 
   validations do
-    validate one_of(:risk_level, ["Info", "Low", "Medium", "High", "Critical"])
-
     # Ensure the start_time must be before end_time
     validate fn changeset, _context ->
       start_time = Ash.Changeset.get_attribute(changeset, :start_time)

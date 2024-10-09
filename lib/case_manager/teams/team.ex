@@ -30,7 +30,11 @@ defmodule CaseManager.Teams.Team do
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false
-    attribute :type, :string, default: "Customer", allow_nil?: false
+    attribute :type, :atom do
+      default :customer
+      allow_nil? false
+      constraints one_of: [:customer, :mssp]
+    end
     attribute :ip_id, :uuid
     attribute :email_id, :uuid
     attribute :phone_id, :uuid
@@ -40,10 +44,6 @@ defmodule CaseManager.Teams.Team do
 
   code_interface do
     define :get_team_by_id, action: :get_by_id, args: [:id], get?: true
-  end
-
-  validations do
-    validate one_of(:type, ["Customer", "MSSP"])
   end
 
   relationships do

@@ -49,10 +49,10 @@ defmodule CaseManager.CaseInternalTest do
 
   defp generate_team(name) do
     customer_team =
-      Ash.Changeset.for_create(Team, :create, %{name: name, type: "Customer"}) |> Ash.create!()
+      Ash.Changeset.for_create(Team, :create, %{name: name, type: :customer}) |> Ash.create!()
 
     mssp_team =
-      Ash.Changeset.for_create(Team, :create, %{name: name, type: "MSSP"}) |> Ash.create!()
+      Ash.Changeset.for_create(Team, :create, %{name: name, type: :mssp}) |> Ash.create!()
 
     {customer_team, mssp_team}
   end

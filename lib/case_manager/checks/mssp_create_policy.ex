@@ -11,7 +11,7 @@ defmodule CaseManager.Policies.MSSPCreatePolicy do
         _opts
       ) do
     team = Ash.load!(actor, :team).team
-    team && team.type == "MSSP"
+    team && team.type == :mssp
   end
 
   def match?(_actor, _changeset, _opts), do: false

@@ -100,7 +100,7 @@ defmodule CaseManagerWeb.AuthForm do
           </fieldset>
           <fieldset class="form-group">
             <%= label(f, :role, "Role", class: "block text-black text-sm font-bold mb-2") %>
-            <%= select(f, :role, ["Analyst", "Admin"],
+            <%= select(f, :role, [:analyst, :admin],
               class:
                 "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 mb-2 focus:outline-none focus:shadow-outline"
             ) %>

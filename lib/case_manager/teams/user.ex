@@ -31,7 +31,8 @@ defmodule CaseManager.Teams.User do
       public? true
     end
 
-    attribute :role, :string do
+    attribute :role, :atom do
+      constraints one_of: [:admin, :analyst]
       public? true
     end
 
@@ -86,10 +87,6 @@ defmodule CaseManager.Teams.User do
 
   code_interface do
     define :get_by_id, action: :get_by_id, args: [:id], get?: true
-  end
-
-  validations do
-    validate one_of(:role, ["Admin", "Analyst"])
   end
 
   relationships do

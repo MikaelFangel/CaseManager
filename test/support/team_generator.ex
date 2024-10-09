@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.TeamGenerator do
   @doc """
   Gives a list of the allowed types for a team.
   """
-  def valid_types, do: ["Customer", "MSSP"]
+  def valid_types, do: [:customer, :mssp]
 
   @doc """
   Generator that generates valid types for a team.
