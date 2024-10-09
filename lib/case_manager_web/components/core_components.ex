@@ -95,7 +95,6 @@ defmodule CaseManagerWeb.CoreComponents do
 
   ## JS Commands ---------------------------------------------------------
 
-
   def show_modal(js \\ %JS{}, id) when is_binary(id) do
     js
     |> JS.show(to: "##{id}")
