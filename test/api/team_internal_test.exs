@@ -1,8 +1,8 @@
 defmodule CaseManager.TeamInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
-  alias CaseManager.ContactInfos.Email
-  alias CaseManager.Relationships.TeamEmail
+  alias CaseManager.ContactInfos.{Email, Phone}
+  alias CaseManager.Relationships.{TeamEmail, TeamPhone}
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.TeamGenerator
 
@@ -43,7 +43,7 @@ defmodule CaseManager.TeamInternalTest do
       check all(
               team_attr <- TeamGenerator.team_attrs(),
               emails <-
-                StreamData.list_of(StreamData.string(:printable, min_length: 1), min_length: 1)
+                StreamData.list_of(StreamData.string(:printable, min_length: 1))
             ) do
         team = Team |> Ash.Changeset.for_create(:create, team_attr) |> Ash.create!()
 
@@ -63,6 +63,32 @@ defmodule CaseManager.TeamInternalTest do
         team_with_email = Ash.load!(team, :email)
         assert length(team_with_email.email) === length(emails)
         assert Enum.sort(email_ids) === team_with_email.email |> Enum.map(& &1.id) |> Enum.sort()
+      end
+    end
+
+    property "teams can have 0 or more phone relationships" do
+      check all(
+              team_attr <- TeamGenerator.team_attrs(),
+              phone_numbers <- StreamData.list_of(StreamData.string(?0..?9, min_length: 1))
+            ) do
+        team = Team |> Ash.Changeset.for_create(:create, team_attr) |> Ash.create!()
+
+        phone_ids =
+          phone_numbers
+          |> Enum.map(fn gen_phone ->
+            phone =
+              Phone |> Ash.Changeset.for_create(:create, %{phone: gen_phone}) |> Ash.create!()
+
+            TeamPhone
+            |> Ash.Changeset.for_create(:create, %{team_id: team.id, phone_id: phone.id})
+            |> Ash.create!()
+
+            phone.id
+          end)
+
+        team_with_phone = Ash.load!(team, :phone)
+        assert length(team_with_phone.phone) === length(phone_numbers)
+        assert Enum.sort(phone_ids) === team_with_phone.phone |> Enum.map(& &1.id) |> Enum.sort()
       end
     end
   end

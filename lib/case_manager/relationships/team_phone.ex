@@ -12,8 +12,12 @@ defmodule CaseManager.Relationships.TeamPhone do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team, primary_key?: true, allow_nil?: false
-    belongs_to :phone, CaseManager.ContactInfos.Phone, primary_key?: true, allow_nil?: false
+    belongs_to :team, CaseManager.Teams.Team, primary_key?: true, allow_nil?: false, public?: true
+
+    belongs_to :phone, CaseManager.ContactInfos.Phone,
+      primary_key?: true,
+      allow_nil?: false,
+      public?: true
   end
 
   actions do
