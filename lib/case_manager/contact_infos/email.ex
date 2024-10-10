@@ -25,8 +25,6 @@ defmodule CaseManager.ContactInfos.Email do
   end
 
   relationships do
-    belongs_to :user, CaseManager.Teams.User
-
     relationships do
       many_to_many :team, CaseManager.Teams.Team do
         through CaseManager.Relationships.TeamEmail

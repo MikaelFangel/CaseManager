@@ -1,6 +1,6 @@
 defmodule CaseManager.Relationships.TeamEmail do
   @moduledoc """
-  Resource for the many-to-many relationship between teams and ips.
+  Resource for the many-to-many relationship between teams and emails.
   """
   use Ash.Resource,
     domain: CaseManager.Relationships,
