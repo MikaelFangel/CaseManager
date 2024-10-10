@@ -111,6 +111,8 @@ defmodule CaseManager.Cases.Case do
       transition(:*, from: :in_progress, to: [:pending, :t_positive, :f_positive, :benign])
       transition(:*, from: :pending, to: [:in_progress, :t_positive, :f_positive, :benign])
       transition(:*, from: :benign, to: [:t_positive, :f_positive])
+      transition(:*, from: :t_positive, to: [:benign, :f_positive])
+      transition(:*, from: :f_positive, to: [:benign, :t_positive])
     end
   end
 
