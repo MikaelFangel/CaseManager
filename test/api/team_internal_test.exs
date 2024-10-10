@@ -1,8 +1,8 @@
 defmodule CaseManager.TeamInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
-  alias CaseManager.ContactInfos.{Email, Phone, IP}
-  alias CaseManager.Relationships.{TeamEmail, TeamPhone, TeamIP}
+  alias CaseManager.ContactInfos.{Email, IP, PhoneInternalTest}
+  alias CaseManager.Relationships.{TeamEmail, TeamIP, TeamPhone}
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.TeamGenerator
 
