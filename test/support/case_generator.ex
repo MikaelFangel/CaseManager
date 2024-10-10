@@ -16,18 +16,18 @@ defmodule CaseManagerWeb.CaseGenerator do
   def priority, do: StreamData.member_of(valid_priorities())
 
   @doc """
-  List of valid statusses. The list should no be used diretly as a genrator
-  becuase it's a static list.
+  List of valid statuses. The list should no be used directly as a generator
+  because it's a static list.
   """
   def valid_statusses, do: [:in_progress, :pending, :t_positive, :f_positive, :benign]
 
   @doc """
-  Generator valid statusses that adhere to the contraints of the database.
+  Generator valid statuses that adhere to the constraints of the database.
   """
   def status, do: StreamData.member_of(valid_statusses())
 
   @doc """
-  Genarter valid and only valid case attributes. The attributes follow the database 
+  Generator for valid and only valid case attributes. The attributes follow the database 
   contraints and the other missing attributes such as team_id etc. should be manually
   inserted.
   """

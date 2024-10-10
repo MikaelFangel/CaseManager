@@ -1,6 +1,6 @@
 defmodule CaseManagerWeb.TeamGenerator do
   @moduledoc """
-  Generator for the team respource. This can be used to generate random team data either
+  Generator for the team resource. This can be used to generate random team data either
   for test or for display.
   """
   use ExUnitProperties
