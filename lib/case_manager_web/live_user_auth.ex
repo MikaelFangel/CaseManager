@@ -10,7 +10,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
     socket.assigns[:current_user]
     |> case do
       true -> {:cont, socket}
-      _ -> {:cont, assign(socket, :current_user, nil)}
+      _nil -> {:cont, assign(socket, :current_user, nil)}
     end
   end
 
@@ -18,7 +18,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
     socket.assigns[:current_user]
     |> case do
       true -> {:cont, socket}
-      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      _nil -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
     end
   end
 
@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
     socket.assigns[:current_user]
     |> case do
       true -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
-      _ -> {:cont, assign(socket, :current_user, nil)}
+      _nil -> {:cont, assign(socket, :current_user, nil)}
     end
   end
 end
