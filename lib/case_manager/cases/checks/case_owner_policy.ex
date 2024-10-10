@@ -18,7 +18,7 @@ defmodule CaseManager.Policies.CaseOwnerPolicy do
         _opts
       ) do
     case_id = Ash.Changeset.get_attribute(changeset, :case_id)
-    case = Case.get_by_id!(case_id)
+    case = Case |> Ash.get!(case_id)
 
     case.team_id == team_id
   end

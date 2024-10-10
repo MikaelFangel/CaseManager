@@ -20,11 +20,6 @@ defmodule CaseManager.Teams.User do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
-
-    read :get_by_id do
-      argument :id, :uuid
-      filter expr(id == ^arg(:id))
-    end
   end
 
   attributes do
@@ -70,10 +65,6 @@ defmodule CaseManager.Teams.User do
     policy always() do
       authorize_if always()
     end
-  end
-
-  code_interface do
-    define :get_by_id, action: :get_by_id, args: [:id], get?: true
   end
 
   relationships do

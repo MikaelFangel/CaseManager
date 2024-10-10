@@ -54,15 +54,6 @@ defmodule CaseManager.Cases.Case do
         default_limit 20
       end
     end
-
-    read :get_by_id do
-      argument :id, :uuid
-      filter expr(id == ^arg(:id))
-    end
-  end
-
-  code_interface do
-    define :get_by_id, action: :get_by_id, args: [:id], get?: true
   end
 
   attributes do
