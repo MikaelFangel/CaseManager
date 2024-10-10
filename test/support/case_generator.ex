@@ -1,6 +1,7 @@
 defmodule CaseManagerWeb.CaseGenerator do
   @moduledoc """
-  Generator to generate all a case without a team and alerts. This generator helps
+  Generator to generate all attributes for a case except for team_id and alerts. The team_id need to
+  be a valid team_id in the database and the alerts linked also need to exist. This generator helps
   by providing all the needed data for a valid case.
   """
   use ExUnitProperties
