@@ -9,7 +9,7 @@ defmodule CaseManager.Teams.Token do
     extensions: [AshAuthentication.TokenResource]
 
   postgres do
-    table "tokens"
+    table "token"
     repo CaseManager.Repo
   end
 
