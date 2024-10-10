@@ -1,8 +1,8 @@
 defmodule CaseManager.TeamInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
-  alias CaseManager.ContactInfos.{Email, Phone}
-  alias CaseManager.Relationships.{TeamEmail, TeamPhone}
+  alias CaseManager.ContactInfos.{Email, Phone, IP}
+  alias CaseManager.Relationships.{TeamEmail, TeamPhone, TeamIP}
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.TeamGenerator
 
@@ -89,6 +89,32 @@ defmodule CaseManager.TeamInternalTest do
         team_with_phone = Ash.load!(team, :phone)
         assert length(team_with_phone.phone) === length(phone_numbers)
         assert Enum.sort(phone_ids) === team_with_phone.phone |> Enum.map(& &1.id) |> Enum.sort()
+      end
+    end
+
+    property "teams can have 0 or more ip relationships" do
+      check all(
+              team_attr <- TeamGenerator.team_attrs(),
+              ips <- StreamData.list_of(StreamData.string(?0..?9, min_length: 1))
+            ) do
+        team = Team |> Ash.Changeset.for_create(:create, team_attr) |> Ash.create!()
+
+        ip_ids =
+          ips
+          |> Enum.map(fn gen_ip ->
+            ip =
+              IP |> Ash.Changeset.for_create(:create, %{ip: gen_ip}) |> Ash.create!()
+
+            TeamIP
+            |> Ash.Changeset.for_create(:create, %{team_id: team.id, ip_id: ip.id})
+            |> Ash.create!()
+
+            ip.id
+          end)
+
+        team_with_ip = Ash.load!(team, :ip)
+        assert length(team_with_ip.ip) === length(ips)
+        assert Enum.sort(ip_ids) === team_with_ip.ip |> Enum.map(& &1.id) |> Enum.sort()
       end
     end
   end
