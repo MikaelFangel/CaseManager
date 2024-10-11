@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    </.modal>
 
     <div class="p-0 pl-6 pr-8">
       <div class="flex justify-end my-4 gap-x-2">

@@ -27,7 +27,11 @@ defmodule CaseManagerWeb.Table do
 
   slot :col, required: true do
     attr :label, :any
-    attr :width, :string, doc: "optionally specify a width if a fixed width is wanted. Otherwise it will space the column out automatically using the space available"
+
+    attr :width, :string,
+      doc:
+        "optionally specify a width if a fixed width is wanted. Otherwise it will space the column out automatically using the space available"
+
     attr :not_clickable_area?, :boolean, doc: "true if col contains a clickable item"
   end
 
@@ -44,7 +48,12 @@ defmodule CaseManagerWeb.Table do
       <table class="w-full mt-11 sm:w-full">
         <thead class="text-xs text-left leading-0 text-black">
           <tr>
-            <th :for={col <- @col} class={["p-0 pb-2 pr-0 font-semibold", col[:width] && "w-#{col[:width]}"]}><%= col[:label] %></th>
+            <th
+              :for={col <- @col}
+              class={["p-0 pb-2 pr-0 font-semibold", col[:width] && "w-#{col[:width]}"]}
+            >
+              <%= col[:label] %>
+            </th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only"><%= gettext("Actions") %></span>
             </th>
