@@ -4,46 +4,67 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div
-      id="alerts-container"
-      phx-update="stream"
-      phx-viewport-bottom={@more_pages? && "load_more_alerts"}
-    >
-      <.table
-        id="alerts"
-        rows={@streams.alerts}
-        row_click={fn {_id, alert} -> JS.push("show_modal", value: alert) end}
-      >
-        <:col :let={{_id, _alert}}></:col>
-        <:col :let={{_id, alert}} label={gettext("Team")}><%= alert.team.name %></:col>
-        <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
-        <:col :let={{_id, alert}} label={gettext("Risk Level")}><%= alert.risk_level %></:col>
-        <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.start_time %></:col>
-        <:col :let={{_id, _alert}} label={gettext("Case ID")}></:col>
-        <:col :let={{_id, _alert}} label={gettext("Case Status")}></:col>
-        <:col :let={{_id, alert}} label={gettext("Link")}>
-          <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
-        </:col>
-      </.table>
-    </div>
 
-    <%= if @more_pages? do %>
-      <div class="flex justify-center my-4">
-        <.button phx-click="load_more_alerts"><%= gettext("Load More") %></.button>
+    <div class="p-0 pl-6 pr-8">
+      <div class="flex justify-end my-4 gap-x-2">
+        <.icon_btn icon_name="hero-pause-circle" color="critical" />
+        <.button icon_name="hero-document-plus" phx-click="load_more_alerts"><%= gettext("Create Case") %></.button>
       </div>
-    <% else %>
-      <div class="flex justify-center my-4">
-        <span><%= gettext("No more alerts") %></span>
+
+      <div
+        class="mt-12"
+        id="alerts-container"
+        phx-update="stream"
+        phx-viewport-bottom={@more_pages? && "load_more_alerts"}
+      >
+        <.table
+          id="alerts"
+          rows={@streams.alerts}
+          row_click={
+            fn {_id, alert} ->
+              JS.push("show_modal", value: alert) |> show_modal("alert_modal")
+            end
+          }
+        >
+          <:col :let={{_id, _alert}} width="6" not_clickable_area? >
+            <.input type="checkbox" name="checkbox_name" />
+          </:col>
+          <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
+          <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+          <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
+            <.risk_badge color={String.downcase(alert.risk_level)} />
+          </:col>
+          <:col :let={{_id, alert}} label={gettext("Start Time")} width="36"><%= alert.start_time %></:col>
+          <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
+            <.tooltip pos="top" tooltip_txt="Pending">
+              <.txt_link phx-click="go" txt="3h6g3f6v" />
+            </.tooltip>
+          </:col>
+          <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
+            <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="pl-0.5 pb-1" phx-click={alert.link} />
+            <!-- <.link navigate={alert.link} target="_blank"><%= alert.link %></.link> -->
+          </:col>
+        </.table>
       </div>
-    <% end %>
+
+      <%= if @more_pages? do %>
+        <div class="flex justify-center my-4">
+          <.button phx-click="load_more_alerts"><%= gettext("Load More") %></.button>
+        </div>
+      <% else %>
+        <div class="flex justify-center my-4">
+          <span class="text-black text-xs font-semibold"><%= gettext("No more alerts") %></span>
+        </div>
+      <% end %>
+    </div>
 
     <.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
       <div class="modal-content">
         <.header><%= @alert.title %></.header>
         <hr class="border-t border-gray-300 my-4" />
-        Time Range: <%= @alert.start_time %> - <%= @alert.end_time %> Case ID: Case Status:
-        Risk Level: <%= @alert.risk_level %> <br />
-        Team: <%= @alert.team_id %> Alert ID: <%= @alert.id %>
+        Time Range: <%= @alert.start_time %> - <%= @alert.end_time %> <br /> Case ID: <br />
+        Case Status: <br /> Risk Level: <%= @alert.risk_level %> <br /> Team: <%= @alert.team_id %>
+        <br /> Alert ID: <%= @alert.id %>
         <%= @alert.description %>
         <br />
         <br />
@@ -55,8 +76,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
           %> </pre>
         <br />
         <div class="flex justify-end space-x-2">
-          <.button phx-click="hide_modal">Close</.button>
-          <.button phx-click="hide_modal">Search Link</.button>
+          <.button color="secondary" phx-click="hide_modal">Close</.button>
+          <.button color="secondary" phx-click="hide_modal">Search Link</.button>
           <.button phx-click="hide_modal">Create Case</.button>
         </div>
       </div>
