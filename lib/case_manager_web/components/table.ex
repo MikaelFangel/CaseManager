@@ -27,6 +27,8 @@ defmodule CaseManagerWeb.Table do
 
   slot :col, required: true do
     attr :label, :any
+    attr :width, :string, doc: "optionally specify a width if a fixed width is wanted. Otherwise it will space the column out automatically using the space available"
+    attr :not_clickable_area?, :boolean, doc: "true if col contains a clickable item"
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -38,11 +40,11 @@ defmodule CaseManagerWeb.Table do
       end
 
     ~H"""
-    <div class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
+    <div class="overflow-y-auto px-0 sm:overflow-visible sm:px-0">
       <table class="w-full mt-11 sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
+        <thead class="text-xs text-left leading-0 text-black">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class={["p-0 pb-2 pr-0 font-semibold", col[:width] && "w-#{col[:width]}"]}><%= col[:label] %></th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only"><%= gettext("Actions") %></span>
             </th>
@@ -51,16 +53,16 @@ defmodule CaseManagerWeb.Table do
         <tbody
           id={@id}
           phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
-          class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
+          class="relative divide-y divide-stone-300 border-y border-stone-300 text-xs leading-0 text-black font-semibold"
         >
-          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
+          <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="hover:bg-zinc-50">
             <td
               :for={{col, i} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
+              phx-click={!col[:not_clickable_area?] && @row_click && @row_click.(row)}
               class={["relative p-0", @row_click && "hover:cursor-pointer"]}
             >
-              <div class="block py-4 pr-6">
-                <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
+              <div class="inline-block py-2 pr-0">
+                <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
                   <%= render_slot(col, @row_item.(row)) %>
                 </span>
@@ -71,7 +73,7 @@ defmodule CaseManagerWeb.Table do
                 <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class="relative ml-4 font-semibold leading-0 text-zinc-900 hover:text-zinc-700"
                 >
                   <%= render_slot(action, @row_item.(row)) %>
                 </span>
