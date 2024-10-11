@@ -9,24 +9,24 @@ defmodule CaseManagerWeb.LiveUserAuth do
   def on_mount(:live_user_optional, _params, _session, socket) do
     socket.assigns[:current_user]
     |> case do
-      true -> {:cont, socket}
-      _nil -> {:cont, assign(socket, :current_user, nil)}
+      nil -> {:cont, assign(socket, :current_user, nil)}
+      _present -> {:cont, socket}
     end
   end
 
   def on_mount(:live_user_required, _params, _session, socket) do
     socket.assigns[:current_user]
     |> case do
-      true -> {:cont, socket}
-      _nil -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      nil -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      _present -> {:cont, socket}
     end
   end
 
   def on_mount(:live_no_user, _params, _session, socket) do
     socket.assigns[:current_user]
     |> case do
-      true -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
-      _nil -> {:cont, assign(socket, :current_user, nil)}
+      nil -> {:cont, assign(socket, :current_user, nil)}
+      _present -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
     end
   end
 end
