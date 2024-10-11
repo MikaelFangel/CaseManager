@@ -35,7 +35,9 @@ defmodule CaseManagerWeb.RiskBadge do
       |> assign(:badge_classes, badge_classes(assigns))
 
     ~H"""
-    <.badge class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
+    <div class="flex items-center h-full">
+      <.badge class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
+    </div>
     """
   end
 
