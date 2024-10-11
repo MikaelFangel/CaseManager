@@ -75,7 +75,13 @@ config :phoenix, :json_library, Jason
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
 
-config :case_manager, :ash_domains, [CaseManager.Alerts, CaseManager.Teams]
+config :case_manager, :ash_domains, [
+  CaseManager.ContactInfos,
+  CaseManager.Cases,
+  CaseManager.Alerts,
+  CaseManager.Teams,
+  CaseManager.Relationships
+]
 
 config :ash,
   include_embedded_source_by_default?: false,
@@ -84,3 +90,5 @@ config :ash,
 config :ash, :policies, no_filter_static_forbidden_reads?: false
 
 config :ash, :pub_sub, debug?: true
+
+config :case_manager, :token_signing_secret, "some_super_secret_random_value"

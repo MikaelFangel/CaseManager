@@ -14,7 +14,7 @@ defmodule CaseManager.Teams.Team do
 
   actions do
     create :create do
-      accept [:ip, :name, :email, :phone, :is_mssp]
+      accept [:name, :type]
     end
 
     read :read do
@@ -24,13 +24,12 @@ defmodule CaseManager.Teams.Team do
 
   attributes do
     uuid_primary_key :id
-    attribute :ip, :string
-    attribute :name, :string
-    attribute :email, :string
-    attribute :phone, :string
+    attribute :name, :string, allow_nil?: false
 
-    attribute :is_mssp, :boolean do
-      default false
+    attribute :type, :atom do
+      default :customer
+      allow_nil? false
+      constraints one_of: [:customer, :mssp]
     end
 
     timestamps()
@@ -38,5 +37,24 @@ defmodule CaseManager.Teams.Team do
 
   relationships do
     has_many :alert, CaseManager.Alerts.Alert
+    has_many :case, CaseManager.Cases.Case
+
+    many_to_many :ip, CaseManager.ContactInfos.IP do
+      through CaseManager.Relationships.TeamIP
+      source_attribute_on_join_resource :team_id
+      destination_attribute_on_join_resource :ip_id
+    end
+
+    many_to_many :email, CaseManager.ContactInfos.Email do
+      through CaseManager.Relationships.TeamEmail
+      source_attribute_on_join_resource :team_id
+      destination_attribute_on_join_resource :email_id
+    end
+
+    many_to_many :phone, CaseManager.ContactInfos.Phone do
+      through CaseManager.Relationships.TeamPhone
+      source_attribute_on_join_resource :team_id
+      destination_attribute_on_join_resource :phone_id
+    end
   end
 end

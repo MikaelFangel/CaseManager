@@ -60,7 +60,7 @@ defmodule CaseManager.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
-      {:finch, "~> 0.13"},
+      {:finch, "~> 0.13", override: true},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.26 and >= 0.26.1"},
@@ -74,7 +74,10 @@ defmodule CaseManager.MixProject do
       {:ex_doc, "~> 0.31", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       # Unconstrained to avoid conflicts with the mix.exs from ash
-      {:stream_data, "~> 1.0"}
+      {:stream_data, "~> 1.0"},
+      {:ash_authentication, "~> 4.0"},
+      {:ash_authentication_phoenix, "~> 2.1"},
+      {:ash_state_machine, "~> 0.2.6"}
     ]
   end
 

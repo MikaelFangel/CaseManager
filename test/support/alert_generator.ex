@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.AlertGenerator do
   Gives a list of valid risk levels. The given risk levels are ordered by their severity
   and is static.
   """
-  def valid_risk_levels, do: ["Informational", "Low", "Medium", "High", "Critical"]
+  def valid_risk_levels, do: [:info, :low, :medium, :high, :critical]
 
   @doc """
   A generator for risk levels. The generator generates a random risk level from 

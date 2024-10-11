@@ -14,6 +14,7 @@ defmodule CaseManager.Application do
       {Phoenix.PubSub, name: CaseManager.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: CaseManager.Finch},
+      {AshAuthentication.Supervisor, otp_app: :case_manager},
       # Start a worker by calling: CaseManager.Worker.start_link(arg)
       # {CaseManager.Worker, arg},
       # Start to serve requests, typically the last entry
