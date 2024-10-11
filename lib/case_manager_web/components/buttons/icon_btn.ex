@@ -4,7 +4,7 @@ defmodule CaseManagerWeb.IconBtn do
   """
 
   use Phoenix.Component
-  import CaseManagerWeb.Button
+  import CaseManagerWeb.BtnTemplate
   import CaseManagerWeb.Icon
 
   @doc """
@@ -42,9 +42,9 @@ defmodule CaseManagerWeb.IconBtn do
       |> assign(:icon_size_classes, icon_size_classes(assigns))
 
     ~H"""
-    <.button color={@color} type={@type} class={@btn_size_classes} {@rest}>
+    <.btn_template color={@color} type={@type} class={@btn_size_classes} {@rest}>
       <.icon name={@icon_name} class={@icon_size_classes} />
-    </.button>
+    </.btn_template>
     """
   end
 

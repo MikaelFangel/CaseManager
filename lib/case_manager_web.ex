@@ -89,10 +89,9 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.FlashGroup
       import CaseManagerWeb.Header
       import CaseManagerWeb.Table
-      import CaseManagerWeb.Button
       import CaseManagerWeb.Icon
       import CaseManagerWeb.IconBtn
-      import CaseManagerWeb.CustomBtn
+      import CaseManagerWeb.Button
       import CaseManagerWeb.Input
       import CaseManagerWeb.Tooltip
       import CaseManagerWeb.TxtLink

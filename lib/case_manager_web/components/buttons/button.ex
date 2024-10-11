@@ -1,86 +1,74 @@
 defmodule CaseManagerWeb.Button do
   @moduledoc """
-  Provides a very general button UI component.
+  Provides a custom button UI component.
   """
 
   use Phoenix.Component
+  import CaseManagerWeb.BtnTemplate
+  import CaseManagerWeb.Icon
 
   @doc """
-  Renders a button template.
+  Renders a custom button with content. 
 
-  Buttons come in three colors – primary, secondary, and critical.
+  Custom buttons come with a hero icon if the icon_name atribute is specified.
+
+  The text of the button can either be specified using the default slot or the txt attribute.
+
+  Custom buttons come in three colors – primary, secondary, and critical.
   By default, the primary color is used, but the color may
   be applied by using the color parameter.
 
-  ## Examples
-
-      <.button>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
+  # Examples
+        
+      <.button txt="Simple primary text button" />
+      <.button icon_name="hero-user-plus">Simple primary button with icon</.button>
+      <.button color="secondary" txt="Simple secondary text button" />
+      <.button color="critical" txt="Simple critical text button" />
+      <.button disabled txt="Simple disabled text button" phx-click="show_modal" />
+      <.button color="disabled" txt="Simple disabled text button" phx-click="show_modal" />
   """
-
   attr :color, :string,
     default: "primary",
     values: ["primary", "secondary", "disabled", "critical"]
 
-  attr :disabled, :boolean, default: false
+  attr :icon_name, :string, default: nil, doc: "name of icon used lhs"
+  attr :txt, :string, default: nil, doc: "txt written on btn"
+
   attr :type, :string, default: nil
   attr :class, :string, default: nil
-  attr :rest, :global
-
-  slot :inner_block, required: true
-
-  def button(%{disabled: true, color: color} = assigns) when color != "disabled" do
-    button(Map.put(assigns, :color, "disabled"))
-  end
-
-  def button(%{disabled: false, color: "disabled"} = assigns) do
-    button(Map.put(assigns, :disabled, true))
-  end
+  attr :rest, :global, include: ~w(disabled)
+  slot :inner_block
 
   def button(assigns) do
     assigns =
       assigns
-      |> assign(:color_classes, button_color_classes(assigns))
+      |> assign(:btn_classes, btn_classes(assigns))
 
     ~H"""
-    <div class="flex items-center h-full">
-      <button
-        type={@type}
-        class={[
-          "phx-submit-loading:opacity-75",
-          "text-sm text-white",
-          @color_classes
-        ]}
-        disabled={@disabled}
-        {@rest}
-      >
-        <%= render_slot(@inner_block) %>
-      </button>
-    </div>
+    <%= unless txt_blank?(@txt, @inner_block) do %>
+      <.btn_template color={@color} type={@type} class={@btn_classes} {@rest}>
+        <%= if @icon_name && String.starts_with?(@icon_name, "hero-") do %>
+          <.icon name={@icon_name} class="w-6 h-6 mr-1" />
+        <% end %>
+
+        <%= render_slot(@inner_block) || @txt %>
+      </.btn_template>
+    <% end %>
     """
   end
 
-  defp button_color_classes(opts) do
+  defp btn_classes(opts) do
     opts = %{
-      color: opts[:color] || "primary",
       class: opts[:class] || ""
     }
 
-    color_css = get_color_classes(opts.color)
-    custom_button_classes = opts.class
+    base_classes = "h-11 px-5 font-semibold rounded-xl"
+    custom_classes = opts.class
 
-    [color_css, custom_button_classes]
+    [base_classes, custom_classes]
   end
 
-  defp get_color_classes("primary"),
-    do: "bg-slate-950 hover:bg-zinc-500 active:text-white/80"
-
-  defp get_color_classes("secondary"),
-    do: "bg-neutral-500 hover:bg-neutral-400 active:text-white/80"
-
-  defp get_color_classes("disabled"),
-    do: "bg-gray-300"
-
-  defp get_color_classes("critical"),
-    do: "bg-rose-500 hover:bg-rose-400 active:text-white/80"
+  defp txt_blank?(txt, inner_block) do
+    (!txt || txt == "") && inner_block == []
+  end
 end
