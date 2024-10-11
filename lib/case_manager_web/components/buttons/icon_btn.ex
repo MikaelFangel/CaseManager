@@ -21,7 +21,7 @@ defmodule CaseManagerWeb.IconBtn do
   ## Examples
 
       <.icon_btn icon_name="hero-pause-circle" color="critical" />
-      <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="ml-0.5 mb-0.5" />
+      <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="pl-0.5 pb-1" />
   """
   attr :size, :string, default: "large", values: ["large", "small"]
 
