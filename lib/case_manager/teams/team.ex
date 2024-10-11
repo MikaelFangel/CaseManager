@@ -14,7 +14,7 @@ defmodule CaseManager.Teams.Team do
 
   actions do
     create :create do
-      accept [:name, :type, :ip_id, :email_id, :phone_id]
+      accept [:name, :type]
     end
 
     read :read do
@@ -31,10 +31,6 @@ defmodule CaseManager.Teams.Team do
       allow_nil? false
       constraints one_of: [:customer, :mssp]
     end
-
-    attribute :ip_id, :uuid
-    attribute :email_id, :uuid
-    attribute :phone_id, :uuid
 
     timestamps()
   end
