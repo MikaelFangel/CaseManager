@@ -17,8 +17,7 @@ defmodule CaseManager.Alerts.Alert do
              :title,
              :description,
              :risk_level,
-             :start_time,
-             :end_time,
+             :creation_time,
              :link,
              :additional_data
            ]}
@@ -53,8 +52,7 @@ defmodule CaseManager.Alerts.Alert do
         :alert_id,
         :title,
         :risk_level,
-        :start_time,
-        :end_time,
+        :creation_time,
         :link,
         :additional_data,
         :team_id
@@ -81,8 +79,7 @@ defmodule CaseManager.Alerts.Alert do
     attribute :team_id, :uuid, allow_nil?: false
     attribute :title, :string, allow_nil?: false
     attribute :description, :string
-    attribute :start_time, :utc_datetime, allow_nil?: false
-    attribute :end_time, :utc_datetime, allow_nil?: false
+    attribute :creation_time, :utc_datetime, allow_nil?: false
     attribute :link, :string, allow_nil?: false
 
     attribute :risk_level, :atom do
@@ -96,22 +93,6 @@ defmodule CaseManager.Alerts.Alert do
     end
 
     timestamps()
-  end
-
-  validations do
-    # Ensure the start_time must be before end_time
-    validate fn changeset, _context ->
-      start_time = Ash.Changeset.get_attribute(changeset, :start_time)
-      end_time = Ash.Changeset.get_attribute(changeset, :end_time)
-
-      # If either start time or end time is nil, we don't need to validate
-      # as the allow_nil? false on the attributes will return missing_attribute error instead
-      if start_time && end_time && DateTime.before?(start_time, end_time) do
-        :ok
-      else
-        {:error, message: "start_time must be before end_time"}
-      end
-    end
   end
 
   relationships do

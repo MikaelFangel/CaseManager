@@ -18,7 +18,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         <:col :let={{_id, alert}} label={gettext("Team")}><%= alert.team.name %></:col>
         <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
         <:col :let={{_id, alert}} label={gettext("Risk Level")}><%= alert.risk_level %></:col>
-        <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.start_time %></:col>
+        <:col :let={{_id, alert}} label={gettext("Start Time")}><%= alert.creation_time %></:col>
         <:col :let={{_id, _alert}} label={gettext("Case ID")}></:col>
         <:col :let={{_id, _alert}} label={gettext("Case Status")}></:col>
         <:col :let={{_id, alert}} label={gettext("Link")}>
@@ -41,7 +41,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <div class="modal-content">
         <.header><%= @alert.title %></.header>
         <hr class="border-t border-gray-300 my-4" />
-        Time Range: <%= @alert.start_time %> - <%= @alert.end_time %> Case ID: Case Status:
+        Creation Time: <%= @alert.creation_time %> Case ID: Case Status:
         Risk Level: <%= @alert.risk_level %> <br />
         Team: <%= @alert.team_id %> Alert ID: <%= @alert.id %>
         <%= @alert.description %>
