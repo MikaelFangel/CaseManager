@@ -15,14 +15,14 @@ defmodule CaseManagerWeb.RiskBadge do
 
   # Example
 
-      <.risk_badge color="critical" />
-      <.risk_badge color="high" />
-      <.risk_badge color="medium" />
-      <.risk_badge color="low" />
-      <.risk_badge color="info" />
-  """
+      <.risk_badge color={:critical} />
+      <.risk_badge color={:high} />
+      <.risk_badge color={:medium} />
+      <.risk_badge color={:low} />
+      <.risk_badge color={:info} />
 
-  attr :color, :string, required: true, values: ["critical", "high", "medium", "low", "info"]
+  """
+  attr :color, :atom, required: true, values: [:critical, :high, :medium, :low, :info]
 
   attr :class, :string, default: nil
   attr :rest, :global
@@ -61,11 +61,11 @@ defmodule CaseManagerWeb.RiskBadge do
     get_icon_name(opts.color)
   end
 
-  defp get_icon_name("critical"), do: "hero-exclamation-circle"
-  defp get_icon_name("high"), do: "hero-arrow-up-circle"
-  defp get_icon_name("medium"), do: "hero-minus-circle"
-  defp get_icon_name("low"), do: "hero-arrow-down-circle"
-  defp get_icon_name("info"), do: "hero-information-circle"
+  defp get_icon_name(:critical), do: "hero-exclamation-circle"
+  defp get_icon_name(:high), do: "hero-arrow-up-circle"
+  defp get_icon_name(:medium), do: "hero-minus-circle"
+  defp get_icon_name(:low), do: "hero-arrow-down-circle"
+  defp get_icon_name(:info), do: "hero-information-circle"
 
   defp txt(opts) do
     opts = %{
@@ -75,11 +75,11 @@ defmodule CaseManagerWeb.RiskBadge do
     get_txt(opts.color)
   end
 
-  defp get_txt("critical"), do: gettext("Critical")
-  defp get_txt("high"), do: gettext("High")
-  defp get_txt("medium"), do: gettext("Medium")
-  defp get_txt("low"), do: gettext("Low")
-  defp get_txt("info"), do: gettext("Info")
+  defp get_txt(:critical), do: gettext("Critical")
+  defp get_txt(:high), do: gettext("High")
+  defp get_txt(:medium), do: gettext("Medium")
+  defp get_txt(:low), do: gettext("Low")
+  defp get_txt(:info), do: gettext("Info")
 
   defp color_classes(opts) do
     opts = %{
@@ -89,9 +89,9 @@ defmodule CaseManagerWeb.RiskBadge do
     get_color_classes(opts.color)
   end
 
-  defp get_color_classes("critical"), do: "bg-red-300"
-  defp get_color_classes("high"), do: "bg-orange-200"
-  defp get_color_classes("medium"), do: "bg-amber-100"
-  defp get_color_classes("low"), do: "bg-green-200"
-  defp get_color_classes("info"), do: "bg-teal-200"
+  defp get_color_classes(:critical), do: "bg-red-300"
+  defp get_color_classes(:high), do: "bg-orange-200"
+  defp get_color_classes(:medium), do: "bg-amber-100"
+  defp get_color_classes(:low), do: "bg-green-200"
+  defp get_color_classes(:info), do: "bg-teal-200"
 end

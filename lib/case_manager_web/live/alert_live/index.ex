@@ -33,9 +33,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
           <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
           <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
-            <.risk_badge color={String.downcase(alert.risk_level)} />
+            <.risk_badge color={alert.risk_level} />
           </:col>
-          <:col :let={{_id, alert}} label={gettext("Start Time")} width="36">
+          <:col :let={{_id, alert}} label={gettext("Created Time")} width="36">
             <%= alert.start_time %>
           </:col>
           <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>

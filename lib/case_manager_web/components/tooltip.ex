@@ -5,10 +5,15 @@ defmodule CaseManagerWeb.Tooltip do
 
   use Phoenix.Component
 
-  attr :pos, :string, default: "top", values: ["top", "bottom", "left", "right"]
-  attr :tooltip_txt, :string, required: true, doc: "tooltip text"
-
-  slot :inner_block, required: true, doc: "Hoverable item, e.g. text or button"
+  @tooltip_body "
+    w-max 
+    bg-slate-950 text-white 
+    text-xs font-semibold text-center 
+    py-1 px-1.5 
+    rounded-md 
+    absolute 
+    z-10
+    "
 
   @doc """
   Renders a hoverable item with a tooltip.
@@ -29,10 +34,15 @@ defmodule CaseManagerWeb.Tooltip do
       </.tooltip>
 
   """
+  attr :pos, :string, default: "top", values: ["top", "bottom", "left", "right"]
+  attr :tooltip_txt, :string, required: true, doc: "tooltip text"
+
+  slot :inner_block, required: true, doc: "Hoverable item, e.g. text or button"
+
   def tooltip(assigns) do
     assigns =
       assigns
-      |> assign(:tooltip_body, get_tooltip_body())
+      |> assign(:tooltip_body, @tooltip_body)
       |> assign(:tooltip_arrow, tooltip_arrow(assigns))
       |> assign(:tooltip_pos, tooltip_pos(assigns))
 
@@ -54,16 +64,6 @@ defmodule CaseManagerWeb.Tooltip do
     </div>
     """
   end
-
-  defp get_tooltip_body, do: "
-    w-max 
-    bg-slate-950 text-white 
-    text-xs font-semibold text-center 
-    py-1 px-1.5 
-    rounded-md 
-    absolute 
-    z-10
-    "
 
   defp tooltip_arrow(opts) do
     opts = %{

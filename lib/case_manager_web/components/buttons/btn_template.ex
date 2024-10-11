@@ -15,25 +15,25 @@ defmodule CaseManagerWeb.BtnTemplate do
   ## Examples
 
       <.btn_template>Send!</.button>
-      <.btn_template phx-click="go" class="ml-2">Send!</.button>
-  """
+      <.btn_template phx-click="go" class="ml-2">Send!</.btn_template>
 
+  """
   attr :color, :string,
     default: "primary",
     values: ["primary", "secondary", "disabled", "critical"]
 
-  attr :disabled, :boolean, default: false
+  attr :disabled?, :boolean, default: false
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global
 
   slot :inner_block, required: true
 
-  def btn_template(%{disabled: true, color: color} = assigns) when color != "disabled" do
+  def btn_template(%{disabled?: true, color: color} = assigns) when color != "disabled" do
     btn_template(Map.put(assigns, :color, "disabled"))
   end
 
-  def btn_template(%{disabled: false, color: "disabled"} = assigns) do
+  def btn_template(%{disabled?: false, color: "disabled"} = assigns) do
     btn_template(Map.put(assigns, :disabled, true))
   end
 
@@ -51,7 +51,7 @@ defmodule CaseManagerWeb.BtnTemplate do
           "text-sm text-white",
           @color_classes
         ]}
-        disabled={@disabled}
+        disabled={@disabled?}
         {@rest}
       >
         <%= render_slot(@inner_block) %>

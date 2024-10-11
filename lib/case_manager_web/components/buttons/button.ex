@@ -26,18 +26,19 @@ defmodule CaseManagerWeb.Button do
       <.button color="critical" txt="Simple critical text button" />
       <.button disabled txt="Simple disabled text button" phx-click="show_modal" />
       <.button color="disabled" txt="Simple disabled text button" phx-click="show_modal" />
+
   """
   attr :color, :string,
     default: "primary",
     values: ["primary", "secondary", "disabled", "critical"]
 
-  attr :icon_name, :string, default: nil, doc: "name of icon used lhs"
-  attr :txt, :string, default: nil, doc: "txt written on btn"
+  attr :icon_name, :string, default: nil, doc: "name of hero icon used lhs"
+  attr :txt, :string, default: nil, doc: "text written on button"
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled)
-  slot :inner_block
+  slot :inner_block, required: false
 
   def button(assigns) do
     assigns =
