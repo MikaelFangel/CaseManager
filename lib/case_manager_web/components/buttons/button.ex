@@ -43,18 +43,20 @@ defmodule CaseManagerWeb.Button do
       |> assign(:color_classes, button_color_classes(assigns))
 
     ~H"""
-    <button
-      type={@type}
-      class={[
-        "phx-submit-loading:opacity-75",
-        "text-sm text-white",
-        @color_classes
-      ]}
-      disabled={@disabled}
-      {@rest}
-    >
-      <%= render_slot(@inner_block) %>
-    </button>
+    <div class="flex items-center h-full">
+      <button
+        type={@type}
+        class={[
+          "phx-submit-loading:opacity-75",
+          "text-sm text-white",
+          @color_classes
+        ]}
+        disabled={@disabled}
+        {@rest}
+      >
+        <%= render_slot(@inner_block) %>
+      </button>
+    </div>
     """
   end
 
