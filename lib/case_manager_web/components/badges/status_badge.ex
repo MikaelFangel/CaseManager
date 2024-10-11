@@ -4,7 +4,7 @@ defmodule CaseManagerWeb.StatusBadge do
   """
 
   use Phoenix.Component
-  import CaseManagerWeb.Badge
+  import CaseManagerWeb.BadgeTemplate
   use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
@@ -34,7 +34,7 @@ defmodule CaseManagerWeb.StatusBadge do
       |> assign(:badge_classes, badge_classes(assigns))
 
     ~H"""
-    <.badge class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
+    <.badge_template class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
     """
   end
 

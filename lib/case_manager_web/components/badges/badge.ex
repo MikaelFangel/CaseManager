@@ -1,4 +1,4 @@
-defmodule CaseManagerWeb.Badge do
+defmodule CaseManagerWeb.BadgeTemplate do
   @moduledoc """
   Provides a bagde for showing things like severity level.
   """
@@ -17,7 +17,7 @@ defmodule CaseManagerWeb.Badge do
 
   slot :inner_block, required: false
 
-  def badge(assigns) do
+  def badge_template(assigns) do
     assigns =
       assigns
       |> assign(:badge_classes, badge_classes(assigns))

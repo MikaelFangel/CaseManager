@@ -4,7 +4,7 @@ defmodule CaseManagerWeb.RiskBadge do
   """
 
   use Phoenix.Component
-  import CaseManagerWeb.Badge
+  import CaseManagerWeb.BadgeTemplate
   use Gettext, backend: CaseManagerWeb.Gettext
 
   @doc """
@@ -36,7 +36,7 @@ defmodule CaseManagerWeb.RiskBadge do
 
     ~H"""
     <div class="flex items-center h-full">
-      <.badge class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
+      <.badge_template class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
     </div>
     """
   end
