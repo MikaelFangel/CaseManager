@@ -44,6 +44,7 @@ defmodule CaseManagerWeb.BadgeTemplate do
   defp badge_class(_opts), do: [@container_class, @label_class]
 
   defp txt_blank?(label, inner_block) do
+    # Label is negated to convert it from a truthy/falsy value to a boolean value
     (!label || label == "") && inner_block == []
   end
 end
