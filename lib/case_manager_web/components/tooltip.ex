@@ -35,7 +35,7 @@ defmodule CaseManagerWeb.Tooltip do
 
   """
   attr :pos, :atom, default: :top, values: [:top, :bottom, :left, :right]
-  attr :tooltip_txt, :string, required: true, doc: "tooltip text"
+  attr :tooltip_label, :string, required: true, doc: "tooltip label"
 
   slot :inner_block, required: true, doc: "Hoverable item, e.g. text or button"
 
@@ -57,7 +57,7 @@ defmodule CaseManagerWeb.Tooltip do
         @tooltip_arrow,
         @tooltip_pos
       ]}>
-        <%= @tooltip_txt %>
+        <%= @tooltip_label %>
       </span>
       <!-- Hoverable item -->
       <%= render_slot(@inner_block) %>

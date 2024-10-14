@@ -39,8 +39,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
             <%= alert.start_time %>
           </:col>
           <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
-            <.tooltip pos={:top} tooltip_txt="Pending">
-              <.txt_link phx-click="go" txt="3h6g3f6v" />
+            <.tooltip pos={:top} tooltip_label="Pending">
+              <.txt_link phx-click="go" label="3h6g3f6v" />
             </.tooltip>
           </:col>
           <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>

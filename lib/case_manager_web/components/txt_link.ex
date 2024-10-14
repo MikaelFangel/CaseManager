@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.TxtLink do
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled)
 
-  attr :txt, :string, required: true, doc: "displayed text"
+  attr :label, :string, required: true, doc: "displayed label"
 
   def txt_link(assigns) do
     assigns =
@@ -36,7 +36,7 @@ defmodule CaseManagerWeb.TxtLink do
       ]}
       {@rest}
     >
-      <%= @txt %>
+      <%= @label %>
     </button>
     """
   end
