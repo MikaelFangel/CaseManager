@@ -18,9 +18,9 @@ defmodule CaseManagerWeb.BtnTemplate do
       <.btn_template phx-click="go" class="ml-2">Send!</.btn_template>
 
   """
-  attr :color, :string,
-    default: "primary",
-    values: ["primary", "secondary", "disabled", "critical"]
+  attr :colour, :atom,
+    default: :primary,
+    values: [:primary, :secondary, :disabled, :critical]
 
   attr :disabled?, :boolean, default: false
   attr :type, :string, default: nil
@@ -29,18 +29,18 @@ defmodule CaseManagerWeb.BtnTemplate do
 
   slot :inner_block, required: true
 
-  def btn_template(%{disabled?: true, color: color} = assigns) when color != "disabled" do
-    btn_template(Map.put(assigns, :color, "disabled"))
+  def btn_template(%{disabled?: true, colour: colour} = assigns) when colour != :disabled do
+    btn_template(Map.put(assigns, :colour, :disabled))
   end
 
-  def btn_template(%{disabled?: false, color: "disabled"} = assigns) do
-    btn_template(Map.put(assigns, :disabled, true))
+  def btn_template(%{disabled?: false, colour: :disabled} = assigns) do
+    btn_template(Map.put(assigns, :disabled?, true))
   end
 
   def btn_template(assigns) do
     assigns =
       assigns
-      |> assign(:color_classes, button_color_classes(assigns))
+      |> assign(:colour_class, button_colour_class(assigns))
 
     ~H"""
     <div class="flex items-center h-full">
@@ -49,7 +49,7 @@ defmodule CaseManagerWeb.BtnTemplate do
         class={[
           "phx-submit-loading:opacity-75",
           "text-sm text-white",
-          @color_classes
+          @colour_class
         ]}
         disabled={@disabled?}
         {@rest}
@@ -60,27 +60,11 @@ defmodule CaseManagerWeb.BtnTemplate do
     """
   end
 
-  defp button_color_classes(opts) do
-    opts = %{
-      color: opts[:color] || "primary",
-      class: opts[:class] || ""
-    }
+  defp button_colour_class(%{colour: colour, class: class}), do: [colour_class(colour), class]
+  defp button_colour_class(%{colour: colour}), do: colour_class(colour)
 
-    color_css = get_color_classes(opts.color)
-    custom_button_classes = opts.class
-
-    [color_css, custom_button_classes]
-  end
-
-  defp get_color_classes("primary"),
-    do: "bg-slate-950 hover:bg-zinc-500 active:text-white/80"
-
-  defp get_color_classes("secondary"),
-    do: "bg-neutral-500 hover:bg-neutral-400 active:text-white/80"
-
-  defp get_color_classes("disabled"),
-    do: "bg-gray-300"
-
-  defp get_color_classes("critical"),
-    do: "bg-rose-500 hover:bg-rose-400 active:text-white/80"
+  defp colour_class(:primary), do: "bg-slate-950 hover:bg-zinc-500 active:text-white/80"
+  defp colour_class(:secondary), do: "bg-neutral-500 hover:bg-neutral-400 active:text-white/80"
+  defp colour_class(:disabled), do: "bg-gray-300"
+  defp colour_class(:critical), do: "bg-rose-500 hover:bg-rose-400 active:text-white/80"
 end

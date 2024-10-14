@@ -6,7 +6,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     ~H"""
     <div class="p-0 pl-6 pr-8">
       <div class="flex justify-end my-4 gap-x-2">
-        <.icon_btn icon_name="hero-pause-circle" color="critical" />
+        <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
         <.button icon_name="hero-document-plus" phx-click="load_more_alerts">
           <%= gettext("Create Case") %>
         </.button>
@@ -33,21 +33,21 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
           <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
           <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
-            <.risk_badge color={alert.risk_level} />
+            <.risk_badge colour={alert.risk_level} />
           </:col>
           <:col :let={{_id, alert}} label={gettext("Created Time")} width="36">
             <%= alert.start_time %>
           </:col>
           <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
-            <.tooltip pos="top" tooltip_txt="Pending">
+            <.tooltip pos={:top} tooltip_txt="Pending">
               <.txt_link phx-click="go" txt="3h6g3f6v" />
             </.tooltip>
           </:col>
           <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
             <.icon_btn
               icon_name="hero-arrow-top-right-on-square"
-              color="secondary"
-              size="small"
+              colour={:secondary}
+              size={:small}
               class="pl-0.5 pb-1"
               phx-click={alert.link}
             />
@@ -85,8 +85,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
           %> </pre>
         <br />
         <div class="flex justify-end space-x-2">
-          <.button color="secondary" phx-click="hide_modal">Close</.button>
-          <.button color="secondary" phx-click="hide_modal">Search Link</.button>
+          <.button colour={:secondary} phx-click="hide_modal">Close</.button>
+          <.button colour={:secondary} phx-click="hide_modal">Search Link</.button>
           <.button phx-click="hide_modal">Create Case</.button>
         </div>
       </div>

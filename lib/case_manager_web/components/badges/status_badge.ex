@@ -15,14 +15,14 @@ defmodule CaseManagerWeb.StatusBadge do
 
   # Example
 
-      <.status_badge color={:t_positive} />
-      <.status_badge color={:benign} />
-      <.status_badge color={:pending} />
-      <.status_badge color={:f_positive} />
-      <.status_badge color={:in_progress} />
+      <.status_badge colour={:t_positive} />
+      <.status_badge colour={:benign} />
+      <.status_badge colour={:pending} />
+      <.status_badge colour={:f_positive} />
+      <.status_badge colour={:in_progress} />
 
   """
-  attr :color, :atom,
+  attr :colour, :atom,
     required: true,
     values: [:t_positive, :benign, :pending, :f_positive, :in_progress]
 
@@ -33,65 +33,32 @@ defmodule CaseManagerWeb.StatusBadge do
     assigns =
       assigns
       |> assign(:icon_name, icon_name(assigns))
-      |> assign(:txt, txt(assigns))
-      |> assign(:badge_classes, badge_classes(assigns))
+      |> assign(:label, label(assigns))
+      |> assign(:badge_class, badge_class(assigns))
 
     ~H"""
-    <.badge_template class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
+    <.badge_template class={@badge_class} icon_name={@icon_name} txt={@label} {@rest} />
     """
   end
 
-  defp badge_classes(opts) do
-    opts = %{
-      color: opts[:color],
-      class: opts[:class]
-    }
+  defp icon_name(%{colour: :t_positive}), do: "hero-fire"
+  defp icon_name(%{colour: :benign}), do: "hero-check-circle"
+  defp icon_name(%{colour: :pending}), do: "hero-clock"
+  defp icon_name(%{colour: :f_positive}), do: "hero-x-circle"
+  defp icon_name(%{colour: :in_progress}), do: "hero-bolt"
 
-    color_classes = color_classes(opts)
-    custom_classes = opts.class
+  defp label(%{colour: :t_positive}), do: gettext("T. Positive")
+  defp label(%{colour: :benign}), do: gettext("Benign")
+  defp label(%{colour: :pending}), do: gettext("Pending")
+  defp label(%{colour: :f_positive}), do: gettext("F. Positive")
+  defp label(%{colour: :in_progress}), do: gettext("In Progress")
 
-    [color_classes, custom_classes]
-  end
+  defp badge_class(%{colour: colour, class: class}), do: [colour_class(colour), class]
+  defp badge_class(%{colour: colour}), do: colour_class(colour)
 
-  defp icon_name(opts) do
-    opts = %{
-      color: opts[:color]
-    }
-
-    get_icon_name(opts.color)
-  end
-
-  defp get_icon_name(:t_positive), do: "hero-fire"
-  defp get_icon_name(:benign), do: "hero-check-circle"
-  defp get_icon_name(:pending), do: "hero-clock"
-  defp get_icon_name(:f_positive), do: "hero-x-circle"
-  defp get_icon_name(:in_progress), do: "hero-bolt"
-
-  defp txt(opts) do
-    opts = %{
-      color: opts[:color]
-    }
-
-    get_txt(opts.color)
-  end
-
-  defp get_txt(:t_positive), do: gettext("T. Positive")
-  defp get_txt(:benign), do: gettext("Benign")
-  defp get_txt(:pending), do: gettext("Pending")
-  defp get_txt(:f_positive), do: gettext("F. Positive")
-  defp get_txt(:in_progress), do: gettext("In Progress")
-
-  defp color_classes(opts) do
-    opts = %{
-      color: opts[:color]
-    }
-
-    get_color_classes(opts.color)
-  end
-
-  defp get_color_classes(:t_positive), do: "bg-red-300"
-  defp get_color_classes(:benign), do: "bg-green-200"
-  defp get_color_classes(:pending), do: "bg-amber-100"
-  defp get_color_classes(:f_positive), do: "bg-gray-300"
-  defp get_color_classes(:in_progress), do: "bg-sky-300"
+  defp colour_class(:t_positive), do: "bg-red-300"
+  defp colour_class(:benign), do: "bg-green-200"
+  defp colour_class(:pending), do: "bg-amber-100"
+  defp colour_class(:f_positive), do: "bg-gray-300"
+  defp colour_class(:in_progress), do: "bg-sky-300"
 end

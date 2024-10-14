@@ -15,14 +15,14 @@ defmodule CaseManagerWeb.RiskBadge do
 
   # Example
 
-      <.risk_badge color={:critical} />
-      <.risk_badge color={:high} />
-      <.risk_badge color={:medium} />
-      <.risk_badge color={:low} />
-      <.risk_badge color={:info} />
+      <.risk_badge colour={:critical} />
+      <.risk_badge colour={:high} />
+      <.risk_badge colour={:medium} />
+      <.risk_badge colour={:low} />
+      <.risk_badge colour={:info} />
 
   """
-  attr :color, :atom, required: true, values: [:critical, :high, :medium, :low, :info]
+  attr :colour, :atom, required: true, values: [:critical, :high, :medium, :low, :info]
 
   attr :class, :string, default: nil
   attr :rest, :global
@@ -31,67 +31,34 @@ defmodule CaseManagerWeb.RiskBadge do
     assigns =
       assigns
       |> assign(:icon_name, icon_name(assigns))
-      |> assign(:txt, txt(assigns))
-      |> assign(:badge_classes, badge_classes(assigns))
+      |> assign(:label, label(assigns))
+      |> assign(:badge_class, badge_class(assigns))
 
     ~H"""
     <div class="flex items-center h-full">
-      <.badge_template class={@badge_classes} icon_name={@icon_name} txt={@txt} {@rest} />
+      <.badge_template class={@badge_class} icon_name={@icon_name} txt={@label} {@rest} />
     </div>
     """
   end
 
-  defp badge_classes(opts) do
-    opts = %{
-      color: opts[:color],
-      class: opts[:class]
-    }
+  defp icon_name(%{colour: :critical}), do: "hero-exclamation-circle"
+  defp icon_name(%{colour: :high}), do: "hero-arrow-up-circle"
+  defp icon_name(%{colour: :medium}), do: "hero-minus-circle"
+  defp icon_name(%{colour: :low}), do: "hero-arrow-down-circle"
+  defp icon_name(%{colour: :info}), do: "hero-information-circle"
 
-    color_classes = color_classes(opts)
-    custom_classes = opts.class
+  defp label(%{colour: :critical}), do: gettext("Critical")
+  defp label(%{colour: :high}), do: gettext("High")
+  defp label(%{colour: :medium}), do: gettext("Medium")
+  defp label(%{colour: :low}), do: gettext("Low")
+  defp label(%{colour: :info}), do: gettext("Info")
 
-    [color_classes, custom_classes]
-  end
+  defp badge_class(%{colour: colour, class: class}), do: [colour_class(colour), class]
+  defp badge_class(%{colour: colour}), do: colour_class(colour)
 
-  defp icon_name(opts) do
-    opts = %{
-      color: opts[:color]
-    }
-
-    get_icon_name(opts.color)
-  end
-
-  defp get_icon_name(:critical), do: "hero-exclamation-circle"
-  defp get_icon_name(:high), do: "hero-arrow-up-circle"
-  defp get_icon_name(:medium), do: "hero-minus-circle"
-  defp get_icon_name(:low), do: "hero-arrow-down-circle"
-  defp get_icon_name(:info), do: "hero-information-circle"
-
-  defp txt(opts) do
-    opts = %{
-      color: opts[:color]
-    }
-
-    get_txt(opts.color)
-  end
-
-  defp get_txt(:critical), do: gettext("Critical")
-  defp get_txt(:high), do: gettext("High")
-  defp get_txt(:medium), do: gettext("Medium")
-  defp get_txt(:low), do: gettext("Low")
-  defp get_txt(:info), do: gettext("Info")
-
-  defp color_classes(opts) do
-    opts = %{
-      color: opts[:color]
-    }
-
-    get_color_classes(opts.color)
-  end
-
-  defp get_color_classes(:critical), do: "bg-red-300"
-  defp get_color_classes(:high), do: "bg-orange-200"
-  defp get_color_classes(:medium), do: "bg-amber-100"
-  defp get_color_classes(:low), do: "bg-green-200"
-  defp get_color_classes(:info), do: "bg-teal-200"
+  defp colour_class(:critical), do: "bg-red-300"
+  defp colour_class(:high), do: "bg-orange-200"
+  defp colour_class(:medium), do: "bg-amber-100"
+  defp colour_class(:low), do: "bg-green-200"
+  defp colour_class(:info), do: "bg-teal-200"
 end

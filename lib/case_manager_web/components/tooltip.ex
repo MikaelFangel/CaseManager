@@ -34,7 +34,7 @@ defmodule CaseManagerWeb.Tooltip do
       </.tooltip>
 
   """
-  attr :pos, :string, default: "top", values: ["top", "bottom", "left", "right"]
+  attr :pos, :atom, default: :top, values: [:top, :bottom, :left, :right]
   attr :tooltip_txt, :string, required: true, doc: "tooltip text"
 
   slot :inner_block, required: true, doc: "Hoverable item, e.g. text or button"
@@ -65,17 +65,9 @@ defmodule CaseManagerWeb.Tooltip do
     """
   end
 
-  defp tooltip_arrow(opts) do
-    opts = %{
-      pos: opts[:pos] || "top"
-    }
+  defp tooltip_arrow(%{pos: pos}), do: tooltip_arrow(pos)
 
-    tooltip_css = get_tooltip_arrow(opts.pos)
-
-    [tooltip_css]
-  end
-
-  defp get_tooltip_arrow("bottom"),
+  defp tooltip_arrow(:bottom),
     do: "
     after:absolute
     after:border-b-8
@@ -90,7 +82,7 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-r-transparent
     "
 
-  defp get_tooltip_arrow("top"),
+  defp tooltip_arrow(:top),
     do: "
     after:absolute
     after:border-t-8
@@ -105,7 +97,7 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-r-transparent
     "
 
-  defp get_tooltip_arrow("left"),
+  defp tooltip_arrow(:left),
     do: "
     after:absolute
     after:border-l-8
@@ -119,7 +111,7 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-r-transparent
     "
 
-  defp get_tooltip_arrow("right"),
+  defp tooltip_arrow(:right),
     do: "
     after:absolute
     after:border-r-8
@@ -133,27 +125,11 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-t-transparent
     "
 
-  defp tooltip_pos(opts) do
-    opts = %{
-      pos: opts[:pos] || "top",
-      class: opts[:class] || ""
-    }
+  defp tooltip_pos(%{pos: pos, class: class}), do: [tooltip_pos(pos), class]
+  defp tooltip_pos(%{pos: pos}), do: tooltip_pos(pos)
 
-    tooltip_css = get_tooltip_pos(opts.pos)
-    custom_tooltip_classes = opts.class
-
-    [tooltip_css, custom_tooltip_classes]
-  end
-
-  defp get_tooltip_pos("top"),
-    do: "bottom-[120%] left-1/2 -translate-x-1/2"
-
-  defp get_tooltip_pos("bottom"),
-    do: "top-[120%] left-1/2 -translate-x-1/2"
-
-  defp get_tooltip_pos("right"),
-    do: "left-[120%] top-1/2 -translate-y-1/2"
-
-  defp get_tooltip_pos("left"),
-    do: "right-[120%] top-1/2 -translate-y-1/2"
+  defp tooltip_pos(:top), do: "bottom-[120%] left-1/2 -translate-x-1/2"
+  defp tooltip_pos(:bottom), do: "top-[120%] left-1/2 -translate-x-1/2"
+  defp tooltip_pos(:right), do: "left-[120%] top-1/2 -translate-y-1/2"
+  defp tooltip_pos(:left), do: "right-[120%] top-1/2 -translate-y-1/2"
 end

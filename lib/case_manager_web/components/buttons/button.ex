@@ -7,6 +7,8 @@ defmodule CaseManagerWeb.Button do
   import CaseManagerWeb.BtnTemplate
   import CaseManagerWeb.Icon
 
+  @base_class "h-11 px-5 font-semibold rounded-xl"
+
   @doc """
   Renders a custom button with content. 
 
@@ -28,12 +30,12 @@ defmodule CaseManagerWeb.Button do
       <.button color="disabled" txt="Simple disabled text button" phx-click="show_modal" />
 
   """
-  attr :color, :string,
-    default: "primary",
-    values: ["primary", "secondary", "disabled", "critical"]
+  attr :colour, :atom,
+    default: :primary,
+    values: [:primary, :secondary, :disabled, :critical]
 
   attr :icon_name, :string, default: nil, doc: "name of hero icon used lhs"
-  attr :txt, :string, default: nil, doc: "text written on button"
+  attr :label, :string, default: nil, doc: "text written on button"
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
@@ -43,33 +45,25 @@ defmodule CaseManagerWeb.Button do
   def button(assigns) do
     assigns =
       assigns
-      |> assign(:btn_classes, btn_classes(assigns))
+      |> assign(:btn_class, btn_class(assigns))
 
     ~H"""
-    <%= unless txt_blank?(@txt, @inner_block) do %>
-      <.btn_template color={@color} type={@type} class={@btn_classes} {@rest}>
+    <%= unless txt_blank?(@label, @inner_block) do %>
+      <.btn_template colour={@colour} type={@type} class={@btn_class} {@rest}>
         <%= if @icon_name && String.starts_with?(@icon_name, "hero-") do %>
           <.icon name={@icon_name} class="w-6 h-6 mr-1" />
         <% end %>
 
-        <%= render_slot(@inner_block) || @txt %>
+        <%= render_slot(@inner_block) || @label %>
       </.btn_template>
     <% end %>
     """
   end
 
-  defp btn_classes(opts) do
-    opts = %{
-      class: opts[:class] || ""
-    }
+  defp btn_class(%{class: class}), do: [@base_class, class]
+  defp btn_class(_opts), do: @base_class
 
-    base_classes = "h-11 px-5 font-semibold rounded-xl"
-    custom_classes = opts.class
-
-    [base_classes, custom_classes]
-  end
-
-  defp txt_blank?(txt, inner_block) do
-    (!txt || txt == "") && inner_block == []
+  defp txt_blank?(label, inner_block) do
+    (!label || label == "") && inner_block == []
   end
 end

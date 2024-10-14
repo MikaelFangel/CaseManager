@@ -20,15 +20,15 @@ defmodule CaseManagerWeb.IconBtn do
 
   ## Examples
 
-      <.icon_btn icon_name="hero-pause-circle" color="critical" />
-      <.icon_btn icon_name="hero-arrow-top-right-on-square" color="secondary" size="small" class="pl-0.5 pb-1" />
+      <.icon_btn icon_name="hero-pause-circle" colour="critical" />
+      <.icon_btn icon_name="hero-arrow-top-right-on-square" colour="secondary" size="small" class="pl-0.5 pb-1" />
 
   """
-  attr :size, :string, default: "large", values: ["large", "small"]
+  attr :size, :atom, default: :large, values: [:large, :small]
 
-  attr :color, :string,
-    default: "primary",
-    values: ["primary", "secondary", "disabled", "critical"]
+  attr :colour, :atom,
+    default: :primary,
+    values: [:primary, :secondary, :disabled, :critical]
 
   attr :icon_name, :string, required: true
 
@@ -39,49 +39,24 @@ defmodule CaseManagerWeb.IconBtn do
   def icon_btn(%{icon_name: "hero-" <> _} = assigns) do
     assigns =
       assigns
-      |> assign(:btn_size_classes, btn_size_classes(assigns))
-      |> assign(:icon_size_classes, icon_size_classes(assigns))
+      |> assign(:btn_size_class, btn_size_class(assigns))
+      |> assign(:icon_size_class, icon_size_class(assigns))
 
     ~H"""
-    <.btn_template color={@color} type={@type} class={@btn_size_classes} {@rest}>
-      <.icon name={@icon_name} class={@icon_size_classes} />
+    <.btn_template colour={@colour} type={@type} class={@btn_size_class} {@rest}>
+      <.icon name={@icon_name} class={@icon_size_class} />
     </.btn_template>
     """
   end
 
-  defp btn_size_classes(opts) do
-    opts = %{
-      color: opts[:size] || "large",
-      class: opts[:class] || ""
-    }
+  defp btn_size_class(%{size: size, class: class}), do: [btn_size_class(size), class]
+  defp btn_size_class(%{size: size}), do: btn_size_class(size)
 
-    size_css = get_icon_btn_size_classes(opts.color)
-    custom_btn_size_classes = opts.class
+  defp btn_size_class(:large), do: "w-11 h-11 rounded-xl"
+  defp btn_size_class(:small), do: "w-7 h-7 rounded-lg"
 
-    [size_css, custom_btn_size_classes]
-  end
+  defp icon_size_class(%{size: size, class: class}), do: [icon_size_class(size), class]
 
-  defp get_icon_btn_size_classes("large"),
-    do: "w-11 h-11 rounded-xl"
-
-  defp get_icon_btn_size_classes("small"),
-    do: "w-7 h-7 rounded-lg"
-
-  defp icon_size_classes(opts) do
-    opts = %{
-      color: opts[:size] || "large",
-      class: opts[:class] || ""
-    }
-
-    icon_size_css = get_icon_size_classes(opts.color)
-    custom_icon_size_classes = opts.class
-
-    [icon_size_css, custom_icon_size_classes]
-  end
-
-  defp get_icon_size_classes("large"),
-    do: "w-6 h-6"
-
-  defp get_icon_size_classes("small"),
-    do: "w-4 h-4"
+  defp icon_size_class(:large), do: "w-6 h-6"
+  defp icon_size_class(:small), do: "w-4 h-4"
 end
