@@ -68,9 +68,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
       <div class="modal-content">
         <.header><%= @alert.title %></.header>
-        <hr class="border-t border-gray-300 my-4" />
-        Creation Time: <%= @alert.creation_time %> <br /> Case ID: <br /> Case Status: <br /> 
-        Risk Level: <%= @alert.risk_level %> <br /> 
+        <hr class="border-t border-gray-300 my-4" /> Creation Time: <%= @alert.creation_time %> <br />
+        Case ID: <br /> Case Status: <br /> Risk Level: <%= @alert.risk_level %> <br />
         Team: <%= @alert.team_id %> <br /> Alert ID: <%= @alert.id %>
         <%= @alert.description %>
         <br />
