@@ -97,6 +97,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.TxtLink
       import CaseManagerWeb.RiskBadge
       import CaseManagerWeb.StatusBadge
+      import CaseManagerWeb.Back
 
       # Translation
       use Gettext, backend: CaseManagerWeb.Gettext
