@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.IconBtn do
   import CaseManagerWeb.Icon
 
   @doc """
-  Renders a square icon button
+  Renders a square icon button.
 
   Icon buttons come in three colors – primary, secondary, and critical.
   By default, the primary color is used, but the color may

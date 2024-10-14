@@ -1,6 +1,6 @@
 defmodule CaseManagerWeb.Tooltip do
   @moduledoc """
-  Provides a hoverable item with a tooltip
+  Provides a hoverable item with a tooltip.
   """
 
   use Phoenix.Component
@@ -25,7 +25,7 @@ defmodule CaseManagerWeb.Tooltip do
       <.tooltip pos="top" tooltip_txt="top tooltip">Hoverable text</.tooltip>
       <.tooltip pos="bottom" tooltip_txt="bottom tooltip">Hoverable text</.tooltip>
 
-  The hoverable item can be a clickable text
+  The hoverable item can be a clickable text.
 
   # Example 
     

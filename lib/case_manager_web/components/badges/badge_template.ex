@@ -11,7 +11,7 @@ defmodule CaseManagerWeb.BadgeTemplate do
   @icon_class "w-6 h-6 relative"
 
   @doc """
-  Renders a badge template
+  Renders a badge template.
   """
   attr :icon_name, :string, default: nil, doc: "name of hero icon used lhs"
   attr :label, :string, default: nil, doc: "label written on badge"
