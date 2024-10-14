@@ -18,7 +18,7 @@ defmodule CaseManagerWeb.AlertGenerator do
 
   @doc """
   A generator for alert attributes. The generator generates a map with the following keys:
-  alert_id, title, risk_level, start_time, end_time, link. The values for the keys are generated
+  alert_id, title, risk_level, creation_time, link. The values for the keys are generated
   randomly.
   """
   def alert_attrs do
@@ -26,17 +26,14 @@ defmodule CaseManagerWeb.AlertGenerator do
           alert_id <- StreamData.string(:alphanumeric, length: 8),
           title <- StreamData.string(:printable, min_length: 1),
           risk_level <- risk_level(),
-          start_time <- StreamData.constant(DateTime.utc_now() |> DateTime.to_iso8601()),
-          end_time <-
-            StreamData.constant(DateTime.utc_now() |> DateTime.add(3600) |> DateTime.to_iso8601()),
+          creation_time <- StreamData.constant(DateTime.utc_now() |> DateTime.to_iso8601()),
           link <- StreamData.string(:printable, min_length: 1)
         ) do
       %{
         alert_id: alert_id,
         title: title,
         risk_level: risk_level,
-        start_time: start_time,
-        end_time: end_time,
+        creation_time: creation_time,
         link: link
       }
     end

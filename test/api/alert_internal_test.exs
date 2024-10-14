@@ -68,26 +68,5 @@ defmodule CaseManager.Alerts.AlertInternalTest do
         assert {:error, _changeset} = Ash.create(changeset)
       end
     end
-
-    property "fails to create an alert where the start_time is not before the end_time", %{
-      team: team
-    } do
-      check all(alert_attrs <- AlertGenerator.alert_attrs()) do
-        changeset =
-          Alert
-          |> Ash.Changeset.for_create(
-            :create,
-            alert_attrs
-            |> Map.put(:team_id, team.id)
-            |> Map.put(
-              :start_time,
-              DateTime.utc_now() |> DateTime.add(3600) |> DateTime.to_iso8601()
-            )
-            |> Map.put(:end_time, DateTime.utc_now() |> DateTime.to_iso8601())
-          )
-
-        assert {:error, _changeset} = Ash.create(changeset)
-      end
-    end
   end
 end

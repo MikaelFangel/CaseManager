@@ -35,9 +35,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
             <.risk_badge colour={alert.risk_level} />
           </:col>
-          <:col :let={{_id, alert}} label={gettext("Created Time")} width="36">
-            <%= alert.start_time %>
-          </:col>
+          <:col :let={{_id, alert}} label={gettext("Creation Time")}><%= alert.creation_time %></:col>
           <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
             <.tooltip pos={:top} tooltip_label="Pending">
               <.txt_link phx-click="go" label="3h6g3f6v" />
@@ -70,10 +68,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
       <div class="modal-content">
         <.header><%= @alert.title %></.header>
-        <hr class="border-t border-gray-300 my-4" />
-        Time Range: <%= @alert.start_time %> - <%= @alert.end_time %> <br /> Case ID: <br />
-        Case Status: <br /> Risk Level: <%= @alert.risk_level %> <br /> Team: <%= @alert.team_id %>
-        <br /> Alert ID: <%= @alert.id %>
+        <hr class="border-t border-gray-300 my-4" /> Creation Time: <%= @alert.creation_time %> <br />
+        Case ID: <br /> Case Status: <br /> Risk Level: <%= @alert.risk_level %> <br />
+        Team: <%= @alert.team_id %> <br /> Alert ID: <%= @alert.id %>
         <%= @alert.description %>
         <br />
         <br />
