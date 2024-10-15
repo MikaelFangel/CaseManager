@@ -66,18 +66,6 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                   class="h-[200px]"
                 />
               </div>
-              <.input
-                name="team_id"
-                field={@form[:team_id]}
-                type="hidden"
-                value={
-                  @selected_alerts
-                  |> Enum.take(1)
-                  |> then(fn [{_id, alert} | _xs] -> alert.team.id end)
-                }
-              />
-              <.input name="priority" field={@form[:priority]} type="hidden" value="low" />
-              <.input name="escalated" field={@form[:priority]} type="hidden" value="false" />
             </div>
           </div>
         </div>
@@ -121,6 +109,14 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   end
 
   def handle_event("save", params, socket) do
+    team_id =
+      socket.assigns.selected_alerts |> Enum.at(0) |> elem(1) |> Map.get(:team) |> Map.get(:id)
+
+    params =
+      Map.put(params, :team_id, team_id)
+      |> Map.put(:escalated, false)
+      |> Map.put(:priority, "low")
+
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
       {:ok, _result} ->
         {:noreply,
