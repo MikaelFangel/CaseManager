@@ -6,13 +6,8 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     ~H"""
     <div>
       <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
-              <.input
-                name="title"
-                label="Title"
-                field={@form[:title]}
-                type="text"
-              />
-      <hr />
+        <.input name="title" label="Title" field={@form[:title]} type="text" />
+        <hr />
         <div class="px-2">
           <div class="flex -mx-2">
             <div class="w-1/3 px-2">
@@ -73,9 +68,18 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                   class="h-[200px]"
                 />
               </div>
-              <.input name="team_id" label="team_id" field={@form[:team_id]} type="text" value="02e98f0f-bc8d-4874-9077-235b030cf84f"}/>
-              <.input name="priority" label="priority" field={@form[:priority]} type="text" value="low"}/>
-              <!-- <.input name="escalated" label="escalated" field={@form[:priority]} type="text" value="true"/> -->
+              <.input
+                name="team_id"
+                field={@form[:team_id]}
+                type="hidden"
+                value={
+                  @selected_alerts
+                  |> Enum.take(1)
+                  |> then(fn [{_id, alert} | _xs] -> alert.team.id end)
+                }
+              />
+              <.input name="priority" field={@form[:priority]} type="hidden" value="low" } />
+              <.input name="escalated" field={@form[:priority]} type="hidden" value="false" />
             </div>
           </div>
         </div>
@@ -94,12 +98,17 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   end
 
   def update(assigns, socket) do
-    form = 
+    form =
       CaseManager.Cases.Case
-      |> AshPhoenix.Form.for_create(:create, forms: [case: [
-        resource: CaseManager.Cases.Case,
-        create_action: :create
-      ]], domain: CaseManager.Cases)
+      |> AshPhoenix.Form.for_create(:create,
+        forms: [
+          case: [
+            resource: CaseManager.Cases.Case,
+            create_action: :create
+          ]
+        ],
+        domain: CaseManager.Cases
+      )
       |> AshPhoenix.Form.add_form([:case])
       |> to_form()
 
@@ -109,19 +118,20 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   end
 
   def handle_event("validate", params, socket) do
-  form = AshPhoenix.Form.validate(socket.assigns.form, params)
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, form: form)}
   end
 
   def handle_event("save", params, socket) do
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
       {:ok, _result} ->
-        {:noreply, 
+        {:noreply,
          socket
          |> put_flash(:info, "Case created successfully.")
          |> push_navigate(to: "/cases")}
+
       {:error, form} ->
-        {:noreply, assign(socket, :form, form)}
+        {:noreply, assign(socket, :form, form)} |> dbg
     end
   end
 end
