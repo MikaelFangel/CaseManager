@@ -99,9 +99,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
-    CaseManager.SelectedAlerts.drop_selected_alerts("3a174fb6-1734-4282-b5ee-3c9f210bfd0b")
+    CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
 
     alerts_page =
       CaseManager.Alerts.Alert
