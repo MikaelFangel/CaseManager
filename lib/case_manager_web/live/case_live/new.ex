@@ -1,7 +1,7 @@
 defmodule CaseManagerWeb.CaseLive.New do
   use CaseManagerWeb, :live_view
 
-  def mount(_params, _, socket) do
+  def mount(_params, _session, socket) do
     selected_alerts =
       CaseManager.SelectedAlerts.get_selected_alerts(socket.assigns.current_user.id)
 

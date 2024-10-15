@@ -23,12 +23,10 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                     @selected_alerts
                     |> Enum.take(1)
                     |> then(fn [{_id, alert} | _xs] -> alert.risk_level end)
-                  }>
-                  </.risk_badge>
+                  } />
                 </div>
                 <div class="flex items-center">
-                  Status:
-                  <.status_badge colour={:in_progress}></.status_badge>
+                  Status: <.status_badge colour={:in_progress} />
                 </div>
               </div>
               <.input
@@ -78,7 +76,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                   |> then(fn [{_id, alert} | _xs] -> alert.team.id end)
                 }
               />
-              <.input name="priority" field={@form[:priority]} type="hidden" value="low" } />
+              <.input name="priority" field={@form[:priority]} type="hidden" value="low" />
               <.input name="escalated" field={@form[:priority]} type="hidden" value="false" />
             </div>
           </div>
@@ -100,7 +98,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   def update(assigns, socket) do
     form =
       CaseManager.Cases.Case
-      |> AshPhoenix.Form.for_create(:create,
+      |> Form.for_create(:create,
         forms: [
           case: [
             resource: CaseManager.Cases.Case,
@@ -109,7 +107,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
         ],
         domain: CaseManager.Cases
       )
-      |> AshPhoenix.Form.add_form([:case])
+      |> Form.add_form([:case])
       |> to_form()
 
     {:ok,
@@ -118,7 +116,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   end
 
   def handle_event("validate", params, socket) do
-    form = AshPhoenix.Form.validate(socket.assigns.form, params)
+    form = Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, form: form)}
   end
 
@@ -131,7 +129,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
          |> push_navigate(to: "/cases")}
 
       {:error, form} ->
-        {:noreply, assign(socket, :form, form)} |> dbg
+        {:noreply, assign(socket, :form, form)}
     end
   end
 end

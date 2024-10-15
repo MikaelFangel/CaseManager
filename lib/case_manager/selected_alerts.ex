@@ -1,15 +1,19 @@
 defmodule CaseManager.SelectedAlerts do
+  @moduledoc """
+  GenServer that holds the state of which alerts a user has selected. This is only meant
+  to store data for the mssp users.
+  """
   use GenServer
 
   @table_name :selected_alerts
 
   # Starts the GenServer and creates an ETS table
-  def start_link(_) do
+  def start_link(_args) do
     GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
   end
 
   @impl true
-  def init(_) do
+  def init(_args) do
     :ets.new(@table_name, [
       :named_table,
       :public,

@@ -99,7 +99,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
     CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
 
@@ -167,7 +167,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   def handle_event("create_case", _params, socket) do
-    {:noreply, redirect(socket, to: Routes.case_new_path(socket, :new))}
+    {:noreply, socket}
   end
 
   @impl true
