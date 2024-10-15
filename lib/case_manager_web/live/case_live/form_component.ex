@@ -1,12 +1,18 @@
 defmodule CaseManagerWeb.CaseLive.FormComponent do
   use CaseManagerWeb, :live_component
+  alias AshPhoenix.Form
 
   def render(assigns) do
     ~H"""
     <div>
-      <.header>Important Form Header</.header>
+      <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
+              <.input
+                name="title"
+                label="Title"
+                field={@form[:title]}
+                type="text"
+              />
       <hr />
-      <.simple_form for={@form} id="case-form" phx-target={@myself} phx-submit="save">
         <div class="px-2">
           <div class="flex -mx-2">
             <div class="w-1/3 px-2">
@@ -36,7 +42,6 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                 label="Description"
                 type="textarea"
                 class="h-[530px]"
-                value=""
               />
             </div>
             <div class="w-2/3 px-2">
@@ -56,19 +61,21 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                     class="pl-0.5 pb-1"
                     phx-click={alert.link}
                   />
-                  <!-- <.link navigate={alert.link} target="_blank"><%= alert.link %></.link> -->
+                  <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
                 </:col>
               </.table>
-              <div class="mt-4">
+              <div class="my-4">
                 <.input
                   name="internal_note"
                   field={@form[:internal_note]}
                   label="Internal Note"
                   type="textarea"
                   class="h-[200px]"
-                  value=""
                 />
               </div>
+              <.input name="team_id" label="team_id" field={@form[:team_id]} type="text" value="02e98f0f-bc8d-4874-9077-235b030cf84f"}/>
+              <.input name="priority" label="priority" field={@form[:priority]} type="text" value="low"}/>
+              <!-- <.input name="escalated" label="escalated" field={@form[:priority]} type="text" value="true"/> -->
             </div>
           </div>
         </div>
@@ -87,8 +94,34 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   end
 
   def update(assigns, socket) do
+    form = 
+      CaseManager.Cases.Case
+      |> AshPhoenix.Form.for_create(:create, forms: [case: [
+        resource: CaseManager.Cases.Case,
+        create_action: :create
+      ]], domain: CaseManager.Cases)
+      |> AshPhoenix.Form.add_form([:case])
+      |> to_form()
+
     {:ok,
-     assign(socket, :form, assigns[:form] || %{})
+     assign(socket, :form, form)
      |> assign(:selected_alerts, assigns[:selected_alerts] || [])}
+  end
+
+  def handle_event("validate", params, socket) do
+  form = AshPhoenix.Form.validate(socket.assigns.form, params)
+    {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("save", params, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
+      {:ok, _result} ->
+        {:noreply, 
+         socket
+         |> put_flash(:info, "Case created successfully.")
+         |> push_navigate(to: "/cases")}
+      {:error, form} ->
+        {:noreply, assign(socket, :form, form)}
+    end
   end
 end
