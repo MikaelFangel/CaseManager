@@ -7,9 +7,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <div class="p-0 pl-6 pr-8">
       <div class="flex justify-end my-4 gap-x-2">
         <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
-        <.button icon_name="hero-document-plus" phx-click="load_more_alerts">
-          <%= gettext("Create Case") %>
-        </.button>
+        <.link navigate={~p"/case/new"}>
+          <.button icon_name="hero-document-plus" phx-click="create_case">
+            <%= gettext("Create Case") %>
+          </.button>
+        </.link>
       </div>
 
       <div
@@ -27,8 +29,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
             end
           }
         >
-          <:col :let={{_id, _alert}} width="6" not_clickable_area?>
-            <.input type="checkbox" name="checkbox_name" />
+          <:col :let={{_id, alert}} width="6" not_clickable_area?>
+            <.input
+              type="checkbox"
+              name="checkbox_name"
+              phx-click="toggle_alert_selection"
+              phx-value-id={alert.id}
+            />
           </:col>
           <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
           <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
@@ -38,7 +45,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <:col :let={{_id, alert}} label={gettext("Creation Time")}><%= alert.creation_time %></:col>
           <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
             <.tooltip pos={:top} tooltip_label="Pending">
-              <.txt_link phx-click="go" label="3h6g3f6v" />
+              <.txt_link label="3h6g3f6v" />
             </.tooltip>
           </:col>
           <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
@@ -94,6 +101,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
+    CaseManager.SelectedAlerts.drop_selected_alerts("3a174fb6-1734-4282-b5ee-3c9f210bfd0b")
 
     alerts_page =
       CaseManager.Alerts.Alert
@@ -148,6 +156,18 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_event("hide_modal", _params, socket) do
     {:noreply, assign(socket, :show_modal, false)}
+  end
+
+  def handle_event("toggle_alert_selection", %{"id" => id}, socket) do
+    user_id = socket.assigns.current_user.id
+    CaseManager.SelectedAlerts.toggle_alert_selection(user_id, id)
+
+    selected_alerts = CaseManager.SelectedAlerts.get_selected_alerts(user_id)
+    {:noreply, assign(socket, :selected_alerts, selected_alerts)}
+  end
+
+  def handle_event("create_case", _params, socket) do
+    {:noreply, redirect(socket, to: Routes.case_new_path(socket, :new))}
   end
 
   @impl true

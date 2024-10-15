@@ -1,0 +1,13 @@
+<div class="h-full">
+  <.back navigate={~p"/"}>Back to alerts</.back>
+
+  <.live_component
+    module={CaseManagerWeb.CaseLive.FormComponent}
+    id="1"
+    title="Title"
+    action={@live_action}
+    post="case"
+    patch={~p"/posts/1"}
+    selected_alerts={@selected_alerts}
+  />
+</div>
