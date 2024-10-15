@@ -29,7 +29,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
             end
           }
         >
-          <:col :let={{_id, alert}} width="6" not_clickable_area?>
+          <:col :let={{_id, alert}} not_clickable_area?>
             <.input
               type="checkbox"
               name="checkbox_name"
