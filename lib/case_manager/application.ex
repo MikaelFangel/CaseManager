@@ -10,6 +10,7 @@ defmodule CaseManager.Application do
     children = [
       CaseManagerWeb.Telemetry,
       CaseManager.Repo,
+      CaseManager.SelectedAlerts,
       {DNSCluster, query: Application.get_env(:case_manager, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: CaseManager.PubSub},
       # Start the Finch HTTP client for sending emails
