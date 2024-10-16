@@ -6,27 +6,49 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     ~H"""
     <div>
       <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
-        <.input name="title" label="Title" field={@form[:title]} type="text" />
-        <hr />
-        <div class="px-2">
-          <div class="flex -mx-2">
-            <div class="w-1/3 px-2">
-              <div class="grid grid-cols-3 text-sm items-center">
-                <div class="flex items-center">
-                  Customer: <%= @selected_alerts
+        <div class="w-1/3 px-8">
+          <.input name="title" label="Title" field={@form[:title]} type="text" />
+        </div>
+        <div class="px-8">
+          <div class="flex -mx-8">
+            <div class="w-1/3 px-8">
+              <div class="grid grid-cols-[150px_1fr] text-sm items-center mb-4">
+                <span>Customer:</span>
+                <div>
+                  <%= @selected_alerts
                   |> Enum.take(1)
                   |> then(fn [{_id, alert} | _xs] -> alert.team.name end) %>
                 </div>
-                <div class="flex items-center">
-                  Priority:
-                  <.risk_badge colour={
-                    @selected_alerts
-                    |> Enum.take(1)
-                    |> then(fn [{_id, alert} | _xs] -> alert.risk_level end)
-                  } />
+                <span>Priority:</span>
+                <div>
+                  <.input
+                    name="priority"
+                    type="select"
+                    field={@form[:priority]}
+                    options={[
+                      {"Select a priority", ""},
+                      {"Info", :info},
+                      {"Low", :low},
+                      {"Medium", :medium},
+                      {"High", :high},
+                      {"Critical", :critical}
+                    ]}
+                  />
                 </div>
-                <div class="flex items-center">
-                  Status: <.status_badge colour={:in_progress} />
+                <span>Status:</span>
+                <div>
+                  <.input
+                    name="status"
+                    type="select"
+                    field={@form[:status]}
+                    options={[
+                      {"In Progress", :in_progress},
+                      {"Pending", :pending},
+                      {"True Positive", :t_positive},
+                      {"False Positive", :f_positive},
+                      {"Benign", :benign}
+                    ]}
+                  />
                 </div>
               </div>
               <.input
@@ -34,10 +56,10 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                 field={@form[:description]}
                 label="Description"
                 type="textarea"
-                class="h-[530px]"
+                class="h-[355px]"
               />
             </div>
-            <div class="w-2/3 px-2">
+            <div class="w-2/3 px-8 -mt-8">
               <.table id="alerts" rows={@selected_alerts} row_click={}>
                 <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
                 <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
@@ -114,7 +136,6 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     params =
       Map.put(params, :team_id, team_id)
       |> Map.put(:escalated, false)
-      |> Map.put(:priority, "low")
 
     selected_alert_ids =
       socket.assigns.selected_alerts
