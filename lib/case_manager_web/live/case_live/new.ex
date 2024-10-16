@@ -8,6 +8,8 @@ defmodule CaseManagerWeb.CaseLive.New do
     selected_alerts =
       Enum.map(selected_alerts, fn a -> {a, Ash.get!(CaseManager.Alerts.Alert, a)} end)
 
-    {:ok, assign(socket, :selected_alerts, selected_alerts)}
+    {:ok,
+     assign(socket, :selected_alerts, selected_alerts)
+     |> assign(current_user: socket.assigns.current_user)}
   end
 end

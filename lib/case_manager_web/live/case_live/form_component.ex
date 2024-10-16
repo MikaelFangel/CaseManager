@@ -111,7 +111,8 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
         forms: [
           case: [
             resource: CaseManager.Cases.Case,
-            create_action: :create
+            create_action: :create,
+            actor: assigns[:current_user]
           ]
         ],
         domain: CaseManager.Cases
@@ -121,7 +122,8 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
     {:ok,
      assign(socket, :form, form)
-     |> assign(:selected_alerts, assigns[:selected_alerts] || [])}
+     |> assign(:selected_alerts, assigns[:selected_alerts] || [])
+     |> assign(:current_user, assigns[:current_user]) || nil}
   end
 
   def handle_event("validate", params, socket) do
@@ -141,7 +143,9 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       socket.assigns.selected_alerts
       |> Enum.map(fn {_id, alert} -> alert.id end)
 
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
+    action_opts = [actor: socket.assigns.current_user]
+
+    case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, result} ->
         # Manually create relations due to an issue with updates on paginated resources
         selected_alert_ids
