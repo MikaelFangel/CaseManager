@@ -8,7 +8,7 @@
     <.table id="cases" rows={@streams.cases} row_click={}>
       <:col :let={{_id, case}} label={gettext("Team")} width="36"><%= case.team.name %></:col>
       <:col :let={{_id, case}} label={gettext("Title")}><%= case.title %></:col>
-      <:col :let={{_id, case}} label={gettext("Priority")}><%= case.priority %></:col>
+      <:col :let={{_id, case}} label={gettext("Priority")}><.risk_badge colour={case.priority} /></:col>
       <:col :let={{_id, case}} label={gettext("Time Since Updated")}><%= DateTime.diff(DateTime.utc_now(), case.updated_at, :day) %> days</:col>
       <:col :let={{_id, case}} label={gettext("ID")} width="36" not_clickable_area?>
         <%= case.id |> String.slice(1, 7) %>
