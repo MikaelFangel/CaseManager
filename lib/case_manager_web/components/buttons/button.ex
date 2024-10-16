@@ -36,6 +36,7 @@ defmodule CaseManagerWeb.Button do
 
   attr :icon_name, :string, default: nil, doc: "name of hero icon used lhs"
   attr :label, :string, default: nil, doc: "text written on button"
+  attr :disabled?, :boolean, default: false
 
   attr :type, :string, default: nil
   attr :class, :string, default: nil
@@ -49,7 +50,7 @@ defmodule CaseManagerWeb.Button do
 
     ~H"""
     <%= unless txt_blank?(@label, @inner_block) do %>
-      <.btn_template colour={@colour} type={@type} class={@btn_class} {@rest}>
+      <.btn_template disabled?={@disabled?} colour={@colour} type={@type} class={@btn_class} {@rest}>
         <%= if @icon_name && String.starts_with?(@icon_name, "hero-") do %>
           <.icon name={@icon_name} class="w-6 h-6 mr-1" />
         <% end %>
