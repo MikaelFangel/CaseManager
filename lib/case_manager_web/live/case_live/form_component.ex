@@ -54,7 +54,6 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
                     class="pl-0.5 pb-1"
                     phx-click={alert.link}
                   />
-                  <.link navigate={alert.link} target="_blank"><%= alert.link %></.link>
                 </:col>
               </.table>
               <div class="my-4">
