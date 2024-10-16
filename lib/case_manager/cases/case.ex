@@ -69,6 +69,7 @@ defmodule CaseManager.Cases.Case do
       constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign]
       default :in_progress
       allow_nil? false
+      public? true
     end
 
     attribute :priority, :atom do

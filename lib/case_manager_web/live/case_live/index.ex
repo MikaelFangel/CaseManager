@@ -1,14 +1,19 @@
 defmodule CaseManagerWeb.CaseLive.Index do
   use CaseManagerWeb, :live_view
+  require Ash.Query
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("case:created")
     CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
 
+    open = [:in_progress, :pending]
+    closed = [:t_positive, :f_positive, :benign]
+
     cases_page =
       CaseManager.Cases.Case
-      |> Ash.Query.sort(inserted_at: :desc)
+      |> Ash.Query.filter(status in ^open)
+      |> Ash.Query.sort(updated_at: :desc)
       |> Ash.read!()
 
     cases = cases_page.results
