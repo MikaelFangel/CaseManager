@@ -161,7 +161,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Case created successfully.")
-         |> push_navigate(to: "/cases")}
+         |> push_navigate(to: "/case")}
 
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}

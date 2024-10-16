@@ -1,0 +1,34 @@
+<div class="p-0 pl-6 pr-8">
+  <div
+    class="mt-12"
+    id="cases-container"
+    phx-update="stream"
+    phx-viewport-bottom={@more_pages? && "load_more_cases"}
+  >
+    <.table id="cases" rows={@streams.cases} row_click={}>
+      <:col :let={{_id, case}} label={gettext("Team")} width="36"><%= case.team.name %></:col>
+      <:col :let={{_id, case}} label={gettext("Title")}><%= case.title %></:col>
+      <:col :let={{_id, case}} label={gettext("Priority")}><%= case.priority %></:col>
+      <:col :let={{_id, case}} label={gettext("Time Since Updated")}><%= case.updated_at %></:col>
+      <:col :let={{_id, case}} label={gettext("ID")} width="36" not_clickable_area?>
+        <%= case.id %>
+      </:col>
+      <:col :let={{_id, case}} label={gettext("Status")} width="36" not_clickable_area?>
+        <%= case.status %>
+      </:col>
+      <:col :let={{_id, case}} label={gettext("Assignee")} width="36" not_clickable_area?>
+        <%= case.assignee_id %>
+      </:col>
+    </.table>
+  </div>
+
+  <%= if @more_pages? do %>
+    <div class="flex justify-center my-4">
+      <.button phx-click="load_more_cases"><%= gettext("Load More") %></.button>
+    </div>
+  <% else %>
+    <div class="flex justify-center my-4">
+      <span class="text-black text-xs font-semibold"><%= gettext("No more cases") %></span>
+    </div>
+  <% end %>
+</div>
