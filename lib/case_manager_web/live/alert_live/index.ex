@@ -8,7 +8,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <div class="flex justify-end my-4 gap-x-2">
         <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
         <.link navigate={~p"/case/new"}>
-          <.button icon_name="hero-document-plus" phx-click="create_case">
+          <.button
+            icon_name="hero-document-plus"
+            phx-click="create_case"
+            disabled={Enum.empty?(@selected_alerts)}
+          >
             <%= gettext("Create Case") %>
           </.button>
         </.link>
@@ -118,6 +122,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
      )
      |> assign(:show_modal, false)
      |> assign(:alert, %{})
+     |> assign(:selected_alerts, [])
      |> assign(:current_page, alerts_page)
      |> assign(:more_pages?, alerts_page.more?)}
   end
