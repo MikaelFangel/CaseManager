@@ -12,8 +12,12 @@ defmodule CaseManager.Relationships.CaseAlert do
   end
 
   relationships do
-    belongs_to :case, CaseManager.Cases.Case, primary_key?: true, allow_nil?: false
-    belongs_to :alert, CaseManager.Alerts.Alert, primary_key?: true, allow_nil?: false
+    belongs_to :case, CaseManager.Cases.Case, primary_key?: true, allow_nil?: false, public?: true
+
+    belongs_to :alert, CaseManager.Alerts.Alert,
+      primary_key?: true,
+      allow_nil?: false,
+      public?: true
   end
 
   actions do

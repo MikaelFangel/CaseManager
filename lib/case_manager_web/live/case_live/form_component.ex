@@ -117,8 +117,23 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> Map.put(:escalated, false)
       |> Map.put(:priority, "low")
 
+    selected_alert_ids =
+      socket.assigns.selected_alerts
+      |> Enum.map(fn {_id, alert} -> alert.id end)
+
     case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
-      {:ok, _result} ->
+      {:ok, result} ->
+        # Manually create relations due to an issue with updates on paginated resources
+        selected_alert_ids
+        |> Enum.each(fn alert_id ->
+          CaseManager.Relationships.CaseAlert
+          |> Ash.Changeset.for_create(:create, %{
+            case_id: result.id,
+            alert_id: alert_id
+          })
+          |> Ash.create!()
+        end)
+
         {:noreply,
          socket
          |> put_flash(:info, "Case created successfully.")

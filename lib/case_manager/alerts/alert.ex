@@ -64,10 +64,10 @@ defmodule CaseManager.Alerts.Alert do
       prepare build(load: [:team])
 
       pagination do
-        required?(true)
-        offset?(true)
-        countable(true)
-        default_limit(20)
+        required? true
+        offset? true
+        countable true
+        default_limit 20
       end
     end
   end
