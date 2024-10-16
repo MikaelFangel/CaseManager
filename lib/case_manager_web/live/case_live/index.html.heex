@@ -11,7 +11,7 @@
       <:col :let={{_id, case}} label={gettext("Priority")}><%= case.priority %></:col>
       <:col :let={{_id, case}} label={gettext("Time Since Updated")}><%= case.updated_at %></:col>
       <:col :let={{_id, case}} label={gettext("ID")} width="36" not_clickable_area?>
-        <%= case.id %>
+        <%= case.id |> String.slice(1, 7) %>
       </:col>
       <:col :let={{_id, case}} label={gettext("Status")} width="36" not_clickable_area?>
         <%= case.status %>
