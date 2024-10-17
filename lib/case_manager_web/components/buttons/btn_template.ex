@@ -37,7 +37,6 @@ defmodule CaseManagerWeb.BtnTemplate do
   end
 
   def btn_template(assigns) do
-    IO.inspect(assigns)
     assigns =
       assigns
       |> assign(:colour_class, button_colour_class(assigns))
