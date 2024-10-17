@@ -75,8 +75,14 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
     view_rights =
       case current_user_team.type do
-        :mssp -> Ash.Filter.parse!(CaseManager.Cases.Case, true)
-        _other -> Ash.Filter.parse!(CaseManager.Cases.Case, team_id: current_user_team.id)
+        :mssp ->
+          Ash.Filter.parse!(CaseManager.Cases.Case, true)
+
+        _other ->
+          Ash.Filter.parse!(CaseManager.Cases.Case,
+            team_id: current_user_team.id,
+            escalated: true
+          )
       end
 
     cases_page =
