@@ -22,6 +22,13 @@ defmodule CaseManagerWeb.LiveUserAuth do
     end
   end
 
+  def on_mount(:live_mssp_user, _params, _session, socket) do
+    case Ash.load!(socket.assigns.current_user, :team).team.type do
+      :mssp -> {:cont, socket}
+      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+    end
+  end
+
   def on_mount(:live_no_user, _params, _session, socket) do
     socket.assigns[:current_user]
     |> case do
