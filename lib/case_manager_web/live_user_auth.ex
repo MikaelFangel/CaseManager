@@ -27,7 +27,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
          %{team: %{type: :mssp}} <- current_user do
       {:cont, socket}
     else
-      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+      _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
     end
   end
 
