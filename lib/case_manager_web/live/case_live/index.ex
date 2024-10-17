@@ -2,40 +2,49 @@ defmodule CaseManagerWeb.CaseLive.Index do
   use CaseManagerWeb, :live_view
   require Ash.Query
 
+  @open_statuses [:in_progress, :pending]
+  @closed_statuses [:t_positive, :f_positive, :benign]
+
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("case:created")
     CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
 
-    open = [:in_progress, :pending]
-    closed = [:t_positive, :f_positive, :benign]
-
-    cases_page =
-      CaseManager.Cases.Case
-      |> Ash.Query.filter(status in ^open)
-      |> Ash.Query.sort(updated_at: :desc)
-      |> Ash.read!()
-
-    cases = cases_page.results
-
     {:ok,
-     stream(
-       socket,
-       :cases,
-       cases
-     )
-     |> assign(:current_page, cases_page)
-     |> assign(:more_pages?, cases_page.more?)}
+     socket
+     |> assign(:status_type, :open)
+     |> load_cases()
+     |> assign(:more_pages?, false)}
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  def handle_event("open_cases", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:status_type, :open)
+     |> reset_and_load_cases()}
   end
 
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Cases")
+  @impl true
+  def handle_event("closed_cases", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:status_type, :closed)
+     |> reset_and_load_cases()}
+  end
+
+  @impl true
+  def handle_event("load_more_cases", _params, socket) do
+    next_page = Ash.page!(socket.assigns.current_page, :next)
+
+    {:noreply,
+     stream(
+       socket,
+       :cases,
+       next_page.results
+     )
+     |> assign(:current_page, next_page)
+     |> assign(:more_pages?, next_page.more?)}
   end
 
   @impl true
@@ -49,20 +58,29 @@ defmodule CaseManagerWeb.CaseLive.Index do
     {:noreply, stream_insert(socket, :cases, case, at: 0)}
   end
 
-  @impl true
-  def handle_event("load_more_cases", _params, socket) do
-    current_page = socket.assigns.current_page
-    next_page = Ash.page!(current_page, :next)
+  defp reset_and_load_cases(socket) do
+    socket
+    |> stream(:cases, [], reset: true)
+    |> load_cases()
+  end
 
-    cases = next_page.results
+  defp load_cases(socket) do
+    statuses =
+      case socket.assigns.status_type do
+        :open -> @open_statuses
+        :closed -> @closed_statuses
+      end
 
-    {:noreply,
-     stream(
-       socket,
-       :cases,
-       cases
-     )
-     |> assign(:current_page, next_page)
-     |> assign(:more_pages?, next_page.more?)}
+    cases_page =
+      CaseManager.Cases.Case
+      |> Ash.Query.filter(status in ^statuses)
+      |> Ash.Query.sort(updated_at: :desc)
+      |> Ash.read!()
+
+    socket
+    # Reset stream to ensure no duplicates
+    |> stream(:cases, cases_page.results, reset: true)
+    |> assign(:current_page, cases_page)
+    |> assign(:more_pages?, cases_page.more?)
   end
 end
