@@ -71,8 +71,17 @@ defmodule CaseManagerWeb.CaseLive.Index do
         :closed -> @closed_statuses
       end
 
+    current_user_team = Ash.load!(socket.assigns.current_user, :team).team
+
+    view_rights =
+      case current_user_team.type do
+        :mssp -> Ash.Filter.parse!(CaseManager.Cases.Case, true)
+        _other -> Ash.Filter.parse!(CaseManager.Cases.Case, team_id: current_user_team.id)
+      end
+
     cases_page =
       CaseManager.Cases.Case
+      |> Ash.Query.filter(^view_rights)
       |> Ash.Query.filter(status in ^statuses)
       |> Ash.Query.sort(updated_at: :desc)
       |> Ash.read!()
