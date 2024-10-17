@@ -43,6 +43,7 @@ defmodule CaseManagerWeb.Router do
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
       live "/", AlertLive.Index, :index
       live "/case/new", CaseLive.New, :new
+      live "/case", CaseLive.Index, :index
     end
   end
 
