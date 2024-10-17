@@ -28,7 +28,8 @@ defmodule CaseManagerWeb.BtnTemplate do
 
   slot :inner_block, required: true
 
-  def btn_template(%{colour: colour, rest: %{disabled: true}} = assigns) when colour != :disabled do
+  def btn_template(%{colour: colour, rest: %{disabled: true}} = assigns)
+      when colour != :disabled do
     btn_template(Map.put(assigns, :colour, :disabled))
   end
 
