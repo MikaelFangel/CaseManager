@@ -14,6 +14,7 @@ defmodule CaseManager.Alerts do
     routes do
       base_route "/alerts", CaseManager.Alerts.Alert do
         post :create
+        patch :update_additional_data
       end
     end
   end

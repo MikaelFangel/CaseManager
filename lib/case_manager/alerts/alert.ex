@@ -70,6 +70,16 @@ defmodule CaseManager.Alerts.Alert do
         default_limit 20
       end
     end
+
+    update :update do
+      primary? true
+    end
+
+    update :update_additional_data do
+      accept [
+        :additional_data
+      ]
+    end
   end
 
   attributes do
