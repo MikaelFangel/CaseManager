@@ -77,7 +77,8 @@ defmodule CaseManager.MixProject do
       {:stream_data, "~> 1.0"},
       {:ash_authentication, "~> 4.0"},
       {:ash_authentication_phoenix, "~> 2.1"},
-      {:ash_state_machine, "~> 0.2.6"}
+      {:ash_state_machine, "~> 0.2.6"},
+      {:ash_admin, "~> 0.11.9"}
     ]
   end
 
