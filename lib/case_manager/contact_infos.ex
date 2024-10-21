@@ -2,7 +2,12 @@ defmodule CaseManager.ContactInfos do
   @moduledoc """
   Domain for representing contact informations.
   """
-  use Ash.Domain
+  use Ash.Domain,
+    extensions: [AshAdmin.Domain]
+
+  admin do
+    show?(true)
+  end
 
   resources do
     resource CaseManager.ContactInfos.IP

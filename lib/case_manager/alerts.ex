@@ -3,7 +3,11 @@ defmodule CaseManager.Alerts do
   Domain that defines resources related to alerts and defines the allowed routes
   for the JSON API.
   """
-  use Ash.Domain, extensions: [AshJsonApi.Domain]
+  use Ash.Domain, extensions: [AshJsonApi.Domain, AshAdmin.Domain]
+
+  admin do
+    show?(true)
+  end
 
   resources do
     resource CaseManager.Alerts.Alert

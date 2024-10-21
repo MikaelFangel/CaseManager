@@ -2,7 +2,12 @@ defmodule CaseManager.Teams do
   @moduledoc """
   Domain that reprensents teams and their related resources.
   """
-  use Ash.Domain
+  use Ash.Domain,
+    extensions: [AshAdmin.Domain]
+
+  admin do
+    show?(true)
+  end
 
   resources do
     resource CaseManager.Teams.Team
