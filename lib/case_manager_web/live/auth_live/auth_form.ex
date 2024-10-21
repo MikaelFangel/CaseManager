@@ -39,7 +39,10 @@ defmodule CaseManagerWeb.AuthForm do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="grid h-screen pr-40 pb-32 place-items-end">
+    <div
+      class="grid h-screen pr-40 pb-32 place-items-end bg-cover bg-no-repeat bg-center"
+      style="background-image: url(/images/background.png)"
+    >
       <.form
         :let={f}
         for={@form}
