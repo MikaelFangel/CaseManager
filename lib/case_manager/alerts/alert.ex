@@ -48,6 +48,8 @@ defmodule CaseManager.Alerts.Alert do
 
   actions do
     create :create do
+      primary? true
+
       accept [
         :alert_id,
         :title,
@@ -60,7 +62,11 @@ defmodule CaseManager.Alerts.Alert do
     end
 
     read :read do
+      prepare build(load: [:team])
       primary? true
+    end
+
+    read :read_paginated do
       prepare build(load: [:team])
 
       pagination do
