@@ -67,7 +67,7 @@ defmodule CaseManager.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:ash, "~> 3.4"},
+      {:ash, ">= 3.4.0 and < 3.4.33 or > 3.4.34"},
       {:picosat_elixir, "~> 0.2"},
       {:ash_postgres, "~> 2.3"},
       {:ash_phoenix, "~> 2.1"},
