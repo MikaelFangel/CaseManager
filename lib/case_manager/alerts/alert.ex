@@ -67,7 +67,7 @@ defmodule CaseManager.Alerts.Alert do
     end
 
     read :read_paginated do
-      prepare build(load: [:team])
+      prepare build(load: [:team, :case])
 
       pagination do
         required? true

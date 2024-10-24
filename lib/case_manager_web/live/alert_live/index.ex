@@ -47,10 +47,14 @@ defmodule CaseManagerWeb.AlertLive.Index do
             <.risk_badge colour={alert.risk_level} />
           </:col>
           <:col :let={{_id, alert}} label={gettext("Creation Time")}><%= alert.creation_time %></:col>
-          <:col :let={{_id, _alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
-            <.tooltip pos={:top} tooltip_label="Pending">
-              <.txt_link label="3h6g3f6v" />
-            </.tooltip>
+          <:col :let={{_id, alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
+            <%= for case <- alert.case do %>
+              <.link navigate={~p"/case/#{case.id}"}>
+                <.tooltip pos={:top} tooltip_label={case.status |> to_string() |> String.capitalize()}>
+                  <.txt_link label={case.id |> String.slice(0..7)} />
+                </.tooltip>
+              </.link>
+            <% end %>
           </:col>
           <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
             <.icon_btn
