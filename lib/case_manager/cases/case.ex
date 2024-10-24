@@ -39,12 +39,24 @@ defmodule CaseManager.Cases.Case do
         :priority,
         :escalated,
         :assignee_id,
-        :team_id
+        :team_id,
+        :internal_note
       ]
+
+      argument :alert, {:array, :string}
+
+      change manage_relationship(:alert,
+               type: :append_and_remove,
+               on_no_match: :create
+             )
     end
 
     read :read do
       primary? true
+      prepare build(load: [:team])
+    end
+
+    read :read_paginated do
       prepare build(load: [:team])
 
       pagination do
@@ -54,6 +66,8 @@ defmodule CaseManager.Cases.Case do
         default_limit 20
       end
     end
+
+    update :update, primary?: true
   end
 
   attributes do
@@ -64,6 +78,7 @@ defmodule CaseManager.Cases.Case do
     attribute :assignee_id, :uuid
     attribute :team_id, :uuid, allow_nil?: false
     attribute :escalated, :boolean, allow_nil?: false
+    attribute :internal_note, :string
 
     attribute :status, :atom do
       constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign]

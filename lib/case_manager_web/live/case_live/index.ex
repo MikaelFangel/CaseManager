@@ -90,7 +90,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> Ash.Query.filter(^view_rights)
       |> Ash.Query.filter(status in ^statuses)
       |> Ash.Query.sort(updated_at: :desc)
-      |> Ash.read!()
+      |> Ash.read!(action: :read_paginated)
 
     socket
     # Reset stream to ensure no duplicates

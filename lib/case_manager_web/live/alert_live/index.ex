@@ -110,7 +110,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     alerts_page =
       CaseManager.Alerts.Alert
       |> Ash.Query.sort(inserted_at: :desc)
-      |> Ash.read!()
+      |> Ash.read!(action: :read_paginated)
 
     alerts = alerts_page.results
 

@@ -42,6 +42,7 @@ defmodule CaseManagerWeb.Router do
     ash_authentication_live_session :authentication_required,
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
       live "/", CaseLive.Index, :index
+      live "/case/:id", CaseLive.Show, :show
     end
 
     ash_authentication_live_session :mssp_team_members_required,
