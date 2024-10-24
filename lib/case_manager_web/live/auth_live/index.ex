@@ -43,7 +43,7 @@ defmodule CaseManagerWeb.AuthLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="auth-page">
+    <div class="auth-page h-full">
       <.live_component
         module={CaseManagerWeb.AuthForm}
         id={@form_id}

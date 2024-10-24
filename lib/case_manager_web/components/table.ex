@@ -1,6 +1,6 @@
 defmodule CaseManagerWeb.Table do
   @moduledoc """
-  Provides a table
+  Provides a table.
   """
 
   use Phoenix.Component

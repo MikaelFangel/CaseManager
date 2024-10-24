@@ -1,6 +1,6 @@
 defmodule CaseManagerWeb.TxtLink do
   @moduledoc """
-  Provides a clickable underlined Text
+  Provides a clickable underlined Text.
   """
 
   use Phoenix.Component
@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.TxtLink do
   @txt_style "text-sm text-black font-semibold underline active:text-black/60 hover:opacity-60"
 
   @doc """
-  Renders an underlined text that is clickable
+  Renders an underlined text that is clickable.
 
   # Example
     
