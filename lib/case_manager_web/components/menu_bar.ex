@@ -9,6 +9,7 @@ defmodule CaseManagerWeb.MenuBar do
   @selection_circle "w-11 h-11 bg-gray-300/30 rounded-full z-0 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
 
   attr :current_page, :atom, required: true, doc: "the page the user is at"
+  attr :current_user, :map, required: true, doc: "the user to check if customer or Mssp"
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global
@@ -16,6 +17,7 @@ defmodule CaseManagerWeb.MenuBar do
   slot :inner_block, required: true
 
   def menu_bar(assigns) do
+    team_type = Ash.load!(assigns.current_user, :team).team.type
 
     ~H"""
     <div class="flex flex-row w-screen h-screen gap-x-6">
@@ -23,13 +25,20 @@ defmodule CaseManagerWeb.MenuBar do
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
         <div class="flex-col h-full w-full justify-start items-center gap-4 inline-flex">
-          <.menu_item icon_name="hero-bell" active?={@current_page==:alerts} path="/alerts" />
-          <div class="w-full h-px border border-neutral-500"></div>
+          
+          <%= if team_type==:mssp do %>
+            <.menu_item icon_name="hero-bell" active?={@current_page==:alerts} path="/alerts" />
+            <div class="w-full h-px border border-neutral-500"></div>
+          <% end %>
+
           <.menu_item icon_name="hero-document-duplicate" active?={@current_page==:cases} path="/" />
-          <div class="w-full h-px border border-neutral-500"></div>
-          <.menu_item icon_name="hero-users" active?={@current_page==:users} />
-          <div class="w-full h-px border border-neutral-500"></div>
-          <.menu_item icon_name="hero-building-office" active?={@current_page==:teams} />
+
+          <%= if team_type==:mssp do %>
+            <div class="w-full h-px border border-neutral-500"></div>
+            <.menu_item icon_name="hero-users" active?={@current_page==:users} />
+            <div class="w-full h-px border border-neutral-500"></div>
+            <.menu_item icon_name="hero-building-office" active?={@current_page==:teams} />
+          <% end %>
         </div>
         <!-- Bottom content -->
         <div class="flex-col h-full justify-end items-center gap-4 inline-flex">
