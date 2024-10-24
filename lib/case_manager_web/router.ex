@@ -39,16 +39,16 @@ defmodule CaseManagerWeb.Router do
     live "/register", AuthLive.Index, :register
     live "/sign-in", AuthLive.Index, :sign_in
 
-    ash_authentication_live_session :authentication_required,
-      on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
-      live "/", CaseLive.Index, :index
-      live "/case/:id", CaseLive.Show, :show
-    end
-
     ash_authentication_live_session :mssp_team_members_required,
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_mssp_user} do
       live "/alerts", AlertLive.Index, :index
       live "/case/new", CaseLive.New, :new
+    end
+
+    ash_authentication_live_session :authentication_required,
+      on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
+      live "/", CaseLive.Index, :index
+      live "/case/:id", CaseLive.Show, :show
     end
   end
 
