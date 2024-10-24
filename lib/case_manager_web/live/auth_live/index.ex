@@ -39,22 +39,4 @@ defmodule CaseManagerWeb.AuthLive.Index do
       Form.for_action(User, :sign_in_with_password, api: CaseManager.Teams, as: "user")
     )
   end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div class="auth-page h-full">
-      <.live_component
-        module={CaseManagerWeb.AuthForm}
-        id={@form_id}
-        form={@form}
-        is_register?={@live_action == :register}
-        action={@action}
-        alternative={@alternative}
-        alternative_path={@alternative_path}
-        cta={@cta}
-      />
-    </div>
-    """
-  end
 end

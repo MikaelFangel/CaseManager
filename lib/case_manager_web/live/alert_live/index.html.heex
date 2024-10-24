@@ -1,0 +1,99 @@
+<div class="h-full">
+  <div class="flex justify-end gap-x-2">
+    <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
+    <.link navigate={~p"/case/new"}>
+      <.button
+        icon_name="hero-document-plus"
+        phx-click="create_case"
+        disabled={Enum.empty?(@selected_alerts)}
+      >
+        <%= gettext("Create Case") %>
+      </.button>
+    </.link>
+  </div>
+
+  <div
+    class="mt-12"
+    id="alerts-container"
+    phx-update="stream"
+    phx-viewport-bottom={@more_pages? && "load_more_alerts"}
+  >
+    <.table
+      id="alerts"
+      rows={@streams.alerts}
+      row_click={
+        fn {_id, alert} ->
+          JS.push("show_modal", value: alert) |> show_modal("alert_modal")
+        end
+      }
+    >
+      <:col :let={{_id, alert}} not_clickable_area?>
+        <.input
+          type="checkbox"
+          name="checkbox_name"
+          phx-click="toggle_alert_selection"
+          phx-value-id={alert.id}
+        />
+      </:col>
+      <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
+      <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+      <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
+        <.risk_badge colour={alert.risk_level} />
+      </:col>
+      <:col :let={{_id, alert}} label={gettext("Creation Time")}><%= alert.creation_time %></:col>
+      <:col :let={{_id, alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
+        <%= for case <- alert.case do %>
+          <.link navigate={~p"/case/#{case.id}"}>
+            <.tooltip pos={:top} tooltip_label={case.status |> to_string() |> String.capitalize()}>
+              <.txt_link label={case.id |> String.slice(0..7)} />
+            </.tooltip>
+          </.link>
+        <% end %>
+      </:col>
+      <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
+        <.icon_btn
+          icon_name="hero-arrow-top-right-on-square"
+          colour={:secondary}
+          size={:small}
+          class="pl-0.5 pb-1"
+          phx-click={alert.link}
+        />
+        <!-- <.link navigate={alert.link} target="_blank"><%= alert.link %></.link> -->
+      </:col>
+    </.table>
+  </div>
+
+  <%= if @more_pages? do %>
+    <div class="flex justify-center my-4">
+      <.button phx-click="load_more_alerts"><%= gettext("Load More") %></.button>
+    </div>
+  <% else %>
+    <div class="flex justify-center my-4">
+      <span class="text-black text-xs font-semibold"><%= gettext("No more alerts") %></span>
+    </div>
+  <% end %>
+</div>
+
+<.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
+  <div class="modal-content">
+    <.header><%= @alert.title %></.header>
+    <hr class="border-t border-gray-300 my-4" /> Creation Time: <%= @alert.creation_time %> <br />
+    Case ID: <br /> Case Status: <br /> Risk Level: <%= @alert.risk_level %> <br />
+    Team: <%= @alert.team_id %> <br /> Alert ID: <%= @alert.id %>
+    <%= @alert.description %>
+    <br />
+    <br />
+    <pre><%= 
+      if @alert.additional_data != %{} do
+        @alert.additional_data
+        |> Jason.encode!(pretty: true)
+      end
+      %> </pre>
+    <br />
+    <div class="flex justify-end space-x-2">
+      <.button colour={:secondary} phx-click="hide_modal">Close</.button>
+      <.button colour={:secondary} phx-click="hide_modal">Search Link</.button>
+      <.button phx-click="hide_modal">Create Case</.button>
+    </div>
+  </div>
+</.modal>
