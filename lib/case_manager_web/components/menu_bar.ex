@@ -23,9 +23,9 @@ defmodule CaseManagerWeb.MenuBar do
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
         <div class="flex-col h-full w-full justify-start items-center gap-4 inline-flex">
-          <.menu_item icon_name="hero-bell" active?={@current_page==:alerts} />
+          <.menu_item icon_name="hero-bell" active?={@current_page==:alerts} path="/alerts" />
           <div class="w-full h-px border border-neutral-500"></div>
-          <.menu_item icon_name="hero-document-duplicate" active?={@current_page==:cases} />
+          <.menu_item icon_name="hero-document-duplicate" active?={@current_page==:cases} path="/" />
           <div class="w-full h-px border border-neutral-500"></div>
           <.menu_item icon_name="hero-users" active?={@current_page==:users} />
           <div class="w-full h-px border border-neutral-500"></div>
@@ -44,7 +44,8 @@ defmodule CaseManagerWeb.MenuBar do
     """
   end
 
-  attr :icon_name, :string, doc: "name of hero icon used"
+  attr :icon_name, :string, required: true, doc: "name of hero icon used"
+  attr :path, :string, default: nil, doc: "path to navigate to"
   attr :active?, :boolean, default: false, doc: "determines whether an item is highlighted"
 
   defp menu_item(%{icon_name: "hero-" <> _} = assigns) do
@@ -53,12 +54,15 @@ defmodule CaseManagerWeb.MenuBar do
       |> assign(:selection_circle, @selection_circle)
 
     ~H"""
-    <button class="bg-none border-none relative flex">
-      <%= if @active? do %>
-        <div class={@selection_circle} />
-      <% end %>
-      <.icon name={@icon_name} class="bg-white z-0" />
-    </button>
+    <.link navigate={@path}>
+      <button class="bg-none border-none relative flex">
+        <%= if @active? do %>
+          <div class={@selection_circle} />
+        <% end %>
+        <.icon name={@icon_name} class="bg-white z-0" />
+      </button>
+    </.link>
+
     """
   end
 end
