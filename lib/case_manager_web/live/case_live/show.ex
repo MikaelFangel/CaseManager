@@ -4,7 +4,11 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    socket =
+      socket
+      |> assign(:menu_item, nil)
+
+    {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
   end
 
   @impl true
