@@ -99,6 +99,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.StatusBadge
       import CaseManagerWeb.Back
       import CaseManagerWeb.SimpleForm
+      import CaseManagerWeb.MenuBar
 
       # Translation
       use Gettext, backend: CaseManagerWeb.Gettext

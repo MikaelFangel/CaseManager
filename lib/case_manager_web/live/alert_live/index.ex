@@ -4,8 +4,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="p-0 pl-6 pr-8">
-      <div class="flex justify-end my-4 gap-x-2">
+    <div class="h-full">
+      <div class="flex justify-end gap-x-2">
         <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
         <.link navigate={~p"/case/new"}>
           <.button
@@ -124,6 +124,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:alert, %{})
      |> assign(:selected_alerts, [])
      |> assign(:current_page, alerts_page)
+     |> assign(:menu_item, :alerts)
      |> assign(:more_pages?, alerts_page.more?)}
   end
 
