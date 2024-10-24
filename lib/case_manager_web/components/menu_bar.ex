@@ -25,24 +25,23 @@ defmodule CaseManagerWeb.MenuBar do
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
         <div class="flex-col h-full w-full justify-start items-center gap-4 inline-flex">
-          
           <%= if team_type==:mssp do %>
-            <.menu_item icon_name="hero-bell" active?={@current_page==:alerts} path="/alerts" />
+            <.menu_item icon_name="hero-bell" active?={@current_page == :alerts} path="/alerts" />
             <div class="w-full h-px border border-neutral-500"></div>
           <% end %>
 
-          <.menu_item icon_name="hero-document-duplicate" active?={@current_page==:cases} path="/" />
+          <.menu_item icon_name="hero-document-duplicate" active?={@current_page == :cases} path="/" />
 
           <%= if team_type==:mssp do %>
             <div class="w-full h-px border border-neutral-500"></div>
-            <.menu_item icon_name="hero-users" active?={@current_page==:users} />
+            <.menu_item icon_name="hero-users" active?={@current_page == :users} />
             <div class="w-full h-px border border-neutral-500"></div>
-            <.menu_item icon_name="hero-building-office" active?={@current_page==:teams} />
+            <.menu_item icon_name="hero-building-office" active?={@current_page == :teams} />
           <% end %>
         </div>
         <!-- Bottom content -->
         <div class="flex-col h-full justify-end items-center gap-4 inline-flex">
-          <.menu_item icon_name="hero-cog-8-tooth" active?={@current_page==:settings} />
+          <.menu_item icon_name="hero-cog-8-tooth" active?={@current_page == :settings} />
           <div class="w-full h-px border border-neutral-500"></div>
           <.menu_item icon_name="hero-user-circle" />
         </div>
@@ -71,7 +70,6 @@ defmodule CaseManagerWeb.MenuBar do
         <.icon name={@icon_name} class="bg-white z-0" />
       </button>
     </.link>
-
     """
   end
 end

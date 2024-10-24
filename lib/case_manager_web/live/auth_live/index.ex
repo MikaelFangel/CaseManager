@@ -6,7 +6,8 @@ defmodule CaseManagerWeb.AuthLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    socket = socket
+    socket =
+      socket
       |> assign(:menu_item, nil)
 
     {:ok, socket, layout: false}
