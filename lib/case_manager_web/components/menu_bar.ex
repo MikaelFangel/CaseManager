@@ -9,7 +9,7 @@ defmodule CaseManagerWeb.MenuBar do
   @selection_circle "w-11 h-11 bg-gray-300/30 rounded-full z-0 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
 
   attr :current_page, :atom, required: true, doc: "the page the user is at"
-  attr :current_user, :map, required: true, doc: "the user to check if customer or Mssp"
+  attr :current_user, :map, required: true, doc: "the user to check if customer or mssp"
   attr :type, :string, default: nil
   attr :class, :string, default: nil
   attr :rest, :global
