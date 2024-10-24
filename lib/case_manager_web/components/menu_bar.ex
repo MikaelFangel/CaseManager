@@ -17,8 +17,9 @@ defmodule CaseManagerWeb.MenuBar do
   slot :inner_block, required: true
 
   def menu_bar(assigns) do
-    assigns = assigns
-    |> assign(:team_type, Ash.load!(assigns.current_user, :team).team.type)
+    assigns =
+      assigns
+      |> assign(:team_type, Ash.load!(assigns.current_user, :team).team.type)
 
     ~H"""
     <div class="flex flex-row w-screen h-screen gap-x-6">
