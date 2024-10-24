@@ -15,6 +15,7 @@ defmodule CaseManagerWeb.CaseLive.New do
       _alerts ->
         {:ok,
          assign(socket, :selected_alerts, selected_alerts)
+         |> assign(:menu_item, nil)
          |> assign(current_user: socket.assigns.current_user)}
     end
   end
