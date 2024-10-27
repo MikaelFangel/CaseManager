@@ -140,6 +140,10 @@ defmodule CaseManager.Cases.Case do
       authorize_if CaseManager.Policies.MSSPCreatePolicy
     end
 
+    policy action_type(:update) do
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
+    end
+
     policy action_type(:read) do
       authorize_if always()
     end

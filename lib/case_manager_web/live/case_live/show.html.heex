@@ -46,10 +46,15 @@
       <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         <%= @case.internal_note %>
       </div>
+      <div class="mt-4 gap-2 w-full flex justify-end">
+        <.button>Edit</.button>
+        <%= if !@case.escalated do %>
+          <.button colour={:critical} phx-click="escalate_case" phx-value-id={@case.id}>
+            <%= gettext("Escalate") %>
+          </.button>
+        <% end %>
+      </div>
     <% end %>
-    <div class="mt-4 w-full flex justify-end">
-      <.button>Edit</.button>
-    </div>
   </div>
   <div class="w-1/3 bg-slate-50 shadow"></div>
 </div>
