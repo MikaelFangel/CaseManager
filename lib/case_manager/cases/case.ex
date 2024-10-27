@@ -67,7 +67,19 @@ defmodule CaseManager.Cases.Case do
       end
     end
 
-    update :update, primary?: true
+    update :update do
+      accept [
+        :title,
+        :description,
+        :status,
+        :priority,
+        :escalated,
+        :assignee_id,
+        :internal_note
+      ]
+
+      primary? true
+    end
   end
 
   attributes do
