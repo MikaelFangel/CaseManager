@@ -1,31 +1,31 @@
 <div>
   <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
     <div class="w-1/3 px-8">
-      <.input name="title" label="Title" field={@form[:title]} type="text" />
+      <.input name="title" label={gettext("Title")} field={@form[:title]} type="text" />
     </div>
     <div class="px-8">
       <div class="flex -mx-8">
         <div class="w-1/3 px-8">
           <div class="grid grid-cols-[150px_1fr] text-sm items-center mb-4">
-            <span>Customer:</span>
+            <span><%= gettext("Customer") %>:</span>
             <div>
               <%= @selected_alerts
               |> Enum.take(1)
               |> then(fn [{_id, alert} | _xs] -> alert.team.name end) %>
             </div>
-            <span>Priority:</span>
+            <span><%= gettext("Priority") %>:</span>
             <div>
               <.input
                 name="priority"
                 type="select"
                 field={@form[:priority]}
                 options={[
-                  {"Select a priority", ""},
-                  {"Info", :info},
-                  {"Low", :low},
-                  {"Medium", :medium},
-                  {"High", :high},
-                  {"Critical", :critical}
+                  {gettext("Select a priority"), ""},
+                  {gettext("Info"), :info},
+                  {gettext("Low"), :low},
+                  {gettext("Medium"), :medium},
+                  {gettext("High"), :high},
+                  {gettext("Critical"), :critical}
                 ]}
               />
             </div>
@@ -36,11 +36,11 @@
                 type="select"
                 field={@form[:status]}
                 options={[
-                  {"In Progress", :in_progress},
-                  {"Pending", :pending},
-                  {"True Positive", :t_positive},
-                  {"False Positive", :f_positive},
-                  {"Benign", :benign}
+                  {gettext("In Progress"), :in_progress},
+                  {gettext("Pending"), :pending},
+                  {gettext("True Positive"), :t_positive},
+                  {gettext("False Positive"), :f_positive},
+                  {gettext("Benign"), :benign}
                 ]}
               />
             </div>
@@ -48,7 +48,7 @@
           <.input
             name="description"
             field={@form[:description]}
-            label="Description"
+            label={gettext("Description")}
             type="textarea"
             class="h-[355px]"
           />
@@ -76,7 +76,7 @@
             <.input
               name="internal_note"
               field={@form[:internal_note]}
-              label="Internal Note"
+              label={gettext("Internal Note")}
               type="textarea"
               class="h-[200px]"
             />
@@ -87,9 +87,13 @@
 
     <:actions>
       <div class="flex justify-end w-full gap-4">
-        <.button phx-disable-with="Saving...">Save</.button>
-        <.button colour={:critical} phx-disable-with="Saving..." phx-click="save_escalate">
-          Save & Escalate
+        <.button phx-disable-with={gettext("Saving...")}><%= gettext("Save") %></.button>
+        <.button
+          colour={:critical}
+          phx-disable-with={gettext("Saving...")}
+          phx-click="save_escalate"
+        >
+          <%= gettext("Save & Escalate") %>
         </.button>
       </div>
     </:actions>
