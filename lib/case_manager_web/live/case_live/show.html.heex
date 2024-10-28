@@ -1,23 +1,29 @@
 <div class="flex h-screen">
   <div class="w-2/3 px-4">
-    <.back navigate={~p"/"}>Back to cases</.back>
+    <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
     <.header><%= @case.title %></.header>
     <div class="grid grid-cols-3 gap-2 mt-4">
-      <div><span>Created at:</span> <%= @case.inserted_at %></div>
-      <div><span>ID:</span> <%= @case.id |> String.slice(0..7) %></div>
+      <div><span><%= gettext("Created at") %>:</span> <%= @case.inserted_at %></div>
+      <div><span><%= gettext("ID") %>:</span> <%= @case.id |> String.slice(0..7) %></div>
       <.risk_badge colour={@case.priority} />
 
       <div>
-        <span>Last updated:</span> <%= DateTime.diff(DateTime.utc_now(), @case.updated_at, :day) %> days ago
+        <span><%= gettext("Last updated") %>:</span> <%= DateTime.diff(
+          DateTime.utc_now(),
+          @case.updated_at,
+          :day
+        ) %> days ago
       </div>
-      <div><span>Created by:</span></div>
+      <div><span><%= gettext("Created by") %>:</span></div>
       <div>
-        <span>Escalated:</span> <%= @case.escalated |> to_string() |> String.capitalize() %>
+        <span><%= gettext("Escalated") %>:</span> <%= @case.escalated
+        |> to_string()
+        |> String.capitalize() %>
       </div>
 
-      <div><span>Customer:</span> <%= @case.team.name %></div>
-      <div><span>No. attached alarms:</span></div>
-      <div><span>Status: </span> <.status_badge colour={@case.status} /></div>
+      <div><span><%= gettext("Customer") %>:</span> <%= @case.team.name %></div>
+      <div><span><%= gettext("No. attached alarms") %>:</span></div>
+      <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
     </div>
 
     <p class="mt-4"><%= @case.description %></p>
@@ -42,13 +48,13 @@
     </.table>
 
     <%= if Ash.load!(@current_user, :team).team.type == :mssp do %>
-      <div class="mt-4">Internal Note:</div>
+      <div class="mt-4"><%= gettext("Internal Note") %>:</div>
       <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         <%= @case.internal_note %>
       </div>
     <% end %>
     <div class="mt-4 w-full flex justify-end">
-      <.button>Edit</.button>
+      <.button><%= gettext("Edit") %></.button>
     </div>
   </div>
   <div class="w-1/3 bg-slate-50 shadow"></div>
