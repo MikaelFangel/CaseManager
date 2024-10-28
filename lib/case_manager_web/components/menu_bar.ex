@@ -22,7 +22,7 @@ defmodule CaseManagerWeb.MenuBar do
       |> assign(:team_type, Ash.load!(assigns.current_user, :team).team.type)
 
     ~H"""
-    <div class="flex flex-row w-screen h-screen gap-x-6">
+    <div class="flex flex-row w-screen h-screen">
       <!-- The menu bar -->
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
