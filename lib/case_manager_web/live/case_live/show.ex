@@ -12,7 +12,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _session, socket) do
+  def handle_params(%{"id" => id}, _uri, socket) do
     case = Case |> Ash.get!(id)
     alerts = Ash.load!(case, :alert).alert |> Enum.map(&{&1.id, &1})
 
