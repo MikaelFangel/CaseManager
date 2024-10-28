@@ -21,4 +21,14 @@ defmodule CaseManagerWeb.CaseLive.Show do
      |> assign(case: case)
      |> assign(selected_alerts: alerts)}
   end
+
+  def handle_event("escalate_case", %{"id" => id}, socket) do
+    updated_case =
+      Case
+      |> Ash.get!(id)
+      |> Ash.Changeset.for_update(:update, %{escalated: true}, actor: socket.assigns.current_user)
+      |> Ash.update!()
+
+    {:noreply, socket |> assign(case: updated_case)}
+  end
 end
