@@ -7,6 +7,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
     socket =
       socket
       |> assign(:menu_item, nil)
+      |> assign(current_user: socket.assigns.current_user)
 
     {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
   end
