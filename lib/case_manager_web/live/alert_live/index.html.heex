@@ -2,11 +2,7 @@
   <div class="flex justify-end gap-x-2">
     <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
     <.link navigate={~p"/case/new"}>
-      <.button
-        icon_name="hero-document-plus"
-        phx-click="create_case"
-        disabled={Enum.empty?(@selected_alerts)}
-      >
+      <.button icon_name="hero-document-plus" disabled={Enum.empty?(@selected_alerts)}>
         <%= gettext("Create Case") %>
       </.button>
     </.link>

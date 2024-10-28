@@ -71,10 +71,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, assign(socket, :selected_alerts, selected_alerts)}
   end
 
-  def handle_event("create_case", _params, socket) do
-    {:noreply, socket}
-  end
-
   @impl true
   def handle_event("load_more_alerts", _params, socket) do
     current_page = socket.assigns.current_page
