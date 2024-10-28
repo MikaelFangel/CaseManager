@@ -67,7 +67,19 @@ defmodule CaseManager.Cases.Case do
       end
     end
 
-    update :update, primary?: true
+    update :update do
+      accept [
+        :title,
+        :description,
+        :status,
+        :priority,
+        :escalated,
+        :assignee_id,
+        :internal_note
+      ]
+
+      primary? true
+    end
   end
 
   attributes do
@@ -125,6 +137,10 @@ defmodule CaseManager.Cases.Case do
 
   policies do
     policy action_type(:create) do
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
+    end
+
+    policy action_type(:update) do
       authorize_if CaseManager.Policies.MSSPCreatePolicy
     end
 
