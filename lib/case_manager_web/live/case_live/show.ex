@@ -22,6 +22,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
      |> assign(selected_alerts: alerts)}
   end
 
+  @impl true
   def handle_event("escalate_case", %{"id" => id}, socket) do
     updated_case =
       Case
