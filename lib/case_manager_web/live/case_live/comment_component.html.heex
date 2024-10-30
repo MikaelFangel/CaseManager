@@ -1,0 +1,18 @@
+<div>
+  <.simple_form for={@form} phx-target={@myself} phx-submit="send">
+    <.input
+      name="body"
+      field={@form[:body]}
+      type="textarea"
+      value={@body}
+      placeholder={gettext("Type your message...")}
+    />
+    <:actions>
+      <div class="flex justify-end w-full">
+        <.button phx-disable-with={gettext("Sending...")}>
+          <%= gettext("Send") %>
+        </.button>
+      </div>
+    </:actions>
+  </.simple_form>
+</div>

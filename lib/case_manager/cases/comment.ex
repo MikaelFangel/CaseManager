@@ -6,6 +6,7 @@ defmodule CaseManager.Cases.Comment do
     otp_app: :case_manager,
     domain: CaseManager.Cases,
     data_layer: AshPostgres.DataLayer,
+    notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer]
 
   attributes do
@@ -28,6 +29,13 @@ defmodule CaseManager.Cases.Comment do
     end
   end
 
+  pub_sub do
+    module CaseManagerWeb.Endpoint
+
+    prefix "comment"
+    publish :create, ["created"]
+  end
+
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
@@ -36,6 +44,10 @@ defmodule CaseManager.Cases.Comment do
     policy action_type(:create) do
       authorize_if CaseManager.Policies.MSSPCreatePolicy
       authorize_if CaseManager.Policies.CaseOwnerPolicy
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
     end
   end
 

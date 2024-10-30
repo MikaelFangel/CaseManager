@@ -62,5 +62,45 @@
       </div>
     <% end %>
   </div>
-  <div class="w-1/3 bg-slate-50 shadow"></div>
+  <div class="w-1/3 bg-slate-50 shadow h-screen flex flex-col">
+    <div
+      class="flex-grow overflow-y-auto flex flex-col-reverse px-4 py-4"
+      id="comments"
+      phx-update="stream"
+    >
+      <%= for {id, comment} <- @streams.comments do %>
+        <div id={id} class="mb-4 flex flex-col">
+          <div class={
+            if comment.user_id == @current_user.id do
+              "text-right text-xs text-gray-500 self-end mb-1"
+            else
+              "text-left text-xs text-gray-500 self-start mb-1"
+            end
+          }>
+            <%= user = CaseManager.Teams.User |> Ash.get!(comment.user_id)
+            "#{Map.get(user, :first_name)} #{Map.get(user, :last_name)}" %>
+          </div>
+
+          <div class={
+            if comment.user_id == @current_user.id do
+              "bg-sky-200 p-2 rounded-xl self-end text-right break-words max-w-sm"
+            else
+              "bg-slate-300 p-2 rounded-xl self-start text-left break-words max-w-sm"
+            end
+          }>
+            <%= newline_to_br(comment.body) %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="flex flex-col space-y-2 mx-4 mb-4">
+      <.live_component
+        module={CaseManagerWeb.CaseLive.CommentComponent}
+        id="case-comment-form"
+        action={@live_action}
+        current_user={@current_user}
+        case_id={@case.id}
+      />
+    </div>
+  </div>
 </div>
