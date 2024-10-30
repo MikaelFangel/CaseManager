@@ -1,5 +1,5 @@
 <div class="flex h-screen">
-  <div class="w-2/3 px-4">
+  <div class="w-2/3 pl-8 pr-4">
     <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
     <.header><%= @case.title %></.header>
     <div class="grid grid-cols-3 gap-2 mt-4">
@@ -53,7 +53,9 @@
         <%= @case.internal_note %>
       </div>
       <div class="mt-4 gap-2 w-full flex justify-end">
-        <.button><%= gettext("Edit") %></.button>
+        <.link navigate={~p"/case/#{@case.id}/edit"}>
+          <.button><%= gettext("Edit") %></.button>
+        </.link>
         <%= if !@case.escalated do %>
           <.button colour={:critical} phx-click="escalate_case" phx-value-id={@case.id}>
             <%= gettext("Escalate") %>
