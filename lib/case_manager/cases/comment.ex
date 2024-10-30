@@ -37,6 +37,10 @@ defmodule CaseManager.Cases.Comment do
       authorize_if CaseManager.Policies.MSSPCreatePolicy
       authorize_if CaseManager.Policies.CaseOwnerPolicy
     end
+
+    policy action_type(:read) do
+      authorize_if always()
+    end
   end
 
   relationships do

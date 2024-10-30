@@ -15,12 +15,15 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
     case = Case |> Ash.get!(id)
-    alerts = Ash.load!(case, :alert).alert |> Enum.map(&{&1.id, &1})
+    loaded_relations = case |> Ash.load!([:alert, :comment])
+    alerts = loaded_relations.alert |> Enum.map(&{&1.id, &1})
+    comments = loaded_relations.comment
 
     {:noreply,
      socket
      |> assign(case: case)
-     |> assign(selected_alerts: alerts)}
+     |> assign(selected_alerts: alerts)
+     |> assign(comments: comments)}
   end
 
   @impl true
