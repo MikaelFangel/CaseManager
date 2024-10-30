@@ -54,4 +54,11 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
     {:noreply, socket |> assign(case: updated_case)}
   end
+
+  def newline_to_br(text) do
+    text
+    |> String.split("\n")
+    |> Enum.map_join("<br/>", & &1)
+    |> raw()
+  end
 end

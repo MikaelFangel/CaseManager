@@ -83,12 +83,12 @@
 
           <div class={
             if comment.user_id == @current_user.id do
-              "bg-sky-200 p-2 rounded-xl self-end text-right"
+              "bg-sky-200 p-2 rounded-xl self-end text-right break-words max-w-sm"
             else
-              "bg-slate-300 p-2 rounded-xl self-start text-left"
+              "bg-slate-300 p-2 rounded-xl self-start text-left break-words max-w-sm"
             end
           }>
-            <%= comment.body %>
+            <%= newline_to_br(comment.body) %>
           </div>
         </div>
       <% end %>
