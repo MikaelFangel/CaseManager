@@ -4,6 +4,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
+    if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("comment:created")
+
     socket =
       socket
       |> assign(:menu_item, nil)
@@ -13,17 +15,33 @@ defmodule CaseManagerWeb.CaseLive.Show do
   end
 
   @impl true
+  def handle_info(
+        %Phoenix.Socket.Broadcast{
+          event: "create",
+          payload: %Ash.Notifier.Notification{data: comment}
+        },
+        socket
+      ) do
+    {:noreply, socket |> stream_insert(:comments, comment, at: 0)}
+  end
+
+  @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
     case = Case |> Ash.get!(id)
     loaded_relations = case |> Ash.load!([:alert, :comment])
     alerts = loaded_relations.alert |> Enum.map(&{&1.id, &1})
     comments = loaded_relations.comment
 
+    comments = comments |> Enum.reverse()
+
     {:noreply,
      socket
+     |> stream(
+       :comments,
+       comments
+     )
      |> assign(case: case)
-     |> assign(selected_alerts: alerts)
-     |> assign(comments: comments)}
+     |> assign(selected_alerts: alerts)}
   end
 
   @impl true
