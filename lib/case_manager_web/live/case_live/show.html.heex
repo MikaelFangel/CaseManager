@@ -28,7 +28,7 @@
 
     <p class="mt-4"><%= @case.description %></p>
 
-    <.table id="alerts" rows={@selected_alerts} row_click={}>
+    <.table id="alerts" rows={@related_alerts} row_click={}>
       <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
         <.risk_badge colour={alert.risk_level} />
