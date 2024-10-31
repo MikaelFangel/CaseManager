@@ -38,8 +38,8 @@ defmodule CaseManager.SelectedAlerts do
   @doc """
   Toggles the selection state of an alert for a given user.
   """
-  def toggle_alert_selection(user_id, alert_id) do
-    GenServer.call(__MODULE__, {:toggle_alert_selection, user_id, alert_id})
+  def toggle_alert_selection(user_id, alert_id, team_id) do
+    GenServer.call(__MODULE__, {:toggle_alert_selection, user_id, alert_id, team_id})
   end
 
   @doc """
@@ -50,21 +50,44 @@ defmodule CaseManager.SelectedAlerts do
   end
 
   @impl true
-  def handle_call({:toggle_alert_selection, user_id, alert_id}, _from, state) do
+  def handle_call({:toggle_alert_selection, user_id, alert_id, team_id}, _from, state) do
     selected_alerts = get_selected_alerts(user_id)
 
-    updated_alerts =
-      if Enum.member?(selected_alerts, alert_id),
-        do: List.delete(selected_alerts, alert_id),
-        else: [alert_id | selected_alerts]
+    case Map.get(state, user_id) do
+      nil ->
+        updated_alerts = [alert_id | selected_alerts]
+        :ets.insert(@table_name, {user_id, updated_alerts})
+        new_state = Map.put(state, user_id, %{team_id: team_id})
+        {:reply, :ok, new_state}
 
-    :ets.insert(@table_name, {user_id, updated_alerts})
-    {:reply, :ok, state}
+      %{team_id: ^team_id} ->
+        updated_alerts = toggle_alert(selected_alerts, alert_id)
+        :ets.insert(@table_name, {user_id, updated_alerts})
+
+        if updated_alerts == [] do
+          :ets.delete(@table_name, user_id)
+          new_state = Map.delete(state, user_id)
+          {:reply, :ok, new_state}
+        else
+          {:reply, :ok, state}
+        end
+
+      %{team_id: _existing_team_id} ->
+        {:reply, {:error, :team_mismatch}, state}
+    end
+  end
+
+  defp toggle_alert(selected_alerts, alert_id) do
+    case Enum.member?(selected_alerts, alert_id) do
+      true -> List.delete(selected_alerts, alert_id)
+      false -> [alert_id | selected_alerts]
+    end
   end
 
   @impl true
   def handle_call({:drop_selected_alerts, user_id}, _from, state) do
     :ets.delete(@table_name, user_id)
-    {:reply, :ok, state}
+    new_state = Map.delete(state, user_id)
+    {:reply, :ok, new_state}
   end
 end

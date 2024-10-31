@@ -63,9 +63,23 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, assign(socket, :show_modal, false)}
   end
 
-  def handle_event("toggle_alert_selection", %{"id" => id}, socket) do
+  def handle_event(
+        "toggle_alert_selection",
+        %{"id" => id, "team_id" => team_id, "checkbox_id" => checkbox_id},
+        socket
+      ) do
     user_id = socket.assigns.current_user.id
-    CaseManager.SelectedAlerts.toggle_alert_selection(user_id, id)
+
+    socket =
+      case CaseManager.SelectedAlerts.toggle_alert_selection(user_id, id, team_id) do
+        :ok ->
+          socket
+
+        {:error, _} ->
+          socket
+          |> push_event("deselect-checkbox", %{checkbox_id: checkbox_id})
+          |> put_flash(:error, gettext("Alerts associated teams must match!"))
+      end
 
     selected_alerts = CaseManager.SelectedAlerts.get_selected_alerts(user_id)
     {:noreply, assign(socket, :selected_alerts, selected_alerts)}
