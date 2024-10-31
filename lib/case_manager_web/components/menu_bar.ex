@@ -49,7 +49,9 @@ defmodule CaseManagerWeb.MenuBar do
         </div>
       </div>
       <!-- The screen content -->
-      <%= render_slot(@inner_block) %>
+      <div class="w-full h-full overflow-y-auto">
+        <%= render_slot(@inner_block) %>
+      </div>
     </div>
     """
   end
