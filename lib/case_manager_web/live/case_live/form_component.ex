@@ -9,6 +9,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> assign(:case_team_name, assigns[:case_team_name])
       |> assign(:case_related_alerts, assigns[:case_related_alerts])
       |> assign(:form, assigns[:form])
+      |> assign(:onCancel, assigns[:onCancel])
 
     {:ok, socket}
   end

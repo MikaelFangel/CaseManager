@@ -60,7 +60,7 @@
       </div>
 
       <!-- Right side of form -->
-      <div class="flex flex-col basis-2/3 pl-16 gap-y-8">
+      <div class="flex flex-col basis-2/3 pl-12 gap-y-8">
         <.table id="alerts" rows={@case_related_alerts} row_click={}>
           <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
           <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
@@ -93,13 +93,15 @@
     <!-- Form buttons/actions -->
     <:actions>
       <div class="flex justify-end w-full gap-4">
-        <.button phx-disable-with={gettext("Saving...")}><%= gettext("Save") %></.button>
+        <.button phx-disable-with={gettext("Saving...")}>
+          <%= gettext("Save") %>
+        </.button>
         <.button
-          colour={:critical}
-          phx-disable-with={gettext("Saving...")}
-          phx-click="save_escalate"
+          colour={:secondary}
+          phx-disable-with={gettext("Canceling...")}
+          phx-click={@onCancel}
         >
-          <%= gettext("Save & Escalate") %>
+          <%= gettext("Cancel") %>
         </.button>
       </div>
     </:actions>

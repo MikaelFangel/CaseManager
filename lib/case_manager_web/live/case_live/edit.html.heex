@@ -1,6 +1,6 @@
 <div class="h-full px-8">
   <!-- Back button -->
-  <.back navigate={~p"/case/#{@case_id}"}><%= gettext("Back to case without saving") %></.back>
+  <.back href={~p"/case/#{@case_id}"}><%= gettext("Back to case without saving") %></.back>
 
   <!-- Title -->
   <header class="pt-4 text-2xl font-semibold"><%= gettext("Edit case") %></header>
@@ -14,5 +14,6 @@
     case_team_name={@case_team_name}
     case_related_alerts={@case_related_alerts}
     form={@form}
+    onCancel={JS.navigate(~p"/case/#{@case_id}")}
   />
 </div>
