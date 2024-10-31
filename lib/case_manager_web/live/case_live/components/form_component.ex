@@ -21,10 +21,10 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
   def handle_event("save", params, socket) do
     team_id =
-      socket.assigns.case_related_alerts 
-      |> Enum.at(0) 
-      |> elem(1) 
-      |> Map.get(:team) 
+      socket.assigns.case_related_alerts
+      |> Enum.at(0)
+      |> elem(1)
+      |> Map.get(:team)
       |> Map.get(:id)
 
     case_related_alert_ids =
@@ -40,7 +40,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, case} ->
-        socket = 
+        socket =
           socket
           |> put_flash(:info, "Case created successfully.")
           |> push_navigate(to: ~p"/case/#{case.id}")

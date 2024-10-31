@@ -1,7 +1,13 @@
-<div> <!-- Stateful components must have a single static HTML tag at the root -->
-  <.simple_form class="h-full" for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
+<div>
+  <!-- Stateful components must have a single static HTML tag at the root -->
+  <.simple_form
+    class="h-full"
+    for={@form}
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+  >
     <div class="flex flex-row w-full h-full">
-      
       <!-- Left side of form -->
       <div class="flex flex-col basis-1/3 gap-y-8">
         <.input name="title" label={"#{gettext("Title")}*"} field={@form[:title]} type="text" />
@@ -58,7 +64,6 @@
           class="h-[335px]"
         />
       </div>
-
       <!-- Right side of form -->
       <div class="flex flex-col basis-2/3 pl-12 gap-y-8">
         <.table id="alerts" rows={@case_related_alerts} row_click={}>
@@ -89,7 +94,6 @@
         />
       </div>
     </div>
-
     <!-- Form buttons/actions -->
     <:actions>
       <div class="flex justify-end w-full gap-4">

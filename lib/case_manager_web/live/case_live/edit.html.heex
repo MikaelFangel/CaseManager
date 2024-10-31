@@ -1,10 +1,8 @@
 <div class="h-full px-8">
   <!-- Back button -->
   <.back navigate={~p"/case/#{@case_id}"}><%= gettext("Back to case without saving") %></.back>
-
   <!-- Title -->
   <header class="pt-4 text-2xl font-semibold"><%= gettext("Edit case") %></header>
-
   <!-- Form for creating a new case -->
   <.live_component
     module={CaseManagerWeb.CaseLive.FormComponent}
