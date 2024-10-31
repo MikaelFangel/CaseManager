@@ -38,11 +38,13 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     action_opts = [actor: socket.assigns.current_user]
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
-      {:ok, _result} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Case created successfully.")
-         |> push_navigate(to: "/")}
+      {:ok, case} ->
+        socket = 
+          socket
+          |> put_flash(:info, "Case created successfully.")
+          |> push_navigate(to: ~p"/case/#{case.id}")
+
+        {:noreply, socket}
 
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}
