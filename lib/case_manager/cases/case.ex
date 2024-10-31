@@ -71,12 +71,14 @@ defmodule CaseManager.Cases.Case do
       accept [
         :title,
         :description,
-        :status,
         :priority,
         :escalated,
         :assignee_id,
         :internal_note
       ]
+
+      argument :status, :atom
+      change transition_state(arg(:status))
 
       primary? true
     end
@@ -93,7 +95,8 @@ defmodule CaseManager.Cases.Case do
     attribute :internal_note, :string
 
     attribute :status, :atom do
-      constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign]
+      # Allow nil in the constraints because the state machine depends on it temporarily
+      constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign, nil]
       default :in_progress
       allow_nil? false
       public? true
@@ -125,6 +128,7 @@ defmodule CaseManager.Cases.Case do
     initial_states([:in_progress, :pending, :t_positive, :f_positive, :benign])
     default_initial_state(:in_progress)
     state_attribute(:status)
+    extra_states([nil])
 
     transitions do
       transition(:*, from: :in_progress, to: [:pending, :t_positive, :f_positive, :benign])
@@ -137,10 +141,12 @@ defmodule CaseManager.Cases.Case do
 
   policies do
     policy action_type(:create) do
+      forbid_unless AshStateMachine.Checks.ValidNextState
       authorize_if CaseManager.Policies.MSSPCreatePolicy
     end
 
     policy action_type(:update) do
+      forbid_unless AshStateMachine.Checks.ValidNextState
       authorize_if CaseManager.Policies.MSSPCreatePolicy
     end
 
