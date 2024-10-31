@@ -5,6 +5,7 @@ defmodule CaseManagerWeb.CaseLive.Edit do
   @impl true
   def mount(%{"id" => id} = _params, _session, socket) do
     case = CaseManager.Cases.Case |> Ash.get!(id)
+    case_linked_alerts = Ash.load!(case.team, :alert) |> Map.get(:alert) |> Enum.map(&({&1.id, &1}))
 
     form =
       case
@@ -26,6 +27,8 @@ defmodule CaseManagerWeb.CaseLive.Edit do
       socket
       |> assign(:menu_item, nil)
       |> assign(:case_id, id)
+      |> assign(:case_team_name, case.team.name)
+      |> assign(:case_related_alerts, case_linked_alerts)
       |> assign(:form, form)
 
     {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}

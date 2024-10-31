@@ -1,16 +1,18 @@
-<.simple_form class="h-full pl-8" for={@form} phx-target={} phx-change="validate" phx-submit="save">
+<div class="h-full px-8">
   <!-- Back button -->
-  <.back navigate={~p"/case/#{@case_id}"}><%= gettext("Back to case") %></.back>
+  <.back navigate={~p"/case/#{@case_id}"}><%= gettext("Back to case without saving") %></.back>
 
-  <!-- Form component -->
-  <div class="flex flex-row w-full h-full bg-red-100">
-    
-    <!-- Left side of form -->
-    <div class="basis-1/3 bg-orange-100">
-    </div>
+  <!-- Title -->
+  <header class="pt-4 text-2xl font-semibold"><%= gettext("Edit case") %></header>
 
-    <!-- Right side of form -->
-    <div class="basis-2/3 bg-teal-100">
-    </div>
-  </div>
-</.simple_form>
+  <!-- Form for creating a new case -->
+  <.live_component
+    module={CaseManagerWeb.CaseLive.FormComponent}
+    id="case-creation-form"
+    action={@live_action}
+    current_user={@current_user}
+    case_team_name={@case_team_name}
+    case_related_alerts={@case_related_alerts}
+    form={@form}
+  />
+</div>
