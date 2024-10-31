@@ -39,7 +39,7 @@ defmodule CaseManagerWeb.CaseLive.New do
     # else assign the selected alerts to the socket and render the page.
     case selected_alerts do
       [] -> {:ok, push_navigate(socket, to: ~p"/alerts")}
-      _alerts -> {:ok, socket}
+      _alerts -> {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
     end
   end
 end
