@@ -14,8 +14,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
      socket
      |> assign(:menu_item, :cases)
      |> assign(:status_type, :open)
-     |> load_cases()
-     |> assign(:more_pages?, false)}
+     |> load_cases()}
   end
 
   @impl true
