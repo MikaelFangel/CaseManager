@@ -1,7 +1,7 @@
 <div class="flex h-screen">
   <div class="w-2/3 pl-8 pr-4">
     <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
-    <.header><%= @case.title %></.header>
+    <header class="pt-4 text-2xl font-semibold"><%= @case.title %></header>
     <div class="grid grid-cols-3 gap-2 mt-4">
       <div><span><%= gettext("Created at") %>:</span> <%= @case.inserted_at %></div>
       <div><span><%= gettext("ID") %>:</span> <%= @case.id |> String.slice(0..7) %></div>
