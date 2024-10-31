@@ -1,11 +1,18 @@
-<div class="h-full">
+<div class="h-full px-8">
+  <!-- Back button -->
   <.back navigate={~p"/alerts"}><%= gettext("Back to alerts") %></.back>
 
+  <!-- Title -->
+  <span class="inline-block pt-4 text-3xl"><%= gettext("Create case") %></span>
+
+  <!-- Form for creating a new case -->
   <.live_component
     module={CaseManagerWeb.CaseLive.FormComponent}
     id="case-creation-form"
     action={@live_action}
-    selected_alerts={@selected_alerts}
     current_user={@current_user}
+    case_team_name={@case_team_name}
+    case_related_alerts={@case_related_alerts}
+    form={@form}
   />
 </div>

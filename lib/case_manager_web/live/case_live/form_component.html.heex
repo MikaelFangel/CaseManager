@@ -1,20 +1,20 @@
-<div>
-  <.simple_form for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
-    <div class="w-1/3 px-8">
-      <.input name="title" label={gettext("Title")} field={@form[:title]} type="text" />
-    </div>
-    <div class="px-8">
-      <div class="flex -mx-8">
-        <div class="w-1/3 px-8">
-          <div class="grid grid-cols-[150px_1fr] text-sm items-center mb-4">
-            <span><%= gettext("Customer") %>:</span>
-            <div>
-              <%= @selected_alerts
-              |> Enum.take(1)
-              |> then(fn [{_id, alert} | _xs] -> alert.team.name end) %>
-            </div>
-            <span><%= gettext("Priority") %>:</span>
-            <div>
+<div> <!-- Stateful components must have a single static HTML tag at the root -->
+  <.simple_form class="h-full" for={@form} phx-target={@myself} phx-change="validate" phx-submit="save">
+    <div class="flex flex-row w-full h-full">
+      
+      <!-- Left side of form -->
+      <div class="flex flex-col basis-1/3 gap-y-8">
+        <.input name="title" label={"#{gettext("Title")}*"} field={@form[:title]} type="text" />
+
+        <div class="flex-col gap-y-4">
+          <div class="flex flex-row">
+            <span class="basis-1/3"><%= gettext("Customer") %>:</span>
+            <span class="basis-2/3"><%= @case_team_name %></span>
+          </div>
+
+          <div class="flex flex-row items-center">
+            <span class="basis-1/3"><%= gettext("Priority") %>*:</span>
+            <div class="basis-2/3">
               <.input
                 name="priority"
                 type="select"
@@ -29,8 +29,11 @@
                 ]}
               />
             </div>
-            <span>Status:</span>
-            <div>
+          </div>
+
+          <div class="flex flex-row items-center">
+            <span class="basis-1/3"><%= gettext("Status") %>*:</span>
+            <div class="basis-2/3">
               <.input
                 name="status"
                 type="select"
@@ -45,46 +48,49 @@
               />
             </div>
           </div>
-          <.input
-            name="description"
-            field={@form[:description]}
-            label={gettext("Description")}
-            type="textarea"
-            class="h-[355px]"
-          />
         </div>
-        <div class="w-2/3 px-8 -mt-8">
-          <.table id="alerts" rows={@selected_alerts} row_click={}>
-            <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
-            <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
-              <.risk_badge colour={alert.risk_level} />
-            </:col>
-            <:col :let={{_id, alert}} label={gettext("Creation Time")}>
-              <%= alert.creation_time %>
-            </:col>
-            <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
-              <.icon_btn
-                icon_name="hero-arrow-top-right-on-square"
-                colour={:secondary}
-                size={:small}
-                class="pl-0.5 pb-1"
-                phx-click={alert.link}
-              />
-            </:col>
-          </.table>
-          <div class="my-4">
-            <.input
-              name="internal_note"
-              field={@form[:internal_note]}
-              label={gettext("Internal Note")}
-              type="textarea"
-              class="h-[200px]"
+
+        <.input
+          name="description"
+          field={@form[:description]}
+          label={gettext("Description")}
+          type="textarea"
+          class="h-[335px]"
+        />
+      </div>
+
+      <!-- Right side of form -->
+      <div class="flex flex-col basis-2/3 pl-16 gap-y-8">
+        <.table id="alerts" rows={@case_related_alerts} row_click={}>
+          <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+          <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
+            <.risk_badge colour={alert.risk_level} />
+          </:col>
+          <:col :let={{_id, alert}} label={gettext("Creation Time")}>
+            <%= alert.creation_time %>
+          </:col>
+          <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
+            <.icon_btn
+              icon_name="hero-arrow-top-right-on-square"
+              colour={:secondary}
+              size={:small}
+              class="pl-0.5 pb-1"
+              phx-click={alert.link}
             />
-          </div>
-        </div>
+          </:col>
+        </.table>
+
+        <.input
+          name="internal_note"
+          field={@form[:internal_note]}
+          label={gettext("Internal Note")}
+          type="textarea"
+          class="h-[200px]"
+        />
       </div>
     </div>
 
+    <!-- Form buttons/actions -->
     <:actions>
       <div class="flex justify-end w-full gap-4">
         <.button phx-disable-with={gettext("Saving...")}><%= gettext("Save") %></.button>

@@ -3,25 +3,14 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   alias AshPhoenix.Form
 
   def update(assigns, socket) do
-    form =
-      CaseManager.Cases.Case
-      |> Form.for_create(:create,
-        forms: [
-          case: [
-            resource: CaseManager.Cases.Case,
-            create_action: :create,
-            actor: assigns[:current_user]
-          ]
-        ],
-        domain: CaseManager.Cases
-      )
-      |> Form.add_form([:case])
-      |> to_form()
+    socket =
+      socket
+      |> assign(:current_user, assigns[:current_user])
+      |> assign(:case_team_name, assigns[:case_team_name])
+      |> assign(:case_related_alerts, assigns[:case_related_alerts])
+      |> assign(:form, assigns[:form])
 
-    {:ok,
-     assign(socket, :form, form)
-     |> assign(:selected_alerts, assigns[:selected_alerts] || [])
-     |> assign(:current_user, assigns[:current_user]) || nil}
+    {:ok, socket}
   end
 
   def handle_event("validate", params, socket) do
@@ -31,16 +20,20 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
   def handle_event("save", params, socket) do
     team_id =
-      socket.assigns.selected_alerts |> Enum.at(0) |> elem(1) |> Map.get(:team) |> Map.get(:id)
+      socket.assigns.case_related_alerts 
+      |> Enum.at(0) 
+      |> elem(1) 
+      |> Map.get(:team) 
+      |> Map.get(:id)
 
-    selected_alert_ids =
-      socket.assigns.selected_alerts
+    case_related_alert_ids =
+      socket.assigns.case_related_alerts
       |> Enum.map(fn {_id, alert} -> alert.id end)
 
     params =
       Map.put(params, :team_id, team_id)
       |> Map.put(:escalated, false)
-      |> Map.put(:alert, selected_alert_ids)
+      |> Map.put(:alert, case_related_alert_ids)
 
     action_opts = [actor: socket.assigns.current_user]
 
