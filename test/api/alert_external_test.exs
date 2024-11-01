@@ -23,7 +23,8 @@ defmodule CaseManager.AlertExternalTest do
         json_data = Jason.encode!(data)
 
         conn =
-          conn(:post, "/api/json/alerts", json_data)
+          :post
+          |> conn("/api/json/alerts", json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
           |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
@@ -45,7 +46,8 @@ defmodule CaseManager.AlertExternalTest do
         json_data = Jason.encode!(data)
 
         conn =
-          conn(:post, "/api/json/alerts", json_data)
+          :post
+          |> conn("/api/json/alerts", json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
           |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
@@ -67,7 +69,8 @@ defmodule CaseManager.AlertExternalTest do
         json_data = Jason.encode!(data)
 
         conn =
-          conn(:post, "/api/json/alerts", json_data)
+          :post
+          |> conn("/api/json/alerts", json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
           |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
@@ -84,7 +87,8 @@ defmodule CaseManager.AlertExternalTest do
         updated_json_data = Jason.encode!(updated_data)
 
         update_conn =
-          conn(:patch, "/api/json/alerts/#{alert_id}", updated_json_data)
+          :patch
+          |> conn("/api/json/alerts/#{alert_id}", updated_json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
           |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
@@ -101,7 +105,8 @@ defmodule CaseManager.AlertExternalTest do
         json_data = Jason.encode!(data)
 
         conn =
-          conn(:post, "/api/json/alerts", json_data)
+          :post
+          |> conn("/api/json/alerts", json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
           |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)
@@ -118,7 +123,8 @@ defmodule CaseManager.AlertExternalTest do
         invalid_json_data = Jason.encode!(invalid_data)
 
         invalid_conn =
-          conn(:patch, "/api/json/alerts/#{alert_id}", invalid_json_data)
+          :patch
+          |> conn("/api/json/alerts/#{alert_id}", invalid_json_data)
           |> put_req_header("accept", "application/vnd.api+json")
           |> put_req_header("content-type", "application/vnd.api+json")
           |> put_private(:phoenix_endpoint, CaseManagerWeb.Endpoint)

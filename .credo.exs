@@ -203,7 +203,7 @@
           {Credo.Check.Refactor.RejectFilter, []},
           {Credo.Check.Refactor.VariableRebinding, []},
           {Credo.Check.Warning.LazyLogging, []},
-          {Credo.Check.Warning.MapGetUnsafePass, []},
+          {Credo.Check.Warning.MapGetUnsafePass, []}
 
           # {Credo.Check.Refactor.MapInto, []},
 

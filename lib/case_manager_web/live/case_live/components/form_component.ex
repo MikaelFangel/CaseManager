@@ -32,7 +32,8 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> Enum.map(fn {_id, alert} -> alert.id end)
 
     params =
-      Map.put(params, :team_id, team_id)
+      params
+      |> Map.put(:team_id, team_id)
       |> Map.put(:escalated, false)
       |> Map.put(:alert, related_alert_ids)
 

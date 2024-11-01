@@ -14,11 +14,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
     alerts = alerts_page.results
 
     {:ok,
-     stream(
-       socket,
-       :alerts,
-       alerts
-     )
+     socket
+     |> stream(:alerts, alerts)
      |> assign(:show_modal, false)
      |> assign(:alert, %{})
      |> assign(:selected_alerts, [])
@@ -51,10 +48,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_modal", alert, socket) do
-    alert = Map.new(alert, fn {k, v} -> {String.to_atom(k), v} end)
+    alert = Map.new(alert, fn {k, v} -> {String.to_existing_atom(k), v} end)
 
     {:noreply,
-     assign(socket, :show_modal, true)
+     socket
+     |> assign(:show_modal, true)
      |> assign(:alert, alert)}
   end
 
@@ -96,11 +94,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
     alerts = next_page.results
 
     {:noreply,
-     stream(
-       socket,
-       :alerts,
-       alerts
-     )
+     socket
+     |> stream(:alerts, alerts)
      |> assign(:current_page, next_page)
      |> assign(:more_pages?, next_page.more?)}
   end
