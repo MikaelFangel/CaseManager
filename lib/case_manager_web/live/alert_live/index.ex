@@ -78,7 +78,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
         {:error, _} ->
           socket
           |> push_event("deselect-checkbox", %{checkbox_id: checkbox_id})
-          |> put_flash(:error, gettext("Alerts associated teams must match!"))
+          |> put_flash(
+            :error,
+            gettext("The selected alerts must be associated with the same team!")
+          )
       end
 
     selected_alerts = CaseManager.SelectedAlerts.get_selected_alerts(user_id)
