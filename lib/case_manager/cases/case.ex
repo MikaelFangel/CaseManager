@@ -10,6 +10,9 @@ defmodule CaseManager.Cases.Case do
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshStateMachine]
 
+  @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
+  @closed_states [:t_positive, :f_positive, :benign]
+
   resource do
     plural_name :cases
   end
@@ -42,6 +45,9 @@ defmodule CaseManager.Cases.Case do
         :team_id,
         :internal_note
       ]
+
+      argument :status, :atom
+      change transition_state(arg(:status))
 
       argument :alert, {:array, :string}
 
@@ -95,8 +101,7 @@ defmodule CaseManager.Cases.Case do
     attribute :internal_note, :string
 
     attribute :status, :atom do
-      # Allow nil in the constraints because the state machine depends on it temporarily
-      constraints one_of: [:in_progress, :pending, :t_positive, :f_positive, :benign, nil]
+      constraints one_of: @valid_states
       default :in_progress
       allow_nil? false
       public? true
@@ -125,17 +130,16 @@ defmodule CaseManager.Cases.Case do
   end
 
   state_machine do
-    initial_states([:in_progress, :pending, :t_positive, :f_positive, :benign])
+    initial_states(@valid_states)
     default_initial_state(:in_progress)
     state_attribute(:status)
-    extra_states([nil])
 
     transitions do
-      transition(:*, from: :in_progress, to: [:pending, :t_positive, :f_positive, :benign])
-      transition(:*, from: :pending, to: [:in_progress, :t_positive, :f_positive, :benign])
-      transition(:*, from: :benign, to: [:t_positive, :f_positive])
-      transition(:*, from: :t_positive, to: [:benign, :f_positive])
-      transition(:*, from: :f_positive, to: [:benign, :t_positive])
+      transition(:*, from: :in_progress, to: @valid_states)
+      transition(:*, from: :pending, to: @valid_states)
+      transition(:*, from: :benign, to: @closed_states)
+      transition(:*, from: :t_positive, to: @closed_states)
+      transition(:*, from: :f_positive, to: @closed_states)
     end
   end
 
