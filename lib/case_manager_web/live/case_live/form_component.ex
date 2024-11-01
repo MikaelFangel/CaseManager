@@ -22,7 +22,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
      socket
      |> assign(:form, form)
      |> assign(:selected_alerts, assigns[:selected_alerts] || [])
-     |> assign(:current_user, assigns[:current_user]) || nil}
+     |> assign(:current_user, assigns[:current_user])}
   end
 
   def handle_event("validate", params, socket) do
