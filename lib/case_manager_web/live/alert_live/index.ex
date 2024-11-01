@@ -65,13 +65,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   def handle_event(
         "toggle_alert_selection",
-        %{"id" => id, "team_id" => team_id, "checkbox_id" => checkbox_id},
+        %{"alert_id" => alert_id, "team_id" => team_id, "checkbox_id" => checkbox_id},
         socket
       ) do
     user_id = socket.assigns.current_user.id
 
     socket =
-      case CaseManager.SelectedAlerts.toggle_alert_selection(user_id, id, team_id) do
+      case CaseManager.SelectedAlerts.toggle_alert_selection(user_id, alert_id, team_id) do
         :ok ->
           socket
 
