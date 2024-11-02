@@ -22,14 +22,6 @@ defmodule CaseManager.Alerts.Alert do
              :additional_data
            ]}
 
-  json_api do
-    type "alert"
-  end
-
-  resource do
-    plural_name :alerts
-  end
-
   postgres do
     table "alert"
     repo CaseManager.Repo
@@ -44,6 +36,45 @@ defmodule CaseManager.Alerts.Alert do
 
     prefix "alert"
     publish :create, ["created"]
+  end
+
+  json_api do
+    type "alert"
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :alert_id, :string, allow_nil?: false
+    attribute :team_id, :uuid, allow_nil?: false
+    attribute :title, :string, allow_nil?: false
+    attribute :description, :string
+    attribute :creation_time, :utc_datetime, allow_nil?: false
+    attribute :link, :string, allow_nil?: false
+
+    attribute :risk_level, :atom do
+      constraints one_of: [:info, :low, :medium, :high, :critical]
+      allow_nil? false
+    end
+
+    attribute :additional_data, :map do
+      default %{}
+      sortable? false
+    end
+
+    timestamps()
+  end
+
+  relationships do
+    belongs_to :team, CaseManager.Teams.Team do
+      allow_nil? false
+    end
+
+    many_to_many :case, CaseManager.Cases.Case do
+      through CaseManager.Relationships.CaseAlert
+      source_attribute_on_join_resource :alert_id
+      destination_attribute_on_join_resource :case_id
+    end
   end
 
   actions do
@@ -88,38 +119,7 @@ defmodule CaseManager.Alerts.Alert do
     end
   end
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :alert_id, :string, allow_nil?: false
-    attribute :team_id, :uuid, allow_nil?: false
-    attribute :title, :string, allow_nil?: false
-    attribute :description, :string
-    attribute :creation_time, :utc_datetime, allow_nil?: false
-    attribute :link, :string, allow_nil?: false
-
-    attribute :risk_level, :atom do
-      constraints one_of: [:info, :low, :medium, :high, :critical]
-      allow_nil? false
-    end
-
-    attribute :additional_data, :map do
-      default %{}
-      sortable? false
-    end
-
-    timestamps()
-  end
-
-  relationships do
-    belongs_to :team, CaseManager.Teams.Team do
-      allow_nil? false
-    end
-
-    many_to_many :case, CaseManager.Cases.Case do
-      through CaseManager.Relationships.CaseAlert
-      source_attribute_on_join_resource :alert_id
-      destination_attribute_on_join_resource :case_id
-    end
+  resource do
+    plural_name :alerts
   end
 end
