@@ -55,10 +55,15 @@ defmodule CaseManagerWeb.CaseLive.Show do
     {:noreply, socket |> assign(case: updated_case)}
   end
 
-  def newline_to_br(text) do
-    text
-    |> String.split("\n")
-    |> Enum.map_join("<br/>", & &1)
+  @doc """
+    Converts a HTML string with newlines to a HTML using <br> tags instead. The input is
+    sanitized before being returned.
+  """
+  def newline_to_br(html_text) do
+    html_text
+    |> html_escape()
+    |> safe_to_string()
+    |> String.replace("\n", "<br/>")
     |> raw()
   end
 end
