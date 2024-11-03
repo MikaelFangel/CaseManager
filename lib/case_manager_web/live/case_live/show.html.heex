@@ -90,7 +90,7 @@
               "bg-slate-300 p-2 rounded-xl self-start text-left break-words max-w-sm"
             end
           }>
-            <%= newline_to_br(comment.body) %>
+            <%= raw(comment.body) %>
           </div>
         </div>
       <% end %>
