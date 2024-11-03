@@ -5,15 +5,6 @@ defmodule CaseManager.Alerts do
   """
   use Ash.Domain, extensions: [AshJsonApi.Domain, AshAdmin.Domain]
 
-  admin do
-    show?(true)
-  end
-
-  resources do
-    resource CaseManager.Alerts.Alert
-    resource CaseManager.Relationships.CaseAlert
-  end
-
   json_api do
     routes do
       base_route "/alerts", CaseManager.Alerts.Alert do
@@ -21,5 +12,14 @@ defmodule CaseManager.Alerts do
         patch :update_additional_data
       end
     end
+  end
+
+  admin do
+    show?(true)
+  end
+
+  resources do
+    resource CaseManager.Alerts.Alert
+    resource CaseManager.Relationships.CaseAlert
   end
 end

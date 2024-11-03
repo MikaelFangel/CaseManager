@@ -12,16 +12,6 @@ defmodule CaseManager.Teams.Team do
     repo CaseManager.Repo
   end
 
-  actions do
-    create :create do
-      accept [:name, :type]
-    end
-
-    read :read do
-      primary? true
-    end
-  end
-
   attributes do
     uuid_primary_key :id
     attribute :name, :string, allow_nil?: false
@@ -55,6 +45,16 @@ defmodule CaseManager.Teams.Team do
       through CaseManager.Relationships.TeamPhone
       source_attribute_on_join_resource :team_id
       destination_attribute_on_join_resource :phone_id
+    end
+  end
+
+  actions do
+    create :create do
+      accept [:name, :type]
+    end
+
+    read :read do
+      primary? true
     end
   end
 end

@@ -12,10 +12,6 @@ defmodule CaseManager.ContactInfos.IP do
     repo CaseManager.Repo
   end
 
-  actions do
-    defaults [:read, :destroy, create: :*, update: :*]
-  end
-
   attributes do
     uuid_primary_key :id
 
@@ -35,5 +31,9 @@ defmodule CaseManager.ContactInfos.IP do
       source_attribute_on_join_resource :ip_id
       destination_attribute_on_join_resource :team_id
     end
+  end
+
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 end

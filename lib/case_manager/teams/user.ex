@@ -18,8 +18,28 @@ defmodule CaseManager.Teams.User do
     end
   end
 
-  actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+  authentication do
+    strategies do
+      password :password do
+        identity_field :email
+        register_action_accept([:first_name, :last_name, :team_id, :role])
+      end
+    end
+
+    tokens do
+      enabled? true
+      token_resource CaseManager.Teams.Token
+
+      signing_secret fn _module, _map ->
+        Application.fetch_env(:case_manager, :token_signing_secret)
+      end
+    end
+  end
+
+  policies do
+    policy always() do
+      authorize_if always()
+    end
   end
 
   attributes do
@@ -39,35 +59,15 @@ defmodule CaseManager.Teams.User do
     timestamps()
   end
 
-  authentication do
-    strategies do
-      password :password do
-        identity_field :email
-        register_action_accept([:first_name, :last_name, :team_id, :role])
-      end
-    end
+  relationships do
+    belongs_to :team, CaseManager.Teams.Team
+  end
 
-    tokens do
-      enabled? true
-      token_resource CaseManager.Teams.Token
-
-      signing_secret fn _module, _map ->
-        Application.fetch_env(:case_manager, :token_signing_secret)
-      end
-    end
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 
   identities do
     identity :unique_email, [:email]
-  end
-
-  policies do
-    policy always() do
-      authorize_if always()
-    end
-  end
-
-  relationships do
-    belongs_to :team, CaseManager.Teams.Team
   end
 end

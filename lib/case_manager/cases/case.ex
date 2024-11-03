@@ -13,10 +13,6 @@ defmodule CaseManager.Cases.Case do
   @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
   @closed_states [:t_positive, :f_positive, :benign]
 
-  resource do
-    plural_name :cases
-  end
-
   postgres do
     table "case"
     repo CaseManager.Repo
@@ -31,6 +27,75 @@ defmodule CaseManager.Cases.Case do
 
     prefix "case"
     publish :create, ["created"]
+  end
+
+  policies do
+    policy action_type(:create) do
+      forbid_unless AshStateMachine.Checks.ValidNextState
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
+    end
+
+    policy action_type(:update) do
+      forbid_unless AshStateMachine.Checks.ValidNextState
+      authorize_if CaseManager.Policies.MSSPCreatePolicy
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
+    end
+  end
+
+  state_machine do
+    initial_states(@valid_states)
+    default_initial_state(:in_progress)
+    state_attribute(:status)
+
+    transitions do
+      transition(:*, from: :in_progress, to: @valid_states)
+      transition(:*, from: :pending, to: @valid_states)
+      transition(:*, from: :benign, to: @closed_states)
+      transition(:*, from: :t_positive, to: @closed_states)
+      transition(:*, from: :f_positive, to: @closed_states)
+    end
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :title, :string, allow_nil?: false
+    attribute :description, :string
+    attribute :assignee_id, :uuid
+    attribute :team_id, :uuid, allow_nil?: false
+    attribute :escalated, :boolean, allow_nil?: false
+    attribute :internal_note, :string
+
+    attribute :status, :atom do
+      constraints one_of: @valid_states
+      default :in_progress
+      allow_nil? false
+      public? true
+    end
+
+    attribute :priority, :atom do
+      constraints one_of: [:info, :low, :medium, :high, :critical]
+      allow_nil? false
+    end
+
+    timestamps()
+  end
+
+  relationships do
+    belongs_to :team, CaseManager.Teams.Team do
+      allow_nil? false
+    end
+
+    many_to_many :alert, CaseManager.Alerts.Alert do
+      through CaseManager.Relationships.CaseAlert
+      source_attribute_on_join_resource :case_id
+      destination_attribute_on_join_resource :alert_id
+    end
+
+    has_many :comment, CaseManager.Cases.Comment
   end
 
   actions do
@@ -90,72 +155,7 @@ defmodule CaseManager.Cases.Case do
     end
   end
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :title, :string, allow_nil?: false
-    attribute :description, :string
-    attribute :assignee_id, :uuid
-    attribute :team_id, :uuid, allow_nil?: false
-    attribute :escalated, :boolean, allow_nil?: false
-    attribute :internal_note, :string
-
-    attribute :status, :atom do
-      constraints one_of: @valid_states
-      default :in_progress
-      allow_nil? false
-      public? true
-    end
-
-    attribute :priority, :atom do
-      constraints one_of: [:info, :low, :medium, :high, :critical]
-      allow_nil? false
-    end
-
-    timestamps()
-  end
-
-  relationships do
-    belongs_to :team, CaseManager.Teams.Team do
-      allow_nil? false
-    end
-
-    many_to_many :alert, CaseManager.Alerts.Alert do
-      through CaseManager.Relationships.CaseAlert
-      source_attribute_on_join_resource :case_id
-      destination_attribute_on_join_resource :alert_id
-    end
-
-    has_many :comment, CaseManager.Cases.Comment
-  end
-
-  state_machine do
-    initial_states(@valid_states)
-    default_initial_state(:in_progress)
-    state_attribute(:status)
-
-    transitions do
-      transition(:*, from: :in_progress, to: @valid_states)
-      transition(:*, from: :pending, to: @valid_states)
-      transition(:*, from: :benign, to: @closed_states)
-      transition(:*, from: :t_positive, to: @closed_states)
-      transition(:*, from: :f_positive, to: @closed_states)
-    end
-  end
-
-  policies do
-    policy action_type(:create) do
-      forbid_unless AshStateMachine.Checks.ValidNextState
-      authorize_if CaseManager.Policies.MSSPCreatePolicy
-    end
-
-    policy action_type(:update) do
-      forbid_unless AshStateMachine.Checks.ValidNextState
-      authorize_if CaseManager.Policies.MSSPCreatePolicy
-    end
-
-    policy action_type(:read) do
-      authorize_if always()
-    end
+  resource do
+    plural_name :cases
   end
 end

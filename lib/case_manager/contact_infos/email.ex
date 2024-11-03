@@ -12,10 +12,6 @@ defmodule CaseManager.ContactInfos.Email do
     repo CaseManager.Repo
   end
 
-  actions do
-    defaults [:read, :destroy, create: :*, update: :*]
-  end
-
   attributes do
     uuid_primary_key :id
 
@@ -32,5 +28,9 @@ defmodule CaseManager.ContactInfos.Email do
         destination_attribute_on_join_resource :team_id
       end
     end
+  end
+
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 end

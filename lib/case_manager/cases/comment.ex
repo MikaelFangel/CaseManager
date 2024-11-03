@@ -9,16 +9,6 @@ defmodule CaseManager.Cases.Comment do
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer]
 
-  attributes do
-    uuid_primary_key :id
-
-    attribute :case_id, :uuid, allow_nil?: false, public?: true
-    attribute :user_id, :uuid, allow_nil?: false, public?: true
-    attribute :body, :string, allow_nil?: false, public?: true
-
-    timestamps()
-  end
-
   postgres do
     table "comment"
     repo CaseManager.Repo
@@ -36,10 +26,6 @@ defmodule CaseManager.Cases.Comment do
     publish :create, ["created"]
   end
 
-  actions do
-    defaults [:read, :destroy, create: :*, update: :*]
-  end
-
   policies do
     policy action_type(:create) do
       authorize_if CaseManager.Policies.MSSPCreatePolicy
@@ -51,8 +37,22 @@ defmodule CaseManager.Cases.Comment do
     end
   end
 
+  attributes do
+    uuid_primary_key :id
+
+    attribute :case_id, :uuid, allow_nil?: false, public?: true
+    attribute :user_id, :uuid, allow_nil?: false, public?: true
+    attribute :body, :string, allow_nil?: false, public?: true
+
+    timestamps()
+  end
+
   relationships do
     belongs_to :case, CaseManager.Cases.Case
     belongs_to :user, CaseManager.Teams.User
+  end
+
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 end
