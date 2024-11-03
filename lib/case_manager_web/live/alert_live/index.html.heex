@@ -23,12 +23,16 @@
         end
       }
     >
-      <:col :let={{_id, alert}} label={gettext("Pick")} width="8" not_clickable_area?>
+      <:col :let={{id, alert}} label={gettext("Pick")} width="8" not_clickable_area?>
         <.input
           type="checkbox"
           name="checkbox_name"
+          id={id}
           phx-click="toggle_alert_selection"
-          phx-value-id={alert.id}
+          phx-value-alert_id={alert.id}
+          phx-value-team_id={alert.team_id}
+          phx-value-checkbox_id={id}
+          phx-hook="DeselectCheckbox"
         />
       </:col>
       <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
