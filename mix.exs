@@ -78,7 +78,8 @@ defmodule CaseManager.MixProject do
       {:ash_authentication, "~> 4.0"},
       {:ash_authentication_phoenix, "~> 2.1"},
       {:ash_state_machine, "~> 0.2.6"},
-      {:ash_admin, "~> 0.11.9"}
+      {:ash_admin, "~> 0.11.9"},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false}
     ]
   end
 
