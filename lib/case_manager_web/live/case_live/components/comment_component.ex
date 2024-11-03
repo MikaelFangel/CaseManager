@@ -5,17 +5,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   def update(assigns, socket) do
     form =
       CaseManager.Cases.Comment
-      |> Form.for_create(:create,
-        forms: [
-          comment: [
-            resource: CaseManager.Cases.Comment,
-            create_action: :create,
-            actor: assigns[:current_user]
-          ]
-        ],
-        domain: CaseManager.Cases
-      )
-      |> Form.add_form([:comment])
+      |> Form.for_create(:create, forms: [auto?: true])
       |> to_form()
 
     {:ok,
