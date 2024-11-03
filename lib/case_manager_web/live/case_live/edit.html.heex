@@ -1,17 +1,16 @@
 <div class="h-full px-8">
-  <!-- Back button -->
-  <.back navigate={~p"/case/#{@case_id}"}><%= gettext("Back to case without saving") %></.back>
-  <!-- Title -->
-  <header class="pt-4 text-2xl font-semibold"><%= gettext("Edit case") %></header>
-  <!-- Form for creating a new case -->
+  <.back navigate={~p"/case/#{@id}"}><%= gettext("Back to case without saving") %></.back>
+
+  <.header class="pt-4"><%= gettext("Edit case") %></.header>
+
   <.live_component
     module={CaseManagerWeb.CaseLive.FormComponent}
-    id="case-creation-form"
+    id="case-editing-form"
     action={@live_action}
     current_user={@current_user}
-    case_team_name={@case_team_name}
-    case_related_alerts={@case_related_alerts}
+    team_name={@team_name}
+    related_alerts={@related_alerts}
     form={@form}
-    onCancel={JS.navigate(~p"/case/#{@case_id}")}
+    on_cancel={JS.navigate(~p"/case/#{@id}")}
   />
 </div>

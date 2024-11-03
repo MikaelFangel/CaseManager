@@ -6,10 +6,10 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     socket =
       socket
       |> assign(:current_user, assigns[:current_user])
-      |> assign(:case_team_name, assigns[:case_team_name])
-      |> assign(:case_related_alerts, assigns[:case_related_alerts])
+      |> assign(:team_name, assigns[:team_name])
+      |> assign(:related_alerts, assigns[:related_alerts])
       |> assign(:form, assigns[:form])
-      |> assign(:onCancel, assigns[:onCancel])
+      |> assign(:on_cancel, assigns[:on_cancel])
 
     {:ok, socket}
   end
@@ -21,20 +21,20 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
   def handle_event("save", params, socket) do
     team_id =
-      socket.assigns.case_related_alerts
+      socket.assigns.related_alerts
       |> Enum.at(0)
       |> elem(1)
       |> Map.get(:team)
       |> Map.get(:id)
 
-    case_related_alert_ids =
-      socket.assigns.case_related_alerts
+    related_alert_ids =
+      socket.assigns.related_alerts
       |> Enum.map(fn {_id, alert} -> alert.id end)
 
     params =
       Map.put(params, :team_id, team_id)
       |> Map.put(:escalated, false)
-      |> Map.put(:alert, case_related_alert_ids)
+      |> Map.put(:alert, related_alert_ids)
 
     action_opts = [actor: socket.assigns.current_user]
 
@@ -42,7 +42,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       {:ok, case} ->
         socket =
           socket
-          |> put_flash(:info, "Case created successfully.")
+          |> put_flash(:info, gettext("Case created successfully."))
           |> push_navigate(to: ~p"/case/#{case.id}")
 
         {:noreply, socket}

@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.CaseLive.New do
       CaseManager.SelectedAlerts.get_selected_alerts(socket.assigns.current_user.id)
       |> Enum.map(fn alert_id -> {alert_id, Ash.get!(CaseManager.Alerts.Alert, alert_id)} end)
 
-    case_team_name =
+    team_name =
       selected_alerts
       |> Enum.take(1)
       |> then(fn [{_id, alert} | _xs] -> alert.team.name end)
@@ -31,8 +31,8 @@ defmodule CaseManagerWeb.CaseLive.New do
       socket
       |> assign(:menu_item, nil)
       |> assign(:current_user, socket.assigns.current_user)
-      |> assign(:case_team_name, case_team_name)
-      |> assign(:case_related_alerts, selected_alerts)
+      |> assign(:team_name, team_name)
+      |> assign(:related_alerts, selected_alerts)
       |> assign(:form, form)
 
     # Redirect users if they try to access the page through the URL without selecting any alerts
