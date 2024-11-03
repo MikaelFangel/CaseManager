@@ -14,17 +14,7 @@ defmodule CaseManagerWeb.CaseLive.New do
 
     form =
       CaseManager.Cases.Case
-      |> Form.for_create(:create,
-        forms: [
-          case: [
-            resource: CaseManager.Cases.Case,
-            create_action: :create,
-            actor: socket.assigns[:current_user]
-          ]
-        ],
-        domain: CaseManager.Cases
-      )
-      |> Form.add_form([:case])
+      |> Form.for_create(:create, forms: [auto?: true])
       |> to_form()
 
     socket =
