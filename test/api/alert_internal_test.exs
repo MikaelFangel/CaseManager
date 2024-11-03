@@ -42,13 +42,16 @@ defmodule CaseManager.Alerts.AlertInternalTest do
       check all(
               alert_attrs <- AlertGenerator.alert_attrs(),
               risk_level <-
-                string(:alphanumeric) |> filter(&(&1 not in AlertGenerator.valid_risk_levels()))
+                :alphanumeric
+                |> string()
+                |> filter(&(&1 not in AlertGenerator.valid_risk_levels()))
             ) do
         changeset =
           Alert
           |> Ash.Changeset.for_create(
             :create,
-            Map.put(alert_attrs, :team_id, team.id)
+            alert_attrs
+            |> Map.put(:team_id, team.id)
             |> Map.put(:risk_level, risk_level)
           )
 

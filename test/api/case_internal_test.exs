@@ -35,24 +35,25 @@ defmodule CaseManager.CaseInternalTest do
       |> Map.put(:email, "eve@mail.dk")
 
     customer_user =
-      Ash.Changeset.for_create(User, :register_with_password, customer_user_attrs)
+      User
+      |> Ash.Changeset.for_create(:register_with_password, customer_user_attrs)
       |> Ash.create!()
 
     mssp_user =
-      Ash.Changeset.for_create(User, :register_with_password, mssp_user_attrs) |> Ash.create!()
+      User |> Ash.Changeset.for_create(:register_with_password, mssp_user_attrs) |> Ash.create!()
 
     eve_user =
-      Ash.Changeset.for_create(User, :register_with_password, eve_user_attrs) |> Ash.create!()
+      User |> Ash.Changeset.for_create(:register_with_password, eve_user_attrs) |> Ash.create!()
 
     %{customer_user: customer_user, mssp_user: mssp_user, eve_user: eve_user}
   end
 
   defp generate_team(name) do
     customer_team =
-      Ash.Changeset.for_create(Team, :create, %{name: name, type: :customer}) |> Ash.create!()
+      Team |> Ash.Changeset.for_create(:create, %{name: name, type: :customer}) |> Ash.create!()
 
     mssp_team =
-      Ash.Changeset.for_create(Team, :create, %{name: name, type: :mssp}) |> Ash.create!()
+      Team |> Ash.Changeset.for_create(:create, %{name: name, type: :mssp}) |> Ash.create!()
 
     {customer_team, mssp_team}
   end

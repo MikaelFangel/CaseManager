@@ -92,6 +92,7 @@
           #
           {Credo.Check.Design.TagTODO, [exit_status: 2]},
           {Credo.Check.Design.SkipTestWithoutComment, []},
+          {Credo.Check.Design.DuplicatedCode, []},
 
           #
           ## Readability Checks
@@ -139,6 +140,9 @@
           {Credo.Check.Refactor.UnlessWithElse, []},
           {Credo.Check.Refactor.WithClauses, []},
           {Credo.Check.Refactor.PassAsyncInTestCases, []},
+          {Credo.Check.Refactor.MapMap, []},
+          {Credo.Check.Refactor.NegatedIsNil, []},
+          {Credo.Check.Refactor.PipeChainStart, []},
 
           #
           ## Warnings
@@ -163,7 +167,10 @@
           {Credo.Check.Warning.UnusedRegexOperation, []},
           {Credo.Check.Warning.UnusedStringOperation, []},
           {Credo.Check.Warning.UnusedTupleOperation, []},
-          {Credo.Check.Warning.WrongTestFileExtension, []}
+          {Credo.Check.Warning.WrongTestFileExtension, []},
+          {Credo.Check.Warning.UnsafeToAtom, []},
+          {Credo.Check.Warning.LeakyEnvironment, []},
+          {Credo.Check.Warning.MixEnv, []}
         ],
         disabled: [
           #
@@ -175,7 +182,6 @@
           #   and be sure to use `mix credo --strict` to see low priority checks)
           #
           {Credo.Check.Consistency.MultiAliasImportRequireUse, []},
-          {Credo.Check.Design.DuplicatedCode, []},
           {Credo.Check.Readability.AliasAs, []},
           {Credo.Check.Readability.BlockPipe, []},
           {Credo.Check.Readability.ImplTrue, []},
@@ -193,17 +199,11 @@
           {Credo.Check.Refactor.DoubleBooleanNegation, []},
           {Credo.Check.Refactor.FilterReject, []},
           {Credo.Check.Refactor.IoPuts, []},
-          {Credo.Check.Refactor.MapMap, []},
           {Credo.Check.Refactor.ModuleDependencies, []},
-          {Credo.Check.Refactor.NegatedIsNil, []},
-          {Credo.Check.Refactor.PipeChainStart, []},
           {Credo.Check.Refactor.RejectFilter, []},
           {Credo.Check.Refactor.VariableRebinding, []},
           {Credo.Check.Warning.LazyLogging, []},
-          {Credo.Check.Warning.LeakyEnvironment, []},
-          {Credo.Check.Warning.MapGetUnsafePass, []},
-          {Credo.Check.Warning.MixEnv, []},
-          {Credo.Check.Warning.UnsafeToAtom, []}
+          {Credo.Check.Warning.MapGetUnsafePass, []}
 
           # {Credo.Check.Refactor.MapInto, []},
 

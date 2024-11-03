@@ -19,7 +19,8 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
       |> to_form()
 
     {:ok,
-     assign(socket, :form, form)
+     socket
+     |> assign(:form, form)
      |> assign(:body, "")
      |> assign(:current_user, assigns[:current_user])
      |> assign(:case_id, assigns[:case_id])}
@@ -27,7 +28,8 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
 
   def handle_event("send", params, socket) do
     params =
-      Map.put(params, :case_id, socket.assigns.case_id)
+      params
+      |> Map.put(:case_id, socket.assigns.case_id)
       |> Map.put(:user_id, socket.assigns.current_user.id)
 
     action_opts = [actor: socket.assigns.current_user]

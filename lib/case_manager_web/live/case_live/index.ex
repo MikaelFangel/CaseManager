@@ -38,11 +38,8 @@ defmodule CaseManagerWeb.CaseLive.Index do
     next_page = Ash.page!(socket.assigns.current_page, :next)
 
     {:noreply,
-     stream(
-       socket,
-       :cases,
-       next_page.results
-     )
+     socket
+     |> stream(:cases, next_page.results)
      |> assign(:current_page, next_page)
      |> assign(:more_pages?, next_page.more?)}
   end

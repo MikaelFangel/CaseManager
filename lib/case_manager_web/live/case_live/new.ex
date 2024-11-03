@@ -4,7 +4,8 @@ defmodule CaseManagerWeb.CaseLive.New do
 
   def mount(_params, _session, socket) do
     selected_alerts =
-      CaseManager.SelectedAlerts.get_selected_alerts(socket.assigns.current_user.id)
+      socket.assigns.current_user.id
+      |> CaseManager.SelectedAlerts.get_selected_alerts()
       |> Enum.map(fn alert_id -> {alert_id, Ash.get!(CaseManager.Alerts.Alert, alert_id)} end)
 
     # Redirect users if they try to access the page through the URL without selecting any alerts
