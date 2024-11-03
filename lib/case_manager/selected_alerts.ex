@@ -77,17 +77,17 @@ defmodule CaseManager.SelectedAlerts do
     end
   end
 
-  defp toggle_alert(selected_alerts, alert_id) do
-    case Enum.member?(selected_alerts, alert_id) do
-      true -> List.delete(selected_alerts, alert_id)
-      false -> [alert_id | selected_alerts]
-    end
-  end
-
   @impl true
   def handle_call({:drop_selected_alerts, user_id}, _from, state) do
     :ets.delete(@table_name, user_id)
     new_state = Map.delete(state, user_id)
     {:reply, :ok, new_state}
+  end
+
+  defp toggle_alert(selected_alerts, alert_id) do
+    case Enum.member?(selected_alerts, alert_id) do
+      true -> List.delete(selected_alerts, alert_id)
+      false -> [alert_id | selected_alerts]
+    end
   end
 end
