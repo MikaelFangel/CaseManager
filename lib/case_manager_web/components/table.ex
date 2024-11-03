@@ -46,7 +46,7 @@ defmodule CaseManagerWeb.Table do
 
     ~H"""
     <div class="overflow-y-auto px-0 sm:overflow-visible sm:px-0">
-      <table class="w-full mt-11 sm:w-full">
+      <table class="w-full mt-4 sm:w-full">
         <thead class="text-xs text-left leading-0 text-black">
           <tr>
             <th

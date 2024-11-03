@@ -41,7 +41,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
        comments
      )
      |> assign(case: case)
-     |> assign(selected_alerts: alerts)}
+     |> assign(related_alerts: alerts)}
   end
 
   @impl true

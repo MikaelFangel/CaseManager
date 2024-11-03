@@ -1,7 +1,7 @@
 <div class="flex h-screen">
-  <div class="w-2/3 px-4">
+  <div class="w-2/3 pl-8 pr-4">
     <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
-    <.header><%= @case.title %></.header>
+    <.header class="pt-4"><%= @case.title %></.header>
     <div class="grid grid-cols-3 gap-2 mt-4">
       <div><span><%= gettext("Created at") %>:</span> <%= @case.inserted_at %></div>
       <div><span><%= gettext("ID") %>:</span> <%= @case.id |> String.slice(0..7) %></div>
@@ -28,7 +28,7 @@
 
     <p class="mt-4"><%= @case.description %></p>
 
-    <.table id="alerts" rows={@selected_alerts} row_click={}>
+    <.table id="alerts" rows={@related_alerts} row_click={}>
       <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
         <.risk_badge colour={alert.risk_level} />
@@ -53,7 +53,9 @@
         <%= @case.internal_note %>
       </div>
       <div class="mt-4 gap-2 w-full flex justify-end">
-        <.button><%= gettext("Edit") %></.button>
+        <.link navigate={~p"/case/#{@case.id}/edit"}>
+          <.button><%= gettext("Edit") %></.button>
+        </.link>
         <%= if !@case.escalated do %>
           <.button colour={:critical} phx-click="escalate_case" phx-value-id={@case.id}>
             <%= gettext("Escalate") %>

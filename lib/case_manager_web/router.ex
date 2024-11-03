@@ -43,6 +43,7 @@ defmodule CaseManagerWeb.Router do
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_mssp_user} do
       live "/alerts", AlertLive.Index, :index
       live "/case/new", CaseLive.New, :new
+      live "/case/:id/edit", CaseLive.Edit, :edit
     end
 
     ash_authentication_live_session :authentication_required,

@@ -1,5 +1,6 @@
 defmodule CaseManagerWeb.CaseLive.New do
   use CaseManagerWeb, :live_view
+  alias AshPhoenix.Form
 
   def mount(_params, _session, socket) do
     selected_alerts =
@@ -13,10 +14,25 @@ defmodule CaseManagerWeb.CaseLive.New do
         {:ok, push_navigate(socket, to: ~p"/alerts")}
 
       _alerts ->
-        {:ok,
-         assign(socket, :selected_alerts, selected_alerts)
-         |> assign(:menu_item, nil)
-         |> assign(current_user: socket.assigns.current_user)}
+        form =
+          CaseManager.Cases.Case
+          |> Form.for_create(:create, forms: [auto?: true])
+          |> to_form()
+
+        first_team_name = fn
+          [{_id, alert} | _rest] -> alert.team.name
+          _empty -> nil
+        end
+
+        socket =
+          socket
+          |> assign(:menu_item, nil)
+          |> assign(:current_user, socket.assigns.current_user)
+          |> assign(:team_name, first_team_name.(selected_alerts))
+          |> assign(:related_alerts, selected_alerts)
+          |> assign(:form, form)
+
+        {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
     end
   end
 end
