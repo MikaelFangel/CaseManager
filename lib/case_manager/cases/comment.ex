@@ -53,6 +53,11 @@ defmodule CaseManager.Cases.Comment do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:destroy, create: :*, update: :*]
+
+    read :read do
+      primary? true
+      prepare build(load: [user: [:team]])
+    end
   end
 end
