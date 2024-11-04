@@ -1,6 +1,6 @@
 defmodule CaseManagerWeb.Back do
   @moduledoc """
-  Provides a back navigation link
+  Provides a back navigation link.
   """
 
   use Phoenix.Component
