@@ -3,7 +3,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Credo CI
+name: Static Code Analysis CI
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ permissions:
 jobs:
   build:
 
-    name: Run Credo
+    name: Analyze code
     runs-on: ubuntu-latest
 
     steps:
@@ -33,5 +33,11 @@ jobs:
         restore-keys: ${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
-    - name: Analyse code
+    - name: credo
       run: mix credo
+    - name: sobelow
+      run: mix sobelow # Add --exit medium or high to get a non zero exit code
+    - name: hex audit
+      run: mix hex.audit
+    - name: mix_audit
+      run: mix deps.audit
