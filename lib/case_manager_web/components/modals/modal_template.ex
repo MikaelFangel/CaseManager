@@ -1,4 +1,4 @@
-defmodule CaseManagerWeb.CoreComponents do
+defmodule CaseManagerWeb.ModalTemplate do
   @moduledoc """
   Provides core UI components.
 
@@ -45,7 +45,7 @@ defmodule CaseManagerWeb.CoreComponents do
   attr :on_cancel, JS, default: %JS{}
   slot :inner_block, required: true
 
-  def modal(assigns) do
+  def modal_template(assigns) do
     ~H"""
     <div
       id={@id}

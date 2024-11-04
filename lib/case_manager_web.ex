@@ -82,8 +82,6 @@ defmodule CaseManagerWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components
-      import CaseManagerWeb.CoreComponents
 
       # UI components
       import CaseManagerWeb.FlashGroup

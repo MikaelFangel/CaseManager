@@ -79,26 +79,3 @@
   <% end %>
 </div>
 
-<.modal :if={@show_modal} id="alert_modal" show on_cancel={JS.push("hide_modal")}>
-  <div class="modal-content">
-    <.header><%= @alert.title %></.header>
-    <hr class="border-t border-gray-300 my-4" /> Creation Time: <%= @alert.creation_time %> <br />
-    Case ID: <br /> Case Status: <br /> Risk Level: <%= @alert.risk_level %> <br />
-    Team: <%= @alert.team_id %> <br /> Alert ID: <%= @alert.id %>
-    <%= @alert.description %>
-    <br />
-    <br />
-    <pre><%= 
-      if @alert.additional_data != %{} do
-        @alert.additional_data
-        |> Jason.encode!(pretty: true)
-      end
-      %> </pre>
-    <br />
-    <div class="flex justify-end space-x-2">
-      <.button colour={:secondary} phx-click="hide_modal">Close</.button>
-      <.button colour={:secondary} phx-click="hide_modal">Search Link</.button>
-      <.button phx-click="hide_modal">Create Case</.button>
-    </div>
-  </div>
-</.modal>
