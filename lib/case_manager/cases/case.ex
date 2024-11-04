@@ -96,6 +96,7 @@ defmodule CaseManager.Cases.Case do
     end
 
     has_many :comment, CaseManager.Cases.Comment
+    has_many :file, CaseManager.Cases.File
   end
 
   actions do

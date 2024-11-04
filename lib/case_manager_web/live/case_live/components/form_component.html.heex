@@ -84,6 +84,26 @@
           </:col>
         </.table>
 
+        <.table
+          :if={not Enum.empty?(@files ++ @uploads.attachments.entries)}
+          id="files"
+          rows={@files ++ @uploads.attachments.entries}
+          row_click={}
+        >
+          <:col :let={file} label={gettext("File Name")}>
+            <%= Map.get(file, :client_name, Map.get(file, :filename, "Unnamed file")) %>
+          </:col>
+          <:col :let={file} label={gettext("Size")}>
+            <%= Map.get(
+              file,
+              :client_size,
+              Map.has_key?(file, :binary_data) && byte_size(file.binary_data)
+            ) %> B
+          </:col>
+        </.table>
+
+        <.live_file_input upload={@uploads.attachments} />
+
         <.input
           name="internal_note"
           field={@form[:internal_note]}

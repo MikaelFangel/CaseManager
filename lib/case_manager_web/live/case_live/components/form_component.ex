@@ -8,8 +8,11 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> assign(:current_user, assigns[:current_user])
       |> assign(:team_name, assigns[:team_name])
       |> assign(:related_alerts, assigns[:related_alerts])
+      |> assign(:files, assigns[:files] || [])
       |> assign(:form, assigns[:form])
       |> assign(:on_cancel, assigns[:on_cancel])
+      |> assign(:uploaded_files, [])
+      |> allow_upload(:attachments, accept: :any, max_entries: 10)
 
     {:ok, socket}
   end
@@ -36,11 +39,27 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> Map.put(:team_id, team_id)
       |> Map.put(:escalated, false)
       |> Map.put(:alert, related_alert_ids)
+      |> Map.delete(:uploaded_files)
 
     action_opts = [actor: socket.assigns.current_user]
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, case} ->
+        consume_uploaded_entries(socket, :attachments, fn %{path: path}, entry ->
+          file = File.read!(path)
+
+          CaseManager.Cases.File
+          |> Ash.Changeset.for_create(:create, %{
+            case_id: case.id,
+            filename: entry.client_name,
+            content_type: entry.client_type,
+            binary_data: file
+          })
+          |> Ash.create!()
+
+          {:ok, "success"}
+        end)
+
         socket =
           socket
           |> put_flash(:info, gettext("Case created successfully."))
