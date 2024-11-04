@@ -153,6 +153,14 @@ defmodule CaseManager.Cases.Case do
 
       primary? true
     end
+
+    update :escalate do
+      change set_attribute(:escalated, true)
+    end
+  end
+
+  code_interface do
+    define :escalate, args: []
   end
 
   resource do
