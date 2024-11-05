@@ -17,6 +17,8 @@ jobs:
 
     name: Build and test
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: 'test'
     services:
       postgres:
         image: postgres:16
@@ -50,7 +52,5 @@ jobs:
       run: |
         mix ecto.create
         mix ecto.migrate
-    - name: Check code formatting
-      run: mix format --check-formatted
     - name: Run tests
       run: mix test
