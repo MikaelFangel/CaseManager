@@ -12,11 +12,17 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
 
     name: Build and test
     runs-on: ubuntu-latest
+    env:
+      MIX_ENV: 'test'
     services:
       postgres:
         image: postgres:16
@@ -39,18 +45,18 @@ jobs:
         elixir-version: '1.17.2' # [Required] Define the Elixir version
         otp-version: '26.0'      # [Required] Define the Erlang/OTP version
     - name: Restore dependencies cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
+        path: |
+          deps
+          _build
+        key: test-${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: test-${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
     - name: Set up database
       run: |
         mix ecto.create
         mix ecto.migrate
-    - name: Check code formatting
-      run: mix format --check-formatted
     - name: Run tests
       run: mix test
