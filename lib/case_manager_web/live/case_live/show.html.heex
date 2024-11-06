@@ -47,6 +47,17 @@
       </:col>
     </.table>
 
+    <.table :if={not Enum.empty?(@files)} id="files" rows={@files} row_click={}>
+      <:col :let={file} label={gettext("File Name")}>
+        <%= file.filename %>
+      </:col>
+      <:col :let={file} label={gettext("Updated at")}><%= file.updated_at %></:col>
+      <:col :let={file} label={gettext("Size")}><%= byte_size(file.binary_data) %> B</:col>
+      <:col :let={file} label={gettext("Download")}>
+        <a href={~p"/file/#{file.id}"}>Download</a>
+      </:col>
+    </.table>
+
     <%= if Ash.load!(@current_user, :team).team.type == :mssp do %>
       <div class="mt-4"><%= gettext("Internal Note") %>:</div>
       <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
