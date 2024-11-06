@@ -98,6 +98,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.Back
       import CaseManagerWeb.SimpleForm
       import CaseManagerWeb.MenuBar
+      import CaseManagerWeb.AlertModal
 
       # Translation
       use Gettext, backend: CaseManagerWeb.Gettext

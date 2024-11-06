@@ -19,7 +19,7 @@
       rows={@streams.alerts}
       row_click={
         fn {_id, alert} ->
-          JS.push("show_modal", value: alert) |> show_modal("alert_modal")
+          JS.push("show_modal", value: %{alert_id: alert.id})
         end
       }
     >
@@ -79,3 +79,4 @@
   <% end %>
 </div>
 
+<.alert_modal :if={@alert} show={@alert != nil} on_cancel={JS.push("hide_modal")} alert={@alert} />
