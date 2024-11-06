@@ -134,10 +134,7 @@
                 "text-[8px] text-right text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
               end
             }>
-              <%= comment.inserted_at
-              |> DateTime.to_time()
-              |> Time.to_string()
-              |> String.slice(0, 5) %>
+              <%= comment.inserted_at |> Calendar.strftime("%H:%M") %>
             </div>
           </div>
         </div>
