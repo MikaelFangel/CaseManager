@@ -13,6 +13,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> assign(:on_cancel, assigns[:on_cancel])
       |> assign(:uploaded_files, [])
       |> allow_upload(:attachments, accept: :any, max_entries: 10)
+      |> assign(:alert, nil)
 
     {:ok, socket}
   end
@@ -78,5 +79,25 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}
     end
+  end
+
+  @impl true
+  def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
+    alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
+
+    socket =
+      socket
+      |> assign(:alert, alert)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hide_modal", _params, socket) do
+    socket =
+      socket
+      |> assign(:alert, nil)
+
+    {:noreply, socket}
   end
 end
