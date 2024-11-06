@@ -26,7 +26,7 @@
       <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
     </div>
 
-    <p class="mt-4"><%= @case.description %></p>
+    <p class="mt-4"><%= @case.description |> String.replace("\n", "<br />") |> raw() %></p>
 
     <.table id="alerts" rows={@related_alerts} row_click={}>
       <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
@@ -61,7 +61,7 @@
     <%= if Ash.load!(@current_user, :team).team.type == :mssp do %>
       <div class="mt-4"><%= gettext("Internal Note") %>:</div>
       <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
-        <%= @case.internal_note %>
+        <%= @case.internal_note |> String.replace("\n", "<br />") |> raw() %>
       </div>
       <div class="mt-4 gap-2 w-full flex justify-end">
         <.link navigate={~p"/case/#{@case.id}/edit"}>
@@ -110,7 +110,7 @@
               "bg-slate-300 p-2 rounded-xl self-start text-left break-words max-w-sm"
             end
           }>
-            <%= raw(comment.body) %>
+            <%= comment.body |> String.replace("\n", "<br />") |> raw() %>
           </div>
         </div>
       <% end %>

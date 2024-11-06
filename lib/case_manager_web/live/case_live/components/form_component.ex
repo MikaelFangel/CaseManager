@@ -22,7 +22,11 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event("save", params, socket) do
+  def handle_event(
+        "save",
+        %{"description" => description, "internal_note" => internal_note} = params,
+        socket
+      ) do
     team_id =
       socket.assigns.related_alerts
       |> Enum.at(0)
@@ -34,8 +38,12 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       socket.assigns.related_alerts
       |> Enum.map(fn {_id, alert} -> alert.id end)
 
+    sanitize = &(&1 |> HtmlSanitizeEx.strip_tags())
+
     params =
       params
+      |> Map.put("description", sanitize.(description))
+      |> Map.put("internal_note", sanitize.(internal_note))
       |> Map.put(:team_id, team_id)
       |> Map.put(:escalated, false)
       |> Map.put(:alert, related_alert_ids)

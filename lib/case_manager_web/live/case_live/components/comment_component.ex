@@ -17,7 +17,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   end
 
   def handle_event("send", %{"body" => body}, socket) do
-    body = body |> html_escape() |> safe_to_string() |> String.replace("\n", "<br/>")
+    body = HtmlSanitizeEx.strip_tags(body)
 
     params =
       %{
