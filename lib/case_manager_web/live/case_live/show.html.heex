@@ -117,8 +117,8 @@
             end
           }>
             <%= if comment.body,
-              do: comment.body |> String.replace("\n", "<br />"),
-              else: "" |> raw() %>
+              do: comment.body |> String.replace("\n", "<br />") |> raw(),
+              else: "" %>
           </div>
         </div>
       <% end %>
