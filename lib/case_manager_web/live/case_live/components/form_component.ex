@@ -2,6 +2,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   use CaseManagerWeb, :live_component
   alias AshPhoenix.Form
 
+  @impl true
   def update(assigns, socket) do
     socket =
       socket
