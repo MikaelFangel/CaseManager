@@ -138,6 +138,14 @@
             </div>
           </div>
         </div>
+        <div
+          :if={comment.header}
+          class="flex items-center justify-center text-gray-400 text-xs mb-2 w-full"
+        >
+          <span class="flex-grow border-t border-gray-300 mr-2"></span>
+          <%= comment.header %>
+          <span class="flex-grow border-t border-gray-300 ml-2"></span>
+        </div>
       <% end %>
     </div>
     <div class="flex flex-col space-y-2 mx-4 mb-4">

@@ -23,6 +23,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
         },
         socket
       ) do
+    comment = Map.put(comment, :header, nil)
     {:noreply, socket |> stream_insert(:comments, comment, at: 0)}
   end
 
@@ -31,17 +32,14 @@ defmodule CaseManagerWeb.CaseLive.Show do
     case = Case |> Ash.get!(id)
     loaded_relations = case |> Ash.load!([:alert, :comment, :file])
     alerts = loaded_relations.alert |> Enum.map(&{&1.id, &1})
-    comments = loaded_relations.comment
+    comments = loaded_relations.comment |> add_date_headers()
     files = loaded_relations.file
 
     comments = comments |> Enum.reverse()
 
     {:noreply,
      socket
-     |> stream(
-       :comments,
-       comments
-     )
+     |> stream(:comments, comments)
      |> assign(case: case)
      |> assign(related_alerts: alerts)
      |> assign(files: files)}
@@ -75,5 +73,28 @@ defmodule CaseManagerWeb.CaseLive.Show do
       |> assign(:alert, nil)
 
     {:noreply, socket}
+  end
+
+  defp add_date_headers(comments, comments_with_headers \\ [], last_header \\ nil)
+
+  defp add_date_headers([], comments_with_headers, _last_header),
+    do: Enum.reverse(comments_with_headers)
+
+  defp add_date_headers(
+         [%{inserted_at: inserted_at} = comment | comments],
+         comments_with_headers,
+         last_header
+       ) do
+    header = Calendar.strftime(inserted_at, "%d. %b. %Y")
+
+    comment =
+      comment
+      |> Map.put(:header, if(last_header == header, do: nil, else: header))
+
+    add_date_headers(
+      comments,
+      [comment | comments_with_headers],
+      if(last_header == header, do: last_header, else: header)
+    )
   end
 end
