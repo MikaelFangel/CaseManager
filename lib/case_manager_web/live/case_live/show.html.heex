@@ -116,17 +116,29 @@
           <div class={
             if comment.user.team.type == (@current_user |> Ash.load!(:team)).team.type do
               if comment.user_id == @current_user.id do
-                "bg-sky-200 p-2 rounded-xl self-end text-right break-words max-w-sm"
+                "bg-sky-200 pl-2 pr-4 pt-1 rounded-xl self-end text-right break-words max-w-sm relative"
               else
-                "bg-slate-300 p-2 rounded-xl self-end text-right break-words max-w-sm"
+                "bg-slate-300 pl-2 pr-4 pt-1 rounded-xl self-end text-right break-words max-w-sm relative"
               end
             else
-              "bg-slate-300 p-2 rounded-xl self-start text-left break-words max-w-sm"
+              "bg-slate-300 pr-4 pl-2 pt-1 rounded-xl self-start text-left break-words max-w-sm relative"
             end
           }>
             <%= if comment.body,
               do: comment.body |> String.replace("\n", "<br />") |> raw(),
               else: "" %>
+            <div class={
+              if comment.user.team.type == (@current_user |> Ash.load!(:team)).team.type do
+                "text-[8px] text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
+              else
+                "text-[8px] text-right text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
+              end
+            }>
+              <%= comment.inserted_at
+              |> DateTime.to_time()
+              |> Time.to_string()
+              |> String.slice(0, 5) %>
+            </div>
           </div>
         </div>
       <% end %>
