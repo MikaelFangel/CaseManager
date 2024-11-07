@@ -97,6 +97,7 @@
     >
       <%= for {id, comment} <- @streams.comments do %>
         <div id={id} class="mt-4 flex flex-col">
+          <!-- Name label above comments -->
           <div class={
             if comment.user.team.type == (@current_user |> Ash.load!(:team)).team.type do
               "text-right text-xs text-gray-500 self-end mb-1"
@@ -112,7 +113,7 @@
               "#{Map.get(user, :first_name)} #{Map.get(user, :last_name)}"
             end %>
           </div>
-
+          <!-- Comment Bubble -->
           <div class={
             if comment.user.team.type == (@current_user |> Ash.load!(:team)).team.type do
               if comment.user_id == @current_user.id do
@@ -138,6 +139,7 @@
             </div>
           </div>
         </div>
+        <!-- Date line above comments -->
         <div
           :if={comment.header}
           class="flex items-center justify-center text-gray-400 text-xs w-full pt-4"
