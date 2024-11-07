@@ -13,11 +13,13 @@ jobs:
           echo "Fetching list of cache key"
           cacheKeysForPR=$(gh cache list --ref $BRANCH --json id --jq '.[].id')
 
-          ## Setting this to not fail the workflow while deleting cache keys.
-          set +e
-          echo "Deleting caches..."
-          echo "$cacheKeysForPR" | xargs -n 1 gh cache delete
-          echo "Caches succefully deleted."
+          if [[ -z "$cacheKeysForPR" ]]; then
+            echo "No cache keys found for branch $BRANCH. Skipping cache deletion."
+          else
+            echo "Deleting caches..."
+            echo "$cacheKeysForPR" | xargs -n 1 gh cache delete
+            echo "Caches successfully deleted."
+          fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
