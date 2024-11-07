@@ -9,8 +9,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   documentation:
+
     name: Update documentation
     runs-on: ubuntu-latest
     
@@ -25,7 +25,7 @@ jobs:
           elixir-version: '1.17.2' # [Required] Define the Elixir version
           otp-version: '26.0'      # [Required] Define the Erlang/OTP version
 
-      - name: Restore dependencies cache
+      - name: Cache dependencies and build
         uses: actions/cache@v4
         with:
           path: |
