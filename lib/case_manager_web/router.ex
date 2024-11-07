@@ -39,6 +39,8 @@ defmodule CaseManagerWeb.Router do
     reset_route auth_routes_prefix: "/auth"
 
     live "/register", AuthLive.Index, :register
+    live "/onboarding/team", OnboardingLive.New, :new
+    live "/onboarding/user", AuthLive.Index, :onboarding
     live "/sign-in", AuthLive.Index, :sign_in
 
     ash_authentication_live_session :mssp_team_members_required,
