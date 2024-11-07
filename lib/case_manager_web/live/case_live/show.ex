@@ -10,6 +10,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       socket
       |> assign(:menu_item, nil)
       |> assign(current_user: socket.assigns.current_user)
+      |> assign(:alert, nil)
 
     {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
   end
@@ -54,5 +55,25 @@ defmodule CaseManagerWeb.CaseLive.Show do
       |> Case.escalate!(actor: socket.assigns.current_user)
 
     {:noreply, socket |> assign(case: updated_case)}
+  end
+
+  @impl true
+  def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
+    alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
+
+    socket =
+      socket
+      |> assign(:alert, alert)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hide_modal", _params, socket) do
+    socket =
+      socket
+      |> assign(:alert, nil)
+
+    {:noreply, socket}
   end
 end

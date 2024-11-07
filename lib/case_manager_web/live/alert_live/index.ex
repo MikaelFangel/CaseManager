@@ -16,8 +16,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:ok,
      socket
      |> stream(:alerts, alerts)
-     |> assign(:show_modal, false)
-     |> assign(:alert, %{})
      |> assign(:selected_alerts, [])
      |> assign(:current_page, alerts_page)
      |> assign(:menu_item, :alerts)
@@ -32,7 +30,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Alerts")
-    |> assign(:alert, %{})
+    |> assign(:alert, nil)
   end
 
   @impl true
@@ -47,18 +45,23 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_event("show_modal", alert, socket) do
-    alert = Map.new(alert, fn {k, v} -> {String.to_existing_atom(k), v} end)
+  def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
+    alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
 
-    {:noreply,
-     socket
-     |> assign(:show_modal, true)
-     |> assign(:alert, alert)}
+    socket =
+      socket
+      |> assign(:alert, alert)
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("hide_modal", _params, socket) do
-    {:noreply, assign(socket, :show_modal, false)}
+    socket =
+      socket
+      |> assign(:alert, nil)
+
+    {:noreply, socket}
   end
 
   def handle_event(

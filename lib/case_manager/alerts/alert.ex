@@ -84,6 +84,7 @@ defmodule CaseManager.Alerts.Alert do
       accept [
         :alert_id,
         :title,
+        :description,
         :risk_level,
         :creation_time,
         :link,
