@@ -33,6 +33,12 @@ defmodule CaseManagerWeb.AuthForm do
       |> assign(:errors, Form.errors(form))
       |> assign(:trigger_action, form.valid?)
 
+    if socket.assigns[:is_onboarding?] do
+      CaseManager.AppConfig.Setting
+      |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
+      |> Ash.create!()
+    end
+
     {:noreply, socket}
   end
 end

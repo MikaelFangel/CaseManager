@@ -16,6 +16,7 @@ defmodule CaseManagerWeb.OnboardingLive.New do
     {:ok, socket, layout: {CaseManagerWeb.Layouts, :onboarding}}
   end
 
+  @impl true
   def handle_event("create", params, socket) do
     params =
       params

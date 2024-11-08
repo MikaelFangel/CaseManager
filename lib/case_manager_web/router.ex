@@ -17,6 +17,10 @@ defmodule CaseManagerWeb.Router do
     plug :load_from_bearer
   end
 
+  pipeline :onboarding do
+    plug CaseManagerWeb.Plugs.Onboarding
+  end
+
   scope "/api/json" do
     pipe_through [:api]
 
@@ -31,16 +35,12 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through :browser
 
-    get "/onboarding", OnboardingController, :index
-
     # Standard controller-backed routes
     auth_routes AuthController, CaseManager.Teams.User, path: "/auth"
     sign_out_route AuthController
     reset_route auth_routes_prefix: "/auth"
 
     live "/register", AuthLive.Index, :register
-    live "/onboarding/team", OnboardingLive.New, :new
-    live "/onboarding/user", AuthLive.Index, :onboarding
     live "/sign-in", AuthLive.Index, :sign_in
 
     ash_authentication_live_session :mssp_team_members_required,
@@ -56,6 +56,14 @@ defmodule CaseManagerWeb.Router do
       live "/case/:id", CaseLive.Show, :show
       get "/file/:id", FileController, :download
     end
+  end
+
+  scope "/onboarding", CaseManagerWeb do
+    pipe_through [:browser, :onboarding]
+
+    get "/", OnboardingController, :index
+    live "/team", OnboardingLive.New, :new
+    live "/user", AuthLive.Index, :onboarding
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
