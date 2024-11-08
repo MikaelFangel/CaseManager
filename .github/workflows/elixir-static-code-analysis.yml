@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  analyze:
 
     name: Analyze code
     runs-on: ubuntu-latest
@@ -39,6 +39,8 @@ jobs:
         restore-keys: dev-${{ runner.os }}-mix-
     - name: Install dependencies
       run: mix deps.get
+    - name: Check for unused dependencies
+      run: mix deps.unlock --check-unused
     - name: Check code formatting
       run: mix format --check-formatted
     - name: credo
