@@ -40,8 +40,8 @@ defmodule CaseManagerWeb.MenuBar do
         <!-- Bottom content -->
         <div class="flex-col h-full justify-end items-center gap-4 inline-flex">
           <.menu_item icon_name="hero-cog-8-tooth" active?={@current_page == :settings} />
-          <.menu_item icon_name="hero-user-circle" />
           <div class="w-full border border-neutral-500"></div>
+          <.menu_item icon_name="hero-user-circle" active?={@current_page == :user} />
         </div>
       </div>
       <!-- The screen content -->
