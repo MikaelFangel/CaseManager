@@ -155,6 +155,22 @@ defmodule CaseManager.Cases.Case do
       primary? true
     end
 
+    update :add_comment do
+      argument :comment, :string, allow_nil?: false
+      require_atomic? false
+
+      change fn changeset, context ->
+        comment = changeset.arguments[:comment]
+
+        Ash.Changeset.manage_relationship(
+          changeset,
+          :comment,
+          %{body: comment, user_id: context.actor.id},
+          type: :create
+        )
+      end
+    end
+
     update :escalate do
       change set_attribute(:escalated, true)
     end
