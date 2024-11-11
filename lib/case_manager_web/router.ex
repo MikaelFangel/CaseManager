@@ -17,6 +17,10 @@ defmodule CaseManagerWeb.Router do
     plug :load_from_bearer
   end
 
+  pipeline :onboarding do
+    plug CaseManagerWeb.Plugs.Onboarding
+  end
+
   scope "/api/json" do
     pipe_through [:api]
 
@@ -52,6 +56,14 @@ defmodule CaseManagerWeb.Router do
       live "/case/:id", CaseLive.Show, :show
       get "/file/:id", FileController, :download
     end
+  end
+
+  scope "/onboarding", CaseManagerWeb do
+    pipe_through [:browser, :onboarding]
+
+    get "/", OnboardingController, :index
+    live "/team", OnboardingLive.New, :new
+    live "/user", AuthLive.Index, :onboarding
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

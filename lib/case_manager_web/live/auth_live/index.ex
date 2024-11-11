@@ -6,7 +6,13 @@ defmodule CaseManagerWeb.AuthLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket, layout: false}
+    layout =
+      if(socket.assigns.live_action == :onboarding,
+        do: {CaseManagerWeb.Layouts, :onboarding},
+        else: false
+      )
+
+    {:ok, socket, layout: layout}
   end
 
   @impl true
@@ -18,8 +24,17 @@ defmodule CaseManagerWeb.AuthLive.Index do
     socket
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, "Sign up")
-    |> assign(:alternative_path, ~p"/sign-in")
-    |> assign(:alternative, "Have an account?")
+    |> assign(:action, ~p"/auth/user/password/register")
+    |> assign(
+      :form,
+      Form.for_create(User, :register_with_password, api: CaseManager.Teams, as: "user")
+    )
+  end
+
+  defp apply_action(socket, :onboarding, _params) do
+    socket
+    |> assign(:form_id, "onboarding-form")
+    |> assign(:cta, "Create your first MSSP admin")
     |> assign(:action, ~p"/auth/user/password/register")
     |> assign(
       :form,
@@ -31,8 +46,6 @@ defmodule CaseManagerWeb.AuthLive.Index do
     socket
     |> assign(:form_id, "sign-in-form")
     |> assign(:cta, "Sign in")
-    |> assign(:alternative_path, ~p"/register")
-    |> assign(:alternative, "Need an account?")
     |> assign(:action, ~p"/auth/user/password/sign_in")
     |> assign(
       :form,

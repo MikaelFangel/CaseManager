@@ -76,6 +76,7 @@ config :phoenix, :json_library, Jason
 import_config "#{config_env()}.exs"
 
 config :case_manager, :ash_domains, [
+  CaseManager.AppConfig,
   CaseManager.ContactInfos,
   CaseManager.Cases,
   CaseManager.Alerts,
