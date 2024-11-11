@@ -7,4 +7,7 @@ export default {
       ['fix', 'feat', 'chore', 'build', 'ci', 'test'],
     ],
   },
+  ignores: [
+    (message) => message.startsWith('build(deps): bump ')
+  ]
 };
