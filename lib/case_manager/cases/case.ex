@@ -155,6 +155,29 @@ defmodule CaseManager.Cases.Case do
       primary? true
     end
 
+    update :add_comment do
+      argument :comment, :string, allow_nil?: false
+      require_atomic? false
+
+      change fn changeset, context ->
+        comment = changeset.arguments[:comment]
+
+        Ash.Changeset.manage_relationship(
+          changeset,
+          :comment,
+          %{body: comment, user_id: context.actor.id},
+          type: :create
+        )
+      end
+    end
+
+    update :upload_file do
+      argument :file, :map, allow_nil?: false
+      require_atomic? false
+
+      change manage_relationship(:file, :file, type: :create)
+    end
+
     update :escalate do
       change set_attribute(:escalated, true)
     end
@@ -162,6 +185,7 @@ defmodule CaseManager.Cases.Case do
 
   code_interface do
     define :escalate, args: []
+    define :upload_file, args: [:file]
   end
 
   resource do

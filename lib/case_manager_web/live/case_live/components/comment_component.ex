@@ -1,11 +1,13 @@
 defmodule CaseManagerWeb.CaseLive.CommentComponent do
   use CaseManagerWeb, :live_component
   alias AshPhoenix.Form
+  alias CaseManager.Cases.Case
 
   def update(assigns, socket) do
     form =
-      CaseManager.Cases.Comment
-      |> Form.for_create(:create, forms: [auto?: true])
+      Case
+      |> Ash.get!(assigns[:case_id])
+      |> Form.for_update(:add_comment, forms: [auto?: true], actor: assigns.current_user)
       |> to_form()
 
     {:ok,
@@ -18,13 +20,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
 
   def handle_event("send", %{"body" => body}, socket) do
     body = HtmlSanitizeEx.strip_tags(body)
-
-    params =
-      %{
-        body: body,
-        case_id: socket.assigns.case_id,
-        user_id: socket.assigns.current_user.id
-      }
+    params = %{comment: body}
 
     action_opts = [actor: socket.assigns.current_user]
 
