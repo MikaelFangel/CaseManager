@@ -62,10 +62,23 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(:alert, type: :create)
     end
 
+    read :read_by_name_asc do
+      primary? true
+      prepare(build(sort: [name: :asc]))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+
     defaults [:read, :destroy, update: :*]
   end
 
   code_interface do
+    define :read_by_name_asc
     define :add_case, args: [:case]
     define :add_alert, args: [:alert]
   end

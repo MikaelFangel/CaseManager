@@ -34,7 +34,11 @@ defmodule CaseManagerWeb.MenuBar do
             <div class="w-full border border-neutral-500"></div>
             <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
             <div class="w-full border border-neutral-500"></div>
-            <.menu_item icon_name="hero-building-office" active?={@current_page == :teams} />
+            <.menu_item
+              icon_name="hero-building-office"
+              active?={@current_page == :teams}
+              path="/teams"
+            />
           <% end %>
         </div>
         <!-- Bottom content -->
