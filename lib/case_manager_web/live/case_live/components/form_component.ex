@@ -1,6 +1,7 @@
 defmodule CaseManagerWeb.CaseLive.FormComponent do
   use CaseManagerWeb, :live_component
   alias AshPhoenix.Form
+  alias CaseManager.Cases.Case
 
   @impl true
   def update(assigns, socket) do
@@ -58,14 +59,15 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
         consume_uploaded_entries(socket, :attachments, fn %{path: path}, entry ->
           file = File.read!(path)
 
-          CaseManager.Cases.File
-          |> Ash.Changeset.for_create(:create, %{
-            case_id: case.id,
-            filename: entry.client_name,
-            content_type: entry.client_type,
-            binary_data: file
-          })
-          |> Ash.create!()
+          case
+          |> Case.upload_file!(
+            %{
+              filename: entry.client_name,
+              content_type: entry.client_type,
+              binary_data: file
+            },
+            actor: socket.assigns.current_user
+          )
 
           {:ok, "success"}
         end)

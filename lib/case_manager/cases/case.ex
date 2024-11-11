@@ -171,6 +171,13 @@ defmodule CaseManager.Cases.Case do
       end
     end
 
+    update :upload_file do
+      argument :file, :map, allow_nil?: false
+      require_atomic? false
+
+      change manage_relationship(:file, :file, type: :create)
+    end
+
     update :escalate do
       change set_attribute(:escalated, true)
     end
@@ -178,6 +185,7 @@ defmodule CaseManager.Cases.Case do
 
   code_interface do
     define :escalate, args: []
+    define :upload_file, args: [:file]
   end
 
   resource do
