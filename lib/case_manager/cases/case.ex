@@ -100,6 +100,8 @@ defmodule CaseManager.Cases.Case do
   end
 
   actions do
+    defaults [:destroy]
+
     create :create do
       accept [
         :title,
@@ -156,19 +158,15 @@ defmodule CaseManager.Cases.Case do
     end
 
     update :add_comment do
-      argument :comment, :string, allow_nil?: false
+      argument :body, :string, allow_nil?: false
       require_atomic? false
 
-      change fn changeset, context ->
-        comment = changeset.arguments[:comment]
-
-        Ash.Changeset.manage_relationship(
-          changeset,
-          :comment,
-          %{body: comment, user_id: context.actor.id},
-          type: :create
-        )
-      end
+      change manage_relationship(
+               :body,
+               :comment,
+               type: :create,
+               value_is_key: :body
+             )
     end
 
     update :upload_file do

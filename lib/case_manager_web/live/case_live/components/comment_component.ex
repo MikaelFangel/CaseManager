@@ -19,8 +19,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   end
 
   def handle_event("send", %{"body" => body}, socket) do
-    body = HtmlSanitizeEx.strip_tags(body)
-    params = %{comment: body}
+    params = %{body: HtmlSanitizeEx.strip_tags(body)}
 
     action_opts = [actor: socket.assigns.current_user]
 

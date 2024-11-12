@@ -40,20 +40,25 @@ defmodule CaseManager.Cases.Comment do
   attributes do
     uuid_primary_key :id
 
-    attribute :case_id, :uuid, allow_nil?: false, public?: true
-    attribute :user_id, :uuid, allow_nil?: false, public?: true
     attribute :body, :string, allow_nil?: false, public?: true
 
     timestamps()
   end
 
   relationships do
-    belongs_to :case, CaseManager.Cases.Case
-    belongs_to :user, CaseManager.Teams.User
+    belongs_to :case, CaseManager.Cases.Case, allow_nil?: false
+    belongs_to :user, CaseManager.Teams.User, allow_nil?: false
   end
 
   actions do
-    defaults [:destroy, create: :*, update: :*]
+    defaults [:destroy, update: :*]
+
+    create :create do
+      accept [:body]
+      primary? true
+
+      change relate_actor(:user)
+    end
 
     read :read do
       primary? true
