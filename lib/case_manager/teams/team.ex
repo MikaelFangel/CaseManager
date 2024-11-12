@@ -28,24 +28,9 @@ defmodule CaseManager.Teams.Team do
   relationships do
     has_many :alert, CaseManager.Alerts.Alert
     has_many :case, CaseManager.Cases.Case
-
-    many_to_many :ip, CaseManager.ContactInfos.IP do
-      through CaseManager.Relationships.TeamIP
-      source_attribute_on_join_resource :team_id
-      destination_attribute_on_join_resource :ip_id
-    end
-
-    many_to_many :email, CaseManager.ContactInfos.Email do
-      through CaseManager.Relationships.TeamEmail
-      source_attribute_on_join_resource :team_id
-      destination_attribute_on_join_resource :email_id
-    end
-
-    many_to_many :phone, CaseManager.ContactInfos.Phone do
-      through CaseManager.Relationships.TeamPhone
-      source_attribute_on_join_resource :team_id
-      destination_attribute_on_join_resource :phone_id
-    end
+    has_many :ip, CaseManager.Teams.IP
+    has_many :email, CaseManager.Teams.Email
+    has_many :phone, CaseManager.Teams.Phone
   end
 
   actions do
@@ -55,7 +40,7 @@ defmodule CaseManager.Teams.Team do
       # Use the _arg postfix because the argument cannot be the same
       # as the relationship in question.
       argument :ip_arg, :map, allow_nil?: true
-      argument :email_arg, :map, allow_nil?: true
+      argument :email_arg, :string, allow_nil?: true
       argument :phone_arg, :map, allow_nil?: true
 
       change manage_relationship(
@@ -67,7 +52,8 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(
                :email_arg,
                :email,
-               type: :create
+               type: :create,
+               value_is_key: :email
              )
 
       change manage_relationship(

@@ -13,8 +13,8 @@ defmodule CaseManager.Teams do
     resource CaseManager.Teams.Team
     resource CaseManager.Teams.User
     resource CaseManager.Teams.Token
-    resource CaseManager.Relationships.TeamIP
-    resource CaseManager.Relationships.TeamEmail
-    resource CaseManager.Relationships.TeamPhone
+    resource CaseManager.Teams.IP
+    resource CaseManager.Teams.Email
+    resource CaseManager.Teams.Phone
   end
 end

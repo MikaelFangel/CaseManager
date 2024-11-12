@@ -1,15 +1,19 @@
-defmodule CaseManager.ContactInfos.Phone do
+defmodule CaseManager.Teams.Phone do
   @moduledoc """
   Resource that represents a phone number.
   """
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.ContactInfos,
+    domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer
 
   postgres do
     table "phone"
     repo CaseManager.Repo
+
+    references do
+      reference :team, on_delete: :delete, on_update: :update, name: "phone_to_team_fkey"
+    end
   end
 
   attributes do
@@ -22,12 +26,8 @@ defmodule CaseManager.ContactInfos.Phone do
   end
 
   relationships do
-    relationships do
-      many_to_many :team, CaseManager.Teams.Team do
-        through CaseManager.Relationships.TeamPhone
-        source_attribute_on_join_resource :phone_id
-        destination_attribute_on_join_resource :team_id
-      end
+    belongs_to :team, CaseManager.Teams.Team do
+      allow_nil? false
     end
   end
 

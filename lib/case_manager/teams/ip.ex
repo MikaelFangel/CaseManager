@@ -1,15 +1,19 @@
-defmodule CaseManager.ContactInfos.IP do
+defmodule CaseManager.Teams.IP do
   @moduledoc """
   Resource to represents an IP address of either version v4 og v6.
   """
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.ContactInfos,
+    domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer
 
   postgres do
     table "ip"
     repo CaseManager.Repo
+
+    references do
+      reference :team, on_delete: :delete, on_update: :update, name: "ip_to_team_fkey"
+    end
   end
 
   attributes do
@@ -26,10 +30,8 @@ defmodule CaseManager.ContactInfos.IP do
   end
 
   relationships do
-    many_to_many :team, CaseManager.Teams.Team do
-      through CaseManager.Relationships.TeamIP
-      source_attribute_on_join_resource :ip_id
-      destination_attribute_on_join_resource :team_id
+    belongs_to :team, CaseManager.Teams.Team do
+      allow_nil? false
     end
   end
 
