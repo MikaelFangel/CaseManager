@@ -6,7 +6,7 @@ defmodule CaseManager.Teams.User do
     otp_app: :case_manager,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication],
+    extensions: [AshAuthentication, AshAdmin.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
   postgres do
@@ -34,6 +34,10 @@ defmodule CaseManager.Teams.User do
         Application.fetch_env(:case_manager, :token_signing_secret)
       end
     end
+  end
+
+  admin do
+    actor?(true)
   end
 
   policies do
