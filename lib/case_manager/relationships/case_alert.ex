@@ -9,6 +9,11 @@ defmodule CaseManager.Relationships.CaseAlert do
   postgres do
     table "case_alert"
     repo CaseManager.Repo
+
+    references do
+      reference :alert, on_delete: :delete, on_update: :update, name: "case_alert_to_alert_fkey"
+      reference :case, on_delete: :delete, on_update: :update, name: "case_alert_to_case_fkey"
+    end
   end
 
   relationships do
