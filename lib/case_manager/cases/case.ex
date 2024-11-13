@@ -190,6 +190,7 @@ defmodule CaseManager.Cases.Case do
   code_interface do
     define :escalate, args: []
     define :upload_file, args: [:file]
+    define :set_assignee, args: [:assignee]
   end
 
   resource do
