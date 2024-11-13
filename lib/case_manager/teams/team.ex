@@ -37,30 +37,13 @@ defmodule CaseManager.Teams.Team do
     create :create do
       accept [:name, :type]
 
-      # Use the _arg postfix because the argument cannot be the same
-      # as the relationship in question.
-      argument :ip_arg, :map, allow_nil?: true
-      argument :email_arg, :string, allow_nil?: true
-      argument :phone_arg, :map, allow_nil?: true
+      argument :ip, :map, allow_nil?: true
+      argument :email, :string, allow_nil?: true
+      argument :phone, :map, allow_nil?: true
 
-      change manage_relationship(
-               :ip_arg,
-               :ip,
-               type: :create
-             )
-
-      change manage_relationship(
-               :email_arg,
-               :email,
-               type: :create,
-               value_is_key: :email
-             )
-
-      change manage_relationship(
-               :phone_arg,
-               :phone,
-               type: :create
-             )
+      change manage_relationship(:ip, type: :create)
+      change manage_relationship(:email, type: :create, value_is_key: :email)
+      change manage_relationship(:phone, type: :create)
     end
 
     defaults [:read, :destroy, update: :*]

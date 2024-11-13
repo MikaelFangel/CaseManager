@@ -115,11 +115,10 @@ defmodule CaseManager.Cases.Case do
       ]
 
       argument :status, :atom
-      change transition_state(arg(:status))
-
       argument :alert, {:array, :string}
-      change manage_relationship(:alert, type: :append_and_remove)
 
+      change transition_state(arg(:status))
+      change manage_relationship(:alert, type: :append_and_remove)
       change relate_actor(:reporter)
     end
 
@@ -155,15 +154,17 @@ defmodule CaseManager.Cases.Case do
     end
 
     update :set_assignee do
-      argument :assignee, :string
       require_atomic? false
+
+      argument :assignee, :string
 
       change manage_relationship(:assignee, type: :append_and_remove)
     end
 
     update :add_comment do
-      argument :body, :string, allow_nil?: false
       require_atomic? false
+
+      argument :body, :string, allow_nil?: false
 
       change manage_relationship(
                :body,
@@ -174,8 +175,9 @@ defmodule CaseManager.Cases.Case do
     end
 
     update :upload_file do
-      argument :file, :map, allow_nil?: false
       require_atomic? false
+
+      argument :file, :map, allow_nil?: false
 
       change manage_relationship(:file, :file, type: :create)
     end
