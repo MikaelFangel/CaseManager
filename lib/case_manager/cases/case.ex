@@ -19,6 +19,8 @@ defmodule CaseManager.Cases.Case do
 
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "case_to_team_fkey"
+      reference :reporter, on_delete: :nilify, on_update: :update, name: "case_to_reporter_fkey"
+      reference :assignee, on_delete: :nilify, on_update: :update, name: "case_to_assignee_fkey"
     end
   end
 
@@ -64,7 +66,6 @@ defmodule CaseManager.Cases.Case do
 
     attribute :title, :string, allow_nil?: false
     attribute :description, :string
-    attribute :assignee_id, :uuid
     attribute :team_id, :uuid, allow_nil?: false
     attribute :escalated, :boolean, allow_nil?: false
     attribute :internal_note, :string
@@ -85,9 +86,9 @@ defmodule CaseManager.Cases.Case do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team do
-      allow_nil? false
-    end
+    belongs_to :reporter, CaseManager.Teams.User, allow_nil?: true
+    belongs_to :assignee, CaseManager.Teams.User, allow_nil?: true
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
 
     many_to_many :alert, CaseManager.Alerts.Alert do
       through CaseManager.Relationships.CaseAlert
@@ -109,7 +110,6 @@ defmodule CaseManager.Cases.Case do
         :status,
         :priority,
         :escalated,
-        :assignee_id,
         :team_id,
         :internal_note
       ]
@@ -118,11 +118,9 @@ defmodule CaseManager.Cases.Case do
       change transition_state(arg(:status))
 
       argument :alert, {:array, :string}
+      change manage_relationship(:alert, type: :append_and_remove)
 
-      change manage_relationship(:alert,
-               type: :append_and_remove,
-               on_no_match: :create
-             )
+      change relate_actor(:reporter)
     end
 
     read :read do
@@ -147,7 +145,6 @@ defmodule CaseManager.Cases.Case do
         :description,
         :priority,
         :escalated,
-        :assignee_id,
         :internal_note
       ]
 
@@ -155,6 +152,13 @@ defmodule CaseManager.Cases.Case do
       change transition_state(arg(:status))
 
       primary? true
+    end
+
+    update :set_assignee do
+      argument :assignee, :string
+      require_atomic? false
+
+      change manage_relationship(:assignee, type: :append_and_remove)
     end
 
     update :add_comment do
