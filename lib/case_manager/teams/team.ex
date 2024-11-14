@@ -37,9 +37,9 @@ defmodule CaseManager.Teams.Team do
     create :create do
       accept [:name, :type]
 
-      argument :ip, :map, allow_nil?: true
-      argument :email, :string, allow_nil?: true
-      argument :phone, :map, allow_nil?: true
+      argument :ip, {:array, :map}, allow_nil?: true
+      argument :email, {:array, :string}, allow_nil?: true
+      argument :phone, {:array, :map}, allow_nil?: true
 
       change manage_relationship(:ip, type: :create)
       change manage_relationship(:email, type: :create, value_is_key: :email)
