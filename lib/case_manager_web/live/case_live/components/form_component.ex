@@ -7,6 +7,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   def update(assigns, socket) do
     socket =
       socket
+      |> assign(:action, assigns[:action])
       |> assign(:current_user, assigns[:current_user])
       |> assign(:team_name, assigns[:team_name])
       |> assign(:related_alerts, assigns[:related_alerts])
@@ -30,54 +31,55 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
         %{"description" => description, "internal_note" => internal_note} = params,
         socket
       ) do
-    team_id =
-      socket.assigns.related_alerts
-      |> Enum.at(0)
-      |> elem(1)
-      |> Map.get(:team)
-      |> Map.get(:id)
+    related_alert_ids = Enum.map(socket.assigns.related_alerts, fn {_id, alert} -> alert.id end)
 
-    related_alert_ids =
-      socket.assigns.related_alerts
-      |> Enum.map(fn {_id, alert} -> alert.id end)
-
-    sanitize = &(&1 |> HtmlSanitizeEx.strip_tags())
+    sanitize = &HtmlSanitizeEx.strip_tags/1
 
     params =
       params
       |> Map.put("description", sanitize.(description))
       |> Map.put("internal_note", sanitize.(internal_note))
-      |> Map.put(:team_id, team_id)
       |> Map.put(:escalated, false)
       |> Map.put(:alert, related_alert_ids)
       |> Map.delete(:uploaded_files)
+      |> then(&if(socket.assigns[:action] == :new, do: %{case: &1}, else: &1))
+
+    upload_attachments = fn case ->
+      consume_uploaded_entries(socket, :attachments, fn %{path: path}, entry ->
+        file = File.read!(path)
+
+        case
+        |> Case.upload_file!(
+          %{
+            filename: entry.client_name,
+            content_type: entry.client_type,
+            binary_data: file
+          },
+          actor: socket.assigns.current_user
+        )
+
+        {:ok, "success"}
+      end)
+    end
 
     action_opts = [actor: socket.assigns.current_user]
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
+      {:ok, %{case: [case]}} ->
+        upload_attachments.(case)
+
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Case created successfully."))
+         |> push_navigate(to: ~p"/case/#{case.id}")}
+
       {:ok, case} ->
-        consume_uploaded_entries(socket, :attachments, fn %{path: path}, entry ->
-          file = File.read!(path)
+        upload_attachments.(case)
 
-          case
-          |> Case.upload_file!(
-            %{
-              filename: entry.client_name,
-              content_type: entry.client_type,
-              binary_data: file
-            },
-            actor: socket.assigns.current_user
-          )
-
-          {:ok, "success"}
-        end)
-
-        socket =
-          socket
-          |> put_flash(:info, gettext("Case created successfully."))
-          |> push_navigate(to: ~p"/case/#{case.id}")
-
-        {:noreply, socket}
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Case updated successfully."))
+         |> push_navigate(to: ~p"/case/#{case.id}")}
 
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}

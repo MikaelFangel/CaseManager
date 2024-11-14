@@ -46,6 +46,18 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(:phone, type: :create)
     end
 
+    update :add_case do
+      require_atomic? false
+
+      argument :case, :map, allow_nil?: false
+
+      change manage_relationship(:case, type: :create)
+    end
+
     defaults [:read, :destroy, update: :*]
+  end
+
+  code_interface do
+    define :add_case, args: [:case]
   end
 end

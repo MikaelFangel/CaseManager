@@ -51,6 +51,7 @@ defmodule CaseManager.Cases.Case do
     initial_states(@valid_states)
     default_initial_state(:in_progress)
     state_attribute(:status)
+    extra_states([nil])
 
     transitions do
       transition(:*, from: :in_progress, to: @valid_states)
@@ -66,12 +67,11 @@ defmodule CaseManager.Cases.Case do
 
     attribute :title, :string, allow_nil?: false
     attribute :description, :string
-    attribute :team_id, :uuid, allow_nil?: false
     attribute :escalated, :boolean, allow_nil?: false
     attribute :internal_note, :string
 
     attribute :status, :atom do
-      constraints one_of: @valid_states
+      constraints one_of: @valid_states ++ [nil]
       default :in_progress
       allow_nil? false
       public? true
@@ -107,14 +107,14 @@ defmodule CaseManager.Cases.Case do
       accept [
         :title,
         :description,
-        :status,
         :priority,
         :escalated,
-        :team_id,
         :internal_note
       ]
 
-      argument :status, :atom
+      primary? true
+
+      argument :status, :atom, allow_nil?: false
       argument :alert, {:array, :string}
 
       change transition_state(arg(:status))
@@ -147,7 +147,8 @@ defmodule CaseManager.Cases.Case do
         :internal_note
       ]
 
-      argument :status, :atom
+      argument :status, :atom, allow_nil?: false
+
       change transition_state(arg(:status))
 
       primary? true
