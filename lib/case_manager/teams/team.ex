@@ -54,10 +54,19 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(:case, type: :create)
     end
 
+    update :add_alert do
+      require_atomic? false
+
+      argument :alert, :map, allow_nil?: false
+
+      change manage_relationship(:alert, type: :create)
+    end
+
     defaults [:read, :destroy, update: :*]
   end
 
   code_interface do
     define :add_case, args: [:case]
+    define :add_alert, args: [:alert]
   end
 end
