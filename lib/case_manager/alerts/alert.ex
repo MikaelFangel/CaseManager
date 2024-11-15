@@ -93,13 +93,10 @@ defmodule CaseManager.Alerts.Alert do
     end
 
     read :read do
-      prepare build(load: [:team, :case])
       primary? true
     end
 
     read :read_paginated do
-      prepare build(load: [:team, :case])
-
       pagination do
         required? true
         offset? true
@@ -121,5 +118,9 @@ defmodule CaseManager.Alerts.Alert do
 
   resource do
     plural_name :alerts
+  end
+
+  preparations do
+    prepare build(load: [:team, :case])
   end
 end

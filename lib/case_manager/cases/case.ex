@@ -126,12 +126,9 @@ defmodule CaseManager.Cases.Case do
 
     read :read do
       primary? true
-      prepare build(load: [:team])
     end
 
     read :read_paginated do
-      prepare build(load: [:team])
-
       pagination do
         required? true
         offset? true
@@ -199,5 +196,9 @@ defmodule CaseManager.Cases.Case do
 
   resource do
     plural_name :cases
+  end
+
+  preparations do
+    prepare build(load: [:team])
   end
 end
