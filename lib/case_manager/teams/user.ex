@@ -53,7 +53,6 @@ defmodule CaseManager.Teams.User do
     attribute :last_name, :string, public?: true
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :team_id, :uuid, allow_nil?: false, public?: true
 
     attribute :role, :atom do
       constraints one_of: [:admin, :analyst]
