@@ -30,12 +30,20 @@ defmodule CaseManager.Teams.IP do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team do
-      allow_nil? false
-    end
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, update: :*]
+
+    create :create do
+      accept [
+        :ip,
+        :version,
+        :team_id
+      ]
+
+      primary? true
+    end
   end
 end

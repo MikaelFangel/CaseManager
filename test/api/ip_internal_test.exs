@@ -4,10 +4,19 @@ defmodule CaserManager.IpInternalTest do
   """
   use CaseManager.DataCase, async: true
   use ExUnitProperties
-  alias CaseManager.ContactInfos.IP
+  alias CaseManager.Teams.{IP, Team}
+
+  setup do
+    team =
+      Team
+      |> Ash.Changeset.for_create(:create, %{name: "test", type: :mssp})
+      |> Ash.create!()
+
+    %{team: team}
+  end
 
   describe "positive test for ips" do
-    property "ips of pseudo ipv4 can be created " do
+    property "ips of pseudo ipv4 can be created ", %{team: team} do
       check all(
               a <- StreamData.string(?0..?9, min_length: 1, max_length: 3),
               b <- StreamData.string(?0..?9, min_length: 1, max_length: 3),
@@ -18,7 +27,8 @@ defmodule CaserManager.IpInternalTest do
           IP
           |> Ash.Changeset.for_create(:create, %{
             ip: a <> "." <> b <> "." <> c <> ". " <> d,
-            version: :v4
+            version: :v4,
+            team_id: team.id
           })
           |> Ash.create()
 
@@ -28,10 +38,10 @@ defmodule CaserManager.IpInternalTest do
   end
 
   describe "negative tests ips" do
-    test "fails to create ip entity when ip is nil" do
+    test "fails to create ip entity when ip is nil", %{team: team} do
       changeset =
         IP
-        |> Ash.Changeset.for_create(:create, %{ip: nil})
+        |> Ash.Changeset.for_create(:create, %{ip: nil, team_id: team.id})
         |> Ash.create()
 
       assert {:error, _ip} = changeset

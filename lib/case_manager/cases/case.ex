@@ -40,6 +40,8 @@ defmodule CaseManager.Cases.Case do
     policy action_type(:update) do
       forbid_unless AshStateMachine.Checks.ValidNextState
       authorize_if CaseManager.Policies.MSSPCreatePolicy
+      authorize_if changing_relationship(:comment)
+      authorize_if changing_relationship(:file)
     end
 
     policy action_type(:read) do
@@ -191,6 +193,7 @@ defmodule CaseManager.Cases.Case do
   code_interface do
     define :escalate, args: []
     define :upload_file, args: [:file]
+    define :add_comment, args: [:body]
     define :set_assignee, args: [:assignee]
   end
 
