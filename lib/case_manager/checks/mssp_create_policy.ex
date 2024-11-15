@@ -16,7 +16,12 @@ defmodule CaseManager.Policies.MSSPCreatePolicy do
         _context,
         _opts
       ) do
-    team = Ash.load!(actor, :team).team
+    team =
+      case actor.team do
+        %Ash.NotLoaded{} -> Ash.load!(actor, :team).team
+        _loaded -> actor.team
+      end
+
     team && team.type == :mssp
   end
 

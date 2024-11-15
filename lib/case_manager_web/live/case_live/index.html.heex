@@ -16,7 +16,7 @@
     module={CaseManagerWeb.CaseLive.Components.Table}
     id="case_table"
     rows={@streams.cases}
-    role={Ash.load!(@current_user, :team).team.type}
+    role={@current_user.team.type}
     more_pages?={@more_pages?}
     row_click={fn {_id, case} -> JS.patch(~p"/case/#{case.id}") end}
   />

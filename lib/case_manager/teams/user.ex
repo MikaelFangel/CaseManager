@@ -73,4 +73,8 @@ defmodule CaseManager.Teams.User do
   identities do
     identity :unique_email, [:email]
   end
+
+  preparations do
+    prepare build(load: [:team])
+  end
 end
