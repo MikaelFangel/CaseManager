@@ -1,12 +1,12 @@
 defmodule CaseManagerWeb.CaseLive.Edit do
   use CaseManagerWeb, :live_view
   alias AshPhoenix.Form
+  alias CaseManager.Cases.Case
 
   @impl true
   def mount(%{"id" => id} = _params, _session, socket) do
-    case = CaseManager.Cases.Case |> Ash.get!(id)
-    related_alerts = case.team |> Ash.load!(:alert) |> Map.get(:alert) |> Enum.map(&{&1.id, &1})
-    files = case |> Ash.load!(:file) |> Map.get(:file)
+    case = Case |> Ash.get!(id) |> Ash.load!([:alert, :file])
+    related_alerts = case.alert |> Enum.map(&{&1.id, &1})
 
     form =
       case
@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.CaseLive.Edit do
       |> assign(:id, id)
       |> assign(:team_name, case.team.name)
       |> assign(:related_alerts, related_alerts)
-      |> assign(:files, files)
+      |> assign(:files, case.file)
       |> assign(:form, form)
 
     {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
