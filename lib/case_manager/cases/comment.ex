@@ -7,7 +7,8 @@ defmodule CaseManager.Cases.Comment do
     domain: CaseManager.Cases,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshAdmin.Resource]
 
   postgres do
     table "comment"
@@ -37,23 +38,32 @@ defmodule CaseManager.Cases.Comment do
     end
   end
 
+  admin do
+    create_actions([])
+  end
+
   attributes do
     uuid_primary_key :id
 
-    attribute :case_id, :uuid, allow_nil?: false, public?: true
-    attribute :user_id, :uuid, allow_nil?: false, public?: true
     attribute :body, :string, allow_nil?: false, public?: true
 
     timestamps()
   end
 
   relationships do
-    belongs_to :case, CaseManager.Cases.Case
-    belongs_to :user, CaseManager.Teams.User
+    belongs_to :case, CaseManager.Cases.Case, allow_nil?: false
+    belongs_to :user, CaseManager.Teams.User, allow_nil?: false
   end
 
   actions do
-    defaults [:destroy, create: :*, update: :*]
+    defaults [:destroy, update: :*]
+
+    create :create do
+      accept :*
+      primary? true
+
+      change relate_actor(:user)
+    end
 
     read :read do
       primary? true

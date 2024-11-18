@@ -6,7 +6,7 @@ defmodule CaseManager.Teams.User do
     otp_app: :case_manager,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication],
+    extensions: [AshAuthentication, AshAdmin.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
   postgres do
@@ -36,6 +36,10 @@ defmodule CaseManager.Teams.User do
     end
   end
 
+  admin do
+    actor?(true)
+  end
+
   policies do
     policy always() do
       authorize_if always()
@@ -49,7 +53,6 @@ defmodule CaseManager.Teams.User do
     attribute :last_name, :string, public?: true
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :team_id, :uuid, allow_nil?: false, public?: true
 
     attribute :role, :atom do
       constraints one_of: [:admin, :analyst]
@@ -69,5 +72,9 @@ defmodule CaseManager.Teams.User do
 
   identities do
     identity :unique_email, [:email]
+  end
+
+  preparations do
+    prepare build(load: [:team])
   end
 end

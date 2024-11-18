@@ -46,7 +46,6 @@ defmodule CaseManager.Alerts.Alert do
     uuid_primary_key :id
 
     attribute :alert_id, :string, allow_nil?: false
-    attribute :team_id, :uuid, allow_nil?: false
     attribute :title, :string, allow_nil?: false
     attribute :description, :string
     attribute :creation_time, :utc_datetime, allow_nil?: false
@@ -94,13 +93,10 @@ defmodule CaseManager.Alerts.Alert do
     end
 
     read :read do
-      prepare build(load: [:team])
       primary? true
     end
 
     read :read_paginated do
-      prepare build(load: [:team, :case])
-
       pagination do
         required? true
         offset? true
@@ -122,5 +118,9 @@ defmodule CaseManager.Alerts.Alert do
 
   resource do
     plural_name :alerts
+  end
+
+  preparations do
+    prepare build(load: [:team, :case])
   end
 end

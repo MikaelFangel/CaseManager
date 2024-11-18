@@ -8,7 +8,7 @@ defmodule CaseManager.Cases.Case do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshStateMachine]
+    extensions: [AshStateMachine, AshAdmin.Resource]
 
   @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
   @closed_states [:t_positive, :f_positive, :benign]
@@ -19,6 +19,8 @@ defmodule CaseManager.Cases.Case do
 
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "case_to_team_fkey"
+      reference :reporter, on_delete: :nilify, on_update: :update, name: "case_to_reporter_fkey"
+      reference :assignee, on_delete: :nilify, on_update: :update, name: "case_to_assignee_fkey"
     end
   end
 
@@ -38,6 +40,8 @@ defmodule CaseManager.Cases.Case do
     policy action_type(:update) do
       forbid_unless AshStateMachine.Checks.ValidNextState
       authorize_if CaseManager.Policies.MSSPCreatePolicy
+      authorize_if changing_relationship(:comment)
+      authorize_if changing_relationship(:file)
     end
 
     policy action_type(:read) do
@@ -49,6 +53,7 @@ defmodule CaseManager.Cases.Case do
     initial_states(@valid_states)
     default_initial_state(:in_progress)
     state_attribute(:status)
+    extra_states([nil])
 
     transitions do
       transition(:*, from: :in_progress, to: @valid_states)
@@ -59,18 +64,20 @@ defmodule CaseManager.Cases.Case do
     end
   end
 
+  admin do
+    create_actions([])
+  end
+
   attributes do
     uuid_primary_key :id
 
     attribute :title, :string, allow_nil?: false
     attribute :description, :string
-    attribute :assignee_id, :uuid
-    attribute :team_id, :uuid, allow_nil?: false
     attribute :escalated, :boolean, allow_nil?: false
     attribute :internal_note, :string
 
     attribute :status, :atom do
-      constraints one_of: @valid_states
+      constraints one_of: @valid_states ++ [nil]
       default :in_progress
       allow_nil? false
       public? true
@@ -85,9 +92,9 @@ defmodule CaseManager.Cases.Case do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team do
-      allow_nil? false
-    end
+    belongs_to :reporter, CaseManager.Teams.User, allow_nil?: true
+    belongs_to :assignee, CaseManager.Teams.User, allow_nil?: true
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
 
     many_to_many :alert, CaseManager.Alerts.Alert do
       through CaseManager.Relationships.CaseAlert
@@ -100,37 +107,32 @@ defmodule CaseManager.Cases.Case do
   end
 
   actions do
+    defaults [:destroy]
+
     create :create do
       accept [
         :title,
         :description,
-        :status,
         :priority,
         :escalated,
-        :assignee_id,
-        :team_id,
         :internal_note
       ]
 
-      argument :status, :atom
-      change transition_state(arg(:status))
+      primary? true
 
+      argument :status, :atom, allow_nil?: false
       argument :alert, {:array, :string}
 
-      change manage_relationship(:alert,
-               type: :append_and_remove,
-               on_no_match: :create
-             )
+      change transition_state(arg(:status))
+      change manage_relationship(:alert, type: :append_and_remove)
+      change relate_actor(:reporter)
     end
 
     read :read do
       primary? true
-      prepare build(load: [:team])
     end
 
     read :read_paginated do
-      prepare build(load: [:team])
-
       pagination do
         required? true
         offset? true
@@ -145,35 +147,41 @@ defmodule CaseManager.Cases.Case do
         :description,
         :priority,
         :escalated,
-        :assignee_id,
         :internal_note
       ]
 
-      argument :status, :atom
+      argument :status, :atom, allow_nil?: false
+
       change transition_state(arg(:status))
 
       primary? true
     end
 
-    update :add_comment do
-      argument :comment, :string, allow_nil?: false
+    update :set_assignee do
       require_atomic? false
 
-      change fn changeset, context ->
-        comment = changeset.arguments[:comment]
+      argument :assignee, :string
 
-        Ash.Changeset.manage_relationship(
-          changeset,
-          :comment,
-          %{body: comment, user_id: context.actor.id},
-          type: :create
-        )
-      end
+      change manage_relationship(:assignee, type: :append_and_remove)
+    end
+
+    update :add_comment do
+      require_atomic? false
+
+      argument :body, :string, allow_nil?: false
+
+      change manage_relationship(
+               :body,
+               :comment,
+               type: :create,
+               value_is_key: :body
+             )
     end
 
     update :upload_file do
-      argument :file, :map, allow_nil?: false
       require_atomic? false
+
+      argument :file, :map, allow_nil?: false
 
       change manage_relationship(:file, :file, type: :create)
     end
@@ -186,9 +194,15 @@ defmodule CaseManager.Cases.Case do
   code_interface do
     define :escalate, args: []
     define :upload_file, args: [:file]
+    define :add_comment, args: [:body]
+    define :set_assignee, args: [:assignee]
   end
 
   resource do
     plural_name :cases
+  end
+
+  preparations do
+    prepare build(load: [:team])
   end
 end

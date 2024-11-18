@@ -28,55 +28,45 @@ defmodule CaseManager.Teams.Team do
   relationships do
     has_many :alert, CaseManager.Alerts.Alert
     has_many :case, CaseManager.Cases.Case
-
-    many_to_many :ip, CaseManager.ContactInfos.IP do
-      through CaseManager.Relationships.TeamIP
-      source_attribute_on_join_resource :team_id
-      destination_attribute_on_join_resource :ip_id
-    end
-
-    many_to_many :email, CaseManager.ContactInfos.Email do
-      through CaseManager.Relationships.TeamEmail
-      source_attribute_on_join_resource :team_id
-      destination_attribute_on_join_resource :email_id
-    end
-
-    many_to_many :phone, CaseManager.ContactInfos.Phone do
-      through CaseManager.Relationships.TeamPhone
-      source_attribute_on_join_resource :team_id
-      destination_attribute_on_join_resource :phone_id
-    end
+    has_many :ip, CaseManager.Teams.IP
+    has_many :email, CaseManager.Teams.Email
+    has_many :phone, CaseManager.Teams.Phone
   end
 
   actions do
     create :create do
       accept [:name, :type]
 
-      # Use the _arg postfix because the argument cannot be the same
-      # as the relationship in question.
-      argument :ip_arg, :map, allow_nil?: true
-      argument :email_arg, :map, allow_nil?: true
-      argument :phone_arg, :map, allow_nil?: true
+      argument :ip, {:array, :map}, allow_nil?: true
+      argument :email, {:array, :string}, allow_nil?: true
+      argument :phone, {:array, :map}, allow_nil?: true
 
-      change manage_relationship(
-               :ip_arg,
-               :ip,
-               type: :create
-             )
+      change manage_relationship(:ip, type: :create)
+      change manage_relationship(:email, type: :create, value_is_key: :email)
+      change manage_relationship(:phone, type: :create)
+    end
 
-      change manage_relationship(
-               :email_arg,
-               :email,
-               type: :create
-             )
+    update :add_case do
+      require_atomic? false
 
-      change manage_relationship(
-               :phone_arg,
-               :phone,
-               type: :create
-             )
+      argument :case, :map, allow_nil?: false
+
+      change manage_relationship(:case, type: :create)
+    end
+
+    update :add_alert do
+      require_atomic? false
+
+      argument :alert, :map, allow_nil?: false
+
+      change manage_relationship(:alert, type: :create)
     end
 
     defaults [:read, :destroy, update: :*]
+  end
+
+  code_interface do
+    define :add_case, args: [:case]
+    define :add_alert, args: [:alert]
   end
 end

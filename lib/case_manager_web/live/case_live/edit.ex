@@ -10,7 +10,7 @@ defmodule CaseManagerWeb.CaseLive.Edit do
 
     form =
       case
-      |> Form.for_update(:update, forms: [auto?: true])
+      |> Form.for_update(:update, forms: [auto?: true], actor: socket.assigns[:current_user])
       |> to_form()
 
     socket =

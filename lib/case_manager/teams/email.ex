@@ -1,15 +1,24 @@
-defmodule CaseManager.ContactInfos.Email do
+defmodule CaseManager.Teams.Email do
   @moduledoc """
   Resource that represents emails. This resources is different from the email used for authentication.
   """
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.ContactInfos,
-    data_layer: AshPostgres.DataLayer
+    domain: CaseManager.Teams,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshAdmin.Resource]
 
   postgres do
     table "email"
     repo CaseManager.Repo
+
+    references do
+      reference :team, on_delete: :delete, on_update: :update, name: "email_to_team_fkey"
+    end
+  end
+
+  admin do
+    create_actions([])
   end
 
   attributes do
@@ -21,13 +30,7 @@ defmodule CaseManager.ContactInfos.Email do
   end
 
   relationships do
-    relationships do
-      many_to_many :team, CaseManager.Teams.Team do
-        through CaseManager.Relationships.TeamEmail
-        source_attribute_on_join_resource :email_id
-        destination_attribute_on_join_resource :team_id
-      end
-    end
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
   end
 
   actions do

@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.MenuBar do
   def menu_bar(assigns) do
     assigns =
       assigns
-      |> assign(:team_type, Ash.load!(assigns.current_user, :team).team.type)
+      |> assign(:team_type, assigns.current_user.team.type)
 
     ~H"""
     <div class="flex flex-row w-screen h-screen">

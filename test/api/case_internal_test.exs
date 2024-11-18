@@ -4,58 +4,50 @@ defmodule CaseManager.CaseInternalTest do
   """
   use CaseManager.DataCase, async: true
   use ExUnitProperties
-  alias CaseManager.Cases.{Case, Comment}
+  alias CaseManager.Cases.Case
   alias CaseManager.Teams.{Team, User}
   alias CaseManagerWeb.CaseGenerator
 
   setup do
-    {customer_team, mssp_team} = generate_team("setup")
-    {eve_team, _} = generate_team("eve")
+    {customer_team, mssp_team, eve_team} = generate_teams()
 
-    gen_map = %{
+    user_attrs = %{
       first_name: "Testing",
       last_name: "Testing",
       password: "12345678",
       password_confirmation: "12345678"
     }
 
-    mssp_user_attrs =
-      gen_map
-      |> Map.put(:team_id, mssp_team.id)
-      |> Map.put(:email, "mssp@mail.dk")
-
-    customer_user_attrs =
-      gen_map
-      |> Map.put(:team_id, customer_team.id)
-      |> Map.put(:email, "customer@mail.dk")
-
-    eve_user_attrs =
-      gen_map
-      |> Map.put(:team_id, eve_team.id)
-      |> Map.put(:email, "eve@mail.dk")
-
-    customer_user =
-      User
-      |> Ash.Changeset.for_create(:register_with_password, customer_user_attrs)
-      |> Ash.create!()
-
-    mssp_user =
-      User |> Ash.Changeset.for_create(:register_with_password, mssp_user_attrs) |> Ash.create!()
-
-    eve_user =
-      User |> Ash.Changeset.for_create(:register_with_password, eve_user_attrs) |> Ash.create!()
+    customer_user = create_user(user_attrs, customer_team.id, "customer@mail.dk")
+    mssp_user = create_user(user_attrs, mssp_team.id, "mssp@mail.dk")
+    eve_user = create_user(user_attrs, eve_team.id, "eve@mail.dk")
 
     %{customer_user: customer_user, mssp_user: mssp_user, eve_user: eve_user}
   end
 
-  defp generate_team(name) do
-    customer_team =
-      Team |> Ash.Changeset.for_create(:create, %{name: name, type: :customer}) |> Ash.create!()
+  defp generate_teams do
+    customer_team = create_team("customer", :customer)
+    mssp_team = create_team("mssp", :mssp)
+    eve_team = create_team("eve", :customer)
 
-    mssp_team =
-      Team |> Ash.Changeset.for_create(:create, %{name: name, type: :mssp}) |> Ash.create!()
+    {customer_team, mssp_team, eve_team}
+  end
 
-    {customer_team, mssp_team}
+  defp create_team(name, type) do
+    Team
+    |> Ash.Changeset.for_create(:create, %{name: name, type: type})
+    |> Ash.create!()
+  end
+
+  defp create_user(attrs, team_id, email) do
+    attrs =
+      attrs
+      |> Map.put(:team_id, team_id)
+      |> Map.put(:email, email)
+
+    User
+    |> Ash.Changeset.for_create(:register_with_password, attrs)
+    |> Ash.create!()
   end
 
   describe "positive test for creating cases" do
@@ -64,31 +56,11 @@ defmodule CaseManager.CaseInternalTest do
       mssp_user: mssp_user
     } do
       check all(case_attr <- CaseGenerator.case_attrs()) do
-        nil_changeset = Case |> Ash.Changeset.for_create(:create, case_attr, actor: mssp_user)
+        team = (customer_user |> Ash.load!(:team)).team
 
-        mssp_changeset =
-          Case
-          |> Ash.Changeset.for_create(
-            :create,
-            case_attr
-            |> Map.put(:team_id, mssp_user.team_id)
-            |> Map.put(:assignee_id, mssp_user.id),
-            actor: mssp_user
-          )
-
-        customer_changeset =
-          Case
-          |> Ash.Changeset.for_create(
-            :create,
-            case_attr
-            |> Map.put(:team_id, customer_user.team_id)
-            |> Map.put(:assignee_id, customer_user.id),
-            actor: customer_user
-          )
-
-        assert {:ok, _case} = mssp_changeset |> Ash.create()
-        assert {:error, _case} = customer_changeset |> Ash.create()
-        assert {:error, _case} = nil_changeset |> Ash.create()
+        assert {:ok, _case} = Team.add_case(team, case_attr, actor: mssp_user)
+        assert {:error, _case} = Team.add_case(team, case_attr, actor: customer_user)
+        assert {:error, _case} = Team.add_case(team, %{}, actor: mssp_user)
       end
     end
   end
@@ -103,33 +75,16 @@ defmodule CaseManager.CaseInternalTest do
               case_attr <- CaseGenerator.case_attrs(),
               comment_body <- StreamData.string(:utf8, min_length: 1)
             ) do
-        case =
-          Case
-          |> Ash.Changeset.for_create(
-            :create,
-            case_attr
-            |> Map.put(:team_id, customer_user.team_id)
-            |> Map.put(:assignee_id, mssp_user.id),
-            actor: mssp_user
-          )
-          |> Ash.create!()
+        team =
+          (customer_user |> Ash.load!(:team)).team
+          |> Team.add_case!(case_attr, actor: mssp_user)
 
-        gen_comment = %{case_id: case.id, user_id: customer_user.id, body: comment_body}
-        gen_comment_negative = %{case_id: case.id, user_id: eve_user.id, body: comment_body}
-
-        pos_changeset =
-          Comment |> Ash.Changeset.for_create(:create, gen_comment, actor: customer_user)
-
-        mssp_changeset =
-          Comment |> Ash.Changeset.for_create(:create, gen_comment, actor: mssp_user)
-
-        neg_changeset =
-          Comment |> Ash.Changeset.for_create(:create, gen_comment_negative, actor: eve_user)
+        [case] = team.case
 
         refute eve_user.team_id == customer_user.team_id
-        assert {:ok, _comment} = pos_changeset |> Ash.create()
-        assert {:ok, _comment} = mssp_changeset |> Ash.create()
-        assert {:error, _comment} = neg_changeset |> Ash.create()
+        assert {:ok, _comment} = Case.add_comment(case, comment_body, actor: customer_user)
+        assert {:ok, _comment} = Case.add_comment(case, comment_body, actor: mssp_user)
+        assert {:error, _comment} = Case.add_comment(case, comment_body, actor: eve_user)
       end
     end
   end
