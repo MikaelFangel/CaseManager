@@ -8,7 +8,7 @@ defmodule CaseManager.Cases.Case do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshStateMachine]
+    extensions: [AshStateMachine, AshAdmin.Resource]
 
   @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
   @closed_states [:t_positive, :f_positive, :benign]
@@ -62,6 +62,10 @@ defmodule CaseManager.Cases.Case do
       transition(:*, from: :t_positive, to: @closed_states)
       transition(:*, from: :f_positive, to: @closed_states)
     end
+  end
+
+  admin do
+    create_actions([])
   end
 
   attributes do
