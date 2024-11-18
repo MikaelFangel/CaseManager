@@ -41,6 +41,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         },
         socket
       ) do
+    alert = Ash.load!(alert, :team)
     {:noreply, stream_insert(socket, :alerts, alert, at: 0)}
   end
 
