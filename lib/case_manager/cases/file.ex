@@ -5,7 +5,8 @@ defmodule CaseManager.Cases.File do
   use Ash.Resource,
     otp_app: :case_manager,
     data_layer: AshPostgres.DataLayer,
-    domain: CaseManager.Cases
+    domain: CaseManager.Cases,
+    extensions: [AshAdmin.Resource]
 
   postgres do
     table "file"
@@ -16,13 +17,16 @@ defmodule CaseManager.Cases.File do
     end
   end
 
+  admin do
+    create_actions([])
+  end
+
   attributes do
     uuid_primary_key :id
 
-    attribute :case_id, :uuid, allow_nil?: false
-    attribute :filename, :string
-    attribute :content_type, :string
-    attribute :binary_data, :binary
+    attribute :filename, :string, allow_nil?: false, public?: true
+    attribute :content_type, :string, allow_nil?: false, public?: true
+    attribute :binary_data, :binary, allow_nil?: false, public?: true
 
     timestamps()
   end
@@ -32,17 +36,6 @@ defmodule CaseManager.Cases.File do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*]
-
-    create :create do
-      primary? true
-
-      accept [
-        :case_id,
-        :filename,
-        :content_type,
-        :binary_data
-      ]
-    end
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 end
