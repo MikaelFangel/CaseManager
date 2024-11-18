@@ -5,7 +5,8 @@ defmodule CaseManager.Teams.Email do
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Teams,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshAdmin.Resource]
 
   postgres do
     table "email"
@@ -14,6 +15,10 @@ defmodule CaseManager.Teams.Email do
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "email_to_team_fkey"
     end
+  end
+
+  admin do
+    create_actions([])
   end
 
   attributes do
@@ -29,15 +34,6 @@ defmodule CaseManager.Teams.Email do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*]
-
-    create :create do
-      accept [
-        :email,
-        :team_id
-      ]
-
-      primary? true
-    end
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 end

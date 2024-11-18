@@ -5,7 +5,8 @@ defmodule CaseManager.Teams.IP do
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Teams,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshAdmin.Resource]
 
   postgres do
     table "ip"
@@ -14,6 +15,10 @@ defmodule CaseManager.Teams.IP do
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "ip_to_team_fkey"
     end
+  end
+
+  admin do
+    create_actions([])
   end
 
   attributes do
@@ -34,16 +39,6 @@ defmodule CaseManager.Teams.IP do
   end
 
   actions do
-    defaults [:read, :destroy, update: :*]
-
-    create :create do
-      accept [
-        :ip,
-        :version,
-        :team_id
-      ]
-
-      primary? true
-    end
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 end
