@@ -205,4 +205,8 @@ defmodule CaseManager.Cases.Case do
   preparations do
     prepare build(load: [:team])
   end
+
+  aggregates do
+    count :no_of_related_alerts, :alert
+  end
 end
