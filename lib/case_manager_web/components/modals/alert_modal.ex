@@ -72,7 +72,7 @@ defmodule CaseManagerWeb.AlertModal do
         <.button colour={:secondary} phx-click={@on_cancel}>
           <%= gettext("Close") %>
         </.button>
-        <.link href={@alert.link}>
+        <.link href={@alert.link} target="_blank">
           <.button>
             <%= gettext("Search Link") %>
           </.button>

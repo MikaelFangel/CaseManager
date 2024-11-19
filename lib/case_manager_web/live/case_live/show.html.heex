@@ -49,13 +49,14 @@
         <%= alert.creation_time %>
       </:col>
       <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
-        <.icon_btn
-          icon_name="hero-arrow-top-right-on-square"
-          colour={:secondary}
-          size={:small}
-          class="pl-0.5 pb-1"
-          phx-click={alert.link}
-        />
+        <.link href={alert.link} target="_blank">
+          <.icon_btn
+            icon_name="hero-arrow-top-right-on-square"
+            colour={:secondary}
+            size={:small}
+            class="pl-0.5 pb-1"
+          />
+        </.link>
       </:col>
     </.table>
 
