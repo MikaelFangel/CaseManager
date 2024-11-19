@@ -14,7 +14,10 @@
           :day
         ) %> days ago
       </div>
-      <div><span><%= gettext("Created by") %>:</span></div>
+      <div>
+        <span><%= gettext("Reported by") %>:</span> <%= @reporter.first_name <>
+          " " <> @reporter.last_name %>
+      </div>
       <div>
         <span><%= gettext("Escalated") %>:</span> <%= @case.escalated
         |> to_string()
