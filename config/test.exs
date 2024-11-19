@@ -31,3 +31,9 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Ensure Ash not spawn tasks to execute requests.
+config :ash, :disable_async?, true
+
+# Ignore missed_notifications
+config :ash, :missed_notifications, :ignore
