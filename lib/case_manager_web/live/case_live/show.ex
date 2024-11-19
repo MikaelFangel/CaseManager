@@ -29,7 +29,11 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
-    case = Case |> Ash.get!(id) |> Ash.load!([:alert, :comment, :file, :reporter])
+    case =
+      Case
+      |> Ash.get!(id)
+      |> Ash.load!([:alert, :comment, :file, :reporter, :no_of_related_alerts])
+
     alerts = case.alert |> Enum.map(&{&1.id, &1})
     comments = case.comment |> add_date_headers() |> Enum.reverse()
 
@@ -39,7 +43,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
      |> assign(case: case)
      |> assign(reporter: case.reporter)
      |> assign(related_alerts: alerts)
-     |> assign(files: case.file)}
+     |> assign(files: case.file)
+     |> assign(no_of_related_alerts: case.no_of_related_alerts)}
   end
 
   @impl true

@@ -25,7 +25,7 @@
       </div>
 
       <div><span><%= gettext("Customer") %>:</span> <%= @case.team.name %></div>
-      <div><span><%= gettext("No. attached alarms") %>:</span></div>
+      <div><span><%= gettext("No. attached alarms") %>:</span> <%= @no_of_related_alerts %></div>
       <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
     </div>
 
