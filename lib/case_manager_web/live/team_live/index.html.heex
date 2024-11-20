@@ -8,17 +8,17 @@
   <div class="h-full mt-12 flex flex-row grow-0 gap-x-14">
     <!-- Left side -->
     <div class="basis-2/3">
-      <div id="teams-container" phx-update="stream" phx-viewport-bottom="load_more_teams">
-        <.table id="teams" rows={@streams.teams}>
-          <:col :let={{_id, team}} label={gettext("Name")} width="48"><%= team.name %></:col>
-          <:col :let={{_id, team}} label={gettext("Email")}>
+      <div id="teams-container" phx-viewport-bottom="load_more_teams">
+        <.table id="teams" rows={@teams}>
+          <:col :let={team} label={gettext("Name")}><%= team.name %></:col>
+          <:col :let={team} label={gettext("Email")}>
             <%= team.email |> Enum.map(& &1.email) %>
           </:col>
-          <:col :let={{_id, team}} label={gettext("Phone")}>
+          <:col :let={team} label={gettext("Phone")}>
             <%= phone = team.phone
             "#{phone |> Enum.map(& &1.country_code)} #{phone |> Enum.map(& &1.phone)}" %>
           </:col>
-          <:col :let={{_id, team}} label={gettext("IP")} width="24">
+          <:col :let={team} label={gettext("IP")}>
             <%= team.ip |> Enum.map(& &1.ip) %>
           </:col>
         </.table>
