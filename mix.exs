@@ -81,7 +81,8 @@ defmodule CaseManager.MixProject do
       {:ash_admin, "~> 0.11.9"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
-      {:html_sanitize_ex, "~> 1.4"}
+      {:html_sanitize_ex, "~> 1.4"},
+      {:earmark, "~> 1.4"}
     ]
   end
 

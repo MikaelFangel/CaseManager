@@ -29,11 +29,11 @@
       <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
     </div>
 
-    <p class="mt-4">
+    <article class="prose prose-sm mt-4">
       <%= if @case.description,
-        do: @case.description |> String.replace("\n", "<br />") |> raw(),
+        do: @case.description |> CaseManagerWeb.Helpers.render_markdown!(),
         else: "" %>
-    </p>
+    </article>
 
     <.table
       id="alerts"
@@ -78,7 +78,7 @@
       <div class="mt-4"><%= gettext("Internal Note") %>:</div>
       <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         <%= if @case.internal_note,
-          do: @case.internal_note |> String.replace("\n", "<br />") |> raw(),
+          do: @case.internal_note |> CaseManagerWeb.Helpers.render_markdown!(),
           else: "" %>
       </div>
       <div class="mt-4 gap-2 w-full flex justify-end">
