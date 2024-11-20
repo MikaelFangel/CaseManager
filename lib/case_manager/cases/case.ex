@@ -107,7 +107,7 @@ defmodule CaseManager.Cases.Case do
   end
 
   actions do
-    defaults [:destroy]
+    defaults [:read, :destroy]
 
     create :create do
       accept [
@@ -126,10 +126,6 @@ defmodule CaseManager.Cases.Case do
       change transition_state(arg(:status))
       change manage_relationship(:alert, type: :append_and_remove)
       change relate_actor(:reporter)
-    end
-
-    read :read do
-      primary? true
     end
 
     read :read_paginated do
@@ -178,12 +174,20 @@ defmodule CaseManager.Cases.Case do
              )
     end
 
+    update :remove_alert do
+      require_atomic? false
+
+      argument :alert_id, :uuid, allow_nil?: false
+
+      change manage_relationship(:alert_id, :alert, type: :remove)
+    end
+
     update :upload_file do
       require_atomic? false
 
       argument :file, :map, allow_nil?: false
 
-      change manage_relationship(:file, :file, type: :create)
+      change manage_relationship(:file, type: :create)
     end
 
     update :escalate do
@@ -195,6 +199,7 @@ defmodule CaseManager.Cases.Case do
     define :escalate, args: []
     define :upload_file, args: [:file]
     define :add_comment, args: [:body]
+    define :remove_alert, args: [:alert_id]
     define :set_assignee, args: [:assignee]
   end
 

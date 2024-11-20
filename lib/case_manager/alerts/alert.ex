@@ -77,6 +77,8 @@ defmodule CaseManager.Alerts.Alert do
   end
 
   actions do
+    defaults [:read, :destroy, update: :*]
+
     create :create do
       primary? true
 
@@ -92,10 +94,6 @@ defmodule CaseManager.Alerts.Alert do
       ]
     end
 
-    read :read do
-      primary? true
-    end
-
     read :read_paginated do
       pagination do
         required? true
@@ -103,10 +101,6 @@ defmodule CaseManager.Alerts.Alert do
         countable true
         default_limit 20
       end
-    end
-
-    update :update do
-      primary? true
     end
 
     update :update_additional_data do
