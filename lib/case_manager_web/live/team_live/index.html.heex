@@ -88,7 +88,7 @@
     <%!-- Attributes for the team's email resource --%>
 
     <.label><%= gettext("Emails") %></.label>
-    <.inputs_for :let={email_form} field={@form[:email_arg]}>
+    <.inputs_for :let={email_form} field={@form[:email]}>
       <.input type="text" field={email_form[:email]} label={"#{gettext("Email")}"} />
 
       <button
@@ -105,14 +105,14 @@
       type="button"
       class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       phx-click="add_form"
-      phx-value-path={@form[:email_arg].name}
+      phx-value-path={@form[:email].name}
     >
       <.icon name="hero-plus" />
     </button>
 
     <%!-- Attributes for the team's phone resource --%>
     <.label><%= gettext("Phone Numbers") %></.label>
-    <.inputs_for :let={phone_form} field={@form[:phone_arg]}>
+    <.inputs_for :let={phone_form} field={@form[:phone]}>
       <div class="flex flex-row items-center gap-4" }>
         <div class="basis-1/2" }>
           <.input type="text" field={phone_form[:country_code]} label={"#{gettext("Country Code")}"} />
@@ -136,14 +136,14 @@
       type="button"
       class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       phx-click="add_form"
-      phx-value-path={@form[:phone_arg].name}
+      phx-value-path={@form[:phone].name}
     >
       <.icon name="hero-plus" />
     </button>
 
     <%!-- Attributes for the team's ip resource --%>
     <.label><%= gettext("IP Addresses") %></.label>
-    <.inputs_for :let={ip_form} field={@form[:ip_arg]}>
+    <.inputs_for :let={ip_form} field={@form[:ip]}>
       <div class="flex flex-row items-center gap-4" }>
         <div class="basis-1/3" }>
           <.input
@@ -176,7 +176,7 @@
       type="button"
       class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       phx-click="add_form"
-      phx-value-path={@form[:ip_arg].name}
+      phx-value-path={@form[:ip].name}
 
     >
       <.icon name="hero-plus" />
