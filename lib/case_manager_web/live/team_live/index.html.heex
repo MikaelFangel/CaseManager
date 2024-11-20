@@ -1,5 +1,8 @@
 <div class="h-full flex flex-col">
-  <div class="flex justify-end">
+  <div class="flex justify-end gap-x-2">
+    <%= if @pending_refresh? do %>
+      <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:critical} phx-click="refresh_teams"/>
+    <% end %>
     <.button phx-click="show_create_team_modal" icon_name="hero-document-plus">
       <%= gettext("Create Team") %>
     </.button>

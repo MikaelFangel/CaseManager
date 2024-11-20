@@ -16,6 +16,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:more_pages?, page.more?)
       |> assign(:selected_team, nil)
       |> assign(:show_create_team_modal, false)
+      |> assign(:pending_refresh?, false)
 
     {:ok, socket}
   end
@@ -35,6 +36,21 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:teams, teams)
       |> assign(:page, page)
       |> assign(:more_pages?, page.more?)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("refresh_teams", _params, socket) do
+    page = Team.read_by_name_asc!(load: [:email, :phone, :ip])
+    teams = page.results
+
+    socket =
+      socket
+      |> assign(:teams, teams)
+      |> assign(:page, page)
+      |> assign(:more_pages?, page.more?)
+      |> assign(:pending_refresh?, false)
 
     {:noreply, socket}
   end
@@ -78,7 +94,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
         socket =
           socket
           |> assign(:show_create_team_modal, false)
-          |> put_flash(:info, gettext("Team created successfully."))
+          |> assign(:pending_refresh?, true)
           |> push_patch(to: ~p"/teams", replace: true)
 
         {:noreply, socket}
