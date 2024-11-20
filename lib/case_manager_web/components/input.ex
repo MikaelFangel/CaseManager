@@ -99,7 +99,7 @@ defmodule CaseManagerWeb.Input do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div phx-feedback-for={@name}>
+    <div class="phx-no-feedback" phx-feedback-for={@name}>
       <.label for={@id}><%= @label %></.label>
       <select
         id={@id}

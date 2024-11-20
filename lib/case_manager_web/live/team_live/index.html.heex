@@ -1,6 +1,6 @@
 <div class="h-full flex flex-col">
   <div class="flex justify-end">
-    <.button phx-click="show_modal" icon_name="hero-document-plus">
+    <.button phx-click="show_create_team_modal" icon_name="hero-document-plus">
       <%= gettext("Create Team") %>
     </.button>
   </div>
@@ -48,3 +48,147 @@
     </div>
   </div>
 </div>
+
+<.modal_template
+  :if={@show_create_team_modal}
+  id="create_team_modal"
+  show={@show_create_team_modal}
+  on_cancel={JS.push("hide_create_team_modal")}
+>
+  <.header class="flex-none font-bold"><%= gettext("Create Team") %></.header>
+  <hr class="border-t border-gray-300 mt-1 mb-2.5" />
+
+  <.simple_form
+    class="h-full flex flex-col"
+    for={@form}
+    phx-change="validate"
+    phx-submit="create_team"
+  >
+    <%!-- Attributes for the team resource --%>
+    <div class="flex flex-row" }>
+      <div class="basis-full" }>
+        <.input type="text" field={@form[:name]} label={"#{gettext("Team Name")}*"} />
+      </div>
+    </div>
+
+    <div class="flex flex-row" }>
+      <div class="basis-1/4" }>
+        <.input
+          type="select"
+          field={@form[:type]}
+          label={gettext("Team Type")}
+          options={[
+            {gettext("Customer"), :customer},
+            {gettext("MSSP"), :mssp},
+          ]}
+        />
+      </div>
+    </div>
+
+    <%!-- Attributes for the team's email resource --%>
+
+    <.label><%= gettext("Emails") %></.label>
+    <.inputs_for :let={email_form} field={@form[:email_arg]}>
+      <.input type="text" field={email_form[:email]} label={"#{gettext("Email")}"} />
+
+      <button
+        type="button"
+        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+        phx-click="remove_form"
+        phx-value-path={email_form.name}
+      >
+        <.icon name="hero-minus" />
+      </button>
+    </.inputs_for>
+
+    <button
+      type="button"
+      class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+      phx-click="add_form"
+      phx-value-path={@form[:email_arg].name}
+    >
+      <.icon name="hero-plus" />
+    </button>
+
+    <%!-- Attributes for the team's phone resource --%>
+    <.label><%= gettext("Phone Numbers") %></.label>
+    <.inputs_for :let={phone_form} field={@form[:phone_arg]}>
+      <div class="flex flex-row items-center gap-4" }>
+        <div class="basis-1/2" }>
+          <.input type="text" field={phone_form[:country_code]} label={"#{gettext("Country Code")}"} />
+        </div>
+
+        <div class="basis-1/2">
+          <.input type="text" field={phone_form[:phone]} label={"#{gettext("Phone Number")}"} />
+        </div>
+      </div>
+      <button
+        type="button"
+        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+        phx-click="remove_form"
+        phx-value-path={phone_form.name}
+      >
+        <.icon name="hero-minus" />
+      </button>
+    </.inputs_for>
+
+    <button
+      type="button"
+      class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+      phx-click="add_form"
+      phx-value-path={@form[:phone_arg].name}
+    >
+      <.icon name="hero-plus" />
+    </button>
+
+    <%!-- Attributes for the team's ip resource --%>
+    <.label><%= gettext("IP Addresses") %></.label>
+    <.inputs_for :let={ip_form} field={@form[:ip_arg]}>
+      <div class="flex flex-row items-center gap-4" }>
+        <div class="basis-1/3" }>
+          <.input
+            type="select"
+            field={ip_form[:version]}
+            label={gettext("Version")}
+            options={[
+              {gettext("-"), nil},
+              {gettext("V4"), :v4},
+              {gettext("V6"), :v6}
+            ]}
+          />
+        </div>
+
+        <div class="basis-2/3">
+          <.input type="text" field={ip_form[:ip]} label={"#{gettext("IP")}"} />
+        </div>
+      </div>
+      <button
+        type="button"
+        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+        phx-click="remove_form"
+        phx-value-path={ip_form.name}
+      >
+        <.icon name="hero-minus" />
+      </button>
+    </.inputs_for>
+
+    <button
+      type="button"
+      class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+      phx-click="add_form"
+      phx-value-path={@form[:ip_arg].name}
+
+    >
+      <.icon name="hero-plus" />
+    </button>
+
+    <:actions>
+      <.button type="button" colour={:secondary} phx-click="hide_create_team_modal">
+        <%= gettext("Close") %>
+      </.button>
+      <.button type="submit" phx-disable-with="Saving...">
+        <%= gettext("Save") %>
+      </.button>
+    </:actions>
+  </.simple_form>
+</.modal_template>
