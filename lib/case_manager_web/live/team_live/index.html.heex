@@ -1,7 +1,11 @@
 <div class="h-full flex flex-col">
   <div class="flex justify-end gap-x-2">
     <%= if @pending_refresh? do %>
-      <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:critical} phx-click="refresh_teams"/>
+      <.icon_btn
+        icon_name="hero-arrow-path-rounded-square"
+        colour={:critical}
+        phx-click="refresh_teams"
+      />
     <% end %>
     <.button phx-click="show_create_team_modal" icon_name="hero-document-plus">
       <%= gettext("Create Team") %>
@@ -23,6 +27,18 @@
           </:col>
           <:col :let={team} label={gettext("IP")}>
             <%= team.ip |> Enum.map(& &1.ip) %>
+          </:col>
+          <:col :let={team} label={gettext("Actions")} width="6" >
+            <div class="flex items-center justify-end gap-2">
+              <.icon_btn
+                icon_name="hero-trash"
+                colour={:critical}
+                size={:small}
+                class="pb-0.5"
+                phx-click="delete_team"
+                phx-value-team_id={team.id}
+              />
+          </div>
           </:col>
         </.table>
       </div>

@@ -56,6 +56,18 @@ defmodule CaseManagerWeb.TeamLive.Index do
   end
 
   @impl true
+  def handle_event("delete_team", %{"team_id" => team_id}, socket) do
+    team = Ash.get!(CaseManager.Teams.Team, team_id)
+    Ash.destroy!(team)
+
+    socket =
+      socket
+      |> assign(:pending_refresh?, true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("show_create_team_modal", _params, socket) do
     form =
       CaseManager.Teams.Team
