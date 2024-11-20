@@ -1,7 +1,9 @@
 defmodule CaseManagerWeb.CaseLive.New do
+  alias CaseManager.SelectedAlerts
   use CaseManagerWeb, :live_view
   alias AshPhoenix.Form
 
+  @impl true
   def mount(_params, _session, socket) do
     selected_alerts =
       socket.assigns.current_user.id
@@ -34,10 +36,34 @@ defmodule CaseManagerWeb.CaseLive.New do
           |> assign(:menu_item, nil)
           |> assign(:current_user, socket.assigns.current_user)
           |> assign(:team_name, first_team.(selected_alerts).name)
+          |> assign(:team_id, first_team.(selected_alerts).id)
           |> assign(:related_alerts, selected_alerts)
           |> assign(:form, form)
 
         {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
     end
+  end
+
+  @impl true
+  def handle_event("remove_alert", %{"alert_id" => alert_id}, socket) do
+    socket =
+      if length(socket.assigns.related_alerts) > 1 do
+        SelectedAlerts.toggle_alert_selection(
+          socket.assigns.current_user.id,
+          alert_id,
+          socket.assigns.team_id
+        )
+
+        selected_alerts =
+          socket.assigns.current_user.id
+          |> CaseManager.SelectedAlerts.get_selected_alerts()
+          |> Enum.map(fn alert_id -> {alert_id, Ash.get!(CaseManager.Alerts.Alert, alert_id)} end)
+
+        socket |> assign(:related_alerts, selected_alerts)
+      else
+        socket |> put_flash(:error, gettext("You can't delete the last alert."))
+      end
+
+    {:noreply, socket}
   end
 end

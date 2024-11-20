@@ -91,6 +91,16 @@
               />
             </.link>
           </:col>
+          <:col :let={{_id, alert}} label={gettext("Remove")} not_clickable_area?>
+            <.icon_btn
+              type="button"
+              icon_name="hero-trash"
+              colour={:critical}
+              size={:small}
+              phx-click="remove_alert"
+              phx-value-alert_id={alert.id}
+            />
+          </:col>
         </.table>
 
         <.table
