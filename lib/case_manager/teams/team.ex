@@ -63,7 +63,7 @@ defmodule CaseManager.Teams.Team do
     end
 
     read :read_by_name_asc do
-      primary? true
+      primary? false
       prepare(build(sort: [name: :asc]))
 
       pagination do
