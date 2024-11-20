@@ -16,7 +16,11 @@
     <!-- Left side -->
     <div class="basis-2/3">
       <div id="teams-container" phx-viewport-bottom="load_more_teams">
-        <.table id="teams" rows={@teams}>
+        <.table
+          id="teams"
+          rows={@teams}
+          row_click={&JS.push("select_team", value: %{team_id: &1.id})}
+        >
           <:col :let={team} label={gettext("Name")}><%= team.name %></:col>
           <:col :let={team} label={gettext("Email")}>
             <%= team.email |> Enum.map(& &1.email) %>
@@ -28,7 +32,7 @@
           <:col :let={team} label={gettext("IP")}>
             <%= team.ip |> Enum.map(& &1.ip) %>
           </:col>
-          <:col :let={team} label={gettext("Actions")} width="6" >
+          <:col :let={team} label={gettext("Actions")} width="6">
             <div class="flex items-center justify-end gap-2">
               <.icon_btn
                 icon_name="hero-trash"
@@ -38,7 +42,7 @@
                 phx-click="delete_team"
                 phx-value-team_id={team.id}
               />
-          </div>
+            </div>
           </:col>
         </.table>
       </div>
@@ -56,13 +60,116 @@
     <!-- Right side -->
     <div class="h-full basis-1/3">
       <%= if @selected_team == nil do %>
-        <div class="h-full p-4 flex justify-center items-center bg-slate-50 rounded-md shadow">
+        <div class="h-full p-8 flex justify-center items-center bg-slate-50 rounded-md shadow">
           <header class="text-black text-2xl font-semibold">
             <%= gettext("No team selected") %>...
           </header>
         </div>
       <% else %>
-        <div class="h-full p-4 flex flex-col gap-y-12 bg-slate-50 rounded-md shadow"></div>
+        <div class="h-full p-8 flex flex-col gap-y-12 bg-slate-50 rounded-md shadow">
+          <header class="text-black text-3xl font-semibold"><%= @selected_team.name %></header>
+
+          <div class="h-full p-0 flex flex-col gap-y-10">
+            <header class="text-black text-xl font-bold"><%= gettext("Tokens") %>:</header>
+            <div class="h-full p-0 flex flex-col gap-y-8">
+              <header class="text-black text-xl font-bold">
+                <%= gettext("Statistics and Numbers") %>:
+              </header>
+              <div class="h-full p-0 flex flex-row gap-x-2">
+                <div class="h-full p-0 basis-1/2 flex flex-col gap-y-6">
+                  <div class="p-0 flex flex-col gap-y-4">
+                    <header class="text-black text-base font-semibold">
+                      <%= gettext("Alerts") %>:
+                    </header>
+                    <div class="p-0 flex flex-col gap-y-0.5">
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("with linked cases") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("with no linked cases") %>:
+                      </header>
+                    </div>
+                  </div>
+                  <div class="p-0 flex flex-col gap-y-4">
+                    <header class="text-black text-base font-semibold">
+                      <%= gettext("Open cases") %>:
+                    </header>
+                    <div class="p-0 flex flex-col gap-y-0.5">
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("In progress") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Pending") %>:
+                      </header>
+                    </div>
+                  </div>
+                  <div class="p-0 flex flex-col gap-y-4">
+                    <header class="text-black text-base font-semibold">
+                      <%= gettext("Closed cases") %>:
+                    </header>
+                    <div class="p-0 flex flex-col gap-y-0.5">
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("True Positive") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("False Positive") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Benign") %>:
+                      </header>
+                    </div>
+                  </div>
+                </div>
+                <div class="h-full p-0 basis-1/2 flex flex-col gap-y-6">
+                  <div class="p-0 flex flex-col gap-y-4">
+                    <header class="text-black text-base font-semibold">
+                      <%= gettext("Alert risk levels") %>:
+                    </header>
+                    <div class="p-0 flex flex-col gap-y-0.5">
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Informational") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Low") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Medium") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("High") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Critical") %>:
+                      </header>
+                    </div>
+                  </div>
+                  <div class="p-0 flex flex-col gap-y-4">
+                    <header class="text-black text-base font-semibold">
+                      <%= gettext("Case priorities") %>:
+                    </header>
+                    <div class="p-0 flex flex-col gap-y-0.5">
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Informational") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Low") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Medium") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("High") %>:
+                      </header>
+                      <header class="text-black text-xs font-medium">
+                        <%= gettext("Critical") %>:
+                      </header>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       <% end %>
     </div>
   </div>
@@ -98,7 +205,7 @@
           label={gettext("Team Type")}
           options={[
             {gettext("Customer"), :customer},
-            {gettext("MSSP"), :mssp},
+            {gettext("MSSP"), :mssp}
           ]}
         />
       </div>
@@ -134,7 +241,11 @@
     <.inputs_for :let={phone_form} field={@form[:phone]}>
       <div class="flex flex-row items-center gap-4" }>
         <div class="basis-1/2" }>
-          <.input type="text" field={phone_form[:country_code]} label={"#{gettext("Country Code")}"} />
+          <.input
+            type="text"
+            field={phone_form[:country_code]}
+            label={"#{gettext("Country Code")}"}
+          />
         </div>
 
         <div class="basis-1/2">
@@ -196,7 +307,6 @@
       class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
       phx-click="add_form"
       phx-value-path={@form[:ip].name}
-
     >
       <.icon name="hero-plus" />
     </button>

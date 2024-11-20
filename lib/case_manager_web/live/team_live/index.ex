@@ -51,6 +51,18 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:page, page)
       |> assign(:more_pages?, page.more?)
       |> assign(:pending_refresh?, false)
+      |> assign(:selected_team, nil)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("select_team", %{"team_id" => team_id}, socket) do
+    team = Ash.get!(CaseManager.Teams.Team, team_id, load: [:phone, :email, :ip, :case, :alert])
+
+    socket =
+      socket
+      |> assign(:selected_team, team)
 
     {:noreply, socket}
   end
