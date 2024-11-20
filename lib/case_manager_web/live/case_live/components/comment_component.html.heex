@@ -8,11 +8,9 @@
       placeholder={gettext("Type your message...")}
     />
     <:actions>
-      <div class="flex justify-end w-full">
-        <.button phx-disable-with={gettext("Sending...")}>
-          <%= gettext("Send") %>
-        </.button>
-      </div>
+      <.button phx-disable-with={gettext("Sending...")}>
+        <%= gettext("Send") %>
+      </.button>
     </:actions>
   </.simple_form>
 </div>

@@ -140,19 +140,18 @@
     </div>
 
     <:actions>
-      <div class="flex justify-end w-full gap-4">
-        <.button
-          colour={:secondary}
-          phx-disable-with={gettext("Canceling...")}
-          phx-click={@on_cancel}
-        >
-          <%= gettext("Cancel") %>
-        </.button>
+      <.button
+        type="button"
+        colour={:secondary}
+        phx-disable-with={gettext("Canceling...")}
+        phx-click={@on_cancel}
+      >
+        <%= gettext("Cancel") %>
+      </.button>
 
-        <.button phx-disable-with={gettext("Saving...")}>
-          <%= gettext("Save") %>
-        </.button>
-      </div>
+      <.button type="submit" phx-disable-with={gettext("Saving...")}>
+        <%= gettext("Save") %>
+      </.button>
     </:actions>
   </.simple_form>
 
