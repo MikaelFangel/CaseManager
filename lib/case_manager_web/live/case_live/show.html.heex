@@ -3,30 +3,51 @@
     <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
     <.header class="pt-4"><%= @case.title %></.header>
     <div class="grid grid-cols-3 gap-2 mt-4">
-      <div><span><%= gettext("Created at") %>:</span> <%= @case.inserted_at %></div>
-      <div><span><%= gettext("ID") %>:</span> <%= @case.id |> String.slice(0..7) %></div>
-      <.risk_badge colour={@case.priority} />
+      <div>
+        <.label><%= gettext("Created at") %>:</.label>
+         <%= @case.inserted_at %>
+      </div>
+      <div>
+        <.label><%= gettext("ID") %>:</.label>
+         <%= @case.id |> String.slice(0..7) %>
+      </div>
+      <div>
+        <.label><%= gettext("Priority") %>:</.label>
+         <.risk_badge colour={@case.priority} />
+      </div>
 
       <div>
-        <span><%= gettext("Last updated") %>:</span> <%= DateTime.diff(
+        <.label><%= gettext("Last updated") %>:</.label>
+         <%= DateTime.diff(
           DateTime.utc_now(),
           @case.updated_at,
           :day
         ) %> days ago
       </div>
       <div>
-        <span><%= gettext("Reported by") %>:</span> <%= @reporter.first_name <>
+        <.label><%= gettext("Reported by") %>:</.label>
+         <%= @reporter.first_name <>
           " " <> @reporter.last_name %>
       </div>
       <div>
-        <span><%= gettext("Escalated") %>:</span> <%= @case.escalated
+        <.label><%= gettext("Escalated") %>:</.label>
+         <%= @case.escalated
         |> to_string()
         |> String.capitalize() %>
       </div>
 
-      <div><span><%= gettext("Customer") %>:</span> <%= @case.team.name %></div>
-      <div><span><%= gettext("No. attached alarms") %>:</span> <%= @no_of_related_alerts %></div>
-      <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
+      <div>
+        <.label><%= gettext("Customer") %>:</.label>
+         <%= @case.team.name %>
+      </div>
+      <div>
+        <.label><%= gettext("No. attached alarms") %>:</.label>
+         <%= @no_of_related_alerts %>
+      </div>
+      <div>
+        <.label><%= gettext("Status") %>:</.label>
+         <.status_badge colour={@case.status} />
+      </div>
     </div>
 
     <div class="mt-4">
@@ -49,7 +70,9 @@
     >
       <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
-        <.risk_badge colour={alert.risk_level} />
+        <div class="flex items-center h-full">
+          <.risk_badge colour={alert.risk_level} />
+        </div>
       </:col>
       <:col :let={{_id, alert}} label={gettext("Creation Time")}>
         <%= alert.creation_time %>
@@ -78,7 +101,7 @@
     </.table>
 
     <%= if @current_user.team.type == :mssp do %>
-      <div class="mt-4"><%= gettext("Internal Note") %>:</div>
+      <.label class="mt-4"><%= gettext("Internal Note") %></.label>
       <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         <%= if @case.internal_note,
           do: @case.internal_note |> CaseManagerWeb.Helpers.render_markdown!(),

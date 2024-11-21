@@ -16,8 +16,6 @@ defmodule CaseManagerWeb do
   below. Instead, define additional modules and import
   those modules here.
   """
-alias Credo.Test.Case
-
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
