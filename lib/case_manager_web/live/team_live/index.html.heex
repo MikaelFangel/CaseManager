@@ -22,6 +22,7 @@
           row_click={&JS.push("select_team", value: %{team_id: &1.id})}
         >
           <:col :let={team} label={gettext("Name")}><%= team.name %></:col>
+          <:col :let={team} label={gettext("Type")}><%= team.type |> Atom.to_string() |> String.capitalize() %></:col>
           <:col :let={team} label={gettext("Email")}>
             <%= team.email |> Enum.map(& &1.email) %>
           </:col>
