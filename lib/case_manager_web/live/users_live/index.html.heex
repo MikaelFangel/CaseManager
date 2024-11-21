@@ -1,0 +1,44 @@
+<div class="h-full">
+  <div class="flex items-center justify-between w-full">
+    <img src="/images/logo.svg" class="h-20" />
+    <div class="flex justify-end">
+      <.link navigate="#">
+        <.button icon_name="hero-user-plus">
+          <%= gettext("Create User") %>
+        </.button>
+      </.link>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-center mt-4">
+    <div :for={user <- @users} class="w-2/3 flex drop-shadow bg-white rounded-xl mt-4 p-4">
+      <div class="w-1/12 flex justify-center items-center -ml-4">
+        <.icon name="hero-user-circle" />
+      </div>
+      <div>
+        <div>
+          <%= user.first_name %>
+          <%= user.last_name %>
+        </div>
+        <div class="text-xs text-gray-500 mb-4">
+          <%= user.email %>
+        </div>
+        <div class="flex">
+          <div class="bg-slate-950 text-white text-xs mr-2 px-2 rounded">
+            <%= user.role %>
+          </div>
+          <div class="bg-red-200 text-xs mr-2 px-2 rounded">
+            <%= user.team.type %>
+          </div>
+          <div class="bg-amber-200 text-xs mr-2 px-2 rounded">
+            <%= user.team.name %>
+          </div>
+        </div>
+      </div>
+      <div class="flex space-x-2 ml-auto">
+        <.icon_btn icon_name="hero-pencil" size={:small} />
+        <.icon_btn icon_name="hero-trash" size={:small} colour={:critical} />
+      </div>
+    </div>
+  </div>
+</div>
