@@ -117,4 +117,8 @@ defmodule CaseManager.Alerts.Alert do
   preparations do
     prepare build(load: [:team, :case])
   end
+
+  aggregates do
+    count :case_count, :case
+  end
 end

@@ -58,7 +58,8 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("select_team", %{"team_id" => team_id}, socket) do
-    team = Ash.get!(CaseManager.Teams.Team, team_id, load: [:phone, :email, :ip, :case, :alert])
+    team = Ash.get!(CaseManager.Teams.Team, team_id, load: [:alert_with_cases_count, :alert_without_cases_count, :alert_info_count, :alert_low_count, :alert_medium_count, :alert_high_count, :alert_critical_count, :case_in_progress_count, :case_pending_count, :case_t_positive_count, :case_f_positive_count, :case_benign_count, :case_info_count, :case_low_count, :case_medium_count, :case_high_count, :case_critical_count])
+    IO.inspect(team, label: "Team")
 
     socket =
       socket

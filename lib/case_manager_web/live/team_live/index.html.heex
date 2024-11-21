@@ -79,43 +79,43 @@
                 <div class="h-full p-0 basis-1/2 flex flex-col gap-y-6">
                   <div class="p-0 flex flex-col gap-y-4">
                     <header class="text-black text-base font-semibold">
-                      <%= gettext("Alerts") %>:
+                      <%= "#{gettext("Alerts")}(#{@selected_team.alert_with_cases_count + @selected_team.alert_without_cases_count})" %>:
                     </header>
                     <div class="p-0 flex flex-col gap-y-0.5">
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("with linked cases") %>:
+                        <%= "#{gettext("with linked cases")}: #{@selected_team.alert_with_cases_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("with no linked cases") %>:
+                        <%= "#{gettext("with no linked cases")}: #{@selected_team.alert_without_cases_count}" %>
                       </header>
                     </div>
                   </div>
                   <div class="p-0 flex flex-col gap-y-4">
                     <header class="text-black text-base font-semibold">
-                      <%= gettext("Open cases") %>:
+                      <%= "#{gettext("Open cases")}(#{@selected_team.case_in_progress_count + @selected_team.case_pending_count})" %>:
                     </header>
                     <div class="p-0 flex flex-col gap-y-0.5">
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("In progress") %>:
+                      <%= "#{gettext("In progress")}: #{@selected_team.case_in_progress_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Pending") %>:
+                      <%= "#{gettext("Pending")}: #{@selected_team.case_pending_count}" %>
                       </header>
                     </div>
                   </div>
                   <div class="p-0 flex flex-col gap-y-4">
                     <header class="text-black text-base font-semibold">
-                      <%= gettext("Closed cases") %>:
+                      <%= "#{gettext("Closed cases")}(#{@selected_team.case_t_positive_count + @selected_team.case_f_positive_count + @selected_team.case_benign_count})" %>:
                     </header>
                     <div class="p-0 flex flex-col gap-y-0.5">
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("True Positive") %>:
+                      <%= "#{gettext("True Positive")}: #{@selected_team.case_t_positive_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("False Positive") %>:
+                      <%= "#{gettext("False Positive")}: #{@selected_team.case_f_positive_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Benign") %>:
+                      <%= "#{gettext("Benign")}: #{@selected_team.case_benign_count}" %>
                       </header>
                     </div>
                   </div>
@@ -127,19 +127,19 @@
                     </header>
                     <div class="p-0 flex flex-col gap-y-0.5">
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Informational") %>:
+                        <%= "#{gettext("Informational")}: #{@selected_team.alert_info_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Low") %>:
+                        <%= "#{gettext("Low")}: #{@selected_team.alert_low_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Medium") %>:
+                        <%= "#{gettext("Medium")}: #{@selected_team.alert_medium_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("High") %>:
+                        <%= "#{gettext("High")}: #{@selected_team.alert_high_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Critical") %>:
+                        <%= "#{gettext("Critical")}: #{@selected_team.alert_critical_count}" %>
                       </header>
                     </div>
                   </div>
@@ -149,19 +149,19 @@
                     </header>
                     <div class="p-0 flex flex-col gap-y-0.5">
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Informational") %>:
+                        <%= "#{gettext("Informational")}: #{@selected_team.case_info_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Low") %>:
+                        <%= "#{gettext("Low")}: #{@selected_team.case_low_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Medium") %>:
+                        <%= "#{gettext("Medium")}: #{@selected_team.case_medium_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("High") %>:
+                        <%= "#{gettext("High")}: #{@selected_team.case_high_count}" %>
                       </header>
                       <header class="text-black text-xs font-medium">
-                        <%= gettext("Critical") %>:
+                        <%= "#{gettext("Critical")}: #{@selected_team.case_critical_count}" %>
                       </header>
                     </div>
                   </div>
