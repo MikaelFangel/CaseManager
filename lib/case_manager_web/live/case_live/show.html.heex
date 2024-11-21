@@ -29,11 +29,14 @@
       <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
     </div>
 
-    <article class="prose prose-sm mt-4 break-words max-w-none">
-      <%= if @case.description,
-        do: @case.description |> CaseManagerWeb.Helpers.render_markdown!(),
-        else: "" %>
-    </article>
+    <div class="mt-4">
+      <.label><%= gettext("Description") %></.label>
+      <article class="prose prose-sm break-words max-w-none">
+        <%= if @case.description,
+          do: @case.description |> CaseManagerWeb.Helpers.render_markdown!(),
+          else: "" %>
+      </article>
+    </div>
 
     <.table
       id="alerts"
