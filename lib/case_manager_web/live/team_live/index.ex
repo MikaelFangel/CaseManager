@@ -15,7 +15,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:page, page)
       |> assign(:more_pages?, page.more?)
       |> assign(:selected_team, nil)
-      |> assign(:show_create_team_modal, false)
+      |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
 
     {:ok, socket}
@@ -103,7 +103,24 @@ defmodule CaseManagerWeb.TeamLive.Index do
   end
 
   @impl true
-  def handle_event("show_create_team_modal", _params, socket) do
+  def handle_event("show_form_modal", %{"team_id" => team_id}, socket) do
+    form =
+      Ash.get!(CaseManager.Teams.Team, team_id, load: [:email, :phone, :ip])
+      |> Form.for_update(:update, forms: [auto?: true])
+      |> to_form()
+
+    IO.inspect(form, label: "Update form")
+
+    socket =
+      socket
+      |> assign(:form, form)
+      |> assign(:show_form_modal, true)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_form_modal", _params, socket) do
     form =
       CaseManager.Teams.Team
       |> Form.for_create(:create, forms: [auto?: true])
@@ -112,7 +129,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
     socket =
       socket
       |> assign(:form, form)
-      |> assign(:show_create_team_modal, true)
+      |> assign(:show_form_modal, true)
 
     {:noreply, socket}
   end
@@ -123,7 +140,6 @@ defmodule CaseManagerWeb.TeamLive.Index do
   end
 
   def handle_event("remove_form", %{"path" => path} = _params, socket) do
-
     form = AshPhoenix.Form.remove_form(socket.assigns.form, path)
     {:noreply, assign(socket, form: form)}
   end
@@ -133,14 +149,14 @@ defmodule CaseManagerWeb.TeamLive.Index do
     {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event("create_team", %{"form" => params}, socket) do
+  def handle_event("submit_team_form", %{"form" => params}, socket) do
     action_opts = [actor: socket.assigns.current_user]
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, _team} ->
         socket =
           socket
-          |> assign(:show_create_team_modal, false)
+          |> assign(:show_form_modal, false)
           |> assign(:pending_refresh?, true)
           |> push_patch(to: ~p"/teams", replace: true)
 
@@ -149,17 +165,17 @@ defmodule CaseManagerWeb.TeamLive.Index do
       {:error, form} ->
         socket =
           socket
-          |> put_flash(:error, gettext("Team creation error."))
+          |> put_flash(:error, gettext("Team save error."))
 
         {:noreply, assign(socket, :form, form)}
     end
   end
 
   @impl true
-  def handle_event("hide_create_team_modal", _params, socket) do
+  def handle_event("hide_form_modal", _params, socket) do
     socket =
       socket
-      |> assign(:show_create_team_modal, false)
+      |> assign(:show_form_modal, false)
 
     {:noreply, socket}
   end

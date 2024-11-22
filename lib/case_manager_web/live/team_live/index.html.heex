@@ -8,7 +8,7 @@
         phx-click="refresh_teams"
       />
     <% end %>
-    <.button phx-click="show_create_team_modal" icon_name="hero-document-plus">
+    <.button phx-click="show_form_modal" icon_name="hero-document-plus">
       <%= gettext("Create Team") %>
     </.button>
   </div>
@@ -38,6 +38,15 @@
           </:col>
           <:col :let={team} label={gettext("Actions")} width="6">
             <div class="flex items-center justify-end gap-2">
+              <.icon_btn
+                icon_name="hero-pencil"
+                colour={:secondary}
+                size={:small}
+                class="pb-0.5"
+                phx-click="show_form_modal"
+                phx-value-team_id={team.id}
+              />
+
               <.icon_btn
                 icon_name="hero-trash"
                 colour={:critical}
@@ -182,10 +191,10 @@
 </div>
 
 <.modal_template
-  :if={@show_create_team_modal}
-  id="create_team_modal"
-  show={@show_create_team_modal}
-  on_cancel={JS.push("hide_create_team_modal")}
+  :if={@show_form_modal}
+  id="team_form_modal"
+  show={@show_form_modal}
+  on_cancel={JS.push("hide_form_modal")}
 >
   <.header class="flex-none font-bold"><%= gettext("Create Team") %></.header>
   <hr class="border-t border-gray-300 mt-1 mb-2.5" />
@@ -194,7 +203,7 @@
     class="h-full flex flex-col"
     for={@form}
     phx-change="validate"
-    phx-submit="create_team"
+    phx-submit="submit_team_form"
   >
     <%!-- Attributes for the team resource --%>
     <div class="flex flex-row" }>
@@ -318,7 +327,7 @@
     </button>
 
     <:actions>
-      <.button type="button" colour={:secondary} phx-click="hide_create_team_modal">
+      <.button type="button" colour={:secondary} phx-click="hide_form_modal">
         <%= gettext("Close") %>
       </.button>
       <.button type="submit" phx-disable-with="Saving...">

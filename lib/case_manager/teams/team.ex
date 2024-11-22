@@ -46,6 +46,20 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(:phone, type: :create)
     end
 
+    update :update do
+      primary? true
+      require_atomic? false
+      accept [:name, :type]
+
+      argument :ip, {:array, :map}, allow_nil?: true
+      argument :email, {:array, :map}, allow_nil?: true
+      argument :phone, {:array, :map}, allow_nil?: true
+
+      change manage_relationship(:ip, type: :direct_control)
+      change manage_relationship(:email, type: :direct_control, value_is_key: :email)
+      change manage_relationship(:phone, type: :direct_control)
+    end
+
     update :add_case do
       require_atomic? false
 
@@ -74,7 +88,7 @@ defmodule CaseManager.Teams.Team do
       end
     end
 
-    defaults [:read, :destroy, update: :*]
+    defaults [:read, :destroy]
   end
 
   code_interface do
