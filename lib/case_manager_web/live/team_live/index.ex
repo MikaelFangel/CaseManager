@@ -92,12 +92,15 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("delete_team", %{"team_id" => team_id}, socket) do
-    team = Ash.get!(CaseManager.Teams.Team, team_id)
-    Ash.destroy!(team)
-
     socket =
-      socket
-      |> assign(:pending_refresh?, true)
+      case Ash.get(CaseManager.Teams.Team, team_id) do
+        {:ok, team} ->
+          Ash.destroy!(team)
+          socket |> assign(:pending_refresh?, true)
+
+        {:error, _} ->
+          socket |> put_flash(:error, gettext("Team already deleted"))
+      end
 
     {:noreply, socket}
   end
@@ -114,17 +117,6 @@ defmodule CaseManagerWeb.TeamLive.Index do
     CaseManager.Teams.Team
     |> Form.for_create(:create, forms: [auto?: true])
     |> set_form_for_modal(socket)
-  end
-
-  defp set_form_for_modal(form, socket) do
-    form = form |> to_form()
-
-    socket =
-      socket
-      |> assign(:form, form)
-      |> assign(:show_form_modal, true)
-
-    {:noreply, socket}
   end
 
   def handle_event("add_form", %{"path" => path} = _params, socket) do
@@ -169,6 +161,17 @@ defmodule CaseManagerWeb.TeamLive.Index do
     socket =
       socket
       |> assign(:show_form_modal, false)
+
+    {:noreply, socket}
+  end
+
+  defp set_form_for_modal(form, socket) do
+    form = form |> to_form()
+
+    socket =
+      socket
+      |> assign(:form, form)
+      |> assign(:show_form_modal, true)
 
     {:noreply, socket}
   end
