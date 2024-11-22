@@ -107,7 +107,7 @@
           do: @case.internal_note |> CaseManagerWeb.Helpers.render_markdown!(),
           else: "" %>
       </div>
-      <div class="mt-4 gap-2 w-full flex justify-end">
+      <div class="my-4 gap-2 w-full flex justify-end">
         <.link navigate={~p"/case/#{@case.id}/edit"}>
           <.button><%= gettext("Edit") %></.button>
         </.link>
