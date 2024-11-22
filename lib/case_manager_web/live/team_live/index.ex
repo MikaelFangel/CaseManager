@@ -104,27 +104,20 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("show_form_modal", %{"team_id" => team_id}, socket) do
-    form =
-      Ash.get!(CaseManager.Teams.Team, team_id, load: [:email, :phone, :ip])
-      |> Form.for_update(:update, forms: [auto?: true])
-      |> to_form()
-
-    IO.inspect(form, label: "Update form")
-
-    socket =
-      socket
-      |> assign(:form, form)
-      |> assign(:show_form_modal, true)
-
-    {:noreply, socket}
+    Ash.get!(CaseManager.Teams.Team, team_id, load: [:email, :phone, :ip])
+    |> Form.for_update(:update, forms: [auto?: true])
+    |> set_form_for_modal(socket)
   end
 
   @impl true
   def handle_event("show_form_modal", _params, socket) do
-    form =
-      CaseManager.Teams.Team
-      |> Form.for_create(:create, forms: [auto?: true])
-      |> to_form()
+    CaseManager.Teams.Team
+    |> Form.for_create(:create, forms: [auto?: true])
+    |> set_form_for_modal(socket)
+  end
+
+  defp set_form_for_modal(form, socket) do
+    form = form |> to_form()
 
     socket =
       socket
