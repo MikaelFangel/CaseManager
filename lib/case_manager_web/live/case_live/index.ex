@@ -85,6 +85,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> Ash.Query.filter(^view_rights)
       |> Ash.Query.filter(status in ^statuses)
       |> Ash.Query.sort(updated_at: :desc)
+      |> Ash.Query.load(assignee: [:full_name])
       |> Ash.read!(action: :read_paginated)
 
     socket

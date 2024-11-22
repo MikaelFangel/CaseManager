@@ -3,7 +3,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    users = Ash.read!(CaseManager.Teams.User)
+    users = CaseManager.Teams.User |> Ash.read!() |> Ash.load!(:full_name)
     socket = socket |> assign(:menu_item, :users) |> assign(:users, users)
 
     {:ok, socket}

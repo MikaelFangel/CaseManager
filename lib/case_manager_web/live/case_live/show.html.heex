@@ -26,8 +26,7 @@
       </div>
       <div>
         <.label><%= gettext("Reported by") %>:</.label>
-        <%= @reporter.first_name <>
-          " " <> @reporter.last_name %>
+        <%= @reporter.full_name %>
       </div>
       <div>
         <.label><%= gettext("Escalated") %>:</.label>
@@ -136,7 +135,7 @@
             if user.id == @current_user.id do
               gettext("You")
             else
-              "#{Map.get(user, :first_name)} #{Map.get(user, :last_name)}"
+              user.full_name
             end %>
           </div>
           <!-- Comment Bubble -->

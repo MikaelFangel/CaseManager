@@ -37,7 +37,7 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
           </div>
         </:col>
         <:col :let={{_id, case}} label={gettext("Assignee")}>
-          <%= case.assignee_id %>
+          <%= case.assignee && case.assignee.full_name %>
         </:col>
       </.table>
     </div>

@@ -67,7 +67,7 @@ defmodule CaseManager.Cases.Comment do
 
     read :read do
       primary? true
-      prepare build(load: [user: [:team]])
+      prepare build(load: [user: [:team, :full_name]])
     end
   end
 end
