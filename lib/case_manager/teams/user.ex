@@ -75,7 +75,11 @@ defmodule CaseManager.Teams.User do
   end
 
   preparations do
-    prepare build(load: [:team])
+    prepare build(load: [:team_type])
+  end
+
+  aggregates do
+    first :team_type, :team, :type
   end
 
   calculations do

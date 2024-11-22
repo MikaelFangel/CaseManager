@@ -99,7 +99,7 @@
       </:col>
     </.table>
 
-    <%= if @current_user.team.type == :mssp do %>
+    <%= if @current_user.team_type == :mssp do %>
       <.label :if={@case.internal_note} class="mt-4"><%= gettext("Internal Note") %></.label>
       <div :if={@case.internal_note} class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         <%= if @case.internal_note,
@@ -124,7 +124,7 @@
         <div id={id} class="mt-4 flex flex-col">
           <!-- Name label above comments -->
           <div class={
-            if comment.user.team.type == @current_user.team.type do
+            if comment.user.team_type == @current_user.team_type do
               "text-right text-xs text-gray-500 self-end mb-1"
             else
               "text-left text-xs text-gray-500 self-start mb-1"
@@ -140,7 +140,7 @@
           </div>
           <!-- Comment Bubble -->
           <div class={
-            if comment.user.team.type == @current_user.team.type do
+            if comment.user.team_type == @current_user.team_type do
               if comment.user_id == @current_user.id do
                 "bg-sky-200 pl-2 pr-4 pt-1 rounded-xl self-end text-right break-words max-w-sm relative"
               else
@@ -154,7 +154,7 @@
               do: comment.body |> String.replace("\n", "<br />") |> raw(),
               else: "" %>
             <div class={
-              if comment.user.team.type == @current_user.team.type do
+              if comment.user.team_type == @current_user.team_type do
                 "text-[8px] text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
               else
                 "text-[8px] text-right text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"

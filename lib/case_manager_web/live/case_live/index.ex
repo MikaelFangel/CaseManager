@@ -69,13 +69,13 @@ defmodule CaseManagerWeb.CaseLive.Index do
       end
 
     view_rights =
-      case socket.assigns.current_user.team.type do
+      case socket.assigns.current_user.team_type do
         :mssp ->
           Ash.Filter.parse!(CaseManager.Cases.Case, true)
 
         _other ->
           Ash.Filter.parse!(CaseManager.Cases.Case,
-            team_id: socket.assigns.current_user.team.id,
+            team_id: socket.assigns.current_user.team_id,
             escalated: true
           )
       end
