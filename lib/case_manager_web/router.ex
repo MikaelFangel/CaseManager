@@ -48,6 +48,7 @@ defmodule CaseManagerWeb.Router do
       live "/alerts", AlertLive.Index, :index
       live "/case/new", CaseLive.New, :new
       live "/case/:id/edit", CaseLive.Edit, :edit
+      live "/users", UsersLive.Index, :index
     end
 
     ash_authentication_live_session :authentication_required,

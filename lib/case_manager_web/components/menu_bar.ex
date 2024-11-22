@@ -36,7 +36,7 @@ defmodule CaseManagerWeb.MenuBar do
 
           <%= if @team_type==:mssp do %>
             <div class="w-full h-px border border-neutral-500"></div>
-            <.menu_item icon_name="hero-users" active?={@current_page == :users} />
+            <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
             <div class="w-full h-px border border-neutral-500"></div>
             <.menu_item icon_name="hero-building-office" active?={@current_page == :teams} />
           <% end %>
