@@ -69,13 +69,13 @@ defmodule CaseManagerWeb.CaseLive.Index do
       end
 
     view_rights =
-      case socket.assigns.current_user.team.type do
+      case socket.assigns.current_user.team_type do
         :mssp ->
           Ash.Filter.parse!(CaseManager.Cases.Case, true)
 
         _other ->
           Ash.Filter.parse!(CaseManager.Cases.Case,
-            team_id: socket.assigns.current_user.team.id,
+            team_id: socket.assigns.current_user.team_id,
             escalated: true
           )
       end
@@ -85,6 +85,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> Ash.Query.filter(^view_rights)
       |> Ash.Query.filter(status in ^statuses)
       |> Ash.Query.sort(updated_at: :desc)
+      |> Ash.Query.load(assignee: [:full_name])
       |> Ash.read!(action: :read_paginated)
 
     socket

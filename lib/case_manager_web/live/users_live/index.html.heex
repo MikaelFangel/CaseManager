@@ -17,8 +17,7 @@
       </div>
       <div>
         <div>
-          <%= user.first_name %>
-          <%= user.last_name %>
+          <%= user.full_name %>
         </div>
         <div class="text-xs text-gray-500 mb-4">
           <%= user.email %>
@@ -28,7 +27,7 @@
             <%= user.role %>
           </div>
           <div class="bg-red-200 text-xs mr-2 px-2 rounded">
-            <%= user.team.type %>
+            <%= user.team_type %>
           </div>
           <div class="bg-amber-200 text-xs mr-2 px-2 rounded">
             <%= user.team.name %>

@@ -75,6 +75,14 @@ defmodule CaseManager.Teams.User do
   end
 
   preparations do
-    prepare build(load: [:team])
+    prepare build(load: [:team_type])
+  end
+
+  aggregates do
+    first :team_type, :team, :type
+  end
+
+  calculations do
+    calculate :full_name, :string, expr(first_name <> " " <> last_name)
   end
 end

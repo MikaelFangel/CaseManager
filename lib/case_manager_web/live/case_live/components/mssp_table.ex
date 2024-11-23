@@ -21,7 +21,9 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
           <%= case.title %>
         </:col>
         <:col :let={{_id, case}} label={gettext("Priority")}>
-          <.risk_badge colour={case.priority} />
+          <div class="flex items-center h-full">
+            <.risk_badge colour={case.priority} />
+          </div>
         </:col>
         <:col :let={{_id, case}} label={gettext("Time Since Updated")}>
           <%= DateTime.diff(DateTime.utc_now(), case.updated_at, :day) %> days
@@ -30,10 +32,12 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
           <%= case.id |> String.slice(1, 7) %>
         </:col>
         <:col :let={{_id, case}} label={gettext("Status")}>
-          <.status_badge colour={case.status} />
+          <div class="flex items-center h-full">
+            <.status_badge colour={case.status} />
+          </div>
         </:col>
         <:col :let={{_id, case}} label={gettext("Assignee")}>
-          <%= case.assignee_id %>
+          <%= case.assignee && case.assignee.full_name %>
         </:col>
       </.table>
     </div>

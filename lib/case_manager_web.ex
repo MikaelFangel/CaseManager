@@ -16,7 +16,6 @@ defmodule CaseManagerWeb do
   below. Instead, define additional modules and import
   those modules here.
   """
-
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
@@ -84,21 +83,22 @@ defmodule CaseManagerWeb do
       import Phoenix.HTML
 
       # UI components
+      import CaseManagerWeb.AlertModal
+      import CaseManagerWeb.Back
+      import CaseManagerWeb.Button
       import CaseManagerWeb.FlashGroup
       import CaseManagerWeb.Header
-      import CaseManagerWeb.Table
       import CaseManagerWeb.Icon
       import CaseManagerWeb.IconBtn
-      import CaseManagerWeb.Button
       import CaseManagerWeb.Input
+      import CaseManagerWeb.Label
+      import CaseManagerWeb.MenuBar
+      import CaseManagerWeb.RiskBadge
+      import CaseManagerWeb.SimpleForm
+      import CaseManagerWeb.StatusBadge
+      import CaseManagerWeb.Table
       import CaseManagerWeb.Tooltip
       import CaseManagerWeb.TxtLink
-      import CaseManagerWeb.RiskBadge
-      import CaseManagerWeb.StatusBadge
-      import CaseManagerWeb.Back
-      import CaseManagerWeb.SimpleForm
-      import CaseManagerWeb.MenuBar
-      import CaseManagerWeb.AlertModal
 
       # Translation
       use Gettext, backend: CaseManagerWeb.Gettext

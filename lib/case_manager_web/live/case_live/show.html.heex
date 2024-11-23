@@ -2,38 +2,61 @@
   <div class="w-2/3 pl-8 pr-4 overflow-y-auto">
     <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
     <.header class="pt-4"><%= @case.title %></.header>
-    <div class="grid grid-cols-3 gap-2 mt-4">
-      <div><span><%= gettext("Created at") %>:</span> <%= @case.inserted_at %></div>
-      <div><span><%= gettext("ID") %>:</span> <%= @case.id |> String.slice(0..7) %></div>
-      <.risk_badge colour={@case.priority} />
+    <div class="grid grid-cols-3 gap-2 mt-4 text-sm">
+      <div>
+        <.label><%= gettext("Created at") %>:</.label>
+        <%= @case.inserted_at %>
+      </div>
+      <div>
+        <.label><%= gettext("ID") %>:</.label>
+        <%= @case.id |> String.slice(0..7) %>
+      </div>
+      <div>
+        <.label><%= gettext("Priority") %>:</.label>
+        <.risk_badge colour={@case.priority} />
+      </div>
 
       <div>
-        <span><%= gettext("Last updated") %>:</span> <%= DateTime.diff(
+        <.label><%= gettext("Last updated") %>:</.label>
+        <%= DateTime.diff(
           DateTime.utc_now(),
           @case.updated_at,
           :day
         ) %> days ago
       </div>
       <div>
-        <span><%= gettext("Reported by") %>:</span> <%= @reporter.first_name <>
-          " " <> @reporter.last_name %>
+        <.label><%= gettext("Reported by") %>:</.label>
+        <%= @reporter.full_name %>
       </div>
       <div>
-        <span><%= gettext("Escalated") %>:</span> <%= @case.escalated
+        <.label><%= gettext("Escalated") %>:</.label>
+        <%= @case.escalated
         |> to_string()
         |> String.capitalize() %>
       </div>
 
-      <div><span><%= gettext("Customer") %>:</span> <%= @case.team.name %></div>
-      <div><span><%= gettext("No. attached alarms") %>:</span> <%= @no_of_related_alerts %></div>
-      <div><span><%= gettext("Status") %>:</span> <.status_badge colour={@case.status} /></div>
+      <div>
+        <.label><%= gettext("Team") %>:</.label>
+        <%= @case.team.name %>
+      </div>
+      <div>
+        <.label><%= gettext("No. attached alarms") %>:</.label>
+        <%= @no_of_related_alerts %>
+      </div>
+      <div>
+        <.label><%= gettext("Status") %>:</.label>
+        <.status_badge colour={@case.status} />
+      </div>
     </div>
 
-    <article class="prose prose-sm mt-4">
-      <%= if @case.description,
-        do: @case.description |> CaseManagerWeb.Helpers.render_markdown!(),
-        else: "" %>
-    </article>
+    <div :if={@case.description} class="mt-4">
+      <.label><%= gettext("Description") %></.label>
+      <article class="prose prose-sm break-words max-w-none">
+        <%= if @case.description,
+          do: @case.description |> CaseManagerWeb.Helpers.render_markdown!(),
+          else: "" %>
+      </article>
+    </div>
 
     <.table
       id="alerts"
@@ -46,7 +69,9 @@
     >
       <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
-        <.risk_badge colour={alert.risk_level} />
+        <div class="flex items-center h-full">
+          <.risk_badge colour={alert.risk_level} />
+        </div>
       </:col>
       <:col :let={{_id, alert}} label={gettext("Creation Time")}>
         <%= alert.creation_time %>
@@ -74,14 +99,14 @@
       </:col>
     </.table>
 
-    <%= if @current_user.team.type == :mssp do %>
-      <div class="mt-4"><%= gettext("Internal Note") %>:</div>
-      <div class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
+    <%= if @current_user.team_type == :mssp do %>
+      <.label :if={@case.internal_note}><%= gettext("Internal Note") %></.label>
+      <div :if={@case.internal_note} class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         <%= if @case.internal_note,
           do: @case.internal_note |> CaseManagerWeb.Helpers.render_markdown!(),
           else: "" %>
       </div>
-      <div class="mt-4 gap-2 w-full flex justify-end">
+      <div class="my-4 gap-2 w-full flex justify-end">
         <.link navigate={~p"/case/#{@case.id}/edit"}>
           <.button><%= gettext("Edit") %></.button>
         </.link>
@@ -94,16 +119,12 @@
     <% end %>
   </div>
   <div class="w-1/3 bg-slate-50 shadow h-screen flex flex-col">
-    <div
-      class="flex-grow overflow-y-auto flex flex-col-reverse px-4"
-      id="comments"
-      phx-update="stream"
-    >
+    <div class="grow overflow-y-auto flex flex-col-reverse px-4" id="comments" phx-update="stream">
       <%= for {id, comment} <- @streams.comments do %>
         <div id={id} class="mt-4 flex flex-col">
           <!-- Name label above comments -->
           <div class={
-            if comment.user.team.type == @current_user.team.type do
+            if comment.user.team_type == @current_user.team_type do
               "text-right text-xs text-gray-500 self-end mb-1"
             else
               "text-left text-xs text-gray-500 self-start mb-1"
@@ -114,12 +135,12 @@
             if user.id == @current_user.id do
               gettext("You")
             else
-              "#{Map.get(user, :first_name)} #{Map.get(user, :last_name)}"
+              user.full_name
             end %>
           </div>
           <!-- Comment Bubble -->
           <div class={
-            if comment.user.team.type == @current_user.team.type do
+            if comment.user.team_type == @current_user.team_type do
               if comment.user_id == @current_user.id do
                 "bg-sky-200 pl-2 pr-4 pt-1 rounded-xl self-end text-right break-words max-w-sm relative"
               else
@@ -133,7 +154,7 @@
               do: comment.body |> String.replace("\n", "<br />") |> raw(),
               else: "" %>
             <div class={
-              if comment.user.team.type == @current_user.team.type do
+              if comment.user.team_type == @current_user.team_type do
                 "text-[8px] text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
               else
                 "text-[8px] text-right text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
@@ -148,9 +169,9 @@
           :if={comment.header}
           class="flex items-center justify-center text-gray-400 text-xs w-full pt-4"
         >
-          <span class="flex-grow border-t border-gray-300 mr-2"></span>
+          <span class="grow border-t border-gray-300 mr-2"></span>
           <%= comment.header %>
-          <span class="flex-grow border-t border-gray-300 ml-2"></span>
+          <span class="grow border-t border-gray-300 ml-2"></span>
         </div>
       <% end %>
     </div>

@@ -17,24 +17,20 @@ defmodule CaseManagerWeb.MenuBar do
   slot :inner_block, required: true
 
   def menu_bar(assigns) do
-    assigns =
-      assigns
-      |> assign(:team_type, assigns.current_user.team.type)
-
     ~H"""
     <div class="flex flex-row w-screen h-screen">
       <!-- The menu bar -->
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
         <div class="flex-col h-full w-full justify-start items-center gap-4 inline-flex">
-          <%= if @team_type==:mssp do %>
+          <%= if @current_user.team_type==:mssp do %>
             <.menu_item icon_name="hero-bell" active?={@current_page == :alerts} path="/alerts" />
             <div class="w-full h-px border border-neutral-500"></div>
           <% end %>
 
           <.menu_item icon_name="hero-document-duplicate" active?={@current_page == :cases} path="/" />
 
-          <%= if @team_type==:mssp do %>
+          <%= if @current_user.team_type==:mssp do %>
             <div class="w-full h-px border border-neutral-500"></div>
             <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
             <div class="w-full h-px border border-neutral-500"></div>

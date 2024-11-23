@@ -11,7 +11,9 @@ defmodule CaseManagerWeb.CaseLive.Components.CustomerTable do
           <%= case.title %>
         </:col>
         <:col :let={{_id, case}} label={gettext("Priority")}>
-          <.risk_badge colour={case.priority} />
+          <div class="flex items-center h-full">
+            <.risk_badge colour={case.priority} />
+          </div>
         </:col>
         <:col :let={{_id, case}} label={gettext("Time Since Updated")}>
           <%= DateTime.diff(DateTime.utc_now(), case.updated_at, :day) %> days

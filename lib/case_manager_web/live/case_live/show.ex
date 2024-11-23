@@ -32,7 +32,13 @@ defmodule CaseManagerWeb.CaseLive.Show do
     case =
       Case
       |> Ash.get!(id)
-      |> Ash.load!([:alert, :comment, :file, :reporter, :no_of_related_alerts])
+      |> Ash.load!([
+        :alert,
+        :file,
+        :no_of_related_alerts,
+        :comment,
+        reporter: [:full_name]
+      ])
 
     alerts = case.alert |> Enum.map(&{&1.id, &1})
     comments = case.comment |> add_date_headers() |> Enum.reverse()
