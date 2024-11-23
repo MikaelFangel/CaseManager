@@ -35,24 +35,24 @@ defmodule CaseManagerWeb.AlertModal do
 
       <hr class="border-t border-gray-300 mt-1 mb-2.5" />
 
-      <div class="flex flex-row place-items-baseline gap-x-2.5 w-full">
-        <%= for case <- Ash.load!(@alert, :case).case do %>
-          <.tooltip
-            pos={:bottom}
-            tooltip_label={
-              case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()
-            }
-          >
-            <.badge_template
-              class="bg-stone-900 text-white text-xs font-semibold"
-              label={case.id |> String.slice(0..7)}
-            />
-          </.tooltip>
-        <% end %>
-
-        <div class="flex place-items-baseline basis-full justify-end">
-          <label class="text-black text-sm font-bold"><%= @alert.team.name %></label>
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-wrap gap-x-2.5">
+          <%= for case <- Ash.load!(@alert, :case).case do %>
+            <.tooltip
+              pos={:bottom}
+              tooltip_label={
+                case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()
+              }
+            >
+              <.badge_template
+                class="bg-stone-900 text-white text-xs font-semibold font-mono"
+                label={case.id |> String.slice(0..7)}
+              />
+            </.tooltip>
+          <% end %>
         </div>
+
+        <label class="text-black text-sm font-bold"><%= @alert.team.name %></label>
       </div>
 
       <div class="pt-9 w-full">
