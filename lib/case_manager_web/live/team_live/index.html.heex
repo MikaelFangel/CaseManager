@@ -95,7 +95,7 @@
                     <header>
                       <%= "#{gettext("Alerts")}(#{@selected_team.alert_with_cases_count + @selected_team.alert_without_cases_count})" %>:
                     </header>
-                    <div class="flex flex-col gap-y-0.5 text-black text-xs font-medium">
+                    <div class="flex flex-col gap-y-1 text-black text-xs font-medium">
                       <header>
                         <%= "#{gettext("with linked cases")}: #{@selected_team.alert_with_cases_count}" %>
                       </header>
@@ -108,7 +108,7 @@
                     <header>
                       <%= "#{gettext("Open cases")}(#{@selected_team.case_in_progress_count + @selected_team.case_pending_count})" %>:
                     </header>
-                    <div class="flex flex-col gap-y-0.5 text-black text-xs font-medium">
+                    <div class="flex flex-col gap-y-1 text-black text-xs font-medium">
                       <header>
                         <%= "#{gettext("In progress")}: #{@selected_team.case_in_progress_count}" %>
                       </header>
@@ -121,7 +121,7 @@
                     <header>
                       <%= "#{gettext("Closed cases")}(#{@selected_team.case_t_positive_count + @selected_team.case_f_positive_count + @selected_team.case_benign_count})" %>:
                     </header>
-                    <div class="flex flex-col gap-y-0.5 text-black text-xs font-medium">
+                    <div class="flex flex-col gap-y-1 text-black text-xs font-medium">
                       <header>
                         <%= "#{gettext("True Positive")}: #{@selected_team.case_t_positive_count}" %>
                       </header>
@@ -140,7 +140,7 @@
                     <header>
                       <%= gettext("Alert risk levels") %>:
                     </header>
-                    <div class="flex flex-col gap-y-0.5 text-black text-xs font-medium">
+                    <div class="flex flex-col gap-y-1 text-black text-xs font-medium">
                       <header>
                         <%= "#{gettext("Informational")}: #{@selected_team.alert_info_count}" %>
                       </header>
@@ -162,7 +162,7 @@
                     <header>
                       <%= gettext("Case priorities") %>:
                     </header>
-                    <div class="flex flex-col gap-y-0.5 text-black text-xs font-medium">
+                    <div class="flex flex-col gap-y-1 text-black text-xs font-medium">
                       <header>
                         <%= "#{gettext("Informational")}: #{@selected_team.case_info_count}" %>
                       </header>
