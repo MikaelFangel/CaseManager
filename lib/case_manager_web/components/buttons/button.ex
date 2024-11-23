@@ -32,7 +32,7 @@ defmodule CaseManagerWeb.Button do
   """
   attr :colour, :atom,
     default: :primary,
-    values: [:primary, :secondary, :disabled, :critical]
+    values: [:primary, :secondary, :tertiary, :disabled, :critical]
 
   attr :icon_name, :string, default: nil, doc: "name of hero icon used lhs"
   attr :label, :string, default: nil, doc: "text written on button"
