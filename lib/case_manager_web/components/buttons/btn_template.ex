@@ -62,9 +62,18 @@ defmodule CaseManagerWeb.BtnTemplate do
   defp button_colour_class(%{colour: colour, class: class}), do: [colour_class(colour), class]
   defp button_colour_class(%{colour: colour}), do: colour_class(colour)
 
-  defp colour_class(:primary), do: "bg-slate-950 hover:bg-zinc-500 text-white active:text-white/80"
-  defp colour_class(:secondary), do: "bg-neutral-400 hover:bg-neutral-300 text-white active:text-white/80"
-  defp colour_class(:tertiary), do: "bg-white hover:bg-neutral-100 text-slate-950 active:text-slate-950/50 border border-slate-950"
+  defp colour_class(:primary),
+    do: "bg-slate-950 hover:bg-zinc-500 text-white active:text-white/80"
+
+  defp colour_class(:secondary),
+    do: "bg-neutral-400 hover:bg-neutral-300 text-white active:text-white/80"
+
+  defp colour_class(:tertiary),
+    do:
+      "bg-white hover:bg-neutral-100 text-slate-950 active:text-slate-950/50 border border-slate-950"
+
   defp colour_class(:disabled), do: "bg-zinc-300 text-white"
-  defp colour_class(:critical), do: "bg-rose-500 hover:bg-rose-400 text-white active:text-white/80"
+
+  defp colour_class(:critical),
+    do: "bg-rose-500 hover:bg-rose-400 text-white active:text-white/80"
 end
