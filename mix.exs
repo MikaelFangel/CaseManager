@@ -82,7 +82,8 @@ defmodule CaseManager.MixProject do
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:html_sanitize_ex, "~> 1.4"},
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      {:styler, "~> 1.2"}
     ]
   end
 
