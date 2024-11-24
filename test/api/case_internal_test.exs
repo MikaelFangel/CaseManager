@@ -15,7 +15,8 @@ defmodule CaseManager.CaseInternalTest do
       first_name: "Testing",
       last_name: "Testing",
       password: "12345678",
-      password_confirmation: "12345678"
+      password_confirmation: "12345678",
+      role: :analyst
     }
 
     customer_user = create_user(user_attrs, customer_team.id, "customer@mail.dk")
