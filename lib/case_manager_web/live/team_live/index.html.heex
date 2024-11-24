@@ -1,16 +1,19 @@
 <div class="h-full flex flex-col">
   <!-- Top section: Search bar, buttons -->
-  <div class="flex justify-end gap-x-2">
-    <%= if @pending_refresh? do %>
-      <.icon_btn
-        icon_name="hero-arrow-path-rounded-square"
-        colour={:tertiary}
-        phx-click="refresh_teams"
-      />
-    <% end %>
-    <.button phx-click="show_form_modal" icon_name="hero-document-plus">
-      <%= gettext("Create Team") %>
-    </.button>
+  <div class="flex items-center justify-between w-full">
+    <img src="/images/logo.svg" class="h-20" />
+    <div class="flex justify-end gap-x-2">
+      <%= if @pending_refresh? do %>
+        <.icon_btn
+          icon_name="hero-arrow-path-rounded-square"
+          colour={:tertiary}
+          phx-click="refresh_teams"
+        />
+      <% end %>
+      <.button phx-click="show_form_modal" icon_name="hero-document-plus">
+        <%= gettext("Create Team") %>
+      </.button>
+    </div>
   </div>
   <!-- Main content: Split layout -->
   <div class="mt-12 pb-1 flex flex-1 gap-x-14 overflow-hidden">
