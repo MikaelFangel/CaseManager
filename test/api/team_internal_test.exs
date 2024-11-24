@@ -41,7 +41,14 @@ defmodule CaseManager.TeamInternalTest do
       check all(
               team_attr <- TeamGenerator.team_attrs(),
               emails <-
-                StreamData.list_of(StreamData.string(:printable, min_length: 1))
+                StreamData.list_of(
+                  StreamData.map_of(
+                    StreamData.constant(:email),
+                    StreamData.string(:printable, min_length: 1),
+                    length: 1
+                  ),
+                  length: 1
+                )
             ) do
         attrs = Map.merge(team_attr, %{email: emails})
 
