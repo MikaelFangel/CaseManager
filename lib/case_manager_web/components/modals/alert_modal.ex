@@ -45,7 +45,14 @@ defmodule CaseManagerWeb.AlertModal do
               }
             >
               <.badge_template
-                class="bg-stone-900 text-white text-xs font-semibold font-mono"
+                class={"text-xs font-semibold font-mono " <>
+                  case case.status do
+                    :t_positive -> "bg-red-300"
+                    :benign -> "bg-green-200"
+                    :pending -> "bg-amber-100"
+                    :f_positive -> "bg-gray-300"
+                    :in_progress ->  "bg-sky-300"
+                  end}
                 label={case.id |> String.slice(0..7)}
               />
             </.tooltip>
