@@ -27,7 +27,12 @@
         >
           <:col :let={team} label={gettext("Name")}><%= team.name %></:col>
           <:col :let={team} label={gettext("Type")}>
-            <%= team.type |> Atom.to_string() |> String.capitalize() %>
+            <div class="flex items-center h-full">
+              <.badge_template
+                class="bg-red-200"
+                label={team.type |> Atom.to_string() |> String.capitalize()}
+              />
+            </div>
           </:col>
           <:col :let={team} label={gettext("Email")}>
             <%= team.email |> Enum.map(& &1.email) %>

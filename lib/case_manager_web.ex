@@ -85,6 +85,7 @@ defmodule CaseManagerWeb do
       # UI components
       import CaseManagerWeb.AlertModal
       import CaseManagerWeb.Back
+      import CaseManagerWeb.BadgeTemplate
       import CaseManagerWeb.Button
       import CaseManagerWeb.FlashGroup
       import CaseManagerWeb.Header
