@@ -35,14 +35,14 @@
             </div>
           </:col>
           <:col :let={team} label={gettext("Email")}>
-            <%= team.email |> Enum.map(& &1.email) %>
+            <%= team.email |> Enum.map_join(", ", & &1.email) %>
           </:col>
           <:col :let={team} label={gettext("Phone")}>
             <%= phone = team.phone
-            "#{phone |> Enum.map(& &1.country_code)} #{phone |> Enum.map(& &1.phone)}" %>
+            phone |> Enum.map_join(", ", &"#{&1.country_code} #{&1.phone}") %>
           </:col>
           <:col :let={team} label={gettext("IP")}>
-            <%= team.ip |> Enum.map(& &1.ip) %>
+            <%= team.ip |> Enum.map_join(", ", & &1.ip) %>
           </:col>
           <:col :let={team} label={gettext("Actions")} width="6">
             <div class="flex items-center justify-end gap-2">
