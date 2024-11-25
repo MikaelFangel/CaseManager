@@ -100,6 +100,7 @@ defmodule CaseManager.TeamInternalTest do
                       StreamData.string(?0..?9, min_length: 5),
                       length: 1
                     )
+                    |> StreamData.map(&Map.put(&1, :version, Enum.random([:v4, :v6])))
                   ),
                   length: 1
                 )
