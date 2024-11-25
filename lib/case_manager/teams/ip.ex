@@ -27,6 +27,7 @@ defmodule CaseManager.Teams.IP do
     attribute :ip, :string, allow_nil?: false, public?: true
 
     attribute :version, :atom do
+      allow_nil? false
       constraints one_of: [:v4, :v6]
       public? true
     end
