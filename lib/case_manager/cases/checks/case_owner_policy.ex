@@ -3,6 +3,7 @@ defmodule CaseManager.Policies.CaseOwnerPolicy do
   Implementation of the SimpleCheck behaviour. This policy checks if a given case and user team_id is the same.
   """
   use Ash.Policy.SimpleCheck
+
   alias CaseManager.Cases.Case
   alias CaseManager.Teams.User
 
@@ -12,13 +13,9 @@ defmodule CaseManager.Policies.CaseOwnerPolicy do
   end
 
   @impl true
-  def match?(
-        %User{team_id: team_id} = _actor,
-        %{changeset: changeset} = _context,
-        _opts
-      ) do
+  def match?(%User{team_id: team_id} = _actor, %{changeset: changeset} = _context, _opts) do
     case_id = Ash.Changeset.get_attribute(changeset, :case_id)
-    case = Case |> Ash.get!(case_id)
+    case = Ash.get!(Case, case_id)
 
     case.team_id == team_id
   end

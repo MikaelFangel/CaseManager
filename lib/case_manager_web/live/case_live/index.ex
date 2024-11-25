@@ -1,5 +1,9 @@
 defmodule CaseManagerWeb.CaseLive.Index do
+  @moduledoc false
   use CaseManagerWeb, :live_view
+
+  alias CaseManager.Cases.Case
+
   require Ash.Query
 
   @open_statuses [:in_progress, :pending]
@@ -45,13 +49,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_info(
-        %Phoenix.Socket.Broadcast{
-          event: "create",
-          payload: %Ash.Notifier.Notification{data: case}
-        },
-        socket
-      ) do
+  def handle_info(%Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: case}}, socket) do
     {:noreply, stream_insert(socket, :cases, case, at: 0)}
   end
 
@@ -71,17 +69,17 @@ defmodule CaseManagerWeb.CaseLive.Index do
     view_rights =
       case socket.assigns.current_user.team_type do
         :mssp ->
-          Ash.Filter.parse!(CaseManager.Cases.Case, true)
+          Ash.Filter.parse!(Case, true)
 
         _other ->
-          Ash.Filter.parse!(CaseManager.Cases.Case,
+          Ash.Filter.parse!(Case,
             team_id: socket.assigns.current_user.team_id,
             escalated: true
           )
       end
 
     cases_page =
-      CaseManager.Cases.Case
+      Case
       |> Ash.Query.filter(^view_rights)
       |> Ash.Query.filter(status in ^statuses)
       |> Ash.Query.sort(updated_at: :desc)

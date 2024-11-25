@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.AlertGenerator do
           alert_id <- StreamData.string(:alphanumeric, length: 8),
           title <- StreamData.string(:printable, min_length: 1),
           risk_level <- risk_level(),
-          creation_time <- StreamData.constant(DateTime.utc_now() |> DateTime.to_iso8601()),
+          creation_time <- DateTime.utc_now() |> DateTime.to_iso8601() |> StreamData.constant(),
           link <- StreamData.string(:printable, min_length: 1)
         ) do
       %{

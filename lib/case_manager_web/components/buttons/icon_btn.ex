@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.IconBtn do
   """
 
   use Phoenix.Component
+
   import CaseManagerWeb.BtnTemplate
   import CaseManagerWeb.Icon
 

@@ -5,13 +5,14 @@ defmodule CaseManager.AlertExternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
   use Plug.Test
+
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.AlertGenerator
   alias CaseManagerWeb.JsonGenerator
   alias CaseManagerWeb.TeamGenerator
 
   setup do
-    [gen_team] = TeamGenerator.team_attrs() |> Enum.take(1)
+    [gen_team] = Enum.take(TeamGenerator.team_attrs(), 1)
     {:ok, team} = Team |> Ash.Changeset.for_create(:create, gen_team) |> Ash.create()
     {:ok, team: team}
   end
@@ -19,7 +20,7 @@ defmodule CaseManager.AlertExternalTest do
   describe "JSON API POST" do
     property "valid alert attributes return a 201 created response", %{team: team} do
       check all(alert_attr <- AlertGenerator.alert_attrs()) do
-        data = %{data: %{type: "alert", attributes: alert_attr |> Map.put(:team_id, team.id)}}
+        data = %{data: %{type: "alert", attributes: Map.put(alert_attr, :team_id, team.id)}}
         json_data = Jason.encode!(data)
 
         conn =
@@ -65,7 +66,7 @@ defmodule CaseManager.AlertExternalTest do
               additional_data <- JsonGenerator.json_map()
             ) do
         # Step 1: Create an alert first
-        data = %{data: %{type: "alert", attributes: alert_attr |> Map.put(:team_id, team.id)}}
+        data = %{data: %{type: "alert", attributes: Map.put(alert_attr, :team_id, team.id)}}
         json_data = Jason.encode!(data)
 
         conn =
@@ -101,7 +102,7 @@ defmodule CaseManager.AlertExternalTest do
     property "invalid alert update returns a 400 bad request response", %{team: team} do
       check all(alert_attr <- AlertGenerator.alert_attrs()) do
         # Step 1: Create an alert
-        data = %{data: %{type: "alert", attributes: alert_attr |> Map.put(:team_id, team.id)}}
+        data = %{data: %{type: "alert", attributes: Map.put(alert_attr, :team_id, team.id)}}
         json_data = Jason.encode!(data)
 
         conn =

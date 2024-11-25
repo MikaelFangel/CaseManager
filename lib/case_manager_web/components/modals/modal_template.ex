@@ -15,11 +15,12 @@ defmodule CaseManagerWeb.ModalTemplate do
   Icons are provided by [heroicons](https://heroicons.com). See `icon/1` for usage.
   """
   use Phoenix.Component
-  import CaseManagerWeb.Icon
+  use Gettext, backend: CaseManagerWeb.Gettext
+
   import CaseManagerWeb.CoreJsCmds
+  import CaseManagerWeb.Icon
 
   alias Phoenix.LiveView.JS
-  use Gettext, backend: CaseManagerWeb.Gettext
 
   # ---------------------------------------------------------
 

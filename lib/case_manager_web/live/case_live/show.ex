@@ -1,5 +1,7 @@
 defmodule CaseManagerWeb.CaseLive.Show do
+  @moduledoc false
   use CaseManagerWeb, :live_view
+
   alias CaseManager.Cases.Case
 
   @impl true
@@ -17,14 +19,11 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_info(
-        %Phoenix.Socket.Broadcast{
-          event: "create",
-          payload: %Ash.Notifier.Notification{data: comment}
-        },
+        %Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: comment}},
         socket
       ) do
     comment = Map.put(comment, :header, nil)
-    {:noreply, socket |> stream_insert(:comments, comment, at: 0)}
+    {:noreply, stream_insert(socket, :comments, comment, at: 0)}
   end
 
   @impl true
@@ -40,7 +39,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
         reporter: [:full_name]
       ])
 
-    alerts = case.alert |> Enum.map(&{&1.id, &1})
+    alerts = Enum.map(case.alert, &{&1.id, &1})
     comments = case.comment |> add_date_headers() |> Enum.reverse()
 
     {:noreply,
@@ -60,44 +59,33 @@ defmodule CaseManagerWeb.CaseLive.Show do
       |> Ash.get!(id)
       |> Case.escalate!(actor: socket.assigns.current_user)
 
-    {:noreply, socket |> assign(case: updated_case)}
+    {:noreply, assign(socket, case: updated_case)}
   end
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
     alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
 
-    socket =
-      socket
-      |> assign(:alert, alert)
+    socket = assign(socket, :alert, alert)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("hide_modal", _params, socket) do
-    socket =
-      socket
-      |> assign(:alert, nil)
+    socket = assign(socket, :alert, nil)
 
     {:noreply, socket}
   end
 
   defp add_date_headers(comments, comments_with_headers \\ [], last_header \\ nil)
 
-  defp add_date_headers([], comments_with_headers, _last_header),
-    do: Enum.reverse(comments_with_headers)
+  defp add_date_headers([], comments_with_headers, _last_header), do: Enum.reverse(comments_with_headers)
 
-  defp add_date_headers(
-         [%{inserted_at: inserted_at} = comment | comments],
-         comments_with_headers,
-         last_header
-       ) do
+  defp add_date_headers([%{inserted_at: inserted_at} = comment | comments], comments_with_headers, last_header) do
     header = Calendar.strftime(inserted_at, "%d. %b. %Y")
 
-    comment =
-      comment
-      |> Map.put(:header, if(last_header == header, do: nil, else: header))
+    comment = Map.put(comment, :header, if(last_header == header, do: nil, else: header))
 
     add_date_headers(
       comments,

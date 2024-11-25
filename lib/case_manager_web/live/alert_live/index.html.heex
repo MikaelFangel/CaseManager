@@ -11,12 +11,7 @@
     </div>
   </div>
 
-  <div
-    class="mt-12"
-    id="alerts-container"
-    phx-update="stream"
-    phx-viewport-bottom={@more_pages? && "load_more_alerts"}
-  >
+  <div class="mt-12" id="alerts-container" phx-update="stream" phx-viewport-bottom={@more_pages? && "load_more_alerts"}>
     <.table
       id="alerts"
       rows={@streams.alerts}
@@ -51,9 +46,7 @@
           <.link navigate={~p"/case/#{case.id}"}>
             <.tooltip
               pos={:top}
-              tooltip_label={
-                case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()
-              }
+              tooltip_label={case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()}
             >
               <.txt_link label={case.id |> String.slice(0..7)} />
             </.tooltip>
@@ -62,12 +55,7 @@
       </:col>
       <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
         <.link href={alert.link} target="_blank">
-          <.icon_btn
-            icon_name="hero-arrow-top-right-on-square"
-            colour={:secondary}
-            size={:small}
-            class="pl-0.5 pb-1"
-          />
+          <.icon_btn icon_name="hero-arrow-top-right-on-square" colour={:secondary} size={:small} class="pl-0.5 pb-1" />
         </.link>
       </:col>
     </.table>

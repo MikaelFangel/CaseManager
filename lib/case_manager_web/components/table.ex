@@ -49,10 +49,7 @@ defmodule CaseManagerWeb.Table do
       <table class="w-full mt-4 sm:w-full">
         <thead class="text-xs text-left leading-0 text-black">
           <tr>
-            <th
-              :for={col <- @col}
-              class={["p-0 pb-2 pr-0 font-semibold", col[:width] && "w-#{col[:width]}"]}
-            >
+            <th :for={col <- @col} class={["p-0 pb-2 pr-0 font-semibold", col[:width] && "w-#{col[:width]}"]}>
               <%= col[:label] %>
             </th>
             <th :if={@action != []} class="relative p-0 pb-4">

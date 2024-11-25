@@ -5,14 +5,15 @@ defmodule CaseManagerWeb.AlertModal do
 
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
-  alias Phoenix.LiveView.JS
 
-  import CaseManagerWeb.ModalTemplate
+  import CaseManagerWeb.BadgeTemplate
   import CaseManagerWeb.Button
   import CaseManagerWeb.Header
+  import CaseManagerWeb.ModalTemplate
   import CaseManagerWeb.RiskBadge
   import CaseManagerWeb.Tooltip
-  import CaseManagerWeb.BadgeTemplate
+
+  alias Phoenix.LiveView.JS
 
   attr :id, :string, default: "alert_modal"
   attr :show, :boolean, default: false
@@ -40,9 +41,7 @@ defmodule CaseManagerWeb.AlertModal do
           <%= for case <- Ash.load!(@alert, :case).case do %>
             <.tooltip
               pos={:bottom}
-              tooltip_label={
-                case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()
-              }
+              tooltip_label={case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()}
             >
               <.badge_template
                 class={"text-xs font-semibold font-mono " <>

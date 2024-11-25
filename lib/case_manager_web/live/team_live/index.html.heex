@@ -4,11 +4,7 @@
     <img src="/images/logo.svg" class="h-20" />
     <div class="flex justify-end gap-x-2">
       <%= if @pending_refresh? do %>
-        <.icon_btn
-          icon_name="hero-arrow-path-rounded-square"
-          colour={:tertiary}
-          phx-click="refresh_teams"
-        />
+        <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:tertiary} phx-click="refresh_teams" />
       <% end %>
       <.button phx-click="show_form_modal" icon_name="hero-document-plus">
         <%= gettext("Create Team") %>
@@ -20,18 +16,11 @@
     <!-- Left column: Table -->
     <div class="w-2/3 overflow-y-auto">
       <div id="teams-container" phx-viewport-bottom="load_more_teams">
-        <.table
-          id="teams"
-          rows={@teams}
-          row_click={&JS.push("select_team", value: %{team_id: &1.id})}
-        >
+        <.table id="teams" rows={@teams} row_click={&JS.push("select_team", value: %{team_id: &1.id})}>
           <:col :let={team} label={gettext("Name")}><%= team.name %></:col>
           <:col :let={team} label={gettext("Type")}>
             <div class="flex items-center h-full">
-              <.badge_template
-                class="bg-red-200"
-                label={team.type |> Atom.to_string() |> String.capitalize()}
-              />
+              <.badge_template class="bg-red-200" label={team.type |> Atom.to_string() |> String.capitalize()} />
             </div>
           </:col>
           <:col :let={team} label={gettext("Email")}>
@@ -207,12 +196,7 @@
   <.header class="flex-none font-bold"><%= gettext("Create Team") %></.header>
   <hr class="border-t border-gray-300 mt-1 mb-2.5" />
 
-  <.simple_form
-    class="h-full flex flex-col"
-    for={@form}
-    phx-change="validate"
-    phx-submit="submit_team_form"
-  >
+  <.simple_form class="h-full flex flex-col" for={@form} phx-change="validate" phx-submit="submit_team_form">
     <%!-- Attributes for the team resource --%>
     <div class="flex flex-row" }>
       <div class="basis-full" }>
@@ -264,19 +248,11 @@
     <.inputs_for :let={phone_form} field={@form[:phone]}>
       <div class="flex flex-row items-center gap-4" }>
         <div class="basis-1/2" }>
-          <.input
-            type="text"
-            field={phone_form[:country_code]}
-            placeholder={"#{gettext("Country Code")}"}
-          />
+          <.input type="text" field={phone_form[:country_code]} placeholder={"#{gettext("Country Code")}"} />
         </div>
 
         <div class="basis-1/2">
-          <.input
-            type="text"
-            field={phone_form[:phone]}
-            placeholder={"#{gettext("Phone Number")}*"}
-          />
+          <.input type="text" field={phone_form[:phone]} placeholder={"#{gettext("Phone Number")}*"} />
         </div>
       </div>
       <button

@@ -1,5 +1,7 @@
 defmodule CaseManagerWeb.TeamLive.Index do
+  @moduledoc false
   use CaseManagerWeb, :live_view
+
   alias AshPhoenix.Form
   alias CaseManager.Teams.Team
 
@@ -81,9 +83,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
         ]
       )
 
-    socket =
-      socket
-      |> assign(:selected_team, team)
+    socket = assign(socket, :selected_team, team)
 
     {:noreply, socket}
   end
@@ -94,10 +94,10 @@ defmodule CaseManagerWeb.TeamLive.Index do
       case Ash.get(CaseManager.Teams.Team, team_id) do
         {:ok, team} ->
           Ash.destroy!(team)
-          socket |> assign(:pending_refresh?, true)
+          assign(socket, :pending_refresh?, true)
 
         {:error, _} ->
-          socket |> put_flash(:error, gettext("Team already deleted"))
+          put_flash(socket, :error, gettext("Team already deleted"))
       end
 
     {:noreply, socket}
@@ -148,9 +148,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
         {:noreply, socket}
 
       {:error, form} ->
-        socket =
-          socket
-          |> put_flash(:error, gettext("Team save error."))
+        socket = put_flash(socket, :error, gettext("Team save error."))
 
         {:noreply, assign(socket, :form, form)}
     end
@@ -158,15 +156,13 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("hide_form_modal", _params, socket) do
-    socket =
-      socket
-      |> assign(:show_form_modal, false)
+    socket = assign(socket, :show_form_modal, false)
 
     {:noreply, socket}
   end
 
   defp set_form_for_modal(form, socket) do
-    form = form |> to_form()
+    form = to_form(form)
 
     socket =
       socket

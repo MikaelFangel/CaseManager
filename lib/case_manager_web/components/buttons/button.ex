@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.Button do
   """
 
   use Phoenix.Component
+
   import CaseManagerWeb.BtnTemplate
   import CaseManagerWeb.Icon
 
@@ -43,9 +44,7 @@ defmodule CaseManagerWeb.Button do
   slot :inner_block, required: false
 
   def button(assigns) do
-    assigns =
-      assigns
-      |> assign(:btn_class, btn_class(assigns))
+    assigns = assign(assigns, :btn_class, btn_class(assigns))
 
     ~H"""
     <%= unless txt_blank?(@label, @inner_block) do %>

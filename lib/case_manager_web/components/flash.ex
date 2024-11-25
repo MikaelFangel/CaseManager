@@ -5,9 +5,11 @@ defmodule CaseManagerWeb.Flash do
 
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
-  alias Phoenix.LiveView.JS
+
   import CaseManagerWeb.CoreJsCmds
   import CaseManagerWeb.Icon
+
+  alias Phoenix.LiveView.JS
 
   @doc """
   Renders flash notices.

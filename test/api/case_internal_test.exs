@@ -4,8 +4,10 @@ defmodule CaseManager.CaseInternalTest do
   """
   use CaseManager.DataCase, async: true
   use ExUnitProperties
+
   alias CaseManager.Cases.Case
-  alias CaseManager.Teams.{Team, User}
+  alias CaseManager.Teams.Team
+  alias CaseManager.Teams.User
   alias CaseManagerWeb.CaseGenerator
 
   setup do
@@ -57,7 +59,7 @@ defmodule CaseManager.CaseInternalTest do
       mssp_user: mssp_user
     } do
       check all(case_attr <- CaseGenerator.case_attrs()) do
-        team = (customer_user |> Ash.load!(:team)).team
+        team = Ash.load!(customer_user, :team).team
 
         assert {:ok, _case} = Team.add_case(team, case_attr, actor: mssp_user)
         assert {:error, _case} = Team.add_case(team, case_attr, actor: customer_user)
@@ -76,9 +78,7 @@ defmodule CaseManager.CaseInternalTest do
               case_attr <- CaseGenerator.case_attrs(),
               comment_body <- StreamData.string(:utf8, min_length: 1)
             ) do
-        team =
-          (customer_user |> Ash.load!(:team)).team
-          |> Team.add_case!(case_attr, actor: mssp_user)
+        team = Team.add_case!(Ash.load!(customer_user, :team).team, case_attr, actor: mssp_user)
 
         [case] = team.case
 

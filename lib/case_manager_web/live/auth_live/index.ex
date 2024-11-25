@@ -1,4 +1,5 @@
 defmodule CaseManagerWeb.AuthLive.Index do
+  @moduledoc false
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form

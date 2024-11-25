@@ -5,9 +5,10 @@ defmodule CaseManagerWeb.FlashGroup do
 
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
+
+  import CaseManagerWeb.CoreJsCmds
   import CaseManagerWeb.Flash
   import CaseManagerWeb.Icon
-  import CaseManagerWeb.CoreJsCmds
 
   @doc """
   Shows the flash group with standard titles and content.

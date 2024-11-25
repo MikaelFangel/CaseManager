@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.BadgeTemplate do
   """
 
   use Phoenix.Component
+
   import CaseManagerWeb.Icon
 
   @container_class "inline-flex items-center justify-center rounded-[5px] focus:outline-none h-6 px-[5px] gap-[5px]"

@@ -11,11 +11,7 @@ defmodule CaseManager.Policies.MSSPCreatePolicy do
   end
 
   @impl true
-  def match?(
-        %CaseManager.Teams.User{} = actor,
-        _context,
-        _opts
-      ) do
+  def match?(%CaseManager.Teams.User{} = actor, _context, _opts) do
     team_type =
       case actor.team_type do
         %Ash.NotLoaded{} -> Ash.load!(actor, :team_type).team_type

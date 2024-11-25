@@ -1,5 +1,7 @@
 defmodule CaseManagerWeb.CaseLive.FormComponent do
+  @moduledoc false
   use CaseManagerWeb, :live_component
+
   alias AshPhoenix.Form
   alias CaseManager.Cases.Case
 
@@ -26,11 +28,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event(
-        "save",
-        %{"description" => description, "internal_note" => internal_note} = params,
-        socket
-      ) do
+  def handle_event("save", %{"description" => description, "internal_note" => internal_note} = params, socket) do
     related_alert_ids = Enum.map(socket.assigns.related_alerts, fn {_id, alert} -> alert.id end)
 
     sanitize = &HtmlSanitizeEx.strip_tags/1
@@ -48,13 +46,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       consume_uploaded_entries(socket, :attachments, fn %{path: path}, entry ->
         file = File.read!(path)
 
-        case
-        |> Case.upload_file!(
-          %{
-            filename: entry.client_name,
-            content_type: entry.client_type,
-            binary_data: file
-          },
+        Case.upload_file!(case, %{filename: entry.client_name, content_type: entry.client_type, binary_data: file},
           actor: socket.assigns.current_user
         )
 
@@ -90,18 +82,14 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
     alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
 
-    socket =
-      socket
-      |> assign(:alert, alert)
+    socket = assign(socket, :alert, alert)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("hide_modal", _params, socket) do
-    socket =
-      socket
-      |> assign(:alert, nil)
+    socket = assign(socket, :alert, nil)
 
     {:noreply, socket}
   end

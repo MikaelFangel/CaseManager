@@ -22,10 +22,11 @@ defmodule CaseManagerWeb do
     quote do
       use Phoenix.Router, helpers: false
 
-      # Import common connection and controller functions to use in pipelines
-      import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+
+      # Import common connection and controller functions to use in pipelines
+      import Plug.Conn
     end
   end
 
@@ -41,8 +42,10 @@ defmodule CaseManagerWeb do
         formats: [:html, :json],
         layouts: [html: CaseManagerWeb.Layouts]
 
-      import Plug.Conn
       use Gettext, backend: CaseManagerWeb.Gettext
+
+      import Plug.Conn
+
       unquote(verified_routes())
     end
   end
@@ -79,10 +82,8 @@ defmodule CaseManagerWeb do
 
   defp html_helpers do
     quote do
-      # HTML escaping functionality
-      import Phoenix.HTML
+      use Gettext, backend: CaseManagerWeb.Gettext
 
-      # UI components
       import CaseManagerWeb.AlertModal
       import CaseManagerWeb.Back
       import CaseManagerWeb.BadgeTemplate
@@ -101,9 +102,12 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.Table
       import CaseManagerWeb.Tooltip
       import CaseManagerWeb.TxtLink
+      # HTML escaping functionality
+      import Phoenix.HTML
+
+      # UI components
 
       # Translation
-      use Gettext, backend: CaseManagerWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

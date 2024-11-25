@@ -22,9 +22,7 @@ defmodule CaseManagerWeb.TxtLink do
   attr :label, :string, required: true, doc: "displayed label"
 
   def txt_link(assigns) do
-    assigns =
-      assigns
-      |> assign(:txt_style, @txt_style)
+    assigns = assign(assigns, :txt_style, @txt_style)
 
     ~H"""
     <button

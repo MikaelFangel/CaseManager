@@ -53,12 +53,7 @@ defmodule CaseManager.MixProject do
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons,
-       github: "tailwindlabs/heroicons",
-       tag: "v2.1.5",
-       sparse: "optimized",
-       app: false,
-       compile: false,
-       depth: 1},
+       github: "tailwindlabs/heroicons", tag: "v2.1.5", sparse: "optimized", app: false, compile: false, depth: 1},
       {:swoosh, "~> 1.5"},
       {:finch, "~> 0.13", override: true},
       {:telemetry_metrics, "~> 1.0"},
@@ -82,7 +77,8 @@ defmodule CaseManager.MixProject do
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:html_sanitize_ex, "~> 1.4"},
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      {:styler, "~> 1.2"}
     ]
   end
 

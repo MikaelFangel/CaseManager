@@ -2,18 +2,10 @@
   <div class="flex items-center justify-between w-full">
     <img src="/images/logo.svg" class="h-20" />
     <div class="flex justify-end gap-x-2">
-      <.button
-        icon_name="hero-folder-open"
-        phx-click="open_cases"
-        disabled={@status_type == :open}
-      >
+      <.button icon_name="hero-folder-open" phx-click="open_cases" disabled={@status_type == :open}>
         <%= gettext("Open") %>
       </.button>
-      <.button
-        icon_name="hero-lock-closed"
-        phx-click="closed_cases"
-        disabled={@status_type == :closed}
-      >
+      <.button icon_name="hero-lock-closed" phx-click="closed_cases" disabled={@status_type == :closed}>
         <%= gettext("Closed") %>
       </.button>
     </div>

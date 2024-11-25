@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.AuthForm do
   """
   use CaseManagerWeb, :live_component
   use PhoenixHTMLHelpers
+
   alias AshPhoenix.Form
 
   @impl true
@@ -18,14 +19,14 @@ defmodule CaseManagerWeb.AuthForm do
 
   @impl true
   def handle_event("validate", %{"user" => params}, socket) do
-    form = socket.assigns.form |> Form.validate(params, errors: false)
+    form = Form.validate(socket.assigns.form, params, errors: false)
 
     {:noreply, assign(socket, form: form)}
   end
 
   @impl true
   def handle_event("submit", %{"user" => params}, socket) do
-    form = socket.assigns.form |> Form.validate(params)
+    form = Form.validate(socket.assigns.form, params)
 
     socket =
       socket

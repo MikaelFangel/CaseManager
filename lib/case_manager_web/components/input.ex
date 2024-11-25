@@ -4,11 +4,13 @@ defmodule CaseManagerWeb.Input do
   """
 
   use Phoenix.Component
-  alias Phoenix.HTML.Form
   use Gettext, backend: CaseManagerWeb.Gettext
 
   import CaseManagerWeb.Error
   import CaseManagerWeb.Label
+
+  alias Phoenix.HTML.Form
+  alias Phoenix.HTML.FormField
 
   @doc """
   Renders an input with label and error messages.
@@ -46,8 +48,7 @@ defmodule CaseManagerWeb.Input do
     values: ~w(checkbox color date datetime-local email file hidden month number password
                range radio search select tel text textarea time url week)
 
-  attr :field, Phoenix.HTML.FormField,
-    doc: "a form field struct retrieved from the form, for example: @form[:email]"
+  attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
 
   attr :errors, :list, default: []
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
@@ -56,13 +57,12 @@ defmodule CaseManagerWeb.Input do
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
   attr :class, :string, default: nil, doc: "manually assigned classes"
 
-  attr :rest, :global,
-    include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
+  attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
   slot :inner_block
 
-  def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
+  def input(%{field: %FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
     |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
