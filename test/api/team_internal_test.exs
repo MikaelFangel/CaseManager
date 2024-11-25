@@ -89,18 +89,20 @@ defmodule CaseManager.TeamInternalTest do
     end
 
     property "teams can have 0 or more ip relationships" do
+      ip_map =
+        StreamData.map_of(
+          StreamData.constant(:ip),
+          StreamData.string(?0..?9, min_length: 5),
+          length: 1
+        )
+
       check all(
               team_attr <- TeamGenerator.team_attrs(),
               ips <-
                 StreamData.map_of(
                   StreamData.constant(:ip),
                   StreamData.list_of(
-                    StreamData.map_of(
-                      StreamData.constant(:ip),
-                      StreamData.string(?0..?9, min_length: 5),
-                      length: 1
-                    )
-                    |> StreamData.map(&Map.put(&1, :version, Enum.random([:v4, :v6])))
+                    StreamData.map(ip_map, &Map.put(&1, :version, Enum.random([:v4, :v6])))
                   ),
                   length: 1
                 )
