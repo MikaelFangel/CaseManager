@@ -1,0 +1,29 @@
+<div class="grid grid-cols-2 gap-8">
+  <div class="w-1/4">
+    <img :if={@logo_img} src={"data:image/*;base64, " <> Base.encode64(@logo_img.binary_data)} alt="Logo Preview" />
+  </div>
+
+  <div>
+    <.label>Logo</.label>
+    <form id="logo-upload-form" phx-submit="save_logo" phx-change="validate" class="space-y-4">
+      <.live_file_input upload={@uploads.logo} class="mb-4" />
+      <.button type="submit" class="btn-primary">Save Logo</.button>
+    </form>
+  </div>
+
+  <div>
+    <img
+      :if={@background_img}
+      src={"data:image/*;base64, " <> Base.encode64(@background_img.binary_data)}
+      alt="Background Preview"
+    />
+  </div>
+
+  <div>
+    <.label>Background</.label>
+    <form id="background-upload-form" phx-submit="save_background" phx-change="validate" class="space-y-4">
+      <.live_file_input upload={@uploads.background} class="mb-4" />
+      <.button type="submit" class="btn-primary">Save Background</.button>
+    </form>
+  </div>
+</div>

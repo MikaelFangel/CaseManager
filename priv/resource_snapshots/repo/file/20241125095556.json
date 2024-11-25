@@ -11,23 +11,13 @@
       "type": "uuid"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "first_name",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "last_name",
+      "source": "filename",
       "type": "text"
     },
     {
@@ -37,8 +27,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
+      "source": "content_type",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -47,47 +37,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "hashed_password",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "user_to_team_fkey",
-        "on_delete": "delete",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "team"
-      },
-      "size": null,
-      "source": "team_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "role",
-      "type": "text"
+      "source": "binary_data",
+      "type": "binary"
     },
     {
       "allow_nil?": false,
@@ -108,6 +59,64 @@
       "size": null,
       "source": "updated_at",
       "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "file_to_setting_fkey",
+        "on_delete": "delete",
+        "on_update": "update",
+        "primary_key?": true,
+        "schema": "public",
+        "table": "setting"
+      },
+      "size": null,
+      "source": "setting_id",
+      "type": "uuid"
+    },
+    {
+      "allow_nil?": true,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "file_to_case_fkey",
+        "on_delete": "delete",
+        "on_update": "update",
+        "primary_key?": true,
+        "schema": "public",
+        "table": "case"
+      },
+      "size": null,
+      "source": "case_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -115,23 +124,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "9F804B6502235CA45976DF680319F30D56097400C6EA838DF36EA385D68B227B",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "user_unique_email_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "name": "unique_email",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "9DD513915C07BE17E81ECCD2E87965654AF94196129D99CB43D4B1A5DD771600",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -139,5 +133,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "user"
+  "table": "file"
 }

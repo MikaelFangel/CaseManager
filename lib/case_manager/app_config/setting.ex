@@ -13,9 +13,10 @@ defmodule CaseManager.AppConfig.Setting do
   end
 
   attributes do
+    uuid_primary_key :id
+
     attribute :key, :string do
       allow_nil? false
-      primary_key? true
       public? true
     end
 
@@ -25,6 +26,10 @@ defmodule CaseManager.AppConfig.Setting do
     end
 
     timestamps()
+  end
+
+  relationships do
+    has_many :file, CaseManager.AppConfig.File
   end
 
   actions do
@@ -40,10 +45,25 @@ defmodule CaseManager.AppConfig.Setting do
       change set_attribute(:key, arg(:key))
       change set_attribute(:value, arg(:value))
     end
+
+    create :upload_file do
+      argument :key, :string, allow_nil?: false
+      argument :value, :string, allow_nil?: false
+      argument :file, :map, allow_nil?: false
+
+      upsert? true
+      upsert_identity :key
+
+      change set_attribute(:key, arg(:key))
+      change set_attribute(:value, arg(:value))
+
+      change manage_relationship(:file, type: :direct_control)
+    end
   end
 
   code_interface do
     define :set_setting, args: [:key, :value]
+    define :upload_file, args: [:key, :value, :file]
   end
 
   identities do

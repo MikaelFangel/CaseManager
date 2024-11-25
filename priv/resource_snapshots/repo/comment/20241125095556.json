@@ -17,28 +17,8 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "filename",
+      "source": "body",
       "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "content_type",
-      "type": "text"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "binary_data",
-      "type": "binary"
     },
     {
       "allow_nil?": false,
@@ -61,7 +41,7 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
+      "allow_nil?": false,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -78,7 +58,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "file_to_case_fkey",
+        "name": "comment_to_case_fkey",
         "on_delete": "delete",
         "on_update": "update",
         "primary_key?": true,
@@ -88,6 +68,35 @@
       "size": null,
       "source": "case_id",
       "type": "uuid"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": {
+        "deferrable": false,
+        "destination_attribute": "id",
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "multitenancy": {
+          "attribute": null,
+          "global": null,
+          "strategy": null
+        },
+        "name": "comment_to_user_fkey",
+        "on_delete": "delete",
+        "on_update": "update",
+        "primary_key?": true,
+        "schema": "public",
+        "table": "user"
+      },
+      "size": null,
+      "source": "user_id",
+      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -95,7 +104,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "C1A5C5E7A35177FC3B6A5D956F8D70D83D4B034D814C175A8E1DD8B0337BADF6",
+  "hash": "FD7881E44D59E830A7439D768E788C4D8C3443A9A99B1C9F59CC63C105DB15FE",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -104,5 +113,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "file"
+  "table": "comment"
 }
