@@ -28,7 +28,7 @@ defmodule CaseManagerWeb.IconBtn do
 
   attr :colour, :atom,
     default: :primary,
-    values: [:primary, :secondary, :disabled, :critical]
+    values: [:primary, :secondary, :tertiary, :disabled, :critical]
 
   attr :icon_name, :string, required: true
 

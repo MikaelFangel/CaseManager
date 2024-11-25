@@ -18,34 +18,38 @@ defmodule CaseManagerWeb.MenuBar do
 
   def menu_bar(assigns) do
     ~H"""
-    <div class="flex flex-row w-screen h-screen">
+    <div class="h-screen flex flex-row">
       <!-- The menu bar -->
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
-        <div class="flex-col h-full w-full justify-start items-center gap-4 inline-flex">
+        <div class="flex-col w-full justify-start items-center gap-4 inline-flex">
           <%= if @current_user.team_type==:mssp do %>
             <.menu_item icon_name="hero-bell" active?={@current_page == :alerts} path="/alerts" />
-            <div class="w-full h-px border border-neutral-500"></div>
+            <div class="w-full border border-neutral-500"></div>
           <% end %>
 
           <.menu_item icon_name="hero-document-duplicate" active?={@current_page == :cases} path="/" />
 
           <%= if @current_user.team_type==:mssp do %>
-            <div class="w-full h-px border border-neutral-500"></div>
+            <div class="w-full border border-neutral-500"></div>
             <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
-            <div class="w-full h-px border border-neutral-500"></div>
-            <.menu_item icon_name="hero-building-office" active?={@current_page == :teams} />
+            <div class="w-full border border-neutral-500"></div>
+            <.menu_item
+              icon_name="hero-building-office"
+              active?={@current_page == :teams}
+              path="/teams"
+            />
           <% end %>
         </div>
         <!-- Bottom content -->
         <div class="flex-col h-full justify-end items-center gap-4 inline-flex">
           <.menu_item icon_name="hero-cog-8-tooth" active?={@current_page == :settings} />
-          <div class="w-full h-px border border-neutral-500"></div>
-          <.menu_item icon_name="hero-user-circle" />
+          <div class="w-full border border-neutral-500"></div>
+          <.menu_item icon_name="hero-user-circle" active?={@current_page == :user} />
         </div>
       </div>
       <!-- The screen content -->
-      <div class="w-full h-full overflow-y-auto">
+      <div class={["h-full w-full overflow-y-auto", @class]}>
         <%= render_slot(@inner_block) %>
       </div>
     </div>

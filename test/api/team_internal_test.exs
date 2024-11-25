@@ -41,7 +41,14 @@ defmodule CaseManager.TeamInternalTest do
       check all(
               team_attr <- TeamGenerator.team_attrs(),
               emails <-
-                StreamData.list_of(StreamData.string(:printable, min_length: 1))
+                StreamData.list_of(
+                  StreamData.map_of(
+                    StreamData.constant(:email),
+                    StreamData.string(:printable, min_length: 1),
+                    length: 1
+                  ),
+                  length: 1
+                )
             ) do
         attrs = Map.merge(team_attr, %{email: emails})
 
@@ -81,22 +88,16 @@ defmodule CaseManager.TeamInternalTest do
       end
     end
 
-    property "teams can have 0 or more ip relationships" do
+    property "teams can have 0 or more IP relationships" do
       check all(
               team_attr <- TeamGenerator.team_attrs(),
-              ips <-
-                StreamData.map_of(
-                  StreamData.constant(:ip),
-                  StreamData.list_of(
-                    StreamData.map_of(
-                      StreamData.constant(:ip),
-                      StreamData.string(?0..?9, min_length: 5),
-                      length: 1
-                    )
-                  ),
-                  length: 1
+              ip_list <-
+                StreamData.list_of(
+                  {StreamData.string(?0..?9, min_length: 5),
+                   StreamData.one_of([StreamData.constant(:v4), StreamData.constant(:v6)])}
                 )
             ) do
+        ips = %{ip: Enum.map(ip_list, fn {ip, version} -> %{ip: ip, version: version} end)}
         attrs = Map.merge(team_attr, ips)
 
         team =

@@ -1,7 +1,7 @@
 <.header>Create your first team</.header>
 <hr />
 <.simple_form for={@form} phx-submit="create">
-  <.input label={gettext("Team Name")} name="name" field={@form[:name]} type="text" />
+  <.input label={gettext("Team Name") <> "*"} name="name" field={@form[:name]} type="text" />
   <:actions>
     <div class="flex justify-end w-full">
       <.button phx-disable-with={gettext("Creating...")}>

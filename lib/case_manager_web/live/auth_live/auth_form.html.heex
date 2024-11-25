@@ -14,7 +14,7 @@
         <h1 class="text-xl font-semibold mb-2"><%= @cta %></h1>
         <hr class="mb-2" />
         <fieldset class="form-group">
-          <%= label(f, :first_name, "First Name",
+          <%= label(f, :first_name, "First Name*",
             class: "block text-black text-sm font-bold mb-2"
           ) %>
           <%= text_input(f, :first_name,
@@ -24,7 +24,7 @@
           ) %>
         </fieldset>
         <fieldset class="form-group">
-          <%= label(f, :last_name, "Last Name", class: "block text-black text-sm font-bold mb-2") %>
+          <%= label(f, :last_name, "Last Name*", class: "block text-black text-sm font-bold mb-2") %>
           <%= text_input(f, :last_name,
             class:
               "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
@@ -32,7 +32,7 @@
           ) %>
         </fieldset>
         <fieldset class="form-group">
-          <%= label(f, :email, "Email", class: "block text-black text-sm font-bold mb-2") %>
+          <%= label(f, :email, "Email*", class: "block text-black text-sm font-bold mb-2") %>
           <%= text_input(f, :email,
             class:
               "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
@@ -41,7 +41,7 @@
           ) %>
         </fieldset>
         <fieldset class="form-group">
-          <%= label(f, :password, "Password", class: "block text-black text-sm font-bold mb-2") %>
+          <%= label(f, :password, "Password*", class: "block text-black text-sm font-bold mb-2") %>
           <%= text_input(f, :password,
             class:
               "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
@@ -50,7 +50,7 @@
           ) %>
         </fieldset>
         <fieldset class="form-group">
-          <%= label(f, :password_confirmation, "Password Confirmation",
+          <%= label(f, :password_confirmation, "Password Confirmation*",
             class: "block text-black text-sm font-bold mb-2"
           ) %>
           <%= text_input(f, :password_confirmation,
@@ -61,7 +61,7 @@
           ) %>
         </fieldset>
         <fieldset class="form-group">
-          <%= label(f, :team_id, "Team", class: "block text-black text-sm font-bold mb-2") %>
+          <%= label(f, :team_id, "Team*", class: "block text-black text-sm font-bold mb-2") %>
           <%= select(
             f,
             :team_id,
@@ -74,7 +74,7 @@
           ) %>
         </fieldset>
         <fieldset class="form-group">
-          <%= label(f, :role, "Role", class: "block text-black text-sm font-bold mb-2") %>
+          <%= label(f, :role, "Role*", class: "block text-black text-sm font-bold mb-2") %>
           <%= select(f, :role, [:admin],
             class:
               "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 mb-2 focus:outline-none focus:shadow-outline"

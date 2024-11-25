@@ -49,13 +49,14 @@ defmodule CaseManager.Teams.User do
   attributes do
     uuid_primary_key :id
 
-    attribute :first_name, :string, public?: true
-    attribute :last_name, :string, public?: true
+    attribute :first_name, :string, allow_nil?: false, public?: true
+    attribute :last_name, :string, allow_nil?: false, public?: true
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
     attribute :role, :atom do
       constraints one_of: [:admin, :analyst]
+      allow_nil? false
       public? true
     end
 

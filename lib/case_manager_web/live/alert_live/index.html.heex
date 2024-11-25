@@ -2,7 +2,7 @@
   <div class="flex items-center justify-between w-full">
     <img src="/images/logo.svg" class="h-20" />
     <div class="flex justify-end gap-x-2">
-      <.icon_btn icon_name="hero-pause-circle" colour={:critical} />
+      <.icon_btn icon_name="hero-pause-circle" colour={:tertiary} />
       <.link navigate={~p"/case/new"}>
         <.button icon_name="hero-document-plus" disabled={Enum.empty?(@selected_alerts)}>
           <%= gettext("Create Case") %>
