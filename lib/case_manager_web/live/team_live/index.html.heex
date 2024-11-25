@@ -71,7 +71,7 @@
           <%= if @more_pages? do %>
             <.button phx-click="load_more_teams"><%= gettext("Load More") %></.button>
           <% else %>
-            <span class="text-black text-xs font-semibold"><%= gettext("No more teams") %></span>
+            <span class="text-xs font-semibold"><%= gettext("No more teams") %></span>
           <% end %>
         </div>
       </div>
@@ -341,7 +341,7 @@
       <.button type="button" colour={:secondary} phx-click="hide_form_modal">
         <%= gettext("Close") %>
       </.button>
-      <.button type="submit" phx-disable-with="Saving...">
+      <.button phx-disable-with="Saving...">
         <%= gettext("Save") %>
       </.button>
     </:actions>
