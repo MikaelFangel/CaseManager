@@ -238,7 +238,7 @@
 
     <.label><%= gettext("Emails") %></.label>
     <.inputs_for :let={email_form} field={@form[:email]}>
-      <.input type="text" field={email_form[:email]} placeholder={"#{gettext("Email")}"} />
+      <.input type="text" field={email_form[:email]} placeholder={"#{gettext("Email")}*"} />
 
       <button
         type="button"
@@ -275,7 +275,7 @@
           <.input
             type="text"
             field={phone_form[:phone]}
-            placeholder={"#{gettext("Phone Number")}"}
+            placeholder={"#{gettext("Phone Number")}*"}
           />
         </div>
       </div>
@@ -307,7 +307,7 @@
             type="select"
             field={ip_form[:version]}
             options={[
-              {gettext("Choose version"), nil},
+              {"#{gettext("Choose version")}*", nil},
               {"V4", :v4},
               {"V6", :v6}
             ]}
@@ -315,7 +315,7 @@
         </div>
 
         <div class="basis-2/3">
-          <.input type="text" field={ip_form[:ip]} placeholder={"#{gettext("IP")}"} />
+          <.input type="text" field={ip_form[:ip]} placeholder={"#{gettext("IP")}*"} />
         </div>
       </div>
       <button
