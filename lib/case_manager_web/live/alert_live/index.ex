@@ -1,5 +1,8 @@
 defmodule CaseManagerWeb.AlertLive.Index do
+  @moduledoc false
   use CaseManagerWeb, :live_view
+
+  alias CaseManager.Alerts.Alert
 
   @impl true
   def mount(_params, _session, socket) do
@@ -7,7 +10,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
 
     alerts_page =
-      CaseManager.Alerts.Alert
+      Alert
       |> Ash.Query.sort(inserted_at: :desc)
       |> Ash.read!(action: :read_paginated)
 
@@ -34,33 +37,23 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_info(
-        %Phoenix.Socket.Broadcast{
-          event: "create",
-          payload: %Ash.Notifier.Notification{data: alert}
-        },
-        socket
-      ) do
+  def handle_info(%Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: alert}}, socket) do
     alert = Ash.load!(alert, :team)
     {:noreply, stream_insert(socket, :alerts, alert, at: 0)}
   end
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
+    alert = Ash.get!(Alert, alert_id)
 
-    socket =
-      socket
-      |> assign(:alert, alert)
+    socket = assign(socket, :alert, alert)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("hide_modal", _params, socket) do
-    socket =
-      socket
-      |> assign(:alert, nil)
+    socket = assign(socket, :alert, nil)
 
     {:noreply, socket}
   end

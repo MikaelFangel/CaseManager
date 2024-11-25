@@ -1,14 +1,17 @@
 defmodule CaseManagerWeb.CaseLive.New do
-  alias CaseManager.SelectedAlerts
+  @moduledoc false
   use CaseManagerWeb, :live_view
+
   alias AshPhoenix.Form
+  alias CaseManager.Alerts.Alert
+  alias CaseManager.SelectedAlerts
 
   @impl true
   def mount(_params, _session, socket) do
     selected_alerts =
       socket.assigns.current_user.id
       |> CaseManager.SelectedAlerts.get_selected_alerts()
-      |> Enum.map(fn alert_id -> {alert_id, Ash.get!(CaseManager.Alerts.Alert, alert_id)} end)
+      |> Enum.map(fn alert_id -> {alert_id, Ash.get!(Alert, alert_id)} end)
 
     # Redirect users if they try to access the page through the URL without selecting any alerts
     # else assign the selected alerts to the socket and render the page.
@@ -57,11 +60,11 @@ defmodule CaseManagerWeb.CaseLive.New do
         selected_alerts =
           socket.assigns.current_user.id
           |> CaseManager.SelectedAlerts.get_selected_alerts()
-          |> Enum.map(fn alert_id -> {alert_id, Ash.get!(CaseManager.Alerts.Alert, alert_id)} end)
+          |> Enum.map(fn alert_id -> {alert_id, Ash.get!(Alert, alert_id)} end)
 
-        socket |> assign(:related_alerts, selected_alerts)
+        assign(socket, :related_alerts, selected_alerts)
       else
-        socket |> put_flash(:error, gettext("You can't delete the last alert."))
+        put_flash(socket, :error, gettext("You can't delete the last alert."))
       end
 
     {:noreply, socket}

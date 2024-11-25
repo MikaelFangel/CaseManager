@@ -3,6 +3,7 @@ defmodule CaseManager.Relationships do
   Domain that represents cases and their related resources.
   """
   use Ash.Domain
+
   alias CaseManager.Relationships.CaseAlert
 
   resources do

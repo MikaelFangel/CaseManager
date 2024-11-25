@@ -67,8 +67,7 @@ defmodule CaseManagerWeb.Tooltip do
 
   defp tooltip_arrow(%{pos: pos}), do: tooltip_arrow(pos)
 
-  defp tooltip_arrow(:bottom),
-    do: "
+  defp tooltip_arrow(:bottom), do: "
     after:absolute
     after:border-b-8
     after:border-l-4
@@ -82,8 +81,7 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-r-transparent
     "
 
-  defp tooltip_arrow(:top),
-    do: "
+  defp tooltip_arrow(:top), do: "
     after:absolute
     after:border-t-8
     after:border-l-4
@@ -97,8 +95,7 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-r-transparent
     "
 
-  defp tooltip_arrow(:left),
-    do: "
+  defp tooltip_arrow(:left), do: "
     after:absolute
     after:border-l-8
     after:border-t-4
@@ -111,8 +108,7 @@ defmodule CaseManagerWeb.Tooltip do
     after:border-r-transparent
     "
 
-  defp tooltip_arrow(:right),
-    do: "
+  defp tooltip_arrow(:right), do: "
     after:absolute
     after:border-r-8
     after:border-t-4

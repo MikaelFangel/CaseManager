@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.MenuBar do
   """
 
   use Phoenix.Component
+
   import CaseManagerWeb.Icon
 
   @selection_circle "w-11 h-11 bg-gray-300/30 rounded-full z-0 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
@@ -34,11 +35,7 @@ defmodule CaseManagerWeb.MenuBar do
             <div class="w-full border border-neutral-500"></div>
             <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
             <div class="w-full border border-neutral-500"></div>
-            <.menu_item
-              icon_name="hero-building-office"
-              active?={@current_page == :teams}
-              path="/teams"
-            />
+            <.menu_item icon_name="hero-building-office" active?={@current_page == :teams} path="/teams" />
           <% end %>
         </div>
         <!-- Bottom content -->
@@ -61,9 +58,7 @@ defmodule CaseManagerWeb.MenuBar do
   attr :active?, :boolean, default: false, doc: "determines whether an item is highlighted"
 
   defp menu_item(%{icon_name: "hero-" <> _} = assigns) do
-    assigns =
-      assigns
-      |> assign(:selection_circle, @selection_circle)
+    assigns = assign(assigns, :selection_circle, @selection_circle)
 
     ~H"""
     <.link navigate={@path}>

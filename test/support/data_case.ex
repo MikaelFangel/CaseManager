@@ -15,16 +15,17 @@ defmodule CaseManager.DataCase do
   """
 
   use ExUnit.CaseTemplate
+
   alias Ecto.Adapters.SQL.Sandbox
 
   using do
     quote do
-      alias CaseManager.Repo
-
+      import CaseManager.DataCase
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import CaseManager.DataCase
+
+      alias CaseManager.Repo
     end
   end
 

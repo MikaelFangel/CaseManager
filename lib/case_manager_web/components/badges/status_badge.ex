@@ -4,8 +4,9 @@ defmodule CaseManagerWeb.StatusBadge do
   """
 
   use Phoenix.Component
-  import CaseManagerWeb.BadgeTemplate
   use Gettext, backend: CaseManagerWeb.Gettext
+
+  import CaseManagerWeb.BadgeTemplate
 
   @doc """
   Renders a badge showing a status.

@@ -85,9 +85,10 @@ defmodule CaseManager.SelectedAlerts do
   end
 
   defp toggle_alert(selected_alerts, alert_id) do
-    case Enum.member?(selected_alerts, alert_id) do
-      true -> List.delete(selected_alerts, alert_id)
-      false -> [alert_id | selected_alerts]
+    if Enum.member?(selected_alerts, alert_id) do
+      List.delete(selected_alerts, alert_id)
+    else
+      [alert_id | selected_alerts]
     end
   end
 end

@@ -19,15 +19,15 @@ defmodule CaseManagerWeb.ConnCase do
 
   using do
     quote do
+      use CaseManagerWeb, :verified_routes
+
+      import CaseManagerWeb.ConnCase
+      import Phoenix.ConnTest
+      import Plug.Conn
       # The default endpoint for testing
       @endpoint CaseManagerWeb.Endpoint
 
-      use CaseManagerWeb, :verified_routes
-
       # Import conveniences for testing with connections
-      import Plug.Conn
-      import Phoenix.ConnTest
-      import CaseManagerWeb.ConnCase
     end
   end
 

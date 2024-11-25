@@ -1,12 +1,14 @@
 defmodule CaseManagerWeb.CaseLive.Edit do
+  @moduledoc false
   use CaseManagerWeb, :live_view
+
   alias AshPhoenix.Form
   alias CaseManager.Cases.Case
 
   @impl true
   def mount(%{"id" => id} = _params, _session, socket) do
     case = Case |> Ash.get!(id) |> Ash.load!([:alert, :file])
-    related_alerts = case.alert |> format_alerts()
+    related_alerts = format_alerts(case.alert)
 
     form =
       case
@@ -30,15 +32,15 @@ defmodule CaseManagerWeb.CaseLive.Edit do
     socket =
       if length(socket.assigns.related_alerts) > 1 do
         case = Case.remove_alert!(socket.assigns.id, alert_id, actor: socket.assigns.current_user)
-        socket |> assign(related_alerts: case.alert |> format_alerts())
+        assign(socket, related_alerts: format_alerts(case.alert))
       else
-        socket |> put_flash(:error, gettext("You can't delete the last alert."))
+        put_flash(socket, :error, gettext("You can't delete the last alert."))
       end
 
     {:noreply, socket}
   end
 
   defp format_alerts(alerts) do
-    alerts |> Enum.map(&{&1.id, &1})
+    Enum.map(alerts, &{&1.id, &1})
   end
 end

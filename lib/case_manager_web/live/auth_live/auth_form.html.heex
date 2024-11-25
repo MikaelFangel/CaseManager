@@ -14,9 +14,7 @@
         <h1 class="text-xl font-semibold mb-2"><%= @cta %></h1>
         <hr class="mb-2" />
         <fieldset class="form-group">
-          <%= label(f, :first_name, "First Name*",
-            class: "block text-black text-sm font-bold mb-2"
-          ) %>
+          <%= label(f, :first_name, "First Name*", class: "block text-black text-sm font-bold mb-2") %>
           <%= text_input(f, :first_name,
             class:
               "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",

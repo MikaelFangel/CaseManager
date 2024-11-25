@@ -78,12 +78,7 @@
       </:col>
       <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
         <.link href={alert.link} target="_blank">
-          <.icon_btn
-            icon_name="hero-arrow-top-right-on-square"
-            colour={:secondary}
-            size={:small}
-            class="pl-0.5 pb-1"
-          />
+          <.icon_btn icon_name="hero-arrow-top-right-on-square" colour={:secondary} size={:small} class="pl-0.5 pb-1" />
         </.link>
       </:col>
     </.table>
@@ -165,10 +160,7 @@
           </div>
         </div>
         <!-- Date line above comments -->
-        <div
-          :if={comment.header}
-          class="flex items-center justify-center text-gray-400 text-xs w-full pt-4"
-        >
+        <div :if={comment.header} class="flex items-center justify-center text-gray-400 text-xs w-full pt-4">
           <span class="grow border-t border-gray-300 mr-2"></span>
           <%= comment.header %>
           <span class="grow border-t border-gray-300 ml-2"></span>

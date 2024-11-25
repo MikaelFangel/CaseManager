@@ -1,5 +1,7 @@
 defmodule CaseManagerWeb.CaseLive.CommentComponent do
+  @moduledoc false
   use CaseManagerWeb, :live_component
+
   alias AshPhoenix.Form
   alias CaseManager.Cases.Case
 
@@ -25,7 +27,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, _result} ->
-        {:noreply, socket |> push_navigate(to: ~p"/case/#{socket.assigns.case_id}")}
+        {:noreply, push_navigate(socket, to: ~p"/case/#{socket.assigns.case_id}")}
 
       {:error, form} ->
         {:noreply, assign(socket, :form, form)}

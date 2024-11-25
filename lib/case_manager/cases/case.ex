@@ -10,6 +10,10 @@ defmodule CaseManager.Cases.Case do
     authorizers: [Ash.Policy.Authorizer],
     extensions: [AshStateMachine, AshAdmin.Resource]
 
+  alias AshStateMachine.Checks.ValidNextState
+  alias CaseManager.Policies.MSSPCreatePolicy
+  alias CaseManager.Teams.User
+
   @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
   @closed_states [:t_positive, :f_positive, :benign]
 
@@ -33,13 +37,13 @@ defmodule CaseManager.Cases.Case do
 
   policies do
     policy action_type(:create) do
-      forbid_unless AshStateMachine.Checks.ValidNextState
-      authorize_if CaseManager.Policies.MSSPCreatePolicy
+      forbid_unless ValidNextState
+      authorize_if MSSPCreatePolicy
     end
 
     policy action_type(:update) do
-      forbid_unless AshStateMachine.Checks.ValidNextState
-      authorize_if CaseManager.Policies.MSSPCreatePolicy
+      forbid_unless ValidNextState
+      authorize_if MSSPCreatePolicy
       authorize_if changing_relationship(:comment)
       authorize_if changing_relationship(:file)
     end
@@ -92,8 +96,8 @@ defmodule CaseManager.Cases.Case do
   end
 
   relationships do
-    belongs_to :reporter, CaseManager.Teams.User, allow_nil?: true
-    belongs_to :assignee, CaseManager.Teams.User, allow_nil?: true
+    belongs_to :reporter, User, allow_nil?: true
+    belongs_to :assignee, User, allow_nil?: true
     belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
 
     many_to_many :alert, CaseManager.Alerts.Alert do

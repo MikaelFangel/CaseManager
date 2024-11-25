@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.Error do
   """
 
   use Phoenix.Component
+
   import CaseManagerWeb.Icon
 
   @doc """
