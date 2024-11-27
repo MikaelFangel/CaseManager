@@ -15,6 +15,10 @@ defmodule CaseManagerWeb.Helpers do
     |> Phoenix.HTML.raw()
   end
 
+  @doc """
+  Retrieves the background image from the database. If the image isn't set in the datbase
+  this function returns nil. This is to allow to use :if={@image} to check if this settings has been set.
+  """
   def load_bg do
     case Ash.get(Setting, %{key: "background"}) do
       {:ok, setting} -> hd(Ash.load!(setting, [:file]).file)
@@ -22,6 +26,10 @@ defmodule CaseManagerWeb.Helpers do
     end
   end
 
+  @doc """
+  Retrieves the logo from the database. If the logo isn't set in the datbase
+  this function returns nil. This is to allow to use :if={@logo} to check if this settings has been set.
+  """
   def load_logo do
     case Ash.get(Setting, %{key: "logo"}) do
       {:ok, setting} -> hd(Ash.load!(setting, [:file]).file)

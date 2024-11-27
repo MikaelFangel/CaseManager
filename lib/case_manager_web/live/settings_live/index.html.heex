@@ -9,7 +9,7 @@
         <% _ -> %>
           <img
             src={"data:#{@logo_img.content_type};base64," <> Base.encode64(@logo_img.binary_data)}
-            alt="Logo"
+            alt="Logo Preview"
             class="h-20"
           />
       <% end %>
@@ -17,10 +17,10 @@
   </div>
 
   <div>
-    <.label>Logo</.label>
+    <.label><%= gettext("Logo") %></.label>
     <form id="logo-upload-form" phx-submit="save_logo" phx-change="validate" class="space-y-4">
       <.live_file_input upload={@uploads.logo} class="mb-4" />
-      <.button type="submit" class="btn-primary">Save Logo</.button>
+      <.button type="submit" class="btn-primary"><%= gettext("Save Logo") %></.button>
     </form>
   </div>
 
@@ -33,10 +33,10 @@
   </div>
 
   <div>
-    <.label>Background</.label>
+    <.label><%= gettext("Background") %></.label>
     <form id="background-upload-form" phx-submit="save_background" phx-change="validate" class="space-y-4">
       <.live_file_input upload={@uploads.background} class="mb-4" />
-      <.button type="submit" class="btn-primary">Save Background</.button>
+      <.button type="submit" class="btn-primary"><%= gettext("Save Background") %></.button>
     </form>
   </div>
 </div>
