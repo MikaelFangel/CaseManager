@@ -21,8 +21,7 @@ defmodule CaseManagerWeb.OnboardingLive.NewAdminUser do
         :form,
         Form.for_create(User, :register_with_password, api: CaseManager.Teams, as: "user")
       )
-    
+
     {:noreply, socket}
   end
 end
-

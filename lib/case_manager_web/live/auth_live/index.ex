@@ -24,5 +24,4 @@ defmodule CaseManagerWeb.AuthLive.Index do
 
     {:noreply, socket}
   end
-
 end
