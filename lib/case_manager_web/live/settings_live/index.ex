@@ -45,7 +45,7 @@ defmodule CaseManagerWeb.SettingsLive.Index do
       {:ok, "success"}
     end)
 
-    {:noreply, assign(socket, Helpers.load_bg())}
+    {:noreply, assign(socket, :background_img, Helpers.load_bg())}
   end
 
   @impl true
@@ -69,6 +69,6 @@ defmodule CaseManagerWeb.SettingsLive.Index do
       {:ok, "success"}
     end)
 
-    {:noreply, assign(socket, Helpers.load_logo())}
+    {:noreply, assign(socket, :logo_img, Helpers.load_logo())}
   end
 end
