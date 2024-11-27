@@ -23,12 +23,16 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
     {:ok, socket}
   end
 
-  def handle_event("validate", params, socket) do
+  def handle_event("validate", %{"form" => params}, socket) do
     form = Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event("save", %{"description" => description, "internal_note" => internal_note} = params, socket) do
+  def handle_event(
+        "save",
+        %{"form" => %{"description" => description, "internal_note" => internal_note} = params},
+        socket
+      ) do
     related_alert_ids = Enum.map(socket.assigns.related_alerts, fn {_id, alert} -> alert.id end)
 
     sanitize = &HtmlSanitizeEx.strip_tags/1
