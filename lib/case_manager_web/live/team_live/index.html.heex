@@ -1,7 +1,7 @@
 <div class="h-full flex flex-col">
   <!-- Top section: Search bar, buttons -->
   <div class="flex items-center justify-between w-full">
-    <img src="/images/logo.svg" class="h-20" />
+    <img :if={@logo_img} src={"data:image/*;base64, " <> Base.encode64(@logo_img.binary_data)} alt="Logo" class="h-20" />
     <div class="flex justify-end gap-x-2">
       <%= if @pending_refresh? do %>
         <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:tertiary} phx-click="refresh_teams" />
