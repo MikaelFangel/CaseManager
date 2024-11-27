@@ -57,7 +57,6 @@ defmodule CaseManager.Cases.Case do
     initial_states(@valid_states)
     default_initial_state(:in_progress)
     state_attribute(:status)
-    extra_states([nil])
 
     transitions do
       transition(:*, from: :in_progress, to: @valid_states)
@@ -81,7 +80,7 @@ defmodule CaseManager.Cases.Case do
     attribute :internal_note, :string
 
     attribute :status, :atom do
-      constraints one_of: @valid_states ++ [nil]
+      constraints one_of: @valid_states
       default :in_progress
       allow_nil? false
       public? true
