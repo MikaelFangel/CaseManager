@@ -1,12 +1,11 @@
-defmodule CaseManagerWeb.AuthForm do
+defmodule CaseManagerWeb.AuthLive.SignInForm do
   @moduledoc """
-  LiveComponent to show authentication form.
+  LiveComponent to show a form for logging in.
   """
   use CaseManagerWeb, :live_component
   use PhoenixHTMLHelpers
 
   alias AshPhoenix.Form
-  alias CaseManagerWeb.Helpers
 
   @impl true
   def update(assigns, socket) do
@@ -14,7 +13,6 @@ defmodule CaseManagerWeb.AuthForm do
       socket
       |> assign(assigns)
       |> assign(trigger_action: false)
-      |> assign(:background_img, Helpers.load_bg())
 
     {:ok, socket}
   end
@@ -35,12 +33,6 @@ defmodule CaseManagerWeb.AuthForm do
       |> assign(:form, form)
       |> assign(:errors, Form.errors(form))
       |> assign(:trigger_action, form.valid?)
-
-    if socket.assigns[:is_onboarding?] do
-      CaseManager.AppConfig.Setting
-      |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
-      |> Ash.create!()
-    end
 
     {:noreply, socket}
   end

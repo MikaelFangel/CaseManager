@@ -91,8 +91,8 @@ defmodule CaseManagerWeb.Router do
     pipe_through [:browser, :onboarding]
 
     get "/", OnboardingController, :index
-    live "/team", OnboardingLive.New, :new
-    live "/user", AuthLive.Index, :onboarding
+    live "/team", OnboardingLive.NewTeam, :new_team
+    live "/user", OnboardingLive.NewAdminUser, :new_admin_user
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
