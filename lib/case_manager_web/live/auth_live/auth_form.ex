@@ -6,6 +6,7 @@ defmodule CaseManagerWeb.AuthForm do
   use PhoenixHTMLHelpers
 
   alias AshPhoenix.Form
+  alias CaseManagerWeb.Helpers
 
   @impl true
   def update(assigns, socket) do
@@ -13,6 +14,7 @@ defmodule CaseManagerWeb.AuthForm do
       socket
       |> assign(assigns)
       |> assign(trigger_action: false)
+      |> assign(:background_img, Helpers.load_bg())
 
     {:ok, socket}
   end

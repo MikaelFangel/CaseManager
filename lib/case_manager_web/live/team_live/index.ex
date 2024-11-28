@@ -4,6 +4,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   alias AshPhoenix.Form
   alias CaseManager.Teams.Team
+  alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -12,6 +13,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
     socket =
       socket
+      |> assign(:logo_img, Helpers.load_logo())
       |> assign(:menu_item, :teams)
       |> assign(:teams, teams)
       |> assign(:page, page)

@@ -1,6 +1,19 @@
 <div class="h-full">
   <div class="flex items-center justify-between w-full">
-    <img src="/images/logo.svg" class="h-20" />
+    <%= if @logo_img do %>
+      <%= case @logo_img.content_type do %>
+        <% "image/svg+xml" -> %>
+          <svg height="100px" viewbox="0 0 1500 1000">
+            <%= raw(@logo_img.binary_data) %>
+          </svg>
+        <% _ -> %>
+          <img
+            src={"data:#{@logo_img.content_type};base64," <> Base.encode64(@logo_img.binary_data)}
+            alt="Logo"
+            class="h-20"
+          />
+      <% end %>
+    <% end %>
     <div class="flex justify-end gap-x-2">
       <.button icon_name="hero-folder-open" phx-click="open_cases" disabled={@status_type == :open}>
         <%= gettext("Open") %>

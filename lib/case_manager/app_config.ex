@@ -10,6 +10,7 @@ defmodule CaseManager.AppConfig do
   end
 
   resources do
-    resource(CaseManager.AppConfig.Setting)
+    resource CaseManager.AppConfig.Setting
+    resource CaseManager.AppConfig.File
   end
 end

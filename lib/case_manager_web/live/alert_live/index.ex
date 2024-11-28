@@ -3,6 +3,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Alerts.Alert
+  alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -19,6 +20,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:ok,
      socket
      |> stream(:alerts, alerts)
+     |> assign(:logo_img, Helpers.load_logo())
      |> assign(:selected_alerts, [])
      |> assign(:current_page, alerts_page)
      |> assign(:menu_item, :alerts)

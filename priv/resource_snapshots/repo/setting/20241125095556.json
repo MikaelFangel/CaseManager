@@ -15,29 +15,10 @@
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "comment_to_case_fkey",
-        "on_delete": "delete",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "case"
-      },
+      "references": null,
       "size": null,
-      "source": "case_id",
-      "type": "uuid"
+      "source": "key",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -46,17 +27,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "user_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "body",
+      "source": "value",
       "type": "text"
     },
     {
@@ -85,8 +56,23 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "533B979CBE45778E2208296ACF2FBC6EEA51257CCB14DBD9A8D7EA26C7CD3866",
-  "identities": [],
+  "hash": "546D850D5C15B079EC43249EF4E65C5098EDA2BF3E9E8A5C9C248D54BF63D0A1",
+  "identities": [
+    {
+      "all_tenants?": false,
+      "base_filter": null,
+      "index_name": "setting_key_index",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "key"
+        }
+      ],
+      "name": "key",
+      "nils_distinct?": true,
+      "where": null
+    }
+  ],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -94,5 +80,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "comment"
+  "table": "setting"
 }

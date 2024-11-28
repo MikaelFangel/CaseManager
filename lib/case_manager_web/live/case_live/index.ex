@@ -3,6 +3,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Cases.Case
+  alias CaseManagerWeb.Helpers
 
   require Ash.Query
 
@@ -18,6 +19,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
      socket
      |> assign(:menu_item, :cases)
      |> assign(:status_type, :open)
+     |> assign(:logo_img, Helpers.load_logo())
      |> load_cases()}
   end
 
