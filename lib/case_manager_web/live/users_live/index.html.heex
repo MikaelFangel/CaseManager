@@ -16,12 +16,13 @@
     <% else %>
       <div></div>
     <% end %>
-    <div class="flex justify-end">
-      <.link navigate="#">
-        <.button icon_name="hero-user-plus">
-          <%= gettext("Create User") %>
-        </.button>
-      </.link>
+    <div class="flex justify-end gap-x-2">
+      <%= if @pending_refresh? do %>
+        <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:tertiary} phx-click="refresh_users" />
+      <% end %>
+      <.button phx-click="show_form_modal" icon_name="hero-user-plus">
+        <%= gettext("Create User") %>
+      </.button>
     </div>
   </div>
 
@@ -51,7 +52,7 @@
       </div>
       <div class="flex space-x-2 ml-auto">
         <.icon_btn icon_name="hero-pencil" size={:small} />
-        <.icon_btn icon_name="hero-trash" size={:small} colour={:critical} />
+        <.icon_btn icon_name="hero-trash" size={:small} colour={:critical} class="pb-0.5" phx-click="delete_user" phx-value-user_id={user.id} />
       </div>
     </div>
   </div>
