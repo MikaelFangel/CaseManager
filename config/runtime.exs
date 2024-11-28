@@ -43,7 +43,9 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("PORT") || "80")
+  keyfile_path = System.get_env("SSL_KEY_PATH") || "priv/cert/selfsigned_key.pem"
+  certfile_path = System.get_env("SSL_CERT_PATH") || "priv/cert/selfsigned.pem"
 
   config :case_manager, CaseManager.Repo,
     # ssl: true,
@@ -61,6 +63,13 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
+    https: [
+      port: 443,
+      cipher_suite: :strong,
+      keyfile: keyfile_path,
+      certfile: certfile_path
+    ],
+    force_ssl: [hsts: true],
     secret_key_base: secret_key_base
 
   config :case_manager, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")

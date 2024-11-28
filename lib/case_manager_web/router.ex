@@ -4,6 +4,11 @@ defmodule CaseManagerWeb.Router do
 
   pipeline :browser do
     plug :accepts, ["html"]
+
+    if Mix.env() != :test do
+      plug Plug.SSL, rewrite_on: [:x_forwarded_proto]
+    end
+
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, html: {CaseManagerWeb.Layouts, :root}
