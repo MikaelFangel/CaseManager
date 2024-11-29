@@ -11,6 +11,14 @@ defmodule CaseManagerWeb.AuthLive.Index do
   end
 
   @impl true
+  # This is needed if sending flash messages from the form live component
+  def handle_info({:set_flash, type, message}, socket) do
+    socket = put_flash(socket, type, message)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_params(_params, _uri, socket) do
     socket =
       socket

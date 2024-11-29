@@ -73,6 +73,16 @@ defmodule CaseManagerWeb.UsersLive.Index do
   end
 
   @impl true
+  def handle_event("show_form_modal", %{"user_id" => user_id}, socket) do
+    user = Ash.get!(User, user_id)
+    IO.inspect(user)
+
+    user
+    |> Form.for_update(:update, forms: [auto?: true])
+    |> set_form_for_modal(socket)
+  end
+
+  @impl true
   def handle_event("show_form_modal", _params, socket) do
     User
     |> Form.for_create(:register_with_password, forms: [auto?: true])

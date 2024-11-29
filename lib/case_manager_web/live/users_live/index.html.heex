@@ -51,7 +51,14 @@
         </div>
       </div>
       <div class="flex space-x-2 ml-auto">
-        <.icon_btn icon_name="hero-pencil" size={:small} />
+        <.icon_btn 
+        icon_name="hero-pencil" 
+        size={:small} 
+        colour={:secondary}
+        class="pb-0.5"
+        phx-click="show_form_modal"
+        phx-value-user_id={user.id}
+        />
         <.icon_btn
           icon_name="hero-trash"
           size={:small}
