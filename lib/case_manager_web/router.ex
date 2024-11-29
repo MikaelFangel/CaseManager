@@ -57,7 +57,7 @@ defmodule CaseManagerWeb.Router do
     sign_out_route AuthController
     reset_route auth_routes_prefix: "/auth"
 
-    live "/sign-in", AuthLive.Index, :sign_in
+    live "/sign-in", AuthLive.Index, :index
 
     ash_authentication_live_session :admin_user_required,
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_admin_user} do
