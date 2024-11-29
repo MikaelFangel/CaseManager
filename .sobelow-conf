@@ -1,0 +1,1 @@
+[verbose: false, private: false, skip: false, router: nil, exit: :medium, format: "txt", out: nil, threshold: :low, ignore: ["Config.Headers", "Config.HTTPS"], ignore_files: [], version: false]

@@ -46,7 +46,7 @@ jobs:
     - name: credo
       run: mix credo
     - name: sobelow
-      run: mix sobelow # Add --exit medium or high to get a non zero exit code
+      run: mix sobelow --config
     - name: hex audit
       run: mix hex.audit
     - name: mix_audit
