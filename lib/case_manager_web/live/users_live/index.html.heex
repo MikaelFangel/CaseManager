@@ -52,7 +52,14 @@
       </div>
       <div class="flex space-x-2 ml-auto">
         <.icon_btn icon_name="hero-pencil" size={:small} />
-        <.icon_btn icon_name="hero-trash" size={:small} colour={:critical} class="pb-0.5" phx-click="delete_user" phx-value-user_id={user.id} />
+        <.icon_btn
+          icon_name="hero-trash"
+          size={:small}
+          colour={:critical}
+          class="pb-0.5"
+          phx-click="delete_user"
+          phx-value-user_id={user.id}
+        />
       </div>
     </div>
   </div>
