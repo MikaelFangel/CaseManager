@@ -15,7 +15,7 @@ defmodule CaseManagerWeb.AuthLive.Index do
     socket =
       socket
       |> assign(:form_id, "sign-in-form")
-      |> assign(:cta, "Sign in")
+      |> assign(:cta, gettext("Sign in"))
       |> assign(:action, ~p"/auth/user/password/sign_in")
       |> assign(
         :form,
