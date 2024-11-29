@@ -64,7 +64,7 @@ defmodule CaseManager.Teams.User do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
   end
 
   actions do
