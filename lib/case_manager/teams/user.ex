@@ -68,7 +68,7 @@ defmodule CaseManager.Teams.User do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, create: :*]
 
     update :change_password do
       argument :password, :string do
@@ -84,6 +84,12 @@ defmodule CaseManager.Teams.User do
       change set_context(%{strategy_name: :password})
       validate AshAuthentication.Strategy.Password.PasswordConfirmationValidation
       change AshAuthentication.Strategy.Password.HashPasswordChange
+    end
+
+    update :update do
+      primary? true
+      require_atomic? false
+      accept [:first_name, :last_name, :email, :role, :team_id]
     end
   end
 
