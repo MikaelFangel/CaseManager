@@ -82,6 +82,7 @@ defmodule CaseManagerWeb.Router do
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
       live "/", CaseLive.Index, :index
       live "/case/:id", CaseLive.Show, :show
+      live "/user", UserLive.Index, :index
       get "/file/:id", FileController, :download
     end
   end
