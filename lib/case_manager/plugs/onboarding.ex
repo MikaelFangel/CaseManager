@@ -4,16 +4,21 @@ defmodule CaseManagerWeb.Plugs.Onboarding do
   """
   import Plug.Conn
 
+  alias CaseManager.AppConfig.Setting
+
   def init(default), do: default
 
   def call(conn, _opts) do
-    case Ash.get(CaseManager.AppConfig.Setting, "onboarding_completed?") do
-      {:ok, %{value: "true"}} ->
+    case Ash.get(Setting, %{key: "onboarding_completed?"}) do
+      {:ok, %Setting{value: "true"}} ->
         conn
         |> Phoenix.Controller.redirect(to: "/")
         |> halt()
 
-      _unexpected ->
+      {:ok, %Setting{value: "false"}} ->
+        conn
+
+      {:error, %Ash.Error.Invalid{errors: [%Ash.Error.Query.NotFound{}]}} ->
         conn
     end
   end
