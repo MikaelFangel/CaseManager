@@ -32,7 +32,6 @@ defmodule CaseManagerWeb.MenuBar do
           <.menu_item icon_name="hero-document-duplicate" active?={@current_page == :cases} path="/" />
 
           <%= if @current_user.role==:admin do %>
-            <% IO.inspect(@current_user.role, label: "Role") %>
             <div class="w-full border border-neutral-500"></div>
             <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
             <%= if @current_user.team_type==:mssp do %>

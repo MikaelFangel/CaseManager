@@ -23,7 +23,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
   end
 
   @impl true
-  def handle_info({:saved_user, params}, socket) do
+  def handle_info({:saved_user, _params}, socket) do
     socket =
       socket
       |> assign(:show_form_modal, false)

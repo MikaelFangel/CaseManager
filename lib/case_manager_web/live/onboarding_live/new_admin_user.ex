@@ -11,7 +11,7 @@ defmodule CaseManagerWeb.OnboardingLive.NewAdminUser do
   end
 
   @impl true
-  def handle_info({:saved_user, params}, socket) do
+  def handle_info({:saved_user, _params}, socket) do
     socket = push_navigate(socket, to: ~p"/")
 
     {:noreply, socket}
@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.OnboardingLive.NewAdminUser do
   end
 
   @impl true
-  def handle_params(params, _uri, socket) do
+  def handle_params(_params, _uri, socket) do
     # as: "user" is needed to use ash authentication to login after creating a user
     form =
       User
