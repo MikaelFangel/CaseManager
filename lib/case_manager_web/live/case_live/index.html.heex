@@ -13,6 +13,8 @@
             class="h-20"
           />
       <% end %>
+    <% else %>
+      <div></div>
     <% end %>
     <div class="flex justify-end gap-x-2">
       <.button icon_name="hero-folder-open" phx-click="open_cases" disabled={@status_type == :open}>
