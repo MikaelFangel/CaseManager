@@ -1,8 +1,8 @@
 <div
   class="grid h-screen pr-40 pb-32 place-items-end bg-cover bg-no-repeat bg-center"
   style={
-  @background_img && 
-    "background-image: url('data:image/*;base64, " <> Base.encode64(@background_img.binary_data) <> "')"
+    @background_img &&
+      "background-image: url('data:image/*;base64, " <> Base.encode64(@background_img.binary_data) <> "')"
   }
 >
   <.form

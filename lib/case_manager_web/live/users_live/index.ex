@@ -2,9 +2,9 @@ defmodule CaseManagerWeb.UsersLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias CaseManagerWeb.Helpers
   alias AshPhoenix.Form
   alias CaseManager.Teams.User
+  alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -75,7 +75,6 @@ defmodule CaseManagerWeb.UsersLive.Index do
   @impl true
   def handle_event("show_form_modal", %{"user_id" => user_id}, socket) do
     user = Ash.get!(User, user_id)
-    IO.inspect(user)
 
     user
     |> Form.for_update(:update, forms: [auto?: true])
