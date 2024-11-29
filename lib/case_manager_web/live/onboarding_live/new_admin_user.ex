@@ -11,16 +11,32 @@ defmodule CaseManagerWeb.OnboardingLive.NewAdminUser do
   end
 
   @impl true
+  def handle_info({:saved_user, params}, socket) do
+    socket = push_navigate(socket, to: ~p"/")
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  # This is needed if sending flash messages from the form live component
+  def handle_info({:set_flash, type, message}, socket) do
+    socket = put_flash(socket, type, message)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_params(params, _uri, socket) do
+    # as: "user" is needed to use ash authentication to login after creating a user
+    form =
+      User
+      |> Form.for_create(:register_with_password, forms: [auto?: true], as: "user")
+      |> to_form()
+
     socket =
       socket
-      |> assign(:form_id, "onboarding-form")
-      |> assign(:cta, "Create your first MSSP admin")
-      |> assign(:action, ~p"/auth/user/password/register")
-      |> assign(
-        :form,
-        Form.for_create(User, :register_with_password, api: CaseManager.Teams, as: "user")
-      )
+      |> assign(:form, form)
+      |> assign(:cta, gettext("Create your first MSSP admin"))
 
     {:noreply, socket}
   end

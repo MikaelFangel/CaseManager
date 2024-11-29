@@ -64,3 +64,20 @@
     </div>
   </div>
 </div>
+
+<.modal_template
+  :if={@show_form_modal}
+  id="user_form_modal"
+  show={@show_form_modal}
+  on_cancel={JS.push("hide_form_modal")}
+>
+  <div class="auth-page h-full">
+    <.live_component
+      module={CaseManagerWeb.CreateUserForm}
+      id="create_user_form"
+      form={@form}
+      on_cancel="hide_form_modal"
+      cta={@cta}
+    />
+  </div>
+</.modal_template>

@@ -1,85 +1,98 @@
-<div class="grid">
-  <.form
-    :let={f}
+<div>
+  <.simple_form
     for={@form}
     phx-change="validate"
-    phx-submit="submit"
-    phx-trigger-action={@trigger_action}
+    phx-submit="save"
     phx-target={@myself}
+    phx-trigger-action={@trigger_action}
     action={@action}
     method="POST"
   >
     <h1 class="text-xl font-semibold mb-2"><%= @cta %></h1>
     <hr class="mb-2" />
-
     <!-- Form input fields -->
-    <fieldset class="form-group">
-      <%= label(f, :team_id, "Team*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= select(
-        f,
-        :team_id,
-        CaseManager.Teams.Team
-        |> Ash.Query.sort([:name])
-        |> Ash.read!()
-        |> Enum.map(&{&1.name, &1.id}),
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 mb-2 focus:outline-none focus:shadow-outline"
-      ) %>
-    </fieldset>
-    <fieldset class="form-group">
-      <%= label(f, :role, "Role*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= select(f, :role, [:admin],
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 mb-2 focus:outline-none focus:shadow-outline"
-      ) %>
-    </fieldset>
-    <fieldset class="form-group">
-      <%= label(f, :first_name, "First Name*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= text_input(f, :first_name,
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
-        placeholder: "First Name"
-      ) %>
-    </fieldset>
-    <fieldset class="form-group">
-      <%= label(f, :last_name, "Last Name*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= text_input(f, :last_name,
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
-        placeholder: "Last Name"
-      ) %>
-    </fieldset>
-    <fieldset class="form-group">
-      <%= label(f, :email, "Email*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= text_input(f, :email,
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
-        placeholder: "Email",
-        type: "email"
-      ) %>
-    </fieldset>
-    <fieldset class="form-group">
-      <%= label(f, :password, "Password*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= text_input(f, :password,
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
-        placeholder: "Password",
-        type: "password"
-      ) %>
-    </fieldset>
-    <fieldset class="form-group">
-      <%= label(f, :password_confirmation, "Password Confirmation*", class: "block text-black text-sm font-bold mb-2") %>
-      <%= text_input(f, :password_confirmation,
-        class:
-          "form-control form-control-lg shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline mb-2",
-        placeholder: "Password Confirmation",
-        type: "password"
-      ) %>
-    </fieldset>
-    <div class="flex justify-end mt-2">
-      <.button type="submit" class="btn btn-lg bg-slate-950">
+    <div class="flex flex-row gap-4">
+      <div class="basis-1/4">
+        <.input
+          type="select"
+          field={@form[:role]}
+          label={"#{gettext("Role")}*"}
+          options={[
+            {gettext("Analyst"), :analyst},
+            {gettext("Admin"), :admin}
+          ]}
+        />
+      </div>
+      <div class="basis-3/4">
+        <.input
+          type="select"
+          field={@form[:team_id]}
+          label={"#{gettext("Team")}*"}
+          options={
+            CaseManager.Teams.Team
+            |> Ash.Query.sort([:name])
+            |> Ash.read!()
+            |> Enum.map(&{&1.name, &1.id})
+          }
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-row">
+      <div class="basis-full">
+        <.input
+          type="text"
+          field={@form[:first_name]}
+          label={"#{gettext("First Name")}*"}
+          placeholder={gettext("First Name")}
+        />
+      </div>
+    </div>
+    <div class="flex flex-row">
+      <div class="basis-full">
+        <.input
+          type="text"
+          field={@form[:last_name]}
+          label={"#{gettext("Last Name")}*"}
+          placeholder={gettext("Last Name")}
+        />
+      </div>
+    </div>
+
+    <div class="flex flex-row">
+      <div class="basis-full">
+        <.input type="text" field={@form[:email]} label={"#{gettext("Email")}*"} placeholder={gettext("Email")} />
+      </div>
+    </div>
+    <div class="flex flex-row">
+      <div class="basis-full">
+        <.input
+          type="password"
+          field={@form[:password]}
+          label={"#{gettext("Password")}*"}
+          placeholder={gettext("Password")}
+        />
+      </div>
+    </div>
+    <div class="flex flex-row">
+      <div class="basis-full">
+        <.input
+          type="password"
+          field={@form[:password_confirmation]}
+          label={"#{gettext("Password Confirmation")}*"}
+          placeholder={gettext("Password Confirmation")}
+        />
+      </div>
+    </div>
+    <!-- Actions -->
+    <:actions>
+      <.button type="button" colour={:secondary} phx-click={@on_cancel}>
+        <%= gettext("Close") %>
+      </.button>
+
+      <.button phx-disable-with="Saving...">
         <%= gettext("Save") %>
       </.button>
-    </div>
-  </.form>
+    </:actions>
+  </.simple_form>
 </div>

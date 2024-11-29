@@ -13,10 +13,18 @@ defmodule CaseManagerWeb.CreateUserForm do
     socket =
       socket
       |> assign(assigns)
+      |> assign(:action, ~p"/auth/user/password/register")
       |> assign(trigger_action: false)
       |> assign(:background_img, Helpers.load_bg())
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("validate", %{"form" => params}, socket) do
+    form = Form.validate(socket.assigns.form, params)
+
+    {:noreply, assign(socket, form: form)}
   end
 
   @impl true
@@ -27,20 +35,35 @@ defmodule CaseManagerWeb.CreateUserForm do
   end
 
   @impl true
-  def handle_event("submit", %{"user" => params}, socket) do
+  def handle_event("save", %{"form" => params}, socket) do
+    form = socket.assigns.form
+
+    case AshPhoenix.Form.submit(form, params: params) do
+      {:ok, _user} ->
+        send(self(), {:saved_user, params})
+        {:noreply, socket}
+
+      {:error, form} ->
+        # Set the flash in the parent LiveView
+        send(self(), {:set_flash, :error, gettext("User save error.")})
+
+        {:noreply, assign(socket, :form, form)}
+    end
+  end
+
+  @impl true
+  def handle_event("save", %{"user" => params}, socket) do
     form = Form.validate(socket.assigns.form, params)
+
+    CaseManager.AppConfig.Setting
+    |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
+    |> Ash.create!()
 
     socket =
       socket
       |> assign(:form, form)
-      |> assign(:errors, Form.errors(form))
-      |> assign(:trigger_action, form.valid?)
-
-    if socket.assigns[:is_onboarding?] do
-      CaseManager.AppConfig.Setting
-      |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
-      |> Ash.create!()
-    end
+      |> assign(:errors, Form.errors(form.source))
+      |> assign(:trigger_action, form.source.valid?)
 
     {:noreply, socket}
   end
