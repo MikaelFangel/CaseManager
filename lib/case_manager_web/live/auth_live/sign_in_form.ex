@@ -4,6 +4,8 @@ defmodule CaseManagerWeb.AuthLive.SignInForm do
   """
   use CaseManagerWeb, :live_component
   use PhoenixHTMLHelpers
+  alias CaseManagerWeb.Helpers
+
 
   alias AshPhoenix.Form
 
@@ -13,6 +15,7 @@ defmodule CaseManagerWeb.AuthLive.SignInForm do
       socket
       |> assign(assigns)
       |> assign(trigger_action: false)
+      |> assign(:background_img, Helpers.load_bg())
 
     {:ok, socket}
   end
