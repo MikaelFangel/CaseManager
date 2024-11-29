@@ -7,6 +7,8 @@ defmodule CaseManagerWeb.LiveUserAuth do
 
   import Phoenix.Component
 
+  alias CaseManager.Teams.User
+
   def on_mount(:live_user_optional, _params, _session, socket) do
     case socket.assigns[:current_user] do
       nil -> {:cont, assign(socket, :current_user, nil)}
@@ -22,15 +24,19 @@ defmodule CaseManagerWeb.LiveUserAuth do
   end
 
   def on_mount(:live_mssp_user, _params, _session, socket) do
-    case socket.assigns[:current_user][:team_type] do
-      :mssp -> {:cont, socket}
+    with %User{} = user <- socket.assigns[:current_user],
+         :mssp <- user.team_type do
+      {:cont, socket}
+    else
       _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
     end
   end
 
   def on_mount(:live_admin_user, _params, _session, socket) do
-    case socket.assigns[:current_user][:role] do
-      :admin -> {:cont, socket}
+    with %User{} = user <- socket.assigns[:current_user],
+         :admin <- user.role do
+      {:cont, socket}
+    else
       _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
     end
   end
