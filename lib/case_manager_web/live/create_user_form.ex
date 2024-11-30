@@ -55,9 +55,11 @@ defmodule CaseManagerWeb.CreateUserForm do
   def handle_event("save", %{"user" => params}, socket) do
     form = Form.validate(socket.assigns.form, params)
 
-    CaseManager.AppConfig.Setting
-    |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
-    |> Ash.create!()
+    if form.source.valid? do
+      CaseManager.AppConfig.Setting
+      |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
+      |> Ash.create!()
+    end
 
     socket =
       socket
