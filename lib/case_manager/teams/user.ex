@@ -86,10 +86,16 @@ defmodule CaseManager.Teams.User do
       change AshAuthentication.Strategy.Password.HashPasswordChange
     end
 
-    update :update do
+    update :update_user do
       primary? true
       require_atomic? false
-      accept [:first_name, :last_name, :email, :role, :team_id]
+      accept [:first_name, :last_name, :email, :role, :team_id, :hashed_password]
+
+      argument :password, :string, sensitive?: true, allow_nil?: false
+      argument :password_confirmation, :string, sensitive?: true, allow_nil?: false
+
+      validate confirm(:password, :password_confirmation)
+      change {AshAuthentication.Strategy.Password.HashPasswordChange, strategy_name: :password}
     end
   end
 

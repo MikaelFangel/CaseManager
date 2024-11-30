@@ -77,7 +77,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
     user = Ash.get!(User, user_id)
 
     user
-    |> Form.for_update(:update, forms: [auto?: true])
+    |> Form.for_update(:update_user, forms: [auto?: true])
     |> set_form_for_modal(socket)
   end
 
