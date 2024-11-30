@@ -1,6 +1,6 @@
 defmodule CaseManager.Teams.Team do
   @moduledoc """
-  Resource for managing teams withing the application. Teams is supposed to be an
+  Resource for managing teams withing the application. A Team is supposed to be an
   entity that are used to group users.
   """
   use Ash.Resource,
@@ -79,6 +79,11 @@ defmodule CaseManager.Teams.Team do
     read :read_by_name_asc do
       primary? false
       prepare(build(sort: [name: :asc]))
+    end
+
+    read :page_by_name_asc do
+      primary? false
+      prepare(build(sort: [name: :asc]))
 
       pagination do
         required? true
@@ -93,6 +98,7 @@ defmodule CaseManager.Teams.Team do
 
   code_interface do
     define :read_by_name_asc
+    define :page_by_name_asc
     define :add_case, args: [:case]
     define :add_alert, args: [:alert]
   end
