@@ -4,10 +4,9 @@ defmodule CaseManagerWeb.AuthLive.SignInForm do
   """
   use CaseManagerWeb, :live_component
   use PhoenixHTMLHelpers
-  alias CaseManagerWeb.Helpers
-
 
   alias AshPhoenix.Form
+  alias CaseManagerWeb.Helpers
 
   @impl true
   def update(assigns, socket) do
