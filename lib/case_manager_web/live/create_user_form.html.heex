@@ -85,7 +85,7 @@
     </div>
     <!-- Actions -->
     <:actions>
-      <.button type="button" colour={:secondary} phx-click={@on_cancel}>
+      <.button :if={!@onboarding?} type="button" colour={:secondary} phx-click={@on_cancel}>
         <%= gettext("Close") %>
       </.button>
 
