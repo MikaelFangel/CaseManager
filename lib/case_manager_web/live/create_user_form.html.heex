@@ -16,10 +16,12 @@
           type="select"
           field={@form[:role]}
           label={"#{gettext("Role")}*"}
-          options={[
-            {gettext("Analyst"), :analyst},
-            {gettext("Admin"), :admin}
-          ]}
+          options={
+            case @onboarding? do
+              true -> [{gettext("Admin"), :admin}]
+              false -> [{gettext("Analyst"), :analyst}, {gettext("Admin"), :admin}]
+            end
+          }
         />
       </div>
       <div class="basis-3/4">
