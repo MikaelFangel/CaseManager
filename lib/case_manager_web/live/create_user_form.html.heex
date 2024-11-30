@@ -30,10 +30,12 @@
           field={@form[:team_id]}
           label={"#{gettext("Team")}*"}
           options={
-            CaseManager.Teams.Team
-            |> Ash.Query.sort([:name])
-            |> Ash.read!()
-            |> Enum.map(&{&1.name, &1.id})
+            if @current_user && @current_user.team_type == :customer do
+              [{@current_user.team.name, @current_user.team.id}]
+            else
+              CaseManager.Teams.Team.read_by_name_asc!()
+              |> Enum.map(&{&1.name, &1.id})
+            end
           }
         />
       </div>

@@ -13,6 +13,7 @@ defmodule CaseManagerWeb.CreateUserForm do
     socket =
       socket
       |> assign(assigns)
+      |> assign(:current_user, Ash.load!(assigns.current_user, :team))
       |> assign(:action, ~p"/auth/user/password/register")
       |> assign(trigger_action: false)
       |> assign(:background_img, Helpers.load_bg())
