@@ -94,6 +94,10 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_event("show_form_modal", %{"user_id" => user_id}, socket) do
+    socket =
+      socket
+      |> assign(:cta, gettext("Edit User"))
+  
     user = Ash.get!(User, user_id)
 
     user
@@ -103,6 +107,10 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_event("show_form_modal", _params, socket) do
+    socket =
+      socket
+      |> assign(:cta, gettext("Create User"))
+
     User
     |> Form.for_create(:register_with_password, forms: [auto?: true])
     |> set_form_for_modal(socket)
@@ -121,7 +129,6 @@ defmodule CaseManagerWeb.UsersLive.Index do
     socket =
       socket
       |> assign(:form, form)
-      |> assign(:cta, gettext("Create User"))
       |> assign(:show_form_modal, true)
 
     {:noreply, socket}
