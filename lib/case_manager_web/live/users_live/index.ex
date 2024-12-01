@@ -8,7 +8,8 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    users = Ash.read!(User, load: [:full_name, :team])
+    page = User.page_by_name_asc!(load: [:full_name, :team])
+    users = page.results
 
     socket =
       socket
@@ -16,6 +17,8 @@ defmodule CaseManagerWeb.UsersLive.Index do
       |> assign(:logo_img, Helpers.load_logo())
       |> assign(current_user: socket.assigns.current_user)
       |> assign(:users, users)
+      |> assign(:page, page)
+      |> assign(:more_pages?, page.more?)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
 
@@ -46,12 +49,29 @@ defmodule CaseManagerWeb.UsersLive.Index do
   end
 
   @impl true
-  def handle_event("refresh_users", _params, socket) do
-    users = Ash.read!(User, load: [:full_name, :team])
+  def handle_event("load_more_users", _params, socket) do
+    page = Ash.page!(socket.assigns.page, :next)
+    users = socket.assigns.users ++ page.results
 
     socket =
       socket
       |> assign(:users, users)
+      |> assign(:page, page)
+      |> assign(:more_pages?, page.more?)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("refresh_users", _params, socket) do
+    page = User.page_by_name_asc!(load: [:full_name, :team])
+    users = page.results
+
+    socket =
+      socket
+      |> assign(:users, users)
+      |> assign(:page, page)
+      |> assign(:more_pages?, page.more?)
       |> assign(:pending_refresh?, false)
 
     {:noreply, socket}

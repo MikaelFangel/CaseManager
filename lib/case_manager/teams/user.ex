@@ -97,6 +97,22 @@ defmodule CaseManager.Teams.User do
       validate confirm(:password, :password_confirmation)
       change {AshAuthentication.Strategy.Password.HashPasswordChange, strategy_name: :password}
     end
+
+    read :page_by_name_asc do
+      primary? false
+      prepare(build(sort: [first_name: :asc]))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+  end
+
+  code_interface do
+    define :page_by_name_asc
   end
 
   identities do
