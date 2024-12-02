@@ -106,7 +106,7 @@
           <.button><%= gettext("Edit") %></.button>
         </.link>
         <%= if !@case.escalated do %>
-          <.button colour={:critical} phx-click="escalate_case" phx-value-id={@case.id}>
+          <.button colour={:critical} phx-click="show_confirmation_modal" phx-value-id={@case.id}>
             <%= gettext("Escalate") %>
           </.button>
         <% end %>
@@ -179,4 +179,14 @@
   </div>
 </div>
 
-<.alert_modal :if={@alert} show={@alert != nil} on_cancel={JS.push("hide_modal")} alert={@alert} />
+<.alert_modal :if={@alert} show={@alert} on_cancel={JS.push("hide_modal")} alert={@alert} />
+
+<.confirmation_modal
+  :if={@id}
+  show={@id}
+  on_cancel={JS.push("hide_confirmation_modal")}
+  on_action={JS.push("escalate_case", value: %{id: @id}) |> JS.push("hide_confirmation_modal")}
+  action_btn_txt={gettext("Escalate")}
+  title={gettext("Escalate case?")}
+  body={gettext("This will escalate the case permanently")}
+/>

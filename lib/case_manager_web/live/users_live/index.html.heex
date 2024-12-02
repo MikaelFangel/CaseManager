@@ -69,7 +69,7 @@
             size={:small}
             colour={:critical}
             class="pb-0.5"
-            phx-click="delete_user"
+            phx-click="show_confirmation_modal"
             phx-value-user_id={user.id}
           />
         </div>
@@ -104,3 +104,13 @@
     />
   </div>
 </.modal_template>
+
+<.confirmation_modal
+  :if={@user_id}
+  show={@user_id}
+  on_cancel={JS.push("hide_confirmation_modal")}
+  on_action={JS.push("delete_user", value: %{user_id: @user_id}) |> JS.push("hide_confirmation_modal")}
+  action_btn_txt={gettext("Delete")}
+  title={gettext("Delete user?")}
+  body={gettext("This will delete the user permanently")}
+/>

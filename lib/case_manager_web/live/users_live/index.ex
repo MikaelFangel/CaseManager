@@ -22,6 +22,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
       |> assign(:more_pages?, page.more?)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
+      |> assign(:user_id, nil)
 
     {:ok, socket}
   end
@@ -116,6 +117,20 @@ defmodule CaseManagerWeb.UsersLive.Index do
   @impl true
   def handle_event("hide_form_modal", _params, socket) do
     socket = assign(socket, :show_form_modal, false)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_confirmation_modal", %{"user_id" => user_id}, socket) do
+    socket = assign(socket, :user_id, user_id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hide_confirmation_modal", _params, socket) do
+    socket = assign(socket, :user_id, nil)
 
     {:noreply, socket}
   end

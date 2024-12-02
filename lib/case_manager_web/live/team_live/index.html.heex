@@ -64,7 +64,7 @@
                 colour={:critical}
                 size={:small}
                 class="pb-0.5"
-                phx-click="delete_team"
+                phx-click="show_confirmation_modal"
                 phx-value-team_id={team.id}
               />
             </div>
@@ -201,6 +201,16 @@
     </div>
   </div>
 </div>
+
+<.confirmation_modal
+  :if={@team_id}
+  show={@team_id}
+  on_cancel={JS.push("hide_confirmation_modal")}
+  on_action={JS.push("delete_team", value: %{team_id: @team_id}) |> JS.push("hide_confirmation_modal")}
+  action_btn_txt={gettext("Delete")}
+  title={gettext("Delete team?")}
+  body={gettext("This will delete the team and all users in this team permanently")}
+/>
 
 <.modal_template
   :if={@show_form_modal}

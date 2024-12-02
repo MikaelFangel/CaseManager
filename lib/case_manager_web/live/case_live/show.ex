@@ -13,6 +13,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       |> assign(:menu_item, nil)
       |> assign(current_user: socket.assigns.current_user)
       |> assign(:alert, nil)
+      |> assign(:id, nil)
 
     {:ok, socket, layout: {CaseManagerWeb.Layouts, :app_m0}}
   end
@@ -74,6 +75,20 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def handle_event("hide_modal", _params, socket) do
     socket = assign(socket, :alert, nil)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_confirmation_modal", %{"id" => id}, socket) do
+    socket = assign(socket, :id, id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hide_confirmation_modal", _params, socket) do
+    socket = assign(socket, :id, nil)
 
     {:noreply, socket}
   end
