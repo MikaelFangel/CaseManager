@@ -1,0 +1,61 @@
+<div class="space-y-4">
+  <div class="flex mb-4">
+    <%= if @logo_img do %>
+      <%= case @logo_img.content_type do %>
+        <% "image/svg+xml" -> %>
+          <svg height="100px" viewBox="0 0 1500 1000">
+            <%= raw(@logo_img.binary_data) %>
+          </svg>
+        <% _ -> %>
+          <img
+            src={"data:#{@logo_img.content_type};base64," <> Base.encode64(@logo_img.binary_data)}
+            alt="Logo"
+            class="h-20"
+          />
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="flex items-stretch">
+    <div class="flex w-1/4 justify-center">
+      <div class="p-4">
+        <.badge_template label={@current_user.role} class="bg-slate-950 text-white mr-4" />
+        <.badge_template label={@current_user.team_type} class="bg-green-300" />
+      </div>
+    </div>
+    <div class="w-px bg-slate-300"></div>
+    <div class="flex flex-col w-2/5">
+      <div class="pl-4">
+        <.label>Info</.label>
+        <hr />
+      </div>
+      <div class="px-4 space-y-4 mb-4">
+        <.simple_form for={@info_form} phx-submit="update_info" phx-validate="validate_info">
+          <.input label={gettext("First Name")} type="text" field={@info_form[:first_name]} />
+          <.input label={gettext("Last Name")} type="text" field={@info_form[:last_name]} />
+          <.input label={gettext("Email")} type="email" field={@info_form[:email]} />
+          <:actions>
+            <.button><%= gettext("Save Changes") %></.button>
+          </:actions>
+        </.simple_form>
+      </div>
+      <div class="pl-4">
+        <.label>Security</.label>
+        <hr />
+      </div>
+      <div class="px-4 space-y-4 mb-4">
+        <.simple_form for={@password_form} phx-submit="update_password" phx-validate="validate2">
+          <.input label={gettext("Password")} type="password" field={@password_form[:password]} />
+          <.input
+            label={gettext("Password Confirmation")}
+            type="password"
+            field={@password_form[:password_confirmation]}
+          />
+          <:actions>
+            <.button><%= gettext("Update Password") %></.button>
+          </:actions>
+        </.simple_form>
+      </div>
+    </div>
+  </div>
+</div>

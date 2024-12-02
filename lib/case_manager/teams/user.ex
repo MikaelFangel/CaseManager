@@ -69,6 +69,22 @@ defmodule CaseManager.Teams.User do
 
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
+
+    update :change_password do
+      argument :password, :string do
+        sensitive? true
+        constraints min_length: 8, max_length: 32
+      end
+
+      argument :password_confirmation, :string do
+        sensitive? true
+        constraints min_length: 8, max_length: 32
+      end
+
+      change set_context(%{strategy_name: :password})
+      validate AshAuthentication.Strategy.Password.PasswordConfirmationValidation
+      change AshAuthentication.Strategy.Password.HashPasswordChange
+    end
   end
 
   identities do
