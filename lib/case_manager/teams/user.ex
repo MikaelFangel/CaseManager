@@ -9,6 +9,8 @@ defmodule CaseManager.Teams.User do
     extensions: [AshAuthentication, AshAdmin.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
+  alias AshAuthentication.Strategy.Password.HashPasswordChange
+
   postgres do
     table "user"
     repo CaseManager.Repo
@@ -64,13 +66,17 @@ defmodule CaseManager.Teams.User do
   end
 
   relationships do
-    belongs_to :team, CaseManager.Teams.Team
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
   end
 
   actions do
-    defaults [:read, :destroy, create: :*, update: :*]
+    defaults [:read, :destroy, create: :*]
 
-    update :change_password do
+    update :update do
+      primary? true
+      require_atomic? false
+      accept [:first_name, :last_name, :email, :role, :team_id]
+
       argument :password, :string do
         sensitive? true
         constraints min_length: 8, max_length: 32
@@ -81,9 +87,21 @@ defmodule CaseManager.Teams.User do
         constraints min_length: 8, max_length: 32
       end
 
-      change set_context(%{strategy_name: :password})
-      validate AshAuthentication.Strategy.Password.PasswordConfirmationValidation
-      change AshAuthentication.Strategy.Password.HashPasswordChange
+      validate confirm(:password, :password_confirmation)
+      change {HashPasswordChange, strategy_name: :password}
+    end
+
+    read :page_by_name do
+      prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
+
+      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
     end
   end
 

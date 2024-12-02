@@ -24,7 +24,7 @@ defmodule CaseManagerWeb.UserLive.Index do
 
     password_form =
       socket.assigns[:current_user]
-      |> Form.for_update(:change_password, forms: [auto?: true])
+      |> Form.for_update(:update, forms: [auto?: true])
       |> to_form()
 
     socket =

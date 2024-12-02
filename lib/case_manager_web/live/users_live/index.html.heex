@@ -1,4 +1,4 @@
-<div class="h-full">
+<div class="h-full pb-8">
   <div class="flex items-center justify-between w-full">
     <%= if @logo_img do %>
       <%= case @logo_img.content_type do %>
@@ -16,43 +16,91 @@
     <% else %>
       <div></div>
     <% end %>
-    <div class="flex justify-end">
-      <.link navigate="#">
-        <.button icon_name="hero-user-plus">
-          <%= gettext("Create User") %>
-        </.button>
-      </.link>
+    <div class="flex justify-end gap-x-2">
+      <%= if @pending_refresh? do %>
+        <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:tertiary} phx-click="refresh_users" />
+      <% end %>
+      <.button phx-click="show_form_modal" icon_name="hero-user-plus">
+        <%= gettext("Create User") %>
+      </.button>
     </div>
   </div>
 
-  <div class="flex flex-col items-center mt-4">
-    <div :for={user <- @users} class="w-2/3 flex drop-shadow bg-white rounded-xl mt-4 p-4">
-      <div class="w-1/12 flex justify-center items-center -ml-4">
-        <.icon name="hero-user-circle" />
-      </div>
-      <div>
+  <div class="pb-1">
+    <div
+      class="flex flex-col items-center mt-4"
+      id="users-container"
+      phx-viewport-bottom={@more_pages? && "load_more_users"}
+    >
+      <div :for={user <- @users} id={"user-" <> user.id} class="w-2/3 flex drop-shadow bg-white rounded-xl mt-4 p-4">
+        <div class="w-1/12 flex justify-center items-center -ml-4">
+          <.icon name="hero-user-circle" />
+        </div>
         <div>
-          <%= user.full_name %>
+          <div>
+            <%= user.full_name %>
+          </div>
+          <div class="text-xs text-gray-500 mb-4">
+            <%= user.email %>
+          </div>
+          <div class="flex">
+            <div class="bg-slate-950 text-white text-xs mr-2 px-2 rounded">
+              <%= user.role %>
+            </div>
+            <div class="bg-red-200 text-xs mr-2 px-2 rounded">
+              <%= user.team_type %>
+            </div>
+            <div class="bg-amber-200 text-xs mr-2 px-2 rounded">
+              <%= user.team.name %>
+            </div>
+          </div>
         </div>
-        <div class="text-xs text-gray-500 mb-4">
-          <%= user.email %>
-        </div>
-        <div class="flex">
-          <div class="bg-slate-950 text-white text-xs mr-2 px-2 rounded">
-            <%= user.role %>
-          </div>
-          <div class="bg-red-200 text-xs mr-2 px-2 rounded">
-            <%= user.team_type %>
-          </div>
-          <div class="bg-amber-200 text-xs mr-2 px-2 rounded">
-            <%= user.team.name %>
-          </div>
+        <div class="flex space-x-2 ml-auto">
+          <.icon_btn
+            icon_name="hero-pencil"
+            size={:small}
+            colour={:secondary}
+            class="pb-0.5"
+            phx-click="show_form_modal"
+            phx-value-user_id={user.id}
+          />
+          <.icon_btn
+            icon_name="hero-trash"
+            size={:small}
+            colour={:critical}
+            class="pb-0.5"
+            phx-click="delete_user"
+            phx-value-user_id={user.id}
+          />
         </div>
       </div>
-      <div class="flex space-x-2 ml-auto">
-        <.icon_btn icon_name="hero-pencil" size={:small} />
-        <.icon_btn icon_name="hero-trash" size={:small} colour={:critical} />
-      </div>
+    </div>
+
+    <div class="my-4 flex justify-center">
+      <%= if @more_pages? do %>
+        <.button phx-click="load_more_users"><%= gettext("Load More") %></.button>
+      <% else %>
+        <span class="text-xs font-semibold"><%= gettext("No more users") %></span>
+      <% end %>
     </div>
   </div>
 </div>
+
+<.modal_template
+  :if={@show_form_modal}
+  id="user_form_modal"
+  show={@show_form_modal}
+  on_cancel={JS.push("hide_form_modal")}
+>
+  <div class="auth-page h-full">
+    <.live_component
+      module={CaseManagerWeb.CreateUserForm}
+      id="create_user_form"
+      form={@form}
+      current_user={@current_user}
+      on_cancel="hide_form_modal"
+      onboarding?={false}
+      cta={@cta}
+    />
+  </div>
+</.modal_template>

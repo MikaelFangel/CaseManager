@@ -57,8 +57,7 @@ defmodule CaseManagerWeb.Router do
     sign_out_route AuthController
     reset_route auth_routes_prefix: "/auth"
 
-    live "/register", AuthLive.Index, :register
-    live "/sign-in", AuthLive.Index, :sign_in
+    live "/sign-in", AuthLive.Index, :index
 
     ash_authentication_live_session :admin_user_required,
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_admin_user} do
@@ -91,8 +90,8 @@ defmodule CaseManagerWeb.Router do
     pipe_through [:browser, :onboarding]
 
     get "/", OnboardingController, :index
-    live "/team", OnboardingLive.New, :new
-    live "/user", AuthLive.Index, :onboarding
+    live "/team", OnboardingLive.NewTeam, :new_team
+    live "/user", OnboardingLive.NewAdminUser, :new_admin_user
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

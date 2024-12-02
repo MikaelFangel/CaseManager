@@ -1,4 +1,4 @@
-defmodule CaseManagerWeb.OnboardingLive.New do
+defmodule CaseManagerWeb.OnboardingLive.NewTeam do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
