@@ -10,14 +10,17 @@ defmodule CaseManagerWeb.UsersLive.Index do
   def mount(_params, _session, socket) do
     current_user = Ash.load!(socket.assigns.current_user, :team)
 
-    page = case current_user.team_type do
-      :mssp -> User.page_by_name_asc!()
-      :customer -> 
-        #User.page_users_of_team!(%{team_id: current_user.team.id})
-        User
-        |> Ash.Query.for_read(:page_users_of_team, %{team_id: current_user.team.id})
-        |> Ash.read!()
-    end
+    page =
+      case current_user.team_type do
+        :mssp ->
+          User.page_by_name_asc!()
+
+        :customer ->
+          # User.page_users_of_team!(%{team_id: current_user.team.id})
+          User
+          |> Ash.Query.for_read(:page_users_of_team, %{team_id: current_user.team.id})
+          |> Ash.read!()
+      end
 
     users = page.results
 
@@ -104,10 +107,8 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_event("show_form_modal", %{"user_id" => user_id}, socket) do
-    socket =
-      socket
-      |> assign(:cta, gettext("Edit User"))
-  
+    socket = assign(socket, :cta, gettext("Edit User"))
+
     user = Ash.get!(User, user_id)
 
     user
@@ -117,9 +118,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_event("show_form_modal", _params, socket) do
-    socket =
-      socket
-      |> assign(:cta, gettext("Create User"))
+    socket = assign(socket, :cta, gettext("Create User"))
 
     User
     |> Form.for_create(:register_with_password, forms: [auto?: true])
