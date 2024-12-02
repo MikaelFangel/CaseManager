@@ -9,6 +9,8 @@ defmodule CaseManager.Teams.User do
     extensions: [AshAuthentication, AshAdmin.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
+  alias AshAuthentication.Strategy.Password.HashPasswordChange
+
   postgres do
     table "user"
     repo CaseManager.Repo
@@ -83,7 +85,7 @@ defmodule CaseManager.Teams.User do
 
       change set_context(%{strategy_name: :password})
       validate AshAuthentication.Strategy.Password.PasswordConfirmationValidation
-      change AshAuthentication.Strategy.Password.HashPasswordChange
+      change HashPasswordChange
     end
 
     update :update_user do
@@ -91,11 +93,20 @@ defmodule CaseManager.Teams.User do
       require_atomic? false
       accept [:first_name, :last_name, :email, :role, :team_id, :hashed_password]
 
-      argument :password, :string, sensitive?: true, allow_nil?: false
-      argument :password_confirmation, :string, sensitive?: true, allow_nil?: false
+      argument :password, :string do
+        allow_nil? false
+        sensitive? true
+        constraints min_length: 8, max_length: 32
+      end
+
+      argument :password_confirmation, :string do
+        allow_nil? false
+        sensitive? true
+        constraints min_length: 8, max_length: 32
+      end
 
       validate confirm(:password, :password_confirmation)
-      change {AshAuthentication.Strategy.Password.HashPasswordChange, strategy_name: :password}
+      change {HashPasswordChange, strategy_name: :password}
     end
 
     read :page_users_of_team do

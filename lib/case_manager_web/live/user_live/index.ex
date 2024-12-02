@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.UserLive.Index do
   def handle_params(_params, _url, socket) do
     info_form =
       socket.assigns[:current_user]
-      |> Form.for_update(:update, forms: [auto?: true])
+      |> Form.for_update(:update_user, forms: [auto?: true])
       |> to_form()
 
     password_form =
