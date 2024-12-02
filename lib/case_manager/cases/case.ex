@@ -76,7 +76,6 @@ defmodule CaseManager.Cases.Case do
 
     attribute :title, :string, allow_nil?: false
     attribute :description, :string
-    attribute :escalated, :boolean, allow_nil?: false
     attribute :internal_note, :string
 
     attribute :status, :atom do
@@ -84,6 +83,11 @@ defmodule CaseManager.Cases.Case do
       default :in_progress
       allow_nil? false
       public? true
+    end
+
+    attribute :escalated, :boolean do
+      allow_nil? false
+      default false
     end
 
     attribute :priority, :atom do
