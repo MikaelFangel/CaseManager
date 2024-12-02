@@ -132,6 +132,8 @@ defmodule CaseManager.Cases.Case do
     end
 
     read :read_paginated do
+      filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
+
       pagination do
         required? true
         offset? true

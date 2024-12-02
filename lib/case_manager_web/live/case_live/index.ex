@@ -68,25 +68,12 @@ defmodule CaseManagerWeb.CaseLive.Index do
         :closed -> @closed_statuses
       end
 
-    view_rights =
-      case socket.assigns.current_user.team_type do
-        :mssp ->
-          Ash.Filter.parse!(Case, true)
-
-        _other ->
-          Ash.Filter.parse!(Case,
-            team_id: socket.assigns.current_user.team_id,
-            escalated: true
-          )
-      end
-
     cases_page =
       Case
-      |> Ash.Query.filter(^view_rights)
       |> Ash.Query.filter(status in ^statuses)
       |> Ash.Query.sort(updated_at: :desc)
       |> Ash.Query.load(assignee: [:full_name])
-      |> Ash.read!(action: :read_paginated)
+      |> Ash.read!(action: :read_paginated, actor: socket.assigns.current_user)
 
     socket
     # Reset stream to ensure no duplicates
