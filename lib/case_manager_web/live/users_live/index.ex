@@ -9,9 +9,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
-
     page = Ash.read!(User, action: :page_by_name, actor: current_user)
-
     users = page.results
 
     socket =
@@ -102,7 +100,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
     user = Ash.get!(User, user_id)
 
     user
-    |> Form.for_update(:update_user, forms: [auto?: true])
+    |> Form.for_update(:update, forms: [auto?: true])
     |> set_form_for_modal(socket)
   end
 
