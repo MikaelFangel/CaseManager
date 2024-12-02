@@ -19,6 +19,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       |> assign(:uploaded_files, [])
       |> allow_upload(:attachments, accept: :any, max_entries: 10)
       |> assign(:alert, nil)
+      |> assign(:alert_id, nil)
 
     {:ok, socket}
   end
@@ -94,6 +95,20 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
   @impl true
   def handle_event("hide_modal", _params, socket) do
     socket = assign(socket, :alert, nil)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_confirmation_modal", %{"alert_id" => alert_id}, socket) do
+    socket = assign(socket, :alert_id, alert_id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hide_confirmation_modal", _params, socket) do
+    socket = assign(socket, :alert_id, nil)
 
     {:noreply, socket}
   end

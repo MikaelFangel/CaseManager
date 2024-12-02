@@ -89,8 +89,9 @@
               icon_name="hero-trash"
               colour={:critical}
               size={:small}
-              phx-click="remove_alert"
+              phx-click="show_confirmation_modal"
               phx-value-alert_id={alert.id}
+              phx-target={@myself}
             />
           </:col>
         </.table>
@@ -130,5 +131,15 @@
     </:actions>
   </.simple_form>
 
-  <.alert_modal :if={@alert} show={@alert != nil} on_cancel={JS.push("hide_modal", target: @myself)} alert={@alert} />
+  <.alert_modal :if={@alert} show={@alert} on_cancel={JS.push("hide_modal", target: @myself)} alert={@alert} />
+
+  <.confirmation_modal 
+    :if={@alert_id} 
+    show={@alert_id} 
+    on_cancel={JS.push("hide_confirmation_modal", target: @myself)} 
+    on_action={JS.push("remove_alert", value: %{alert_id: @alert_id}) |> JS.push("hide_confirmation_modal", target: @myself)}
+    action_btn_txt={gettext("Remove")}
+    title={gettext("Remove alert?")}
+    body={gettext("This will remove the alert from the case")}
+  />
 </div>
