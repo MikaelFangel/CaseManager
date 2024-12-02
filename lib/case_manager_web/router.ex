@@ -13,7 +13,19 @@ defmodule CaseManagerWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {CaseManagerWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers
+
+    if Mix.env() == :prod do
+      plug :put_secure_browser_headers, %{
+        "content-security-policy" =>
+          "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:;"
+      }
+    else
+      plug :put_secure_browser_headers, %{
+        "content-security-policy" =>
+          "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' https://cdnjs.cloudflare.com 'nonce-ash_admin-Ed55GFnX';"
+      }
+    end
+
     plug :load_from_session
   end
 
