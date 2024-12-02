@@ -30,7 +30,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   def handle_params(%{"id" => id}, _uri, socket) do
     case =
       Case
-      |> Ash.get!(id)
+      |> Ash.get!(id, actor: socket.assigns.current_user)
       |> Ash.load!([
         :alert,
         :file,
