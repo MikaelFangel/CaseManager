@@ -6,6 +6,7 @@ defmodule CaseManagerWeb.CreateUserForm do
   use PhoenixHTMLHelpers
 
   alias AshPhoenix.Form
+  alias CaseManager.AppConfig.Setting
   alias CaseManagerWeb.Helpers
 
   @impl true
@@ -55,12 +56,7 @@ defmodule CaseManagerWeb.CreateUserForm do
   @impl true
   def handle_event("save", %{"user" => params}, socket) do
     form = Form.validate(socket.assigns.form, params)
-
-    if form.source.valid? do
-      CaseManager.AppConfig.Setting
-      |> Ash.Changeset.for_create(:set_setting, %{key: "onboarding_completed?", value: "true"})
-      |> Ash.create!()
-    end
+    if form.source.valid?, do: Setting.set_setting!("onboarding_completed?", "true")
 
     socket =
       socket
