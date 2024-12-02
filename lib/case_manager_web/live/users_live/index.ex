@@ -8,19 +8,9 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    current_user = Ash.load!(socket.assigns.current_user, :team)
+    current_user = socket.assigns.current_user
 
-    page =
-      case current_user.team_type do
-        :mssp ->
-          User.page_by_name_asc!()
-
-        :customer ->
-          # User.page_users_of_team!(%{team_id: current_user.team.id})
-          User
-          |> Ash.Query.for_read(:page_users_of_team, %{team_id: current_user.team.id})
-          |> Ash.read!()
-      end
+    page = Ash.read!(User, action: :page_by_name, actor: current_user)
 
     users = page.results
 
@@ -28,7 +18,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
       socket
       |> assign(:menu_item, :users)
       |> assign(:logo_img, Helpers.load_logo())
-      |> assign(current_user: socket.assigns.current_user)
+      |> assign(current_user: current_user)
       |> assign(:users, users)
       |> assign(:page, page)
       |> assign(:more_pages?, page.more?)
@@ -77,7 +67,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_event("refresh_users", _params, socket) do
-    page = User.page_by_name_asc!(load: [:full_name, :team])
+    page = Ash.read!(User, action: :page_by_name, actor: socket.assigns.current_user)
     users = page.results
 
     socket =

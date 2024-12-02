@@ -91,13 +91,10 @@ defmodule CaseManager.Teams.User do
       change {HashPasswordChange, strategy_name: :password}
     end
 
-    read :page_users_of_team do
-      primary? false
+    read :page_by_name do
       prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
 
-      argument :team_id, :uuid, allow_nil?: false
-
-      filter expr(team.id == ^arg(:team_id))
+      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
 
       pagination do
         required? true
@@ -106,23 +103,6 @@ defmodule CaseManager.Teams.User do
         default_limit 20
       end
     end
-
-    read :page_by_name_asc do
-      primary? false
-      prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
-
-      pagination do
-        required? true
-        offset? true
-        countable true
-        default_limit 20
-      end
-    end
-  end
-
-  code_interface do
-    define :page_users_of_team, args: [:team_id]
-    define :page_by_name_asc
   end
 
   identities do
