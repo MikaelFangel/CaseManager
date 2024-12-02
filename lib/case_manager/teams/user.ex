@@ -70,7 +70,7 @@ defmodule CaseManager.Teams.User do
   end
 
   actions do
-    defaults [:read, :destroy, create: :*]
+    defaults [:read, :destroy, create: :*, update: :*]
 
     update :change_password do
       argument :password, :string do
