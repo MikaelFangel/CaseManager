@@ -26,7 +26,7 @@
       </div>
       <div>
         <.label><%= gettext("Reported by") %>:</.label>
-        <%= @reporter.full_name %>
+        <%= if @reporter, do: @reporter.full_name, else: gettext("Deleted User") %>
       </div>
       <div>
         <.label><%= gettext("Escalated") %>:</.label>
