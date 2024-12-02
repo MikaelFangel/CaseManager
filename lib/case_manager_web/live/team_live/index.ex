@@ -21,6 +21,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:selected_team, nil)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
+      |> assign(:team_id, nil)
 
     {:ok, socket}
   end
@@ -121,21 +122,25 @@ defmodule CaseManagerWeb.TeamLive.Index do
     |> set_form_for_modal(socket)
   end
 
+  @impl true
   def handle_event("add_form", %{"path" => path} = _params, socket) do
     form = AshPhoenix.Form.add_form(socket.assigns.form, path, type: :create)
     {:noreply, assign(socket, form: form)}
   end
 
+  @impl true
   def handle_event("remove_form", %{"path" => path} = _params, socket) do
     form = AshPhoenix.Form.remove_form(socket.assigns.form, path)
     {:noreply, assign(socket, form: form)}
   end
 
+  @impl true
   def handle_event("validate", %{"form" => params}, socket) do
     form = Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, form: form)}
   end
 
+  @impl true
   def handle_event("submit_team_form", %{"form" => params}, socket) do
     action_opts = [actor: socket.assigns.current_user]
 
@@ -159,6 +164,20 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("hide_form_modal", _params, socket) do
     socket = assign(socket, :show_form_modal, false)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("show_confirmation_modal", %{"team_id" => team_id}, socket) do
+    socket = assign(socket, :team_id, team_id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("hide_confirmation_modal", _params, socket) do
+    socket = assign(socket, :team_id, nil)
 
     {:noreply, socket}
   end
