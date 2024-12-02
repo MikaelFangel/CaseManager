@@ -98,9 +98,25 @@ defmodule CaseManager.Teams.User do
       change {AshAuthentication.Strategy.Password.HashPasswordChange, strategy_name: :password}
     end
 
+    read :page_users_of_team do
+      primary? false
+      prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
+
+      argument :team_id, :uuid, allow_nil?: false
+
+      filter expr(team.id == ^arg(:team_id))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+
     read :page_by_name_asc do
       primary? false
-      prepare(build(sort: [first_name: :asc]))
+      prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
 
       pagination do
         required? true
@@ -112,6 +128,7 @@ defmodule CaseManager.Teams.User do
   end
 
   code_interface do
+    define :page_users_of_team, args: [:team_id]
     define :page_by_name_asc
   end
 

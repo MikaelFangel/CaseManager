@@ -8,7 +8,17 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    page = User.page_by_name_asc!(load: [:full_name, :team])
+    current_user = Ash.load!(socket.assigns.current_user, :team)
+
+    page = case current_user.team_type do
+      :mssp -> User.page_by_name_asc!()
+      :customer -> 
+        #User.page_users_of_team!(%{team_id: current_user.team.id})
+        User
+        |> Ash.Query.for_read(:page_users_of_team, %{team_id: current_user.team.id})
+        |> Ash.read!()
+    end
+
     users = page.results
 
     socket =
