@@ -4,8 +4,10 @@ defmodule CaseManagerWeb.MenuBar do
   """
 
   use Phoenix.Component
+  use Gettext, backend: CaseManagerWeb.Gettext
 
   import CaseManagerWeb.Icon
+  import CaseManagerWeb.Tooltip
 
   @selection_circle "w-11 h-11 bg-gray-300/30 rounded-full z-0 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
 
@@ -25,28 +27,58 @@ defmodule CaseManagerWeb.MenuBar do
         <!-- Top content -->
         <div class="flex-col w-full justify-start items-center gap-4 inline-flex">
           <%= if @current_user.team_type==:mssp do %>
-            <.menu_item icon_name="hero-bell" active?={@current_page == :alerts} path="/alerts" />
+            <.menu_item
+              icon_name="hero-bell"
+              active?={@current_page == :alerts}
+              path="/alerts"
+              tooltip_txt={gettext("Alerts")}
+            />
             <div class="w-full border border-neutral-500"></div>
           <% end %>
 
-          <.menu_item icon_name="hero-document-duplicate" active?={@current_page == :cases} path="/" />
+          <.menu_item
+            icon_name="hero-document-duplicate"
+            active?={@current_page == :cases}
+            path="/"
+            tooltip_txt={gettext("Cases")}
+          />
 
           <%= if @current_user.role==:admin do %>
             <div class="w-full border border-neutral-500"></div>
-            <.menu_item icon_name="hero-users" active?={@current_page == :users} path="/users" />
+            <.menu_item
+              icon_name="hero-users"
+              active?={@current_page == :users}
+              path="/users"
+              tooltip_txt={gettext("Users")}
+            />
             <%= if @current_user.team_type==:mssp do %>
               <div class="w-full border border-neutral-500"></div>
-              <.menu_item icon_name="hero-building-office" active?={@current_page == :teams} path="/teams" />
+              <.menu_item
+                icon_name="hero-building-office"
+                active?={@current_page == :teams}
+                path="/teams"
+                tooltip_txt={gettext("Teams")}
+              />
             <% end %>
           <% end %>
         </div>
         <!-- Bottom content -->
         <div class="flex-col h-full justify-end items-center gap-4 inline-flex">
           <%= if @current_user.role==:admin && @current_user.team_type==:mssp do %>
-            <.menu_item icon_name="hero-cog-8-tooth" active?={@current_page == :settings} path="/settings" />
+            <.menu_item
+              icon_name="hero-cog-8-tooth"
+              active?={@current_page == :settings}
+              path="/settings"
+              tooltip_txt={gettext("Settings")}
+            />
             <div class="w-full h-px border border-neutral-500"></div>
           <% end %>
-          <.menu_item icon_name="hero-user-circle" active?={@current_page == :user} path="/user" />
+          <.menu_item
+            icon_name="hero-user-circle"
+            active?={@current_page == :user}
+            path="/user"
+            tooltip_txt={gettext("Profile")}
+          />
         </div>
       </div>
       <!-- The screen content -->
@@ -60,18 +92,21 @@ defmodule CaseManagerWeb.MenuBar do
   attr :icon_name, :string, required: true, doc: "name of hero icon used"
   attr :path, :string, default: nil, doc: "path to navigate to"
   attr :active?, :boolean, default: false, doc: "determines whether an item is highlighted"
+  attr :tooltip_txt, :string, required: true, doc: "text displayed on tooltip when hovering"
 
   defp menu_item(%{icon_name: "hero-" <> _} = assigns) do
     assigns = assign(assigns, :selection_circle, @selection_circle)
 
     ~H"""
     <.link navigate={@path}>
-      <button class="bg-none border-none relative flex">
-        <%= if @active? do %>
-          <div class={@selection_circle} />
-        <% end %>
-        <.icon name={@icon_name} class="bg-white z-0" />
-      </button>
+      <.tooltip pos={:right} tooltip_label={@tooltip_txt}>
+        <button class="bg-none border-none relative flex">
+          <%= if @active? do %>
+            <div class={@selection_circle} />
+          <% end %>
+          <.icon name={@icon_name} class="bg-white z-0" />
+        </button>
+      </.tooltip>
     </.link>
     """
   end
