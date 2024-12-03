@@ -244,19 +244,22 @@
     </div>
 
     <%!-- Attributes for the team's email resource --%>
-
     <.label><%= gettext("Emails") %></.label>
     <.inputs_for :let={email_form} field={@form[:email]}>
-      <.input type="text" field={email_form[:email]} placeholder={"#{gettext("Email")}*"} />
+      <div class="flex flex-row items-center gap-4">
+        <div class="w-full">
+          <.input type="text" field={email_form[:email]} placeholder={"#{gettext("Email")}*"} />
+        </div>
 
-      <button
-        type="button"
-        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-        phx-click="remove_form"
-        phx-value-path={email_form.name}
-      >
-        <.icon name="hero-minus" />
-      </button>
+        <button
+          type="button"
+          class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+          phx-click="remove_form"
+          phx-value-path={email_form.name}
+        >
+          <.icon name="hero-minus" />
+        </button>
+      </div>
     </.inputs_for>
 
     <button
@@ -279,15 +282,15 @@
         <div class="basis-1/2">
           <.input type="text" field={phone_form[:phone]} placeholder={"#{gettext("Phone Number")}*"} />
         </div>
+        <button
+          type="button"
+          class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+          phx-click="remove_form"
+          phx-value-path={phone_form.name}
+        >
+          <.icon name="hero-minus" />
+        </button>
       </div>
-      <button
-        type="button"
-        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-        phx-click="remove_form"
-        phx-value-path={phone_form.name}
-      >
-        <.icon name="hero-minus" />
-      </button>
     </.inputs_for>
 
     <button
@@ -318,15 +321,15 @@
         <div class="basis-2/3">
           <.input type="text" field={ip_form[:ip]} placeholder={"#{gettext("IP")}*"} />
         </div>
+        <button
+          type="button"
+          class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
+          phx-click="remove_form"
+          phx-value-path={ip_form.name}
+        >
+          <.icon name="hero-minus" />
+        </button>
       </div>
-      <button
-        type="button"
-        class="flex h-6 w-6 m-2 border-gray-600 hover:bg-gray-400 rounded-md justify-center items-center"
-        phx-click="remove_form"
-        phx-value-path={ip_form.name}
-      >
-        <.icon name="hero-minus" />
-      </button>
     </.inputs_for>
 
     <button
