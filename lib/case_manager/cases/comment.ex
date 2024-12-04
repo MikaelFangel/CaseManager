@@ -16,7 +16,7 @@ defmodule CaseManager.Cases.Comment do
 
     references do
       reference :case, on_delete: :delete, on_update: :update, name: "comment_to_case_fkey"
-      reference :user, on_delete: :delete, on_update: :update, name: "comment_to_user_fkey"
+      reference :user, on_delete: :nilify, on_update: :update, name: "comment_to_user_fkey"
     end
   end
 
@@ -52,7 +52,7 @@ defmodule CaseManager.Cases.Comment do
 
   relationships do
     belongs_to :case, CaseManager.Cases.Case, allow_nil?: false
-    belongs_to :user, CaseManager.Teams.User, allow_nil?: false
+    belongs_to :user, CaseManager.Teams.User
   end
 
   actions do
