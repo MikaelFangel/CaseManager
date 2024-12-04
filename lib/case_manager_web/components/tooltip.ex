@@ -47,7 +47,7 @@ defmodule CaseManagerWeb.Tooltip do
       |> assign(:tooltip_pos, tooltip_pos(assigns))
 
     ~H"""
-    <div class="group relative inline-block">
+    <div class="group relative">
       <!-- Tooltip body -->
       <span class={[
         "hidden",
