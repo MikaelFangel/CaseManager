@@ -42,7 +42,6 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
       params
       |> Map.put("description", sanitize.(description))
       |> Map.put("internal_note", sanitize.(internal_note))
-      |> Map.put(:escalated, false)
       |> Map.put(:alert, related_alert_ids)
       |> Map.delete(:uploaded_files)
       |> then(&if(socket.assigns[:action] == :new, do: %{case: &1}, else: &1))
