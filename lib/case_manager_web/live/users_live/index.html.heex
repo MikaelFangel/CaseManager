@@ -65,6 +65,7 @@
             phx-value-user_id={user.id}
           />
           <.icon_btn
+            :if={user.id != @current_user.id}
             icon_name="hero-trash"
             size={:small}
             colour={:critical}
