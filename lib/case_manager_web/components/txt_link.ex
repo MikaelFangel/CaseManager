@@ -34,7 +34,7 @@ defmodule CaseManagerWeb.TxtLink do
       ]}
       {@rest}
     >
-      <%= @label %>
+      {@label}
     </button>
     """
   end

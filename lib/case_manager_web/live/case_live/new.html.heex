@@ -1,7 +1,7 @@
 <div class="h-full px-8 flex flex-col">
-  <.back navigate={~p"/alerts"}><%= gettext("Back to alerts") %></.back>
+  <.back navigate={~p"/alerts"}>{gettext("Back to alerts")}</.back>
 
-  <.header class="pt-4"><%= gettext("Create case") %></.header>
+  <.header class="pt-4">{gettext("Create case")}</.header>
 
   <.live_component
     module={CaseManagerWeb.CaseLive.FormComponent}

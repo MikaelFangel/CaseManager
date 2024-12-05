@@ -53,7 +53,7 @@ defmodule CaseManagerWeb.Button do
           <.icon name={@icon_name} class="w-6 h-6 mr-1" />
         <% end %>
 
-        <%= render_slot(@inner_block) || @label %>
+        {render_slot(@inner_block) || @label}
       </.btn_template>
     <% end %>
     """

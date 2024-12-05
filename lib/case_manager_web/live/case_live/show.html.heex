@@ -1,60 +1,60 @@
 <div class="flex h-screen">
   <div class="w-2/3 pl-8 pr-4 overflow-y-auto">
-    <.back navigate={~p"/"}><%= gettext("Back to cases") %></.back>
-    <.header class="pt-4"><%= @case.title %></.header>
+    <.back navigate={~p"/"}>{gettext("Back to cases")}</.back>
+    <.header class="pt-4">{@case.title}</.header>
     <div class="grid grid-cols-3 gap-2 mt-4 text-sm">
       <div>
-        <.label><%= gettext("Created at") %>:</.label>
-        <%= @case.inserted_at %>
+        <.label>{gettext("Created at")}:</.label>
+        {@case.inserted_at}
       </div>
       <div>
-        <.label><%= gettext("ID") %>:</.label>
-        <%= @case.id |> String.slice(0..7) %>
+        <.label>{gettext("ID")}:</.label>
+        {@case.id |> String.slice(0..7)}
       </div>
       <div>
-        <.label><%= gettext("Priority") %>:</.label>
+        <.label>{gettext("Priority")}:</.label>
         <.risk_badge colour={@case.priority} />
       </div>
 
       <div>
-        <.label><%= gettext("Last updated") %>:</.label>
-        <%= DateTime.diff(
+        <.label>{gettext("Last updated")}:</.label>
+        {DateTime.diff(
           DateTime.utc_now(),
           @case.updated_at,
           :day
-        ) %> days ago
+        )} days ago
       </div>
       <div>
-        <.label><%= gettext("Reported by") %>:</.label>
-        <%= if @reporter, do: @reporter.full_name, else: gettext("Deleted User") %>
+        <.label>{gettext("Reported by")}:</.label>
+        {if @reporter, do: @reporter.full_name, else: gettext("Deleted User")}
       </div>
       <div>
-        <.label><%= gettext("Escalated") %>:</.label>
-        <%= @case.escalated
+        <.label>{gettext("Escalated")}:</.label>
+        {@case.escalated
         |> to_string()
-        |> String.capitalize() %>
+        |> String.capitalize()}
       </div>
 
       <div>
-        <.label><%= gettext("Team") %>:</.label>
-        <%= @case.team.name %>
+        <.label>{gettext("Team")}:</.label>
+        {@case.team.name}
       </div>
       <div>
-        <.label><%= gettext("No. attached alarms") %>:</.label>
-        <%= @no_of_related_alerts %>
+        <.label>{gettext("No. attached alarms")}:</.label>
+        {@no_of_related_alerts}
       </div>
       <div>
-        <.label><%= gettext("Status") %>:</.label>
+        <.label>{gettext("Status")}:</.label>
         <.status_badge colour={@case.status} />
       </div>
     </div>
 
     <div :if={@case.description} class="mt-4">
-      <.label><%= gettext("Description") %></.label>
+      <.label>{gettext("Description")}</.label>
       <article class="prose prose-sm break-words max-w-none">
-        <%= if @case.description,
+        {if @case.description,
           do: @case.description |> CaseManagerWeb.Helpers.render_markdown!(),
-          else: "" %>
+          else: ""}
       </article>
     </div>
 
@@ -67,14 +67,14 @@
         end
       }
     >
-      <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+      <:col :let={{_id, alert}} label={gettext("Title")}>{alert.title}</:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
         <div class="flex items-center h-full">
           <.risk_badge colour={alert.risk_level} />
         </div>
       </:col>
       <:col :let={{_id, alert}} label={gettext("Creation Time")}>
-        <%= alert.creation_time %>
+        {alert.creation_time}
       </:col>
       <:col :let={{_id, alert}} label={gettext("Link")} width="8" not_clickable_area?>
         <.link href={alert.link} target="_blank">
@@ -85,29 +85,29 @@
 
     <.table :if={not Enum.empty?(@files)} id="files" rows={@files} row_click={}>
       <:col :let={file} label={gettext("File Name")}>
-        <%= file.filename %>
+        {file.filename}
       </:col>
-      <:col :let={file} label={gettext("Updated at")}><%= file.updated_at %></:col>
-      <:col :let={file} label={gettext("Size")}><%= byte_size(file.binary_data) %> B</:col>
+      <:col :let={file} label={gettext("Updated at")}>{file.updated_at}</:col>
+      <:col :let={file} label={gettext("Size")}>{byte_size(file.binary_data)} B</:col>
       <:col :let={file} label={gettext("Download")}>
         <a href={~p"/file/#{file.id}"}>Download</a>
       </:col>
     </.table>
 
     <%= if @current_user && @current_user.team_type == :mssp do %>
-      <.label :if={@case.internal_note}><%= gettext("Internal Note") %></.label>
+      <.label :if={@case.internal_note}>{gettext("Internal Note")}</.label>
       <div :if={@case.internal_note} class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
-        <%= if @case.internal_note,
+        {if @case.internal_note,
           do: @case.internal_note |> CaseManagerWeb.Helpers.render_markdown!(),
-          else: "" %>
+          else: ""}
       </div>
       <div class="my-4 gap-2 w-full flex justify-end">
         <.link navigate={~p"/case/#{@case.id}/edit"}>
-          <.button><%= gettext("Edit") %></.button>
+          <.button>{gettext("Edit")}</.button>
         </.link>
         <%= if !@case.escalated do %>
           <.button colour={:critical} phx-click="show_confirmation_modal" phx-value-id={@case.id}>
-            <%= gettext("Escalate") %>
+            {gettext("Escalate")}
           </.button>
         <% end %>
       </div>
@@ -125,13 +125,13 @@
               "text-left text-xs text-gray-500 self-start mb-1"
             end
           }>
-            <%= with user when user <- comment.user,
-                     true <- user.id == @current_user.id do
+            {with user when user <- comment.user,
+                  true <- user.id == @current_user.id do
               gettext("You")
             else
               nil -> gettext("Deleted User")
               _ -> comment.user.full_name
-            end %>
+            end}
           </div>
           <!-- Comment Bubble -->
           <div class={
@@ -145,9 +145,9 @@
               "bg-slate-300 pr-4 pl-2 pt-1 rounded-xl self-start text-left break-words max-w-sm relative"
             end
           }>
-            <%= if comment.body,
+            {if comment.body,
               do: comment.body |> String.replace("\n", "<br />") |> raw(),
-              else: "" %>
+              else: ""}
             <div class={
               if comment.user && comment.user.team_type == @current_user.team_type do
                 "text-[8px] text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
@@ -155,14 +155,14 @@
                 "text-[8px] text-right text-gray-500 relative bottom-0 right-0 -mx-2 -mt-1 mb-1"
               end
             }>
-              <%= comment.inserted_at |> Calendar.strftime("%H:%M") %>
+              {comment.inserted_at |> Calendar.strftime("%H:%M")}
             </div>
           </div>
         </div>
         <!-- Date line above comments -->
         <div :if={comment.header} class="flex items-center justify-center text-gray-400 text-xs w-full pt-4">
           <span class="grow border-t border-gray-300 mr-2"></span>
-          <%= comment.header %>
+          {comment.header}
           <span class="grow border-t border-gray-300 ml-2"></span>
         </div>
       <% end %>

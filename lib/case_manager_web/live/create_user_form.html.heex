@@ -7,7 +7,7 @@
     phx-trigger-action={@trigger_action}
     action={@action}
   >
-    <h1 class="text-xl font-semibold mb-2"><%= @cta %></h1>
+    <h1 class="text-xl font-semibold mb-2">{@cta}</h1>
     <hr class="mb-2" />
     <!-- Form input fields -->
     <div class="flex flex-row gap-4">
@@ -90,11 +90,11 @@
     <!-- Actions -->
     <:actions>
       <.button :if={!@onboarding?} type="button" colour={:secondary} phx-click={@on_cancel}>
-        <%= gettext("Close") %>
+        {gettext("Close")}
       </.button>
 
       <.button phx-disable-with="Saving...">
-        <%= gettext("Save") %>
+        {gettext("Save")}
       </.button>
     </:actions>
   </.simple_form>

@@ -26,21 +26,21 @@ defmodule CaseManagerWeb.ConfirmationModal do
   def confirmation_modal(assigns) do
     ~H"""
     <.modal_template id={@id} show={@show} on_cancel={@on_cancel}>
-      <.header class="flex-none font-bold"><%= @title %></.header>
+      <.header class="flex-none font-bold">{@title}</.header>
       <hr class="border-t border-gray-300 mt-1 mb-2.5" />
 
       <span>
-        <%= @body %>
+        {@body}
       </span>
 
       <br />
       <div class="flex justify-end space-x-2">
         <.button phx-click={@on_cancel}>
-          <%= gettext("Cancel") %>
+          {gettext("Cancel")}
         </.button>
         <%= if @action_btn_txt do %>
           <.button colour={:critical} phx-click={@on_action}>
-            <%= @action_btn_txt %>
+            {@action_btn_txt}
           </.button>
         <% end %>
       </div>

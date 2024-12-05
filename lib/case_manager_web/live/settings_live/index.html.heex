@@ -4,7 +4,7 @@
       <%= case @logo_img.content_type do %>
         <% "image/svg+xml" -> %>
           <svg height="100px" viewbox="0 0 1500 1000">
-            <%= raw(@logo_img.binary_data) %>
+            {raw(@logo_img.binary_data)}
           </svg>
         <% _ -> %>
           <img
@@ -17,10 +17,10 @@
   </div>
 
   <div>
-    <.label><%= gettext("Logo") %></.label>
+    <.label>{gettext("Logo")}</.label>
     <form id="logo-upload-form" phx-submit="save_logo" phx-change="validate" class="space-y-4">
       <.live_file_input upload={@uploads.logo} class="mb-4" />
-      <.button type="submit" class="btn-primary"><%= gettext("Save Logo") %></.button>
+      <.button type="submit" class="btn-primary">{gettext("Save Logo")}</.button>
     </form>
   </div>
 
@@ -33,10 +33,10 @@
   </div>
 
   <div>
-    <.label><%= gettext("Background") %></.label>
+    <.label>{gettext("Background")}</.label>
     <form id="background-upload-form" phx-submit="save_background" phx-change="validate" class="space-y-4">
       <.live_file_input upload={@uploads.background} class="mb-4" />
-      <.button type="submit" class="btn-primary"><%= gettext("Save Background") %></.button>
+      <.button type="submit" class="btn-primary">{gettext("Save Background")}</.button>
     </form>
   </div>
 </div>

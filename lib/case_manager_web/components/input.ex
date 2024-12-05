@@ -90,9 +90,9 @@ defmodule CaseManagerWeb.Input do
           class="rounded border-black text-blue-500 focus:ring-0"
           {@rest}
         />
-        <%= @label %>
+        {@label}
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -100,7 +100,7 @@ defmodule CaseManagerWeb.Input do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <select
         id={@id}
         name={@name}
@@ -108,10 +108,10 @@ defmodule CaseManagerWeb.Input do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -119,7 +119,7 @@ defmodule CaseManagerWeb.Input do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div class="flex flex-col h-full">
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <textarea
         id={@id}
         name={@name}
@@ -132,7 +132,7 @@ defmodule CaseManagerWeb.Input do
         ]}
         {@rest}
       ><%= Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -141,7 +141,7 @@ defmodule CaseManagerWeb.Input do
   def input(assigns) do
     ~H"""
     <div>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <input
         type={@type}
         name={@name}
@@ -154,7 +154,7 @@ defmodule CaseManagerWeb.Input do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
