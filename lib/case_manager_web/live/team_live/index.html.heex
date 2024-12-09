@@ -60,6 +60,7 @@
               />
 
               <.icon_btn
+                :if={team.id != @current_user.team_id}
                 icon_name="hero-trash"
                 colour={:critical}
                 size={:small}
