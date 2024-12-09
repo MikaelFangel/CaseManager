@@ -51,7 +51,7 @@ defmodule CaseManagerWeb.MenuBar do
               path="/users"
               tooltip_txt={gettext("Users")}
             />
-            <%= if @current_user.team_type==:mssp do %>
+            <%= if @current_user.team_type == :mssp do %>
               <div class="w-full border border-neutral-500"></div>
               <.menu_item
                 icon_name="hero-building-office"
@@ -63,8 +63,8 @@ defmodule CaseManagerWeb.MenuBar do
           <% end %>
         </div>
         <!-- Bottom content -->
-        <div class="flex-col h-full justify-end items-center gap-4 inline-flex">
-          <%= if @current_user.role==:admin && @current_user.team_type==:mssp do %>
+        <div class="flex-col w-full h-full justify-end items-center gap-4 inline-flex">
+          <%= if @current_user.role == :admin && @current_user.team_type == :mssp do %>
             <.menu_item
               icon_name="hero-cog-8-tooth"
               active?={@current_page == :settings}
@@ -101,10 +101,8 @@ defmodule CaseManagerWeb.MenuBar do
     <.link navigate={@path}>
       <.tooltip pos={:right} tooltip_label={@tooltip_txt}>
         <button class="bg-none border-none relative flex">
-          <%= if @active? do %>
-            <div class={@selection_circle} />
-          <% end %>
-          <.icon name={@icon_name} class="bg-white z-0" />
+          <div :if={@active?} class={@selection_circle} />
+          <.icon name={@icon_name} class="bg-white" />
         </button>
       </.tooltip>
     </.link>
