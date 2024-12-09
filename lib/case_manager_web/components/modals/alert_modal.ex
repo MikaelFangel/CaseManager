@@ -68,7 +68,7 @@ defmodule CaseManagerWeb.AlertModal do
       </div>
 
       <%= if @alert.additional_data != %{} do %>
-        <div class="mt-20 p-4 bg-slate-50 rounded-md shadow">
+        <div class="mt-20 p-4 bg-slate-50 rounded-md shadow overflow-x-auto">
           <pre class="inline"><%= @alert.additional_data |> Jason.encode!(pretty: true) %></pre>
         </div>
       <% end %>
