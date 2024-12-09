@@ -24,9 +24,9 @@ defmodule CaseManagerWeb.AlertModal do
     ~H"""
     <.modal_template id={@id} show={@show} on_cancel={@on_cancel}>
       <div class="flex flex-row place-items-baseline gap-x-2.5 w-full">
-        <.header class="flex-none font-bold"><%= @alert.title %></.header>
+        <.header class="flex-none font-bold">{@alert.title}</.header>
         <label class="flex-none text-gray-400 text-xs font-semibold">
-          <%= @alert.creation_time %>
+          {@alert.creation_time}
         </label>
 
         <div class="flex place-items-baseline basis-full justify-end">
@@ -58,12 +58,12 @@ defmodule CaseManagerWeb.AlertModal do
           <% end %>
         </div>
 
-        <label class="text-black text-sm font-bold"><%= @alert.team.name %></label>
+        <label class="text-black text-sm font-bold">{@alert.team.name}</label>
       </div>
 
       <div class="pt-9 w-full">
         <span>
-          <%= @alert.description %>
+          {@alert.description}
         </span>
       </div>
 
@@ -76,11 +76,11 @@ defmodule CaseManagerWeb.AlertModal do
       <br />
       <div class="flex justify-end space-x-2">
         <.button colour={:secondary} phx-click={@on_cancel}>
-          <%= gettext("Close") %>
+          {gettext("Close")}
         </.button>
         <.link href={@alert.link} target="_blank">
           <.button>
-            <%= gettext("Search Link") %>
+            {gettext("Search Link")}
           </.button>
         </.link>
       </div>

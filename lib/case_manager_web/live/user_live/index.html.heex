@@ -4,7 +4,7 @@
       <%= case @logo_img.content_type do %>
         <% "image/svg+xml" -> %>
           <svg height="100px" viewBox="0 0 1500 1000">
-            <%= raw(@logo_img.binary_data) %>
+            {raw(@logo_img.binary_data)}
           </svg>
         <% _ -> %>
           <img
@@ -35,7 +35,7 @@
           <.input label={gettext("Last Name")} type="text" field={@info_form[:last_name]} />
           <.input label={gettext("Email")} type="email" field={@info_form[:email]} />
           <:actions>
-            <.button><%= gettext("Save Changes") %></.button>
+            <.button>{gettext("Save Changes")}</.button>
           </:actions>
         </.simple_form>
       </div>
@@ -52,7 +52,7 @@
             field={@password_form[:password_confirmation]}
           />
           <:actions>
-            <.button><%= gettext("Update Password") %></.button>
+            <.button>{gettext("Update Password")}</.button>
           </:actions>
         </.simple_form>
       </div>

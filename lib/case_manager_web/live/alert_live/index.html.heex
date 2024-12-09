@@ -4,7 +4,7 @@
       <%= case @logo_img.content_type do %>
         <% "image/svg+xml" -> %>
           <svg height="100px" viewbox="0 0 1500 1000">
-            <%= raw(@logo_img.binary_data) %>
+            {raw(@logo_img.binary_data)}
           </svg>
         <% _ -> %>
           <img
@@ -20,7 +20,7 @@
       <.icon_btn icon_name="hero-pause-circle" colour={:tertiary} />
       <.link navigate={~p"/case/new"}>
         <.button icon_name="hero-document-plus" disabled={Enum.empty?(@selected_alerts)}>
-          <%= gettext("Create Case") %>
+          {gettext("Create Case")}
         </.button>
       </.link>
     </div>
@@ -48,14 +48,14 @@
           phx-hook="DeselectCheckbox"
         />
       </:col>
-      <:col :let={{_id, alert}} label={gettext("Team")} width="36"><%= alert.team.name %></:col>
-      <:col :let={{_id, alert}} label={gettext("Title")}><%= alert.title %></:col>
+      <:col :let={{_id, alert}} label={gettext("Team")} width="36">{alert.team.name}</:col>
+      <:col :let={{_id, alert}} label={gettext("Title")}>{alert.title}</:col>
       <:col :let={{_id, alert}} label={gettext("Risk Level")} width="16">
         <div class="flex items-center h-full">
           <.risk_badge colour={alert.risk_level} />
         </div>
       </:col>
-      <:col :let={{_id, alert}} label={gettext("Creation Time")}><%= alert.creation_time %></:col>
+      <:col :let={{_id, alert}} label={gettext("Creation Time")}>{alert.creation_time}</:col>
       <:col :let={{_id, alert}} label={gettext("Case ID")} width="36" not_clickable_area?>
         <%= for case <- alert.case do %>
           <.link navigate={~p"/case/#{case.id}"}>
@@ -78,11 +78,11 @@
 
   <%= if @more_pages? do %>
     <div class="flex justify-center my-4">
-      <.button phx-click="load_more_alerts"><%= gettext("Load More") %></.button>
+      <.button phx-click="load_more_alerts">{gettext("Load More")}</.button>
     </div>
   <% else %>
     <div class="flex justify-center my-4">
-      <span class="text-black text-xs font-semibold"><%= gettext("No more alerts") %></span>
+      <span class="text-black text-xs font-semibold">{gettext("No more alerts")}</span>
     </div>
   <% end %>
 </div>

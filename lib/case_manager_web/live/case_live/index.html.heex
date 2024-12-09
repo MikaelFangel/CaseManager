@@ -4,7 +4,7 @@
       <%= case @logo_img.content_type do %>
         <% "image/svg+xml" -> %>
           <svg height="100px" viewbox="0 0 1500 1000">
-            <%= raw(@logo_img.binary_data) %>
+            {raw(@logo_img.binary_data)}
           </svg>
         <% _ -> %>
           <img
@@ -18,10 +18,10 @@
     <% end %>
     <div class="flex justify-end gap-x-2">
       <.button icon_name="hero-folder-open" phx-click="open_cases" disabled={@status_type == :open}>
-        <%= gettext("Open") %>
+        {gettext("Open")}
       </.button>
       <.button icon_name="hero-lock-closed" phx-click="closed_cases" disabled={@status_type == :closed}>
-        <%= gettext("Closed") %>
+        {gettext("Closed")}
       </.button>
     </div>
   </div>

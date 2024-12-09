@@ -57,10 +57,9 @@ defmodule CaseManagerWeb.Tooltip do
         @tooltip_arrow,
         @tooltip_pos
       ]}>
-        <%= @tooltip_label %>
+        {@tooltip_label}
       </span>
-      <!-- Hoverable item -->
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
