@@ -50,10 +50,10 @@ defmodule CaseManagerWeb.Table do
         <thead class="text-xs text-left leading-0 text-black">
           <tr>
             <th :for={col <- @col} class={["p-0 pb-2 pr-0 font-semibold", col[:width] && "w-#{col[:width]}"]}>
-              <%= col[:label] %>
+              {col[:label]}
             </th>
             <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only"><%= gettext("Actions") %></span>
+              <span class="sr-only">{gettext("Actions")}</span>
             </th>
           </tr>
         </thead>
@@ -71,7 +71,7 @@ defmodule CaseManagerWeb.Table do
               <div class="inline-block py-2 pr-0">
                 <span class="absolute -inset-y-px right-0 -left-4 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
+                  {render_slot(col, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -82,7 +82,7 @@ defmodule CaseManagerWeb.Table do
                   :for={action <- @action}
                   class="relative ml-4 font-semibold leading-0 text-zinc-900 hover:text-zinc-700"
                 >
-                  <%= render_slot(action, @row_item.(row)) %>
+                  {render_slot(action, @row_item.(row))}
                 </span>
               </div>
             </td>

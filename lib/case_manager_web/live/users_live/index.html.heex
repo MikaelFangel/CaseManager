@@ -4,7 +4,7 @@
       <%= case @logo_img.content_type do %>
         <% "image/svg+xml" -> %>
           <svg height="100px" viewbox="0 0 1500 1000">
-            <%= raw(@logo_img.binary_data) %>
+            {raw(@logo_img.binary_data)}
           </svg>
         <% _ -> %>
           <img
@@ -21,7 +21,7 @@
         <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:tertiary} phx-click="refresh_users" />
       <% end %>
       <.button phx-click="show_form_modal" icon_name="hero-user-plus">
-        <%= gettext("Create User") %>
+        {gettext("Create User")}
       </.button>
     </div>
   </div>
@@ -38,20 +38,20 @@
         </div>
         <div>
           <div>
-            <%= user.full_name %>
+            {user.full_name}
           </div>
           <div class="text-xs text-gray-500 mb-4">
-            <%= user.email %>
+            {user.email}
           </div>
           <div class="flex">
             <div class="bg-slate-950 text-white text-xs mr-2 px-2 rounded">
-              <%= user.role %>
+              {user.role}
             </div>
             <div class="bg-red-200 text-xs mr-2 px-2 rounded">
-              <%= user.team_type %>
+              {user.team_type}
             </div>
             <div class="bg-amber-200 text-xs mr-2 px-2 rounded">
-              <%= user.team.name %>
+              {user.team.name}
             </div>
           </div>
         </div>
@@ -65,6 +65,7 @@
             phx-value-user_id={user.id}
           />
           <.icon_btn
+            :if={user.id != @current_user.id}
             icon_name="hero-trash"
             size={:small}
             colour={:critical}
@@ -78,9 +79,9 @@
 
     <div class="my-4 flex justify-center">
       <%= if @more_pages? do %>
-        <.button phx-click="load_more_users"><%= gettext("Load More") %></.button>
+        <.button phx-click="load_more_users">{gettext("Load More")}</.button>
       <% else %>
-        <span class="text-xs font-semibold"><%= gettext("No more users") %></span>
+        <span class="text-xs font-semibold">{gettext("No more users")}</span>
       <% end %>
     </div>
   </div>

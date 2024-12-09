@@ -18,11 +18,11 @@ defmodule CaseManagerWeb.CaseLive.Components.Table do
       </div>
       <%= if @more_pages? do %>
         <div class="flex justify-center my-4">
-          <.button phx-click="load_more_cases"><%= gettext("Load More") %></.button>
+          <.button phx-click="load_more_cases">{gettext("Load More")}</.button>
         </div>
       <% else %>
         <div class="flex justify-center my-4">
-          <span class="text-black text-xs font-semibold"><%= gettext("No more cases") %></span>
+          <span class="text-black text-xs font-semibold">{gettext("No more cases")}</span>
         </div>
       <% end %>
     </div>

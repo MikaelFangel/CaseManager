@@ -47,7 +47,7 @@ defmodule CaseManagerWeb.Tooltip do
       |> assign(:tooltip_pos, tooltip_pos(assigns))
 
     ~H"""
-    <div class="group relative inline-block">
+    <div class="group relative">
       <!-- Tooltip body -->
       <span class={[
         "hidden",
@@ -57,10 +57,9 @@ defmodule CaseManagerWeb.Tooltip do
         @tooltip_arrow,
         @tooltip_pos
       ]}>
-        <%= @tooltip_label %>
+        {@tooltip_label}
       </span>
-      <!-- Hoverable item -->
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end

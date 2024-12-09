@@ -35,7 +35,7 @@ defmodule CaseManagerWeb.BadgeTemplate do
           <.icon name={@icon_name} class={@icon_class} />
         <% end %>
 
-        <%= render_slot(@inner_block) || @label %>
+        {render_slot(@inner_block) || @label}
       </span>
     <% end %>
     """

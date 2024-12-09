@@ -32,9 +32,9 @@ defmodule CaseManagerWeb.SimpleForm do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="h-full mt-6 space-y-4 flex flex-col">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-end gap-4">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>

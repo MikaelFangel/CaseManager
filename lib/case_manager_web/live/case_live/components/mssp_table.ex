@@ -15,10 +15,10 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
           <% end %>
         </:col>
         <:col :let={{_id, case}} label={gettext("Team")}>
-          <%= case.team.name %>
+          {case.team.name}
         </:col>
         <:col :let={{_id, case}} label={gettext("Title")}>
-          <%= case.title %>
+          {case.title}
         </:col>
         <:col :let={{_id, case}} label={gettext("Priority")}>
           <div class="flex items-center h-full">
@@ -26,10 +26,10 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
           </div>
         </:col>
         <:col :let={{_id, case}} label={gettext("Time Since Updated")}>
-          <%= DateTime.diff(DateTime.utc_now(), case.updated_at, :day) %> days
+          {DateTime.diff(DateTime.utc_now(), case.updated_at, :day)} days
         </:col>
         <:col :let={{_id, case}} label={gettext("ID")}>
-          <%= case.id |> String.slice(1, 7) %>
+          {case.id |> String.slice(1, 7)}
         </:col>
         <:col :let={{_id, case}} label={gettext("Status")}>
           <div class="flex items-center h-full">
@@ -37,7 +37,7 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
           </div>
         </:col>
         <:col :let={{_id, case}} label={gettext("Assignee")}>
-          <%= case.assignee && case.assignee.full_name %>
+          {case.assignee && case.assignee.full_name}
         </:col>
       </.table>
     </div>
