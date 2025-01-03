@@ -37,7 +37,7 @@ defmodule CaseManagerWeb.IconBtn do
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled)
 
-  def icon_btn(%{icon_name: "hero-" <> _} = assigns) do
+  def icon_btn(%{icon_name: "hero-" <> _rest} = assigns) do
     assigns =
       assigns
       |> assign(:btn_size_class, btn_size_class(assigns))
