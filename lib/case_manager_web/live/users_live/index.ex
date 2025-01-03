@@ -87,7 +87,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
           Ash.destroy!(user)
           assign(socket, :pending_refresh?, true)
 
-        {:error, _} ->
+        {:error, _error} ->
           put_flash(socket, :error, gettext("User already deleted"))
       end
 

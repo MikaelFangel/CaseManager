@@ -72,7 +72,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         :ok ->
           socket
 
-        {:error, _} ->
+        {:error, _error} ->
           socket
           |> push_event("deselect-checkbox", %{checkbox_id: checkbox_id})
           |> put_flash(

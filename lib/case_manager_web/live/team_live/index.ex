@@ -99,7 +99,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
           Ash.destroy!(team)
           assign(socket, :pending_refresh?, true)
 
-        {:error, _} ->
+        {:error, _error} ->
           put_flash(socket, :error, gettext("Team already deleted"))
       end
 

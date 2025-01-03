@@ -94,7 +94,7 @@ defmodule CaseManagerWeb.MenuBar do
   attr :active?, :boolean, default: false, doc: "determines whether an item is highlighted"
   attr :tooltip_txt, :string, required: true, doc: "text displayed on tooltip when hovering"
 
-  defp menu_item(%{icon_name: "hero-" <> _} = assigns) do
+  defp menu_item(%{icon_name: "hero-" <> _rest} = assigns) do
     assigns = assign(assigns, :selection_circle, @selection_circle)
 
     ~H"""
