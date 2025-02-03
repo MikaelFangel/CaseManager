@@ -38,23 +38,26 @@ defmodule CaseManager.TeamInternalTest do
       check all(
               team_attr <- TeamGenerator.team_attrs(),
               emails <-
-                StreamData.list_of(
-                  StreamData.map_of(
-                    StreamData.constant(:email),
-                    StreamData.string(:printable, min_length: 1),
-                    length: 1
+                StreamData.map_of(
+                  StreamData.constant(:email),
+                  StreamData.list_of(
+                    StreamData.map_of(
+                      StreamData.constant(:email),
+                      StreamData.string(:printable, min_length: 1),
+                      length: 1
+                    )
                   ),
                   length: 1
                 )
             ) do
-        attrs = Map.put(team_attr, :email, emails)
+        attrs = Map.merge(team_attr, emails)
 
         team =
           CaseManager.Teams.Team
           |> Ash.Changeset.for_create(:create, attrs)
           |> Ash.create!()
 
-        assert length(team.email) === length(emails)
+        assert length(team.email) === length(emails.email)
       end
     end
 
