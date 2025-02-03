@@ -42,7 +42,7 @@ defmodule CaseManager.Teams.Team do
       argument :phone, {:array, :map}, allow_nil?: true
 
       change manage_relationship(:ip, type: :create)
-      change manage_relationship(:email, type: :create, value_is_key: :email)
+      change manage_relationship(:email, type: :create)
       change manage_relationship(:phone, type: :create)
     end
 
