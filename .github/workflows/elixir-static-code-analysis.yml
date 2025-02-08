@@ -43,6 +43,8 @@ jobs:
       run: mix deps.unlock --check-unused
     - name: Check code formatting
       run: mix format --check-formatted
+    - name: Check for missing generation of migrations
+      run: mix ash.codegen --check
     - name: credo
       run: mix credo
     - name: sobelow
