@@ -2,7 +2,6 @@ defmodule CaseManagerWeb.SettingsLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias CaseManager.AppConfig.Setting
   alias CaseManagerWeb.Helpers
 
   @impl true
@@ -31,7 +30,7 @@ defmodule CaseManagerWeb.SettingsLive.Index do
     consume_uploaded_entries(socket, :background, fn %{path: path}, entry ->
       file = File.read!(path)
 
-      Setting.upload_file!(
+      CaseManager.AppConfig.upload_file_to_setting!(
         "background",
         "true",
         %{
@@ -55,7 +54,7 @@ defmodule CaseManagerWeb.SettingsLive.Index do
     consume_uploaded_entries(socket, :logo, fn %{path: path}, entry ->
       file = File.read!(path)
 
-      Setting.upload_file!(
+      CaseManager.AppConfig.upload_file_to_setting!(
         "logo",
         "true",
         %{
