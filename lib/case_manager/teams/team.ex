@@ -96,13 +96,6 @@ defmodule CaseManager.Teams.Team do
     defaults [:read, :destroy]
   end
 
-  code_interface do
-    define :read_by_name_asc
-    define :page_by_name_asc
-    define :add_case, args: [:case]
-    define :add_alert, args: [:alert]
-  end
-
   aggregates do
     count :alert_with_cases_count, :alert do
       filter expr(case_count > 0)
