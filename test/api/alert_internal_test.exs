@@ -5,7 +5,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
 
-  alias CaseManager.Alerts.Alert
+  alias CaseManager.ICM.Alert
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.AlertGenerator
   alias CaseManagerWeb.TeamGenerator

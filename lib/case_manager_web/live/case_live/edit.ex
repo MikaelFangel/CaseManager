@@ -3,11 +3,11 @@ defmodule CaseManagerWeb.CaseLive.Edit do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
-  alias CaseManager.Cases.Case
+  alias CaseManager.ICM
 
   @impl true
   def mount(%{"id" => id} = _params, _session, socket) do
-    case = Case |> Ash.get!(id) |> Ash.load!([:alert, :file])
+    case = ICM.Case |> Ash.get!(id) |> Ash.load!([:alert, :file])
     related_alerts = format_alerts(case.alert)
 
     form =
@@ -36,7 +36,7 @@ defmodule CaseManagerWeb.CaseLive.Edit do
     socket =
       if length(socket.assigns.related_alerts) > 1 do
         case =
-          CaseManager.Cases.remove_alert_from_case!(socket.assigns.id, alert_id, actor: socket.assigns.current_user)
+          ICM.remove_alert_from_case!(socket.assigns.id, alert_id, actor: socket.assigns.current_user)
 
         assign(socket, related_alerts: format_alerts(case.alert))
       else

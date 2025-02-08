@@ -2,7 +2,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias CaseManager.Cases.Case
+  alias CaseManager.ICM
 
   @impl true
   def mount(_params, _session, socket) do
@@ -30,7 +30,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
     case =
-      Case
+      ICM.Case
       |> Ash.get!(id, actor: socket.assigns.current_user)
       |> Ash.load!([
         :alert,
@@ -56,16 +56,16 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def handle_event("escalate_case", %{"id" => id}, socket) do
     updated_case =
-      Case
+      ICM.Case
       |> Ash.get!(id)
-      |> CaseManager.Cases.escalate_case!(actor: socket.assigns.current_user)
+      |> ICM.escalate_case!(actor: socket.assigns.current_user)
 
     {:noreply, assign(socket, case: updated_case)}
   end
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = Ash.get!(CaseManager.Alerts.Alert, alert_id)
+    alert = Ash.get!(ICM.Alert, alert_id)
 
     socket = assign(socket, :alert, alert)
 

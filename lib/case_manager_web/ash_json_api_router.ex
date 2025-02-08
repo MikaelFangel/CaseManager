@@ -3,6 +3,6 @@ defmodule CaseManagerWeb.AshJsonApiRouter do
   JsonApi Router for CaseManager
   """
   use AshJsonApi.Router,
-    domains: [Module.safe_concat(["CaseManager.Alerts"])],
+    domains: [Module.safe_concat(["CaseManager.ICM"])],
     open_api: "/open_api"
 end

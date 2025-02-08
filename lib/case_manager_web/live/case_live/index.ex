@@ -2,7 +2,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias CaseManager.Cases.Case
+  alias CaseManager.ICM.Case
   alias CaseManagerWeb.Helpers
 
   require Ash.Query

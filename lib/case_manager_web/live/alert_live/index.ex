@@ -2,7 +2,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias CaseManager.Alerts.Alert
+  alias CaseManager.ICM.Alert
   alias CaseManagerWeb.Helpers
 
   @impl true
