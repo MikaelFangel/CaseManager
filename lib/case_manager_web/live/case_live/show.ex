@@ -58,7 +58,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
     updated_case =
       Case
       |> Ash.get!(id)
-      |> Case.escalate!(actor: socket.assigns.current_user)
+      |> CaseManager.Cases.escalate_case!(actor: socket.assigns.current_user)
 
     {:noreply, assign(socket, case: updated_case)}
   end

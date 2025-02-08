@@ -83,9 +83,9 @@ defmodule CaseManager.CaseInternalTest do
         [case] = team.case
 
         refute eve_user.team_id == customer_user.team_id
-        assert {:ok, _comment} = Case.add_comment(case, comment_body, actor: customer_user)
-        assert {:ok, _comment} = Case.add_comment(case, comment_body, actor: mssp_user)
-        assert {:error, _comment} = Case.add_comment(case, comment_body, actor: eve_user)
+        assert {:ok, _comment} = CaseManager.Cases.add_comment_to_case(case, comment_body, actor: customer_user)
+        assert {:ok, _comment} = CaseManager.Cases.add_comment_to_case(case, comment_body, actor: mssp_user)
+        assert {:error, _comment} = CaseManager.Cases.add_comment_to_case(case, comment_body, actor: eve_user)
       end
     end
   end

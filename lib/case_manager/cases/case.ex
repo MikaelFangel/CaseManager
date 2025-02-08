@@ -204,14 +204,6 @@ defmodule CaseManager.Cases.Case do
     end
   end
 
-  code_interface do
-    define :escalate, args: []
-    define :upload_file, args: [:file]
-    define :add_comment, args: [:body]
-    define :remove_alert, args: [:alert_id]
-    define :set_assignee, args: [:assignee]
-  end
-
   resource do
     plural_name :cases
   end
