@@ -1,11 +1,11 @@
-defmodule CaseManager.Cases.File do
+defmodule CaseManager.ICM.File do
   @moduledoc """
   Resource for file uploads.
   """
   use Ash.Resource,
     otp_app: :case_manager,
     data_layer: AshPostgres.DataLayer,
-    domain: CaseManager.Cases,
+    domain: CaseManager.ICM,
     extensions: [AshAdmin.Resource]
 
   postgres do
@@ -32,7 +32,7 @@ defmodule CaseManager.Cases.File do
   end
 
   relationships do
-    belongs_to :case, CaseManager.Cases.Case
+    belongs_to :case, CaseManager.ICM.Case
   end
 
   actions do

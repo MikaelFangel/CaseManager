@@ -1,10 +1,10 @@
-defmodule CaseManager.Cases.Comment do
+defmodule CaseManager.ICM.Comment do
   @moduledoc """
   Resource that represents a comment belonging to a case in the system.
   """
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.Cases,
+    domain: CaseManager.ICM,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
@@ -51,7 +51,7 @@ defmodule CaseManager.Cases.Comment do
   end
 
   relationships do
-    belongs_to :case, CaseManager.Cases.Case, allow_nil?: false
+    belongs_to :case, CaseManager.ICM.Case, allow_nil?: false
     belongs_to :user, CaseManager.Teams.User
   end
 
