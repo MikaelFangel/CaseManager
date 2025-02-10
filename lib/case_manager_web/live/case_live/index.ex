@@ -77,25 +77,21 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   defp load_cases(socket) do
+    assigns = socket.assigns
 
     statuses =
-      case socket.assigns.status_type do
+      case assigns.status_type do
         :open -> @open_statuses
         :closed -> @closed_statuses
       end
 
-    cases_page =
-      Case
-      |> Ash.Query.filter(status in ^statuses)
-      |> Ash.Query.sort(updated_at: :desc)
-      |> Ash.Query.load(assignee: [:full_name])
-      |> Ash.read!(action: :read_paginated, actor: socket.assigns.current_user)
+    cases =
+      ICM.list_cases!(query: [filter: [status: [in: statuses]], sort_input: "-updated_at"], actor: assigns.current_user)
 
     socket
     # Reset stream to ensure no duplicates
-    |> stream(:cases, cases_page.results, reset: true)
-    |> assign(:current_page, cases_page)
-    |> assign(:more_pages?, cases_page.more?)
+    |> stream(:cases, cases.results, reset: true)
+    |> assign(:current_page, cases)
     |> assign(:more_cases?, cases.more?)
   end
 end

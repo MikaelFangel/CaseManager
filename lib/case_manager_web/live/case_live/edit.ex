@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.CaseLive.Edit do
 
   @impl true
   def mount(%{"id" => id} = _params, _session, socket) do
-    case = ICM.Case |> Ash.get!(id) |> Ash.load!([:alert, :file])
+    case = ICM.get_case_by_id!(id, load: [:alert, :file])
     related_alerts = format_alerts(case.alert)
 
     form =

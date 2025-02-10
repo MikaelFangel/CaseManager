@@ -5,6 +5,7 @@ defmodule CaseManager.Alerts.AlertInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
 
+  alias CaseManager.ICM
   alias CaseManager.ICM.Alert
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.AlertGenerator
@@ -19,9 +20,9 @@ defmodule CaseManager.Alerts.AlertInternalTest do
   describe "postive tests for creating alerts" do
     property "creates an alert with a valid team_id", %{team: team} do
       check all(alert_attrs <- AlertGenerator.alert_attrs()) do
-        changeset = Ash.Changeset.for_create(Alert, :create, Map.put(alert_attrs, :team_id, team.id))
+        alert_attrs = Map.put(alert_attrs, :team_id, team.id)
 
-        assert {:ok, _alert} = Ash.create(changeset)
+        assert {:ok, _alert} = ICM.add_alert(alert_attrs)
       end
     end
   end

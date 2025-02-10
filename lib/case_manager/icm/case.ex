@@ -95,7 +95,7 @@ defmodule CaseManager.ICM.Case do
       allow_nil? false
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

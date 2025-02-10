@@ -30,15 +30,10 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
     case =
-      ICM.Case
-      |> Ash.get!(id, actor: socket.assigns.current_user)
-      |> Ash.load!([
-        :alert,
-        :file,
-        :no_of_related_alerts,
-        :comment,
-        reporter: [:full_name]
-      ])
+      ICM.get_case_by_id!(id,
+        load: [:alert, :file, :no_of_related_alerts, :comment, reporter: [:full_name]],
+        actor: socket.assigns.current_user
+      )
 
     alerts = Enum.map(case.alert, &{&1.id, &1})
     comments = case.comment |> add_date_headers() |> Enum.reverse()
@@ -55,18 +50,14 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_event("escalate_case", %{"id" => id}, socket) do
-    updated_case =
-      ICM.Case
-      |> Ash.get!(id)
-      |> ICM.escalate_case!(actor: socket.assigns.current_user)
+    updated_case = ICM.escalate_case!(id, actor: socket.assigns.current_user)
 
     {:noreply, assign(socket, case: updated_case)}
   end
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = Ash.get!(ICM.Alert, alert_id)
-
+    alert = ICM.get_alert_by_id!(alert_id)
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}

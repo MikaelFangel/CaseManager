@@ -19,8 +19,8 @@ defmodule CaseManager.Teams do
 
   resources do
     resource Teams.Team do
-      define :read_teams, action: :read_by_name_asc
-      define :read_teams_paged, action: :page_by_name_asc
+      define :list_teams, action: :read, default_options: [query: [sort_input: "-name"]]
+      define :list_teams_paged, action: :read_paged, default_options: [query: [sort_input: "-name"]]
       define :add_case_to_team, args: [:case], action: :add_case
       define :add_alert_to_team, args: [:alert], action: :add_alert
     end

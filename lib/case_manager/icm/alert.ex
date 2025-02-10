@@ -58,7 +58,7 @@ defmodule CaseManager.ICM.Alert do
       sortable? false
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do
@@ -115,10 +115,6 @@ defmodule CaseManager.ICM.Alert do
   resource do
     plural_name :alerts
     description "An alert or incident triggered on a third-party security product."
-  end
-
-  preparations do
-    prepare build(load: [:team, :case])
   end
 
   aggregates do

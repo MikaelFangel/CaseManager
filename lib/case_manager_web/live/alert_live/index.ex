@@ -2,29 +2,24 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias CaseManager.ICM.Alert
+  alias CaseManager.ICM
+  alias CaseManager.SelectedAlerts
   alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
-    CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
-
-    alerts_page =
-      Alert
-      |> Ash.Query.sort(inserted_at: :desc)
-      |> Ash.read!(action: :read_paginated)
-
-    alerts = alerts_page.results
+    SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
+    alerts = ICM.list_alerts!()
 
     {:ok,
      socket
-     |> stream(:alerts, alerts)
+     |> stream(:alerts, alerts.results)
      |> assign(:logo_img, Helpers.load_logo())
      |> assign(:selected_alerts, [])
-     |> assign(:current_page, alerts_page)
+     |> assign(:current_page, alerts)
      |> assign(:menu_item, :alerts)
-     |> assign(:more_pages?, alerts_page.more?)}
+     |> assign(:more_alerts?, alerts.more?)}
   end
 
   @impl true
@@ -46,8 +41,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = Ash.get!(Alert, alert_id)
-
+    alert = ICM.get_alert_by_id!(alert_id, load: :team)
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}
@@ -68,7 +62,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     user_id = socket.assigns.current_user.id
 
     socket =
-      case CaseManager.SelectedAlerts.toggle_alert_selection(user_id, alert_id, team_id) do
+      case SelectedAlerts.toggle_alert_selection(user_id, alert_id, team_id) do
         :ok ->
           socket
 
@@ -81,7 +75,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           )
       end
 
-    selected_alerts = CaseManager.SelectedAlerts.get_selected_alerts(user_id)
+    selected_alerts = SelectedAlerts.get_selected_alerts(user_id)
     {:noreply, assign(socket, :selected_alerts, selected_alerts)}
   end
 
@@ -96,6 +90,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
      socket
      |> stream(:alerts, alerts)
      |> assign(:current_page, next_page)
-     |> assign(:more_pages?, next_page.more?)}
+     |> assign(:more_alerts?, next_page.more?)}
   end
 end

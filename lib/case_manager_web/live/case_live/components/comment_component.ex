@@ -3,12 +3,12 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   use CaseManagerWeb, :live_component
 
   alias AshPhoenix.Form
-  alias CaseManager.ICM.Case
+  alias CaseManager.ICM
 
   def update(assigns, socket) do
     form =
-      Case
-      |> Ash.get!(assigns[:case_id])
+      assigns[:case_id]
+      |> ICM.get_case_by_id!(actor: assigns.current_user)
       |> Form.for_update(:add_comment, forms: [auto?: true], actor: assigns.current_user)
       |> to_form()
 
@@ -25,7 +25,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
 
     action_opts = [actor: socket.assigns.current_user]
 
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
+    case Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, _result} ->
         {:noreply, push_navigate(socket, to: ~p"/case/#{socket.assigns.case_id}")}
 

@@ -3,12 +3,13 @@ defmodule CaseManagerWeb.TeamLive.Index do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
+  alias CaseManager.Teams
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
-    page = CaseManager.Teams.read_teams_paged!(load: [:email, :phone, :ip])
+    page = Teams.list_teams_paged!(load: [:email, :phone, :ip])
     teams = page.results
 
     socket =
@@ -47,7 +48,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("refresh_teams", _params, socket) do
-    page = CaseManager.Teams.read_teams_paged!(load: [:email, :phone, :ip])
+    page = Teams.list_teams_paged!(load: [:email, :phone, :ip])
     teams = page.results
 
     socket =

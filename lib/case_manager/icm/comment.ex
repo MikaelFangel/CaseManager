@@ -6,7 +6,8 @@ defmodule CaseManager.ICM.Comment do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAdmin.Resource]
+    extensions: [AshAdmin.Resource],
+    primary_read_warning?: false
 
   postgres do
     table "comment"

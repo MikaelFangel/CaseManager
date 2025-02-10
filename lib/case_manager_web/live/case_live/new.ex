@@ -3,7 +3,7 @@ defmodule CaseManagerWeb.CaseLive.New do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
-  alias CaseManager.ICM.Alert
+  alias CaseManager.ICM
   alias CaseManager.SelectedAlerts
 
   @impl true
@@ -11,7 +11,7 @@ defmodule CaseManagerWeb.CaseLive.New do
     selected_alerts =
       socket.assigns.current_user.id
       |> CaseManager.SelectedAlerts.get_selected_alerts()
-      |> Enum.map(fn alert_id -> {alert_id, Ash.get!(Alert, alert_id)} end)
+      |> Enum.map(fn alert_id -> {alert_id, ICM.get_alert_by_id!(alert_id)} end)
 
     # Redirect users if they try to access the page through the URL without selecting any alerts
     # else assign the selected alerts to the socket and render the page.
@@ -60,7 +60,7 @@ defmodule CaseManagerWeb.CaseLive.New do
         selected_alerts =
           socket.assigns.current_user.id
           |> CaseManager.SelectedAlerts.get_selected_alerts()
-          |> Enum.map(fn alert_id -> {alert_id, Ash.get!(Alert, alert_id)} end)
+          |> Enum.map(fn alert_id -> {alert_id, ICM.get_alert_by_id!(alert_id)} end)
 
         assign(socket, :related_alerts, selected_alerts)
       else

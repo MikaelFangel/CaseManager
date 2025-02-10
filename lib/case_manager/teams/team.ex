@@ -11,7 +11,7 @@ defmodule CaseManager.Teams.Team do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
+    attribute :name, :string, allow_nil?: false, public?: true
 
     attribute :type, :atom do
       default :customer
@@ -77,16 +77,13 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(:alert, type: :create)
     end
 
-    read :read_by_name_asc do
+    read :read do
       description "List all teams by name in acending order."
-      primary? false
-      prepare(build(sort: [name: :asc]))
+      primary? true
     end
 
-    read :page_by_name_asc do
+    read :read_paged do
       description "List all teams by name in acending order paginated."
-      primary? false
-      prepare(build(sort: [name: :asc]))
 
       pagination do
         required? true
@@ -96,7 +93,7 @@ defmodule CaseManager.Teams.Team do
       end
     end
 
-    defaults [:read, :destroy]
+    defaults [:destroy]
   end
 
   resource do
