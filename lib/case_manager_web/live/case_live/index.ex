@@ -12,8 +12,12 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("case:created")
-    CaseManager.SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
+    current_user = socket.assigns.current_user
+    if connected?(socket) do
+      if current_user.team_type == :mssp, do: CaseManagerWeb.Endpoint.subscribe("case:created")
+    end
+
+    CaseManager.SelectedAlerts.drop_selected_alerts(current_user.id)
 
     {:ok,
      socket
