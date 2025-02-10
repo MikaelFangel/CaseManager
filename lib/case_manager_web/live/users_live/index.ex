@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
       |> assign(current_user: current_user)
       |> assign(:users, users)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_users?, page.more?)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
       |> assign(:user_id, nil)
@@ -59,7 +59,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
       socket
       |> assign(:users, users)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_users?, page.more?)
 
     {:noreply, socket}
   end
@@ -73,7 +73,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
       socket
       |> assign(:users, users)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_users?, page.more?)
       |> assign(:pending_refresh?, false)
 
     {:noreply, socket}

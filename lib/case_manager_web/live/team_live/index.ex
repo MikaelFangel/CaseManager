@@ -17,7 +17,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:menu_item, :teams)
       |> assign(:teams, teams)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_teams?, page.more?)
       |> assign(:selected_team, nil)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
@@ -40,7 +40,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       socket
       |> assign(:teams, teams)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_teams?, page.more?)
 
     {:noreply, socket}
   end
@@ -54,7 +54,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       socket
       |> assign(:teams, teams)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_teams?, page.more?)
       |> assign(:pending_refresh?, false)
       |> assign(:selected_team, nil)
 
