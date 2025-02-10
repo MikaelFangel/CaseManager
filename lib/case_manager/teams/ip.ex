@@ -1,7 +1,5 @@
 defmodule CaseManager.Teams.IP do
-  @moduledoc """
-  Resource to represents an IP address of either version v4 og v6.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Teams,

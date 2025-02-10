@@ -1,7 +1,5 @@
 defmodule CaseManager.ICM.Comment do
-  @moduledoc """
-  Resource that represents a comment belonging to a case in the system.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.ICM,

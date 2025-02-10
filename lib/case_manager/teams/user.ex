@@ -1,7 +1,5 @@
 defmodule CaseManager.Teams.User do
-  @moduledoc """
-  Resource representing a user in the system.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Teams,

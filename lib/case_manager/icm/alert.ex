@@ -1,8 +1,5 @@
 defmodule CaseManager.ICM.Alert do
-  @moduledoc """
-  Resource that represents an alert in the system. The Resource is to be used by the JSON API 
-  and also to view and edit alerts within the application.
-  """
+  @moduledoc false
   use Ash.Resource,
     domain: CaseManager.ICM,
     data_layer: AshPostgres.DataLayer,

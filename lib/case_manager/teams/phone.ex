@@ -1,7 +1,5 @@
 defmodule CaseManager.Teams.Phone do
-  @moduledoc """
-  Resource that represents a phone number.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Teams,
