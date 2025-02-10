@@ -65,7 +65,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("select_team", %{"team_id" => team_id}, socket) do
     team =
-      Ash.get!(Team, team_id,
+      Teams.get_team_by_id!(team_id,
         load: [
           :alert_with_cases_count,
           :alert_without_cases_count,
@@ -95,7 +95,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("delete_team", %{"team_id" => team_id}, socket) do
     socket =
-      case Ash.get(Team, team_id) do
+      case Teams.get_team_by_id(team_id) do
         {:ok, team} ->
           Ash.destroy!(team)
           assign(socket, :pending_refresh?, true)
@@ -109,9 +109,8 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("show_form_modal", %{"team_id" => team_id}, socket) do
-    team = Ash.get!(Team, team_id, load: [:email, :phone, :ip])
-
-    team
+    team_id
+    |> Teams.get_team_by_id!(load: [:email, :phone, :ip])
     |> Form.for_update(:update, forms: [auto?: true])
     |> set_form_for_modal(socket)
   end

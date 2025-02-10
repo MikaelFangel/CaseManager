@@ -90,10 +90,8 @@ defmodule CaseManager.Teams.User do
       change {HashPasswordChange, strategy_name: :password}
     end
 
-    read :page_by_name do
+    read :read_paged do
       description "List all users paginated by name"
-      prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
-
       filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
 
       pagination do
@@ -122,6 +120,6 @@ defmodule CaseManager.Teams.User do
   end
 
   calculations do
-    calculate :full_name, :string, expr(first_name <> " " <> last_name)
+    calculate :full_name, :string, expr(first_name <> " " <> last_name), public?: true
   end
 end

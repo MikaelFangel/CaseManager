@@ -3,23 +3,23 @@ defmodule CaseManagerWeb.UsersLive.Index do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
+  alias CaseManager.Teams
   alias CaseManager.Teams.User
   alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
-    page = Ash.read!(User, action: :page_by_name, actor: current_user)
-    users = page.results
+    users = Teams.list_users!(actor: current_user)
 
     socket =
       socket
       |> assign(:menu_item, :users)
       |> assign(:logo_img, Helpers.load_logo())
       |> assign(current_user: current_user)
-      |> assign(:users, users)
-      |> assign(:page, page)
-      |> assign(:more_users?, page.more?)
+      |> assign(:users, users.results)
+      |> assign(:page, users)
+      |> assign(:more_users?, users.more?)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
       |> assign(:user_id, nil)
@@ -66,14 +66,13 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_event("refresh_users", _params, socket) do
-    page = Ash.read!(User, action: :page_by_name, actor: socket.assigns.current_user)
-    users = page.results
+    users = Teams.list_users!(actor: socket.assigns.current_user)
 
     socket =
       socket
-      |> assign(:users, users)
-      |> assign(:page, page)
-      |> assign(:more_users?, page.more?)
+      |> assign(:users, users.results)
+      |> assign(:page, users)
+      |> assign(:more_users?, users.more?)
       |> assign(:pending_refresh?, false)
 
     {:noreply, socket}
@@ -82,7 +81,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
   @impl true
   def handle_event("delete_user", %{"user_id" => user_id}, socket) do
     socket =
-      case Ash.get(User, user_id) do
+      case Teams.get_user_by_id(user_id, actor: socket.assigns.current_user) do
         {:ok, user} ->
           Ash.destroy!(user)
           assign(socket, :pending_refresh?, true)
@@ -98,9 +97,8 @@ defmodule CaseManagerWeb.UsersLive.Index do
   def handle_event("show_form_modal", %{"user_id" => user_id}, socket) do
     socket = assign(socket, :cta, gettext("Edit User"))
 
-    user = Ash.get!(User, user_id)
-
-    user
+    user_id
+    |> Teams.get_user_by_id!(actor: socket.assigns.current_user)
     |> Form.for_update(:update, forms: [auto?: true])
     |> set_form_for_modal(socket)
   end
