@@ -2,8 +2,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
+  alias Ash.Notifier.Notification
   alias CaseManager.ICM.Case
   alias CaseManagerWeb.Helpers
+  alias Phoenix.Socket.Broadcast
 
   require Ash.Query
 
@@ -13,8 +15,14 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_user
+
     if connected?(socket) do
-      if current_user.team_type == :mssp, do: CaseManagerWeb.Endpoint.subscribe("case:created")
+      if current_user.team_type == :mssp do
+        CaseManagerWeb.Endpoint.subscribe("case:created")
+        CaseManagerWeb.Endpoint.subscribe("case:escalated:all")
+      else
+        CaseManagerWeb.Endpoint.subscribe("case:escalated:" <> current_user.team_id)
+      end
     end
 
     CaseManager.SelectedAlerts.drop_selected_alerts(current_user.id)
@@ -55,7 +63,13 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_info(%Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: case}}, socket) do
+  def handle_info(%Broadcast{event: "create", payload: %Notification{data: case}}, socket) do
+    case = Ash.load!(case, [:team, :assignee])
+    {:noreply, stream_insert(socket, :cases, case, at: 0)}
+  end
+
+  def handle_info(%Broadcast{event: "escalate", payload: %Notification{data: case}}, socket) do
+    case = Ash.load!(case, [:team, :assignee])
     {:noreply, stream_insert(socket, :cases, case, at: 0)}
   end
 
