@@ -59,6 +59,7 @@ defmodule CaseManager.ICM.Comment do
     defaults [:destroy, update: :*]
 
     create :create do
+      description "Create a comment."
       accept :*
       primary? true
 
@@ -66,8 +67,13 @@ defmodule CaseManager.ICM.Comment do
     end
 
     read :read do
+      description "List all comments"
       primary? true
       prepare build(load: [user: [:team, :full_name]])
     end
+  end
+
+  resource do
+    description "A comment is the messages communicated between MSSPs and customers on cases."
   end
 end

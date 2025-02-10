@@ -80,6 +80,7 @@ defmodule CaseManager.ICM.Alert do
     defaults [:read, :destroy, update: :*]
 
     create :create do
+      description "Submit an alert."
       primary? true
 
       accept [
@@ -95,6 +96,8 @@ defmodule CaseManager.ICM.Alert do
     end
 
     read :read_paginated do
+      description "List alerts paginated."
+
       pagination do
         required? true
         offset? true
@@ -104,6 +107,8 @@ defmodule CaseManager.ICM.Alert do
     end
 
     update :update_additional_data do
+      description "Change the additional related data to the alert."
+
       accept [
         :additional_data
       ]
@@ -112,6 +117,7 @@ defmodule CaseManager.ICM.Alert do
 
   resource do
     plural_name :alerts
+    description "An alert or incident triggered on a third-party security product."
   end
 
   preparations do

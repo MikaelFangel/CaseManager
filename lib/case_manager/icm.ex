@@ -6,11 +6,11 @@ defmodule CaseManager.ICM do
   use Ash.Domain,
     extensions: [AshJsonApi.Domain, AshAdmin.Domain]
 
-  alias CaseManager.ICM.Alert
+  alias CaseManager.ICM
 
   json_api do
     routes do
-      base_route "/alerts", Alert do
+      base_route "/alerts", ICM.Alert do
         post :create
         patch :update_additional_data
       end
@@ -21,10 +21,16 @@ defmodule CaseManager.ICM do
     show?(true)
   end
 
-  resources do
-    resource Alert
+  domain do
+    description """
+    Resources related to incident case management (ICM).
+    """
+  end
 
-    resource CaseManager.ICM.Case do
+  resources do
+    resource ICM.Alert
+
+    resource ICM.Case do
       define :escalate_case, args: [], action: :escalate
       define :upload_file_to_case, args: [:file], action: :upload_file
       define :add_comment_to_case, args: [:body], action: :add_comment
@@ -32,8 +38,8 @@ defmodule CaseManager.ICM do
       define :assign_case, args: [:assignee], action: :set_assignee
     end
 
-    resource CaseManager.ICM.CaseAlert
-    resource CaseManager.ICM.Comment
-    resource CaseManager.ICM.File
+    resource ICM.CaseAlert
+    resource ICM.Comment
+    resource ICM.File
   end
 end

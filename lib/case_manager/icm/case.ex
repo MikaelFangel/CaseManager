@@ -119,6 +119,8 @@ defmodule CaseManager.ICM.Case do
     defaults [:read, :destroy]
 
     create :create do
+      description "Create a case with related alerts."
+
       accept [
         :title,
         :description,
@@ -138,6 +140,7 @@ defmodule CaseManager.ICM.Case do
     end
 
     read :read_paginated do
+      description "List cases paginated."
       filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
 
       pagination do
@@ -149,6 +152,8 @@ defmodule CaseManager.ICM.Case do
     end
 
     update :update do
+      description "Update the case information."
+
       accept [
         :title,
         :description,
@@ -165,6 +170,7 @@ defmodule CaseManager.ICM.Case do
     end
 
     update :set_assignee do
+      description "Assign a case to a user."
       require_atomic? false
 
       argument :assignee, :string
@@ -173,6 +179,7 @@ defmodule CaseManager.ICM.Case do
     end
 
     update :add_comment do
+      description "Comment on the case."
       require_atomic? false
 
       argument :body, :string, allow_nil?: false
@@ -186,6 +193,7 @@ defmodule CaseManager.ICM.Case do
     end
 
     update :remove_alert do
+      description "Remove an alert related to the case."
       require_atomic? false
 
       argument :alert_id, :uuid, allow_nil?: false
@@ -194,6 +202,7 @@ defmodule CaseManager.ICM.Case do
     end
 
     update :upload_file do
+      description "Upload a file and relate it to the case."
       require_atomic? false
 
       argument :file, :map, allow_nil?: false
@@ -202,12 +211,14 @@ defmodule CaseManager.ICM.Case do
     end
 
     update :escalate do
+      description "Escalate a case and thus make it visible to its related team."
       change set_attribute(:escalated, true)
     end
   end
 
   resource do
     plural_name :cases
+    description "A case about one or more alerts."
   end
 
   preparations do

@@ -37,4 +37,8 @@ defmodule CaseManager.Teams.Phone do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
+
+  resource do
+    description "Phone number to contact a team."
+  end
 end
