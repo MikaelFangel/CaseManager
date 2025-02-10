@@ -26,8 +26,8 @@ defmodule CaseManager.Teams.Team do
   end
 
   relationships do
-    has_many :alert, CaseManager.Alerts.Alert
-    has_many :case, CaseManager.Cases.Case
+    has_many :alert, CaseManager.ICM.Alert
+    has_many :case, CaseManager.ICM.Case
     has_many :ip, CaseManager.Teams.IP
     has_many :email, CaseManager.Teams.Email
     has_many :phone, CaseManager.Teams.Phone
@@ -94,13 +94,6 @@ defmodule CaseManager.Teams.Team do
     end
 
     defaults [:read, :destroy]
-  end
-
-  code_interface do
-    define :read_by_name_asc
-    define :page_by_name_asc
-    define :add_case, args: [:case]
-    define :add_alert, args: [:alert]
   end
 
   aggregates do

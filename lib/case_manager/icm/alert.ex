@@ -1,10 +1,10 @@
-defmodule CaseManager.Alerts.Alert do
+defmodule CaseManager.ICM.Alert do
   @moduledoc """
   Resource that represents an alert in the system. The Resource is to be used by the JSON API 
   and also to view and edit alerts within the application.
   """
   use Ash.Resource,
-    domain: CaseManager.Alerts,
+    domain: CaseManager.ICM,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     extensions: [AshJsonApi.Resource]
@@ -69,8 +69,8 @@ defmodule CaseManager.Alerts.Alert do
       allow_nil? false
     end
 
-    many_to_many :case, CaseManager.Cases.Case do
-      through CaseManager.Relationships.CaseAlert
+    many_to_many :case, CaseManager.ICM.Case do
+      through CaseManager.ICM.CaseAlert
       source_attribute_on_join_resource :alert_id
       destination_attribute_on_join_resource :case_id
     end

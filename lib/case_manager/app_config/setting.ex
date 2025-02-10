@@ -61,11 +61,6 @@ defmodule CaseManager.AppConfig.Setting do
     end
   end
 
-  code_interface do
-    define :set_setting, args: [:key, :value]
-    define :upload_file, args: [:key, :value, :file]
-  end
-
   identities do
     identity :key, [:key]
   end

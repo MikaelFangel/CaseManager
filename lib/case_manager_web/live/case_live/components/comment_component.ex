@@ -3,7 +3,7 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   use CaseManagerWeb, :live_component
 
   alias AshPhoenix.Form
-  alias CaseManager.Cases.Case
+  alias CaseManager.ICM.Case
 
   def update(assigns, socket) do
     form =

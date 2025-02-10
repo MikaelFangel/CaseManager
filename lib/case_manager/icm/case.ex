@@ -1,10 +1,10 @@
-defmodule CaseManager.Cases.Case do
+defmodule CaseManager.ICM.Case do
   @moduledoc """
   Resource that represents a single case in the system.
   """
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.Cases,
+    domain: CaseManager.ICM,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
@@ -103,14 +103,14 @@ defmodule CaseManager.Cases.Case do
     belongs_to :assignee, User, allow_nil?: true
     belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
 
-    many_to_many :alert, CaseManager.Alerts.Alert do
-      through CaseManager.Relationships.CaseAlert
+    many_to_many :alert, CaseManager.ICM.Alert do
+      through CaseManager.ICM.CaseAlert
       source_attribute_on_join_resource :case_id
       destination_attribute_on_join_resource :alert_id
     end
 
-    has_many :comment, CaseManager.Cases.Comment
-    has_many :file, CaseManager.Cases.File
+    has_many :comment, CaseManager.ICM.Comment
+    has_many :file, CaseManager.ICM.File
   end
 
   actions do
@@ -202,14 +202,6 @@ defmodule CaseManager.Cases.Case do
     update :escalate do
       change set_attribute(:escalated, true)
     end
-  end
-
-  code_interface do
-    define :escalate, args: []
-    define :upload_file, args: [:file]
-    define :add_comment, args: [:body]
-    define :remove_alert, args: [:alert_id]
-    define :set_assignee, args: [:assignee]
   end
 
   resource do

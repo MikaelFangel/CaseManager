@@ -1,8 +1,10 @@
 defmodule CaseManagerWeb.FileController do
   use CaseManagerWeb, :controller
 
+  alias CaseManager.ICM.File
+
   def download(conn, %{"id" => id}) do
-    file = Ash.get!(CaseManager.Cases.File, id)
+    file = Ash.get!(File, id)
 
     conn
     |> put_resp_content_type("application/octet-stream")

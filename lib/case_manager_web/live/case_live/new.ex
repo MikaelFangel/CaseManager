@@ -3,7 +3,7 @@ defmodule CaseManagerWeb.CaseLive.New do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
-  alias CaseManager.Alerts.Alert
+  alias CaseManager.ICM.Alert
   alias CaseManager.SelectedAlerts
 
   @impl true

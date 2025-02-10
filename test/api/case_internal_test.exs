@@ -5,7 +5,7 @@ defmodule CaseManager.CaseInternalTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
 
-  alias CaseManager.Cases.Case
+  alias CaseManager.ICM
   alias CaseManager.Teams.Team
   alias CaseManager.Teams.User
   alias CaseManagerWeb.CaseGenerator
@@ -61,9 +61,9 @@ defmodule CaseManager.CaseInternalTest do
       check all(case_attr <- CaseGenerator.case_attrs()) do
         team = Ash.load!(customer_user, :team).team
 
-        assert {:ok, _case} = Team.add_case(team, case_attr, actor: mssp_user)
-        assert {:error, _case} = Team.add_case(team, case_attr, actor: customer_user)
-        assert {:error, _case} = Team.add_case(team, %{}, actor: mssp_user)
+        assert {:ok, _case} = CaseManager.Teams.add_case_to_team(team, case_attr, actor: mssp_user)
+        assert {:error, _case} = CaseManager.Teams.add_case_to_team(team, case_attr, actor: customer_user)
+        assert {:error, _case} = CaseManager.Teams.add_case_to_team(team, %{}, actor: mssp_user)
       end
     end
   end
@@ -78,14 +78,14 @@ defmodule CaseManager.CaseInternalTest do
               case_attr <- CaseGenerator.case_attrs(),
               comment_body <- StreamData.string(:utf8, min_length: 1)
             ) do
-        team = Team.add_case!(Ash.load!(customer_user, :team).team, case_attr, actor: mssp_user)
+        team = CaseManager.Teams.add_case_to_team!(Ash.load!(customer_user, :team).team, case_attr, actor: mssp_user)
 
         [case] = team.case
 
         refute eve_user.team_id == customer_user.team_id
-        assert {:ok, _comment} = Case.add_comment(case, comment_body, actor: customer_user)
-        assert {:ok, _comment} = Case.add_comment(case, comment_body, actor: mssp_user)
-        assert {:error, _comment} = Case.add_comment(case, comment_body, actor: eve_user)
+        assert {:ok, _comment} = ICM.add_comment_to_case(case, comment_body, actor: customer_user)
+        assert {:ok, _comment} = ICM.add_comment_to_case(case, comment_body, actor: mssp_user)
+        assert {:error, _comment} = ICM.add_comment_to_case(case, comment_body, actor: eve_user)
       end
     end
   end

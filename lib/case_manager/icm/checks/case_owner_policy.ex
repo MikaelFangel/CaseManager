@@ -4,7 +4,7 @@ defmodule CaseManager.Policies.CaseOwnerPolicy do
   """
   use Ash.Policy.SimpleCheck
 
-  alias CaseManager.Cases.Case
+  alias CaseManager.ICM.Case
   alias CaseManager.Teams.User
 
   @impl true

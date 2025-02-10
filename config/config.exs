@@ -85,10 +85,8 @@ config :ash,
 
 config :case_manager, :ash_domains, [
   CaseManager.AppConfig,
-  CaseManager.Cases,
-  CaseManager.Alerts,
-  CaseManager.Teams,
-  CaseManager.Relationships
+  CaseManager.ICM,
+  CaseManager.Teams
 ]
 
 config :case_manager, :token_signing_secret, "some_super_secret_random_value"

@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    page = Team.page_by_name_asc!(load: [:email, :phone, :ip])
+    page = CaseManager.Teams.read_teams_paged!(load: [:email, :phone, :ip])
     teams = page.results
 
     socket =
@@ -47,7 +47,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("refresh_teams", _params, socket) do
-    page = Team.page_by_name_asc!(load: [:email, :phone, :ip])
+    page = CaseManager.Teams.read_teams_paged!(load: [:email, :phone, :ip])
     teams = page.results
 
     socket =
