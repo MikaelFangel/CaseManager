@@ -35,6 +35,7 @@ defmodule CaseManager.Teams.Team do
 
   actions do
     create :create do
+      description "Add a team."
       accept [:name, :type]
 
       argument :ip, {:array, :map}, allow_nil?: true
@@ -47,6 +48,7 @@ defmodule CaseManager.Teams.Team do
     end
 
     update :update do
+      description "Update the team information."
       primary? true
       require_atomic? false
       accept [:name, :type]
@@ -61,6 +63,7 @@ defmodule CaseManager.Teams.Team do
     end
 
     update :add_case do
+      description "Add a case to a team."
       require_atomic? false
 
       argument :case, :map, allow_nil?: false
@@ -69,6 +72,7 @@ defmodule CaseManager.Teams.Team do
     end
 
     update :add_alert do
+      description "Add an alert to a team."
       require_atomic? false
 
       argument :alert, :map, allow_nil?: false
@@ -77,11 +81,13 @@ defmodule CaseManager.Teams.Team do
     end
 
     read :read_by_name_asc do
+      description "List all teams by name in acending order."
       primary? false
       prepare(build(sort: [name: :asc]))
     end
 
     read :page_by_name_asc do
+      description "List all teams by name in acending order paginated."
       primary? false
       prepare(build(sort: [name: :asc]))
 
@@ -94,6 +100,10 @@ defmodule CaseManager.Teams.Team do
     end
 
     defaults [:read, :destroy]
+  end
+
+  resource do
+    description "A team of user that can either be a customer or the MSSP itself."
   end
 
   aggregates do

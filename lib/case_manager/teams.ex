@@ -5,22 +5,30 @@ defmodule CaseManager.Teams do
   use Ash.Domain,
     extensions: [AshAdmin.Domain]
 
+  alias CaseManager.Teams
+
   admin do
     show?(true)
   end
 
+  domain do
+    description """
+    Resources related to a team.
+    """
+  end
+
   resources do
-    resource CaseManager.Teams.Team do
+    resource Teams.Team do
       define :read_teams, action: :read_by_name_asc
       define :read_teams_paged, action: :page_by_name_asc
       define :add_case_to_team, args: [:case], action: :add_case
       define :add_alert_to_team, args: [:alert], action: :add_alert
     end
 
-    resource CaseManager.Teams.User
-    resource CaseManager.Teams.Token
-    resource CaseManager.Teams.IP
-    resource CaseManager.Teams.Email
-    resource CaseManager.Teams.Phone
+    resource Teams.User
+    resource Teams.Token
+    resource Teams.IP
+    resource Teams.Email
+    resource Teams.Phone
   end
 end
