@@ -38,4 +38,8 @@ defmodule CaseManager.ICM.File do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
+
+  resource do
+    description "A file in the context of a case."
+  end
 end

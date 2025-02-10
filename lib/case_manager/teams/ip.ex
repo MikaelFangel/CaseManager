@@ -42,4 +42,8 @@ defmodule CaseManager.Teams.IP do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
+
+  resource do
+    description "IP a address used by a team."
+  end
 end

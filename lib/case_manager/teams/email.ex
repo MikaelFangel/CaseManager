@@ -36,4 +36,8 @@ defmodule CaseManager.Teams.Email do
   actions do
     defaults [:read, :destroy, create: :*, update: :*]
   end
+
+  resource do
+    description "Email address for a team."
+  end
 end

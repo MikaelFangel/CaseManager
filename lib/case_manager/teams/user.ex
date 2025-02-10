@@ -73,6 +73,7 @@ defmodule CaseManager.Teams.User do
     defaults [:read, :destroy, create: :*]
 
     update :update do
+      description "Update the information on a user."
       primary? true
       require_atomic? false
       accept [:first_name, :last_name, :email, :role, :team_id]
@@ -92,6 +93,7 @@ defmodule CaseManager.Teams.User do
     end
 
     read :page_by_name do
+      description "List all users paginated by name"
       prepare(build(load: [:full_name, :team], sort: [first_name: :asc]))
 
       filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
@@ -103,6 +105,10 @@ defmodule CaseManager.Teams.User do
         default_limit 20
       end
     end
+  end
+
+  resource do
+    description "A user on the application."
   end
 
   identities do
