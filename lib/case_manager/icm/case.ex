@@ -33,6 +33,8 @@ defmodule CaseManager.ICM.Case do
 
     prefix "case"
     publish :create, ["created"]
+    publish :escalate, ["escalated", "all"]
+    publish :escalate, ["escalated", :team_id]
   end
 
   policies do
@@ -209,7 +211,7 @@ defmodule CaseManager.ICM.Case do
   end
 
   preparations do
-    prepare build(load: [:team])
+    prepare build(load: [:team, :assignee])
   end
 
   aggregates do
