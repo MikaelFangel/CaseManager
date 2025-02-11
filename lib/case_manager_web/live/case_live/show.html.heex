@@ -188,5 +188,5 @@
   on_action={JS.push("escalate_case", value: %{id: @id}) |> JS.push("hide_confirmation_modal")}
   action_btn_txt={gettext("Escalate")}
   title={gettext("Escalate case?")}
-  body={gettext("This will escalate the case permanently")}
+  body={gettext("This will escalate the case permanently, you won't be able to deescalate it.")}
 />
