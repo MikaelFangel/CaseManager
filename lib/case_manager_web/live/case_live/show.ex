@@ -23,7 +23,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
         %Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: comment}},
         socket
       ) do
-    comment = Map.put(comment, :header, nil)
+    comment = comment |> Ash.load!(:user) |> Map.put(:header, nil)
     {:noreply, stream_insert(socket, :comments, comment, at: 0)}
   end
 
