@@ -84,7 +84,7 @@ config :ash,
   default_page_type: :keyset
 
 config :case_manager, :ash_domains, [
-  CaseManager.AppConfig,
+  CaseManager.Configuration,
   CaseManager.ICM,
   CaseManager.Teams
 ]

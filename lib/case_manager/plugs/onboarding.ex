@@ -4,7 +4,7 @@ defmodule CaseManagerWeb.Plugs.Onboarding do
   """
   import Plug.Conn
 
-  alias CaseManager.AppConfig.Setting
+  alias CaseManager.Configuration.Setting
 
   def init(default), do: default
 
