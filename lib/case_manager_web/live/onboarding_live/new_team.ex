@@ -2,14 +2,9 @@ defmodule CaseManagerWeb.OnboardingLive.NewTeam do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias AshPhoenix.Form
-
   @impl true
   def mount(_params, _session, socket) do
-    form =
-      CaseManager.Teams.Team
-      |> Form.for_create(:create, forms: [auto?: true])
-      |> to_form()
+    form = to_form(CaseManager.Teams.form_to_add_team())
 
     socket = assign(socket, :form, form)
 

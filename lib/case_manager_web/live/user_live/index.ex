@@ -3,6 +3,7 @@ defmodule CaseManagerWeb.UserLive.Index do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
+  alias CaseManager.Teams
   alias CaseManagerWeb.Helpers
 
   @impl true
@@ -19,12 +20,12 @@ defmodule CaseManagerWeb.UserLive.Index do
   def handle_params(_params, _url, socket) do
     info_form =
       socket.assigns[:current_user]
-      |> Form.for_update(:update, forms: [auto?: true])
+      |> Teams.form_to_edit_user()
       |> to_form()
 
     password_form =
       socket.assigns[:current_user]
-      |> Form.for_update(:update, forms: [auto?: true])
+      |> Teams.form_to_edit_user()
       |> to_form()
 
     socket =

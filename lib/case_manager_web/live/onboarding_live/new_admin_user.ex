@@ -2,8 +2,7 @@ defmodule CaseManagerWeb.OnboardingLive.NewAdminUser do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias AshPhoenix.Form
-  alias CaseManager.Teams.User
+  alias CaseManager.Teams
 
   @impl true
   def mount(_params, _session, socket) do
@@ -29,8 +28,8 @@ defmodule CaseManagerWeb.OnboardingLive.NewAdminUser do
   def handle_params(_params, _uri, socket) do
     # as: "user" is needed to use ash authentication to login after creating a user
     form =
-      User
-      |> Form.for_create(:register_with_password, forms: [auto?: true], as: "user")
+      [as: "user"]
+      |> Teams.form_to_register_user()
       |> to_form()
 
     socket =

@@ -2,9 +2,9 @@ defmodule CaseManagerWeb.CaseLive.New do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
-  alias AshPhoenix.Form
   alias CaseManager.ICM
   alias CaseManager.SelectedAlerts
+  alias CaseManager.Teams
 
   @impl true
   def mount(_params, _session, socket) do
@@ -28,10 +28,7 @@ defmodule CaseManagerWeb.CaseLive.New do
         form =
           selected_alerts
           |> first_team.()
-          |> Form.for_update(:add_case,
-            forms: [auto?: true],
-            actor: socket.assigns[:current_user]
-          )
+          |> Teams.form_to_add_case_to_team(actor: socket.assigns[:current_user])
           |> to_form()
 
         socket =

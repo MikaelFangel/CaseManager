@@ -8,8 +8,8 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   def update(assigns, socket) do
     form =
       assigns[:case_id]
-      |> ICM.get_case_by_id!(actor: assigns.current_user)
-      |> Form.for_update(:add_comment, forms: [auto?: true], actor: assigns.current_user)
+      |> ICM.get_case_by_id!(actor: assigns[:current_user])
+      |> ICM.form_to_add_comment_to_case(actor: assigns[:current_user])
       |> to_form()
 
     {:ok,
