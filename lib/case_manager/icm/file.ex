@@ -1,7 +1,5 @@
 defmodule CaseManager.ICM.File do
-  @moduledoc """
-  Resource for file uploads.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     data_layer: AshPostgres.DataLayer,

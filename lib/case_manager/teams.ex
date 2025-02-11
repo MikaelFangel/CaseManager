@@ -3,7 +3,7 @@ defmodule CaseManager.Teams do
   Domain that reprensents teams and their related resources.
   """
   use Ash.Domain,
-    extensions: [AshAdmin.Domain]
+    extensions: [AshAdmin.Domain, AshPhoenix]
 
   alias CaseManager.Teams
 
@@ -19,13 +19,24 @@ defmodule CaseManager.Teams do
 
   resources do
     resource Teams.Team do
-      define :read_teams, action: :read_by_name_asc
-      define :read_teams_paged, action: :page_by_name_asc
+      define :add_team, action: :create
+      define :get_team_by_id, action: :read, get_by: :id
+      define :list_teams, action: :read, default_options: [query: [sort_input: "name"]]
+      define :list_teams_paged, action: :read_paged, default_options: [query: [sort_input: "name"]]
       define :add_case_to_team, args: [:case], action: :add_case
       define :add_alert_to_team, args: [:alert], action: :add_alert
     end
 
-    resource Teams.User
+    resource Teams.User do
+      define :register_user, action: :register_with_password
+      define :get_user_by_id, action: :read_paged, get_by: :id
+      define :edit_user, action: :update
+
+      define :list_users,
+        action: :read_paged,
+        default_options: [query: [sort_input: "full_name", load: [:full_name, :team]]]
+    end
+
     resource Teams.Token
     resource Teams.IP
     resource Teams.Email

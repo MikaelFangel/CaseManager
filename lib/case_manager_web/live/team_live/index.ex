@@ -3,12 +3,13 @@ defmodule CaseManagerWeb.TeamLive.Index do
   use CaseManagerWeb, :live_view
 
   alias AshPhoenix.Form
+  alias CaseManager.Teams
   alias CaseManager.Teams.Team
   alias CaseManagerWeb.Helpers
 
   @impl true
   def mount(_params, _session, socket) do
-    page = CaseManager.Teams.read_teams_paged!(load: [:email, :phone, :ip])
+    page = Teams.list_teams_paged!(load: [:email, :phone, :ip])
     teams = page.results
 
     socket =
@@ -17,7 +18,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:menu_item, :teams)
       |> assign(:teams, teams)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_teams?, page.more?)
       |> assign(:selected_team, nil)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
@@ -40,21 +41,21 @@ defmodule CaseManagerWeb.TeamLive.Index do
       socket
       |> assign(:teams, teams)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_teams?, page.more?)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("refresh_teams", _params, socket) do
-    page = CaseManager.Teams.read_teams_paged!(load: [:email, :phone, :ip])
+    page = Teams.list_teams_paged!(load: [:email, :phone, :ip])
     teams = page.results
 
     socket =
       socket
       |> assign(:teams, teams)
       |> assign(:page, page)
-      |> assign(:more_pages?, page.more?)
+      |> assign(:more_teams?, page.more?)
       |> assign(:pending_refresh?, false)
       |> assign(:selected_team, nil)
 
@@ -64,7 +65,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("select_team", %{"team_id" => team_id}, socket) do
     team =
-      Ash.get!(Team, team_id,
+      Teams.get_team_by_id!(team_id,
         load: [
           :alert_with_cases_count,
           :alert_without_cases_count,
@@ -94,7 +95,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("delete_team", %{"team_id" => team_id}, socket) do
     socket =
-      case Ash.get(Team, team_id) do
+      case Teams.get_team_by_id(team_id) do
         {:ok, team} ->
           Ash.destroy!(team)
           assign(socket, :pending_refresh?, true)
@@ -108,9 +109,8 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("show_form_modal", %{"team_id" => team_id}, socket) do
-    team = Ash.get!(Team, team_id, load: [:email, :phone, :ip])
-
-    team
+    team_id
+    |> Teams.get_team_by_id!(load: [:email, :phone, :ip])
     |> Form.for_update(:update, forms: [auto?: true])
     |> set_form_for_modal(socket)
   end

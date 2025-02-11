@@ -73,11 +73,7 @@
         </.table>
 
         <div class="my-4 flex justify-center">
-          <%= if @more_pages? do %>
-            <.button phx-click="load_more_teams">{gettext("Load More")}</.button>
-          <% else %>
-            <span class="text-xs font-semibold">{gettext("No more teams")}</span>
-          <% end %>
+          <.button :if={@more_teams?} phx-click="load_more_teams">{gettext("Load More")}</.button>
         </div>
       </div>
     </div>

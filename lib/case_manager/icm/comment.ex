@@ -1,14 +1,13 @@
 defmodule CaseManager.ICM.Comment do
-  @moduledoc """
-  Resource that represents a comment belonging to a case in the system.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.ICM,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAdmin.Resource]
+    extensions: [AshAdmin.Resource],
+    primary_read_warning?: false
 
   postgres do
     table "comment"

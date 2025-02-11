@@ -30,7 +30,7 @@
     <div
       class="flex flex-col items-center mt-4"
       id="users-container"
-      phx-viewport-bottom={@more_pages? && "load_more_users"}
+      phx-viewport-bottom={@more_users? && "load_more_users"}
     >
       <div :for={user <- @users} id={"user-" <> user.id} class="w-2/3 flex drop-shadow bg-white rounded-xl mt-4 p-4">
         <div class="w-1/12 flex justify-center items-center -ml-4">
@@ -78,11 +78,7 @@
     </div>
 
     <div class="my-4 flex justify-center">
-      <%= if @more_pages? do %>
-        <.button phx-click="load_more_users">{gettext("Load More")}</.button>
-      <% else %>
-        <span class="text-xs font-semibold">{gettext("No more users")}</span>
-      <% end %>
+      <.button :if={@more_users?} phx-click="load_more_users">{gettext("Load More")}</.button>
     </div>
   </div>
 </div>

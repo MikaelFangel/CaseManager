@@ -31,7 +31,7 @@
     id="case_table"
     rows={@streams.cases}
     role={@current_user.team_type}
-    more_pages?={@more_pages?}
+    more_cases?={@more_cases?}
     row_click={fn {_id, case} -> JS.patch(~p"/case/#{case.id}") end}
   />
 </div>

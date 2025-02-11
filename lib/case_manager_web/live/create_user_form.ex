@@ -55,7 +55,7 @@ defmodule CaseManagerWeb.CreateUserForm do
   @impl true
   def handle_event("save", %{"user" => params}, socket) do
     form = Form.validate(socket.assigns.form, params)
-    if form.source.valid?, do: CaseManager.AppConfig.add_setting!("onboarding_completed?", "true")
+    if form.source.valid?, do: CaseManager.Configuration.add_setting!("onboarding_completed?", "true")
 
     socket =
       socket

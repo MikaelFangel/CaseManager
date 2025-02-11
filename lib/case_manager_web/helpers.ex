@@ -3,7 +3,7 @@ defmodule CaseManagerWeb.Helpers do
   Module that defines helper function for the web-based part of the application.
   """
 
-  alias CaseManager.AppConfig.Setting
+  alias CaseManager.Configuration.Setting
 
   @doc """
   Render basic HTML from text with markdown. All HTML tags are stripped before returning it as a raw value.

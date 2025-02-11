@@ -3,7 +3,8 @@ defmodule CaseManagerWeb.CaseLive.Index do
   use CaseManagerWeb, :live_view
 
   alias Ash.Notifier.Notification
-  alias CaseManager.ICM.Case
+  alias CaseManager.ICM
+  alias CaseManagerWeb.Endpoint
   alias CaseManagerWeb.Helpers
   alias Phoenix.Socket.Broadcast
 
@@ -18,10 +19,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
     if connected?(socket) do
       if current_user.team_type == :mssp do
-        CaseManagerWeb.Endpoint.subscribe("case:created")
-        CaseManagerWeb.Endpoint.subscribe("case:escalated:all")
+        Endpoint.subscribe("case:created")
+        Endpoint.subscribe("case:escalated:all")
       else
-        CaseManagerWeb.Endpoint.subscribe("case:escalated:" <> current_user.team_id)
+        Endpoint.subscribe("case:escalated:" <> current_user.team_id)
       end
     end
 
@@ -59,16 +60,12 @@ defmodule CaseManagerWeb.CaseLive.Index do
      socket
      |> stream(:cases, next_page.results)
      |> assign(:current_page, next_page)
-     |> assign(:more_pages?, next_page.more?)}
+     |> assign(:more_cases?, next_page.more?)}
   end
 
   @impl true
-  def handle_info(%Broadcast{event: "create", payload: %Notification{data: case}}, socket) do
-    case = Ash.load!(case, [:team, :assignee])
-    {:noreply, stream_insert(socket, :cases, case, at: 0)}
-  end
-
-  def handle_info(%Broadcast{event: "escalate", payload: %Notification{data: case}}, socket) do
+  def handle_info(%Broadcast{event: event, payload: %Notification{data: case}}, socket)
+      when event in ["create", "escalate"] do
     case = Ash.load!(case, [:team, :assignee])
     {:noreply, stream_insert(socket, :cases, case, at: 0)}
   end
@@ -80,23 +77,21 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   defp load_cases(socket) do
+    assigns = socket.assigns
+
     statuses =
-      case socket.assigns.status_type do
+      case assigns.status_type do
         :open -> @open_statuses
         :closed -> @closed_statuses
       end
 
-    cases_page =
-      Case
-      |> Ash.Query.filter(status in ^statuses)
-      |> Ash.Query.sort(updated_at: :desc)
-      |> Ash.Query.load(assignee: [:full_name])
-      |> Ash.read!(action: :read_paginated, actor: socket.assigns.current_user)
+    cases =
+      ICM.list_cases!(query: [filter: [status: [in: statuses]], sort_input: "-updated_at"], actor: assigns.current_user)
 
     socket
     # Reset stream to ensure no duplicates
-    |> stream(:cases, cases_page.results, reset: true)
-    |> assign(:current_page, cases_page)
-    |> assign(:more_pages?, cases_page.more?)
+    |> stream(:cases, cases.results, reset: true)
+    |> assign(:current_page, cases)
+    |> assign(:more_cases?, cases.more?)
   end
 end

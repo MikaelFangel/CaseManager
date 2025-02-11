@@ -1,8 +1,5 @@
 defmodule CaseManager.Teams.Team do
-  @moduledoc """
-  Resource for managing teams withing the application. A Team is supposed to be an
-  entity that are used to group users.
-  """
+  @moduledoc false
   use Ash.Resource,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer
@@ -14,7 +11,7 @@ defmodule CaseManager.Teams.Team do
 
   attributes do
     uuid_primary_key :id
-    attribute :name, :string, allow_nil?: false
+    attribute :name, :string, allow_nil?: false, public?: true
 
     attribute :type, :atom do
       default :customer
@@ -80,16 +77,13 @@ defmodule CaseManager.Teams.Team do
       change manage_relationship(:alert, type: :create)
     end
 
-    read :read_by_name_asc do
+    read :read do
       description "List all teams by name in acending order."
-      primary? false
-      prepare(build(sort: [name: :asc]))
+      primary? true
     end
 
-    read :page_by_name_asc do
+    read :read_paged do
       description "List all teams by name in acending order paginated."
-      primary? false
-      prepare(build(sort: [name: :asc]))
 
       pagination do
         required? true
@@ -99,7 +93,7 @@ defmodule CaseManager.Teams.Team do
       end
     end
 
-    defaults [:read, :destroy]
+    defaults [:destroy]
   end
 
   resource do
@@ -107,72 +101,23 @@ defmodule CaseManager.Teams.Team do
   end
 
   aggregates do
-    count :alert_with_cases_count, :alert do
-      filter expr(case_count > 0)
-    end
-
-    count :alert_without_cases_count, :alert do
-      filter expr(case_count == 0)
-    end
-
-    count :alert_info_count, :alert do
-      filter expr(risk_level == :info)
-    end
-
-    count :alert_low_count, :alert do
-      filter expr(risk_level == :low)
-    end
-
-    count :alert_medium_count, :alert do
-      filter expr(risk_level == :medium)
-    end
-
-    count :alert_high_count, :alert do
-      filter expr(risk_level == :high)
-    end
-
-    count :alert_critical_count, :alert do
-      filter expr(risk_level == :critical)
-    end
-
-    count :case_in_progress_count, :case do
-      filter expr(status == :in_progress)
-    end
-
-    count :case_pending_count, :case do
-      filter expr(status == :pending)
-    end
-
-    count :case_t_positive_count, :case do
-      filter expr(status == :t_positive)
-    end
-
-    count :case_f_positive_count, :case do
-      filter expr(status == :f_positive)
-    end
-
-    count :case_benign_count, :case do
-      filter expr(status == :benign)
-    end
-
-    count :case_info_count, :case do
-      filter expr(priority == :info)
-    end
-
-    count :case_low_count, :case do
-      filter expr(priority == :low)
-    end
-
-    count :case_medium_count, :case do
-      filter expr(priority == :medium)
-    end
-
-    count :case_high_count, :case do
-      filter expr(priority == :high)
-    end
-
-    count :case_critical_count, :case do
-      filter expr(priority == :critical)
-    end
+    count :alert_with_cases_count, :alert, do: filter(expr(case_count > 0))
+    count :alert_without_cases_count, :alert, do: filter(expr(case_count == 0))
+    count :alert_info_count, :alert, do: filter(expr(risk_level == :info))
+    count :alert_low_count, :alert, do: filter(expr(risk_level == :low))
+    count :alert_medium_count, :alert, do: filter(expr(risk_level == :medium))
+    count :alert_high_count, :alert, do: filter(expr(risk_level == :high))
+    count :alert_critical_count, :alert, do: filter(expr(risk_level == :critical))
+    count :case_in_progress_count, :case, do: filter(expr(status == :in_progress))
+    count :case_pending_count, :case, do: filter(expr(status == :pending))
+    count :case_ping_count, :case, do: filter(expr(status == :ping))
+    count :case_t_positive_count, :case, do: filter(expr(status == :t_positive))
+    count :case_f_positive_count, :case, do: filter(expr(status == :f_positive))
+    count :case_benign_count, :case, do: filter(expr(status == :benign))
+    count :case_info_count, :case, do: filter(expr(priority == :info))
+    count :case_low_count, :case, do: filter(expr(priority == :low))
+    count :case_medium_count, :case, do: filter(expr(priority == :medium))
+    count :case_high_count, :case, do: filter(expr(priority == :high))
+    count :case_critical_count, :case, do: filter(expr(priority == :critical))
   end
 end

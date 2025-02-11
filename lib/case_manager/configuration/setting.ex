@@ -1,10 +1,10 @@
-defmodule CaseManager.AppConfig.Setting do
+defmodule CaseManager.Configuration.Setting do
   @moduledoc """
   Resource used to store application wide settings in a persitent manner.
   """
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.AppConfig,
+    domain: CaseManager.Configuration,
     data_layer: AshPostgres.DataLayer
 
   postgres do
@@ -29,7 +29,7 @@ defmodule CaseManager.AppConfig.Setting do
   end
 
   relationships do
-    has_many :file, CaseManager.AppConfig.File
+    has_many :file, CaseManager.Configuration.File
   end
 
   actions do

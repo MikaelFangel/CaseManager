@@ -4,7 +4,7 @@ defmodule CaseManager.ICM do
   hereunder the documentation of the investigations.
   """
   use Ash.Domain,
-    extensions: [AshJsonApi.Domain, AshAdmin.Domain]
+    extensions: [AshJsonApi.Domain, AshAdmin.Domain, AshPhoenix]
 
   alias CaseManager.ICM
 
@@ -28,10 +28,24 @@ defmodule CaseManager.ICM do
   end
 
   resources do
-    resource ICM.Alert
+    resource ICM.Alert do
+      define :add_alert, action: :create
+      define :update_additional_data_on_alert, action: :update_additional_data
+      define :get_alert_by_id, action: :read, get_by: :id, default_options: [load: [:team]]
+
+      define :list_alerts,
+        action: :read_paginated,
+        default_options: [query: [sort_input: "-inserted_at", load: [:team, :case]]]
+    end
 
     resource ICM.Case do
-      define :escalate_case, args: [], action: :escalate
+      define :get_case_by_id, action: :read_paginated, get_by: :id
+
+      define :list_cases,
+        action: :read_paginated,
+        default_options: [query: [sort_input: "-inserted_at", load: [assignee: :full_name]]]
+
+      define :escalate_case, action: :escalate, get_by: :id
       define :upload_file_to_case, args: [:file], action: :upload_file
       define :add_comment_to_case, args: [:body], action: :add_comment
       define :remove_alert_from_case, args: [:alert_id], action: :remove_alert

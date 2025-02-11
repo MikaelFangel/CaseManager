@@ -1,4 +1,4 @@
-defmodule CaseManager.AppConfig do
+defmodule CaseManager.Configuration do
   @moduledoc """
   Domain that controls everything related to app configuration.
   """
@@ -10,11 +10,11 @@ defmodule CaseManager.AppConfig do
   end
 
   resources do
-    resource CaseManager.AppConfig.Setting do
+    resource CaseManager.Configuration.Setting do
       define :add_setting, args: [:key, :value], action: :set_setting
       define :upload_file_to_setting, args: [:key, :value, :file], action: :upload_file
     end
 
-    resource CaseManager.AppConfig.File
+    resource CaseManager.Configuration.File
   end
 end

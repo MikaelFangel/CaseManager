@@ -1,7 +1,5 @@
 defmodule CaseManager.Teams.Email do
-  @moduledoc """
-  Resource that represents emails. This resources is different from the email used for authentication.
-  """
+  @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Teams,

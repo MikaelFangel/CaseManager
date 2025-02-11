@@ -86,8 +86,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = Ash.get!(CaseManager.ICM.Alert, alert_id)
-
+    alert = ICM.get_alert_by_id!(alert_id)
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}
