@@ -37,6 +37,10 @@ defmodule CaseManager.Teams do
         default_options: [query: [sort_input: "full_name", load: [:full_name, :team]]]
     end
 
+    resource Teams.ArchivedUser do
+      define :get_archived_user_by_id, action: :archived, get_by: :id, default_options: [load: [:full_name, :team]]
+    end
+
     resource Teams.Token
     resource Teams.IP
     resource Teams.Email

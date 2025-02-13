@@ -36,7 +36,14 @@ defmodule CaseManagerWeb.CaseLive.Show do
       )
 
     alerts = Enum.map(case.alert, &{&1.id, &1})
-    comments = case.comment |> add_date_headers() |> Enum.reverse()
+
+    comments =
+      case.comment
+      |> Enum.map(fn comment ->
+        if is_nil(comment.user), do: Ash.load!(comment, archived_user: [:team_type]), else: comment
+      end)
+      |> add_date_headers()
+      |> Enum.reverse()
 
     {:noreply,
      socket

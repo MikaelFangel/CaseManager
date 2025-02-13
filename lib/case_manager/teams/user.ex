@@ -4,7 +4,7 @@ defmodule CaseManager.Teams.User do
     otp_app: :case_manager,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication, AshAdmin.Resource],
+    extensions: [AshAuthentication, AshAdmin.Resource, AshArchival.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
   alias AshAuthentication.Strategy.Password.HashPasswordChange
@@ -16,6 +16,8 @@ defmodule CaseManager.Teams.User do
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "user_to_team_fkey"
     end
+
+     base_filter_sql "(archived_at IS NULL)"
   end
 
   authentication do
@@ -105,6 +107,7 @@ defmodule CaseManager.Teams.User do
 
   resource do
     description "A user on the application."
+    base_filter expr(is_nil(archived_at))
   end
 
   identities do

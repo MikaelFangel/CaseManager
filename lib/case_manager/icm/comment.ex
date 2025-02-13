@@ -15,7 +15,7 @@ defmodule CaseManager.ICM.Comment do
 
     references do
       reference :case, on_delete: :delete, on_update: :update, name: "comment_to_case_fkey"
-      reference :user, on_delete: :nilify, on_update: :update, name: "comment_to_user_fkey"
+      reference :user, on_delete: :nothing, on_update: :update, name: "comment_to_user_fkey"
     end
   end
 
@@ -51,7 +51,12 @@ defmodule CaseManager.ICM.Comment do
 
   relationships do
     belongs_to :case, CaseManager.ICM.Case, allow_nil?: false
-    belongs_to :user, CaseManager.Teams.User
+    belongs_to :user, CaseManager.Teams.User, allow_nil?: false
+
+    belongs_to :archived_user, CaseManager.Teams.ArchivedUser,
+      source_attribute: :user_id,
+      define_attribute?: false,
+      public?: false
   end
 
   actions do
