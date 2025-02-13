@@ -17,7 +17,7 @@ defmodule CaseManager.Teams.User do
       reference :team, on_delete: :delete, on_update: :update, name: "user_to_team_fkey"
     end
 
-     base_filter_sql "(archived_at IS NULL)"
+    base_filter_sql "(archived_at IS NULL)"
   end
 
   authentication do
