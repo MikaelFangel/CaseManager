@@ -8,6 +8,7 @@
     :ash_phoenix,
     :ash_postgres,
     :ash_authentication,
+    :ash_archival,
     :ash_authentication_phoenix
   ],
   subdirectories: ["priv/*/migrations"],
