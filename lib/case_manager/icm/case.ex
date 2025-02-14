@@ -219,6 +219,10 @@ defmodule CaseManager.ICM.Case do
     description "A case about one or more alerts."
   end
 
+  changes do
+    change set_attribute(:updated_at, &DateTime.utc_now/0)
+  end
+
   preparations do
     prepare build(load: [:team, :assignee])
   end
