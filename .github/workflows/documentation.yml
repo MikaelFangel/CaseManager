@@ -27,8 +27,8 @@ jobs:
 
       - name: Cache dependencies and build
         uses: actions/cache@v4
+        id: "cache-deps"
         with:
-          id: "cache-deps"
           path: |
             deps
             _build
