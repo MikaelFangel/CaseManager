@@ -60,4 +60,4 @@ jobs:
     - name: Set up database
       run: mix ash.setup
     - name: Run tests
-      run: mix test
+      run: mix test --max-failures 1 --trace --warnings-as-errors​
