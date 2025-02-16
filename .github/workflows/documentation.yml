@@ -28,6 +28,7 @@ jobs:
       - name: Cache dependencies and build
         uses: actions/cache@v4
         with:
+          id: "cache-deps"
           path: |
             deps
             _build
@@ -35,6 +36,7 @@ jobs:
           restore-keys: doc-${{ runner.os }}-mix-
 
       - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: mix deps.get
       
       - name: Generate Documentation
