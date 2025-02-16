@@ -32,12 +32,14 @@ jobs:
     - name: Restore dependencies cache
       uses: actions/cache@v4
       with:
+        id: "cache-deps"
         path: |
           deps
           _build
         key: dev-${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: dev-${{ runner.os }}-mix-
     - name: Install dependencies
+      if: steps.cache-deps.outputs.cache-hit != 'true'
       run: mix deps.get
     - name: Check for unused dependencies
       run: mix deps.unlock --check-unused
