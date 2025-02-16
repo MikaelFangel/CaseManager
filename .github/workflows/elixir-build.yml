@@ -56,8 +56,6 @@ jobs:
     - name: Install dependencies
       run: mix deps.get
     - name: Set up database
-      run: |
-        mix ecto.create
-        mix ecto.migrate
+      run: mix ash.setup
     - name: Run tests
       run: mix test
