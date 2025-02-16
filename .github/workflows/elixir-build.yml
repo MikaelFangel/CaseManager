@@ -47,8 +47,8 @@ jobs:
         otp-version: '26.0'      # [Required] Define the Erlang/OTP version
     - name: Restore dependencies cache
       uses: actions/cache@v4
+      id: "cache-deps"
       with:
-        id: "cache-deps"
         path: |
           deps
           _build
