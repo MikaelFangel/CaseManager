@@ -35,7 +35,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_info(%Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: alert}}, socket) do
-    alert = Ash.load!(alert, :team)
+    alert = Ash.load!(alert, [:team, :case])
     {:noreply, stream_insert(socket, :alerts, alert, at: 0)}
   end
 
