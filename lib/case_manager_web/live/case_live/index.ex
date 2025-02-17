@@ -21,8 +21,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
       if current_user.team_type == :mssp do
         Endpoint.subscribe("case:created")
         Endpoint.subscribe("case:escalated:all")
+        Endpoint.subscribe("case:updated:all")
       else
         Endpoint.subscribe("case:escalated:" <> current_user.team_id)
+        Endpoint.subscribe("case:updated:" <> current_user.team_id)
       end
     end
 
@@ -66,8 +68,24 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @impl true
   def handle_info(%Broadcast{event: event, payload: %Notification{data: case}}, socket)
       when event in ["create", "escalate"] do
-    case = Ash.load!(case, [:team, :assignee, :updated_since_last?])
+    case = Ash.load!(case, [:team, :assignee, :updated_since_last?], actor: socket.assigns.current_user)
     {:noreply, stream_insert(socket, :cases, case, at: 0)}
+  end
+
+  @impl true
+  def handle_info(
+        %Broadcast{topic: "case:updated" <> _channel, event: event, payload: %Notification{data: case}},
+        socket
+      ) do
+    socket =
+      if event == "view" do
+        socket
+      else
+        case = Ash.load!(case, [:team, :assignee, :updated_since_last?], actor: socket.assigns.current_user)
+        stream_insert(socket, :cases, case)
+      end
+
+    {:noreply, socket}
   end
 
   defp reset_and_load_cases(socket) do

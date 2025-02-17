@@ -33,6 +33,8 @@ defmodule CaseManager.ICM.Case do
     publish :create, ["created"]
     publish :escalate, ["escalated", "all"]
     publish :escalate, ["escalated", :team_id]
+    publish_all :update, ["updated", "all"]
+    publish_all :update, ["updated", :team_id]
   end
 
   policies do
