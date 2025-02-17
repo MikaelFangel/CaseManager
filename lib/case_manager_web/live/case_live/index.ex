@@ -66,7 +66,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @impl true
   def handle_info(%Broadcast{event: event, payload: %Notification{data: case}}, socket)
       when event in ["create", "escalate"] do
-    case = Ash.load!(case, [:team, :assignee])
+    case = Ash.load!(case, [:team, :assignee, :updated_since_last?])
     {:noreply, stream_insert(socket, :cases, case, at: 0)}
   end
 
@@ -86,7 +86,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
       end
 
     cases =
-      ICM.list_cases!(query: [filter: [status: [in: statuses]], sort_input: "-updated_at"], actor: assigns.current_user)
+      ICM.list_cases!(
+        query: [filter: [status: [in: statuses]], sort_input: "-updated_at", load: [:last_viewed, :updated_since_last?]],
+        actor: assigns.current_user
+      )
 
     socket
     # Reset stream to ensure no duplicates

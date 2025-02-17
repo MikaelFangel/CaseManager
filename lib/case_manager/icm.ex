@@ -46,6 +46,7 @@ defmodule CaseManager.ICM do
         default_options: [query: [sort_input: "-inserted_at", load: [assignee: :full_name]]]
 
       define :escalate_case, action: :escalate, get_by: :id
+      define :view_case, args: [:time], action: :view
       define :upload_file_to_case, args: [:file], action: :upload_file
       define :add_comment_to_case, args: [:body], action: :add_comment
       define :remove_alert_from_case, args: [:alert_id], action: :remove_alert
@@ -55,5 +56,7 @@ defmodule CaseManager.ICM do
     resource ICM.CaseAlert
     resource ICM.Comment
     resource ICM.File
+    resource ICM.Case.View
+    resource ICM.CaseView
   end
 end

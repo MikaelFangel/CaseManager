@@ -39,6 +39,9 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
         <:col :let={{_id, case}} label={gettext("Assignee")}>
           {case.assignee && case.assignee.full_name}
         </:col>
+        <:col :let={{_id, case}} label={gettext("Updated?")}>
+          <.icon :if={case.updated_since_last?} name="hero-bell-alert" />
+        </:col>
       </.table>
     </div>
     """
