@@ -12,11 +12,11 @@ defmodule CaseManager.ICM.Case.View do
   end
 
   policies do
-    policy action(:read) do
+    policy action_type([:read, :destroy, :update]) do
       authorize_if relates_to_actor_via(:user)
     end
 
-    policy action([:create, :destroy]) do
+    policy action_type(:create) do
       authorize_if always()
     end
   end
