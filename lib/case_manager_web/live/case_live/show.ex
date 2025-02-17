@@ -35,6 +35,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
         actor: socket.assigns.current_user
       )
 
+    ICM.view_case!(case, DateTime.to_string(DateTime.utc_now()), actor: socket.assigns.current_user)
     alerts = Enum.map(case.alert, &{&1.id, &1})
 
     comments =

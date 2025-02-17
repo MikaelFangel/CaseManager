@@ -33,6 +33,8 @@ defmodule CaseManager.ICM.Case do
     publish :create, ["created"]
     publish :escalate, ["escalated", "all"]
     publish :escalate, ["escalated", :team_id]
+    publish_all :update, ["updated", "all"]
+    publish_all :update, ["updated", :team_id]
   end
 
   policies do
@@ -107,6 +109,12 @@ defmodule CaseManager.ICM.Case do
       through CaseManager.ICM.CaseAlert
       source_attribute_on_join_resource :case_id
       destination_attribute_on_join_resource :alert_id
+    end
+
+    many_to_many :views, CaseManager.ICM.Case.View do
+      through CaseManager.ICM.CaseView
+      source_attribute_on_join_resource :case_id
+      destination_attribute_on_join_resource :view_id
     end
 
     has_many :comment, CaseManager.ICM.Comment
@@ -212,11 +220,24 @@ defmodule CaseManager.ICM.Case do
       description "Escalate a case and thus make it visible to its related team."
       change set_attribute(:escalated, true)
     end
+
+    update :view do
+      require_atomic? false
+      argument :time, :utc_datetime, default: &DateTime.utc_now/0
+
+      change manage_relationship(:time, :views, type: :direct_control, value_is_key: :time)
+    end
   end
 
   resource do
     plural_name :cases
     description "A case about one or more alerts."
+  end
+
+  changes do
+    change set_attribute(:updated_at, &DateTime.utc_now/0) do
+      where [negate(action_is(:view))]
+    end
   end
 
   preparations do
@@ -225,5 +246,12 @@ defmodule CaseManager.ICM.Case do
 
   aggregates do
     count :no_of_related_alerts, :alert
+    max :last_viewed, :views, :time
+  end
+
+  calculations do
+    calculate :updated_since_last?, :boolean, expr(datetime_add(last_viewed, 1, :second) <= updated_at) do
+      description "Checks if the last_viewed is before the updated_at field with a calculated error of margin."
+    end
   end
 end
