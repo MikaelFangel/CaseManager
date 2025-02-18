@@ -21,6 +21,7 @@ defmodule CaseManager.DataCase do
   using do
     quote do
       import CaseManager.DataCase
+      import CaseManager.Generator
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
