@@ -2,9 +2,12 @@ defmodule CaseManager.Generator do
   @moduledoc false
   use Ash.Generator
 
+  alias CaseManager.ICM
+  alias CaseManager.Teams.ICM.Enums.RiskLevel
+
   def team(opts \\ []) do
     changeset_generator(
-      CaseManager.Teams.Team,
+      Teams.Team,
       :create,
       defaults: [
         name: sequence(:team_name, &"team#{&1}"),
@@ -22,7 +25,7 @@ defmodule CaseManager.Generator do
         end)
 
     changeset_generator(
-      CaseManager.Teams.User,
+      Teams.User,
       :register_with_password,
       defaults: [
         email: sequence(:user_email, &"user#{&1}@example.com"),
@@ -45,12 +48,12 @@ defmodule CaseManager.Generator do
         end)
 
     changeset_generator(
-      CaseManager.ICM.Alert,
+      ICM.Alert,
       :create,
       defaults: [
         alert_id: StreamData.string(:alphanumeric, length: 8),
         title: StreamData.string(:printable, min_length: 1),
-        risk_level: StreamData.one_of(CaseManager.ICM.Enums.RiskLevel.values()),
+        risk_level: StreamData.one_of(RiskLevel.values()),
         creation_time: DateTime.utc_now() |> DateTime.to_iso8601() |> StreamData.constant(),
         link: StreamData.string(:printable, min_length: 1),
         team_id: team_id

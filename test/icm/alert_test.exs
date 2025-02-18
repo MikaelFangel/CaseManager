@@ -9,6 +9,7 @@ defmodule CaseManager.Teams.AlertTest do
   end
 
   describe "CaseManager.ICM.get_alert_by_id" do
+    # Skipped because policies is not implemented for alerts yet.
     @tag :skip
     test "only mssp users can get alerts from a team not belonging to them" do
       alert = generate(alert())
