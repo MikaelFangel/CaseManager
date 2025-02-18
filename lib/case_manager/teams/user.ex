@@ -43,8 +43,21 @@ defmodule CaseManager.Teams.User do
   end
 
   policies do
-    policy always() do
+    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
       authorize_if always()
+    end
+
+    bypass action([:sign_in_with_password, :sign_in_with_token]) do
+      authorize_if always()
+    end
+
+    policy action_type(:create) do
+      authorize_if always()
+    end
+
+    policy action_type([:read, :update, :destroy]) do
+      authorize_if actor_attribute_equals(:role, :admin)
+      authorize_if expr(id == ^actor(:id))
     end
   end
 
