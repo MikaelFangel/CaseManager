@@ -28,8 +28,8 @@ defmodule CaseManager.ICM.Comment do
 
   policies do
     policy action_type(:create) do
-      authorize_if CaseManager.Policies.MSSPCreatePolicy
-      authorize_if CaseManager.Policies.CaseOwnerPolicy
+      authorize_if CaseManager.ICM.Checks.MSSPCreate
+      authorize_if CaseManager.ICM.Case.Checks.Owner
     end
 
     policy action_type(:read) do

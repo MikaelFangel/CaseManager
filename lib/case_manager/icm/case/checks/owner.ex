@@ -1,4 +1,4 @@
-defmodule CaseManager.Policies.CaseOwnerPolicy do
+defmodule CaseManager.ICM.Case.Checks.Owner do
   @moduledoc """
   Implementation of the SimpleCheck behaviour. This policy checks if a given case and user team_id is the same.
   """

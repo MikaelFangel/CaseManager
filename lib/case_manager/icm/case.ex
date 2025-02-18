@@ -9,7 +9,7 @@ defmodule CaseManager.ICM.Case do
     extensions: [AshStateMachine, AshAdmin.Resource]
 
   alias AshStateMachine.Checks.ValidNextState
-  alias CaseManager.Policies.MSSPCreatePolicy
+  alias CaseManager.ICM.Checks.MSSPCreate
   alias CaseManager.Teams.User
 
   @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
@@ -40,12 +40,12 @@ defmodule CaseManager.ICM.Case do
   policies do
     policy action_type(:create) do
       forbid_unless ValidNextState
-      authorize_if MSSPCreatePolicy
+      authorize_if MSSPCreate
     end
 
     policy action_type(:update) do
       forbid_unless ValidNextState
-      authorize_if MSSPCreatePolicy
+      authorize_if MSSPCreate
       authorize_if changing_relationship(:comment)
       authorize_if changing_relationship(:file)
     end
