@@ -92,10 +92,7 @@ defmodule CaseManager.ICM.Case do
       default false
     end
 
-    attribute :priority, :atom do
-      constraints one_of: [:info, :low, :medium, :high, :critical]
-      allow_nil? false
-    end
+    attribute :priority, CaseManager.ICM.Enums.RiskLevel, allow_nil?: false
 
     timestamps(public?: true)
   end

@@ -48,10 +48,7 @@ defmodule CaseManager.ICM.Alert do
     attribute :creation_time, :utc_datetime, allow_nil?: false
     attribute :link, :string, allow_nil?: false
 
-    attribute :risk_level, :atom do
-      constraints one_of: [:info, :low, :medium, :high, :critical]
-      allow_nil? false
-    end
+    attribute :risk_level, CaseManager.ICM.Enums.RiskLevel, allow_nil?: false
 
     attribute :additional_data, :map do
       default %{}
