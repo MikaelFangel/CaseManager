@@ -36,4 +36,26 @@ defmodule CaseManager.Generator do
       overrides: opts
     )
   end
+
+  def alert(opts \\ []) do
+    team_id =
+      opts[:team_id] ||
+        once(:default_team_id, fn ->
+          generate(team()).id
+        end)
+
+    changeset_generator(
+      CaseManager.ICM.Alert,
+      :create,
+      defaults: [
+        alert_id: StreamData.string(:alphanumeric, length: 8),
+        title: StreamData.string(:printable, min_length: 1),
+        risk_level: StreamData.one_of(CaseManager.ICM.Enums.RiskLevel.values()),
+        creation_time: DateTime.utc_now() |> DateTime.to_iso8601() |> StreamData.constant(),
+        link: StreamData.string(:printable, min_length: 1),
+        team_id: team_id
+      ],
+      oveerrides: opts
+    )
+  end
 end
