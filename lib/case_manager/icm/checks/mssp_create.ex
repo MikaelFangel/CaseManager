@@ -1,4 +1,4 @@
-defmodule CaseManager.Policies.MSSPCreatePolicy do
+defmodule CaseManager.ICM.Checks.MSSPCreate do
   @moduledoc """
   Implementation of the SimpleCheck behaviour. This policy checks if a user is part
   of the mssp team and if so it passes.
