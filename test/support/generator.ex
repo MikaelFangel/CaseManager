@@ -3,7 +3,8 @@ defmodule CaseManager.Generator do
   use Ash.Generator
 
   alias CaseManager.ICM
-  alias CaseManager.Teams.ICM.Enums.RiskLevel
+  alias CaseManager.ICM.Enums.RiskLevel
+  alias CaseManager.Teams
 
   def team(opts \\ []) do
     changeset_generator(
