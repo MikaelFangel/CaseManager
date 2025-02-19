@@ -4,6 +4,7 @@ defmodule CaseManager.Generator do
 
   alias CaseManager.ICM
   alias CaseManager.ICM.Enums.RiskLevel
+  alias CaseManager.ICM.Enums.Status
   alias CaseManager.Teams
 
   def team(opts \\ []) do
@@ -59,7 +60,40 @@ defmodule CaseManager.Generator do
         link: StreamData.string(:printable, min_length: 1),
         team_id: team_id
       ],
-      oveerrides: opts
+      overrides: opts
+    )
+  end
+
+  def case(opts \\ []) do
+    team_id =
+      opts[:team_id] ||
+        once(:default_team_id, fn ->
+          generate(team()).id
+        end)
+
+    mssp_team_id =
+      once(:default_team_id, fn ->
+        generate(team(type: :mssp)).id
+      end)
+
+    mssp_user =
+      once(:default_user_id, fn ->
+        generate(user(team_id: mssp_team_id))
+      end)
+
+    changeset_generator(
+      ICM.Case,
+      :create,
+      defaults: [
+        title: StreamData.string(:printable, min_length: 1),
+        description: StreamData.string(:utf8),
+        status: StreamData.one_of(Status.values()),
+        priority: StreamData.one_of(RiskLevel.values()),
+        escalated: StreamData.boolean(),
+        team_id: team_id
+      ],
+      overrides: opts,
+      actor: mssp_user
     )
   end
 end

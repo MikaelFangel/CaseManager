@@ -10,9 +10,9 @@ defmodule CaseManager.ICM.Case do
 
   alias AshStateMachine.Checks.ValidNextState
   alias CaseManager.ICM.Checks.MSSPCreate
+  alias CaseManager.ICM.Enums.Status
   alias CaseManager.Teams.User
 
-  @valid_states [:in_progress, :pending, :t_positive, :f_positive, :benign]
   @closed_states [:t_positive, :f_positive, :benign]
 
   postgres do
@@ -56,13 +56,13 @@ defmodule CaseManager.ICM.Case do
   end
 
   state_machine do
-    initial_states(@valid_states)
+    initial_states(Status.values())
     default_initial_state(:in_progress)
     state_attribute(:status)
 
     transitions do
-      transition(:*, from: :in_progress, to: @valid_states)
-      transition(:*, from: :pending, to: @valid_states)
+      transition(:*, from: :in_progress, to: Status.values())
+      transition(:*, from: :pending, to: Status.values())
       transition(:*, from: :benign, to: @closed_states)
       transition(:*, from: :t_positive, to: @closed_states)
       transition(:*, from: :f_positive, to: @closed_states)
@@ -80,8 +80,7 @@ defmodule CaseManager.ICM.Case do
     attribute :description, :string
     attribute :internal_note, :string
 
-    attribute :status, :atom do
-      constraints one_of: @valid_states
+    attribute :status, Status do
       default :in_progress
       allow_nil? false
       public? true
@@ -129,7 +128,8 @@ defmodule CaseManager.ICM.Case do
         :description,
         :priority,
         :escalated,
-        :internal_note
+        :internal_note,
+        :team_id
       ]
 
       primary? true

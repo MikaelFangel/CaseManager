@@ -1,4 +1,4 @@
-defmodule CaseManager.Teams.AlertTest do
+defmodule CaseManager.ICM.AlertTest do
   use CaseManager.DataCase, async: true
   use ExUnitProperties
 
