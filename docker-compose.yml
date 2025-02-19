@@ -3,13 +3,21 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     environment:
-      - MIX_ENV=prod
-      - DATABASE_URL=ecto://postgres:postgres@db/case_manager
+      DATABASE_URL: ecto://postgres:postgres@db/case_manager
+      PHX_HOST: "localhost"
     ports:
       - "443:443"
     depends_on:
       - db
+    command: >
+      bash -c "bin/migrate && bin/server"
 
   db:
     image: postgres:16
@@ -25,7 +33,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: case_manager
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
+  db_data:
