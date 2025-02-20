@@ -13,8 +13,8 @@ defmodule CaseManagerWeb.SettingsLive.Index do
       |> assign(:menu_item, :settings)
       |> assign(:logo_img, Helpers.load_logo())
       |> assign(:background_img, Helpers.load_bg())
-      |> allow_upload(:background, accept: :any, max_entries: 1)
-      |> allow_upload(:logo, accept: :any, max_entries: 1)
+      |> allow_upload(:background, accept: ["image/*"], max_entries: 1)
+      |> allow_upload(:logo, accept: ["image/*"], max_entries: 1)
 
     {:ok, socket}
   end
