@@ -45,7 +45,7 @@ defmodule CaseManagerWeb.ConnCase do
   def insert_and_authenticate_user(conn, role \\ :admin, team_type \\ :mssp)
 
   def insert_and_authenticate_user(%{conn: conn}, role, team_type) do
-    team_id = Generator.generate(Generator.team(team_type: team_type)).id
+    team_id = Generator.generate(Generator.team(type: team_type)).id
     user = Generator.generate(Generator.user(team_id: team_id, role: role))
     %{conn: log_in_user(conn, user), user: user}
   end
