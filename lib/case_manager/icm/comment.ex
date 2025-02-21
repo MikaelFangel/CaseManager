@@ -67,6 +67,8 @@ defmodule CaseManager.ICM.Comment do
       accept :*
       primary? true
 
+      change {CaseManager.Changes.SanitizeHtml, attribute: :body}
+
       change relate_actor(:user)
     end
 
