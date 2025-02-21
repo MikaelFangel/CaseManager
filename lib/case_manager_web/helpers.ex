@@ -10,7 +10,6 @@ defmodule CaseManagerWeb.Helpers do
   """
   def render_markdown!(text) do
     text
-    |> HtmlSanitizeEx.strip_tags()
     |> Earmark.as_html!()
     |> HtmlSanitizeEx.markdown_html()
     |> Phoenix.HTML.raw()
