@@ -1,5 +1,9 @@
 import Config
 
+config :ash, :policies, show_policy_breakdowns?: true
+
+config :ash_authentication, debug_authentication_failures?: true
+
 # Configure your database
 config :case_manager, CaseManager.Repo,
   # For development, we disable any cache and enable
@@ -54,10 +58,9 @@ config :case_manager, dev_routes: true
 config :logger, :console, format: "[$level] $message\n"
 
 # Initialize plugs at runtime for faster development compilation
-config :phoenix, :plug_init_mode, :runtime
-
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
+config :phoenix, :plug_init_mode, :runtime
 config :phoenix, :stacktrace_depth, 20
 
 # Include HEEx debug annotations as HTML comments in rendered markup

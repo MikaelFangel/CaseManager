@@ -5,7 +5,7 @@ defmodule CaseManagerWeb.CaseLive.Components.MSSPTable do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div id="table-wrapper">
       <.table id="mssp_cases" rows={@rows} row_click={@row_click}>
         <:col :let={{_id, case}} label={gettext("Esca.")}>
           <%= if case.escalated do %>

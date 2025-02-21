@@ -5,7 +5,7 @@ defmodule CaseManagerWeb.CaseLive.Components.CustomerTable do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div id="table-wrapper">
       <.table id="customer_cases" rows={@rows} row_click={@row_click}>
         <:col :let={{_id, case}} label={gettext("Title")}>
           {case.title}

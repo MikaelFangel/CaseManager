@@ -18,14 +18,16 @@ defmodule CaseManagerWeb.UserLive.Index do
 
   @impl true
   def handle_params(_params, _url, socket) do
+    current_user = socket.assigns[:current_user]
+
     info_form =
-      socket.assigns[:current_user]
-      |> Teams.form_to_edit_user()
+      current_user
+      |> Teams.form_to_edit_user(actor: current_user)
       |> to_form()
 
     password_form =
-      socket.assigns[:current_user]
-      |> Teams.form_to_edit_user()
+      current_user
+      |> Teams.form_to_edit_user(actor: current_user)
       |> to_form()
 
     socket =

@@ -99,7 +99,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
     user_id
     |> Teams.get_user_by_id!(actor: socket.assigns.current_user)
-    |> Form.for_update(:update, forms: [auto?: true])
+    |> Form.for_update(:update, forms: [auto?: true], actor: socket.assigns[:current_user])
     |> set_form_for_modal(socket)
   end
 
@@ -108,7 +108,7 @@ defmodule CaseManagerWeb.UsersLive.Index do
     socket = assign(socket, :cta, gettext("Create User"))
 
     User
-    |> Form.for_create(:register_with_password, forms: [auto?: true])
+    |> Form.for_create(:register_with_password, forms: [auto?: true], actor: socket.assigns[:current_user])
     |> set_form_for_modal(socket)
   end
 
