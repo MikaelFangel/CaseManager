@@ -52,7 +52,7 @@ defmodule CaseManagerWeb.CaseLive.FormComponent do
 
         ICM.upload_file_to_case!(
           case,
-          %{filename: entry.client_name, content_type: entry.client_type, binary_data: file},
+          %{filename: Path.basename(entry.client_name), content_type: entry.client_type, binary_data: file},
           actor: socket.assigns.current_user
         )
 

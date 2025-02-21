@@ -35,7 +35,7 @@ defmodule CaseManagerWeb.SettingsLive.Index do
         "background",
         "true",
         %{
-          filename: entry.client_name,
+          filename: Path.basename(entry.client_name),
           content_type: entry.client_type,
           binary_data: file
         },
