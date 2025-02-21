@@ -12,6 +12,7 @@ defmodule CaseManagerWeb.Helpers do
     text
     |> HtmlSanitizeEx.strip_tags()
     |> Earmark.as_html!()
+    |> HtmlSanitizeEx.markdown_html()
     |> Phoenix.HTML.raw()
   end
 
