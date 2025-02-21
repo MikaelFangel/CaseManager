@@ -21,11 +21,9 @@ defmodule CaseManagerWeb.CaseLive.CommentComponent do
   end
 
   def handle_event("send", %{"body" => body}, socket) do
-    params = %{body: HtmlSanitizeEx.strip_tags(body)}
-
     action_opts = [actor: socket.assigns.current_user]
 
-    case Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
+    case Form.submit(socket.assigns.form, params: body, action_opts: action_opts) do
       {:ok, _result} ->
         {:noreply, push_navigate(socket, to: ~p"/case/#{socket.assigns.case_id}")}
 

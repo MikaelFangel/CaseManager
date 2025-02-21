@@ -9,6 +9,7 @@ defmodule CaseManager.ICM.Case do
     extensions: [AshStateMachine, AshAdmin.Resource]
 
   alias AshStateMachine.Checks.ValidNextState
+  alias CaseManager.Changes.SanitizeHtml
   alias CaseManager.ICM.Checks.MSSPCreate
   alias CaseManager.ICM.Enums.Status
   alias CaseManager.Teams.User
@@ -137,6 +138,8 @@ defmodule CaseManager.ICM.Case do
       argument :status, :atom, allow_nil?: false
       argument :alert, {:array, :string}
 
+      change {SanitizeHtml, attribute: :description}
+      change {SanitizeHtml, attribute: :internal_note}
       change transition_state(arg(:status))
       change manage_relationship(:alert, type: :append_and_remove)
       change relate_actor(:reporter)
@@ -157,6 +160,9 @@ defmodule CaseManager.ICM.Case do
     update :update do
       description "Update the case information."
 
+      primary? true
+      require_atomic? false
+
       accept [
         :title,
         :description,
@@ -167,9 +173,9 @@ defmodule CaseManager.ICM.Case do
 
       argument :status, :atom, allow_nil?: false
 
+      change {SanitizeHtml, attribute: :description}
+      change {SanitizeHtml, attribute: :internal_note}
       change transition_state(arg(:status))
-
-      primary? true
     end
 
     update :set_assignee do
