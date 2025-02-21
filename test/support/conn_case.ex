@@ -17,6 +17,9 @@ defmodule CaseManagerWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  alias AshAuthentication.Plug.Helpers
+  alias CaseManager.Generator
+
   using do
     quote do
       use CaseManagerWeb, :verified_routes
@@ -36,5 +39,26 @@ defmodule CaseManagerWeb.ConnCase do
   setup tags do
     CaseManager.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
+  end
+
+  # source: https://github.com/sevenseacat/tunez/blob/606825d52cdb2e8768d8d35107632a7766a4e827/test/support/conn_case.ex
+  def insert_and_authenticate_user(conn, role \\ :admin, team_type \\ :mssp)
+
+  def insert_and_authenticate_user(%{conn: conn}, role, team_type) do
+    team_id = Generator.generate(Generator.team(team_type: team_type)).id
+    user = Generator.generate(Generator.user(team_id: team_id, role: role))
+    %{conn: log_in_user(conn, user), user: user}
+  end
+
+  def insert_and_authenticate_user(%Plug.Conn{} = conn, role, team_type) do
+    %{conn: conn}
+    |> insert_and_authenticate_user(role, team_type)
+    |> Map.fetch!(:conn)
+  end
+
+  def log_in_user(conn, user) do
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Helpers.store_in_session(user)
   end
 end
