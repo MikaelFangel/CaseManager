@@ -41,4 +41,6 @@ npm-debug.log
 /.elixir_ls/
 
 # Ignore certificates
-priv/cert/*
+/priv/cert/*
+
+/.secrets/

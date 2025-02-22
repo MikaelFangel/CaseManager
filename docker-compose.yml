@@ -3,24 +3,31 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      DATABASE_URL_FILE: /run/secrets/databaseurl
+      SECRET_KEY_BASE_FILE: /run/secrets/secretkeybase
+      PHX_HOST: "localhost"
     deploy:
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
-    environment:
-      DATABASE_URL: ecto://postgres:postgres@db/case_manager
-      PHX_HOST: "localhost"
     ports:
       - "443:443"
     depends_on:
       - db
     command: >
       bash -c "bin/migrate && bin/server"
+    secrets:
+      - databaseurl
+      - secretkeybase
 
   db:
     image: postgres:16
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgrespassword
+      POSTGRES_DB: case_manager
     healthcheck:
       test: ["CMD", "pg_isready", "--username=postgres"]
       interval: 10s
@@ -29,11 +36,18 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: case_manager
     volumes:
       - db_data:/var/lib/postgresql/data
+    secrets:
+      - postgrespassword
+
+secrets:
+  databaseurl:
+    file: ./.secrets/.databaseurl
+  secretkeybase:
+    file: ./.secrets/.secretkeybase
+  postgrespassword:
+    file: ./.secrets/.postgrespassword
 
 volumes:
   db_data:
