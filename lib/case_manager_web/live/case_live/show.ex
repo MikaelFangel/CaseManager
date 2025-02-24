@@ -24,7 +24,6 @@ defmodule CaseManagerWeb.CaseLive.Show do
         socket
       ) do
     comment = comment |> Ash.load!(user: [:team_type], archived_user: [:team_type]) |> Map.put(:header, nil)
-    IO.inspect(comment)
     {:noreply, stream_insert(socket, :comments, comment, at: 0)}
   end
 
