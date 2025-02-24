@@ -6,7 +6,7 @@ defmodule CaseManager.ICM.Case do
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshStateMachine, AshAdmin.Resource]
+    extensions: [AshStateMachine, AshAdmin.Resource, AshJsonApi.Resource]
 
   alias AshStateMachine.Checks.ValidNextState
   alias CaseManager.Changes.SanitizeHtml
@@ -72,6 +72,10 @@ defmodule CaseManager.ICM.Case do
 
   admin do
     create_actions([])
+  end
+
+  json_api do
+    type "case"
   end
 
   attributes do
