@@ -72,7 +72,7 @@ defmodule CaseManager.Generator do
         end)
 
     mssp_team_id =
-      once(:default_team_id, fn ->
+      once(:default_mssp_team_id, fn ->
         generate(team(type: :mssp)).id
       end)
 
