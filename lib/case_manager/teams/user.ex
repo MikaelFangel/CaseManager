@@ -4,7 +4,7 @@ defmodule CaseManager.Teams.User do
     otp_app: :case_manager,
     domain: CaseManager.Teams,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication, AshAdmin.Resource, AshArchival.Resource],
+    extensions: [AshAuthentication, AshAdmin.Resource, AshArchival.Resource, AshJsonApi.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
   alias AshAuthentication.Strategy.Password.HashPasswordChange
@@ -40,6 +40,10 @@ defmodule CaseManager.Teams.User do
 
   admin do
     actor?(true)
+  end
+
+  json_api do
+    type "user"
   end
 
   policies do

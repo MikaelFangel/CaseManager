@@ -3,12 +3,26 @@ defmodule CaseManager.Teams do
   Domain that reprensents teams and their related resources.
   """
   use Ash.Domain,
-    extensions: [AshAdmin.Domain, AshPhoenix]
+    extensions: [AshAdmin.Domain, AshPhoenix, AshJsonApi.Domain]
 
   alias CaseManager.Teams
 
   admin do
     show?(true)
+  end
+
+  json_api do
+    routes do
+      base_route "/users", Teams.User do
+        post :sign_in_with_password do
+          route "/sign_in"
+
+          metadata fn _subject, user, _request ->
+            %{token: user.__metadata__.token}
+          end
+        end
+      end
+    end
   end
 
   domain do
