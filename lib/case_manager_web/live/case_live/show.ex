@@ -65,7 +65,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = ICM.get_alert_by_id!(alert_id)
+    alert = ICM.get_alert_by_id!(alert_id, actor: socket.assigns[:current_user])
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}

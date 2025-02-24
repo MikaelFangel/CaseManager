@@ -4,7 +4,8 @@ defmodule CaseManager.ICM.AlertTest do
 
   describe "CaseManager.ICM.list_alerts" do
     test "when no alerts, nothing is returned" do
-      assert CaseManager.ICM.list_alerts!().results == []
+      user = generate(user())
+      assert CaseManager.ICM.list_alerts!(actor: user).results == []
     end
   end
 
