@@ -4,7 +4,8 @@ defmodule CaseManager.ICM.Alert do
     domain: CaseManager.ICM,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
-    extensions: [AshJsonApi.Resource]
+    extensions: [AshJsonApi.Resource],
+    authorizers: [Ash.Policy.Authorizer]
 
   @derive {Jason.Encoder,
            only: [
@@ -37,6 +38,12 @@ defmodule CaseManager.ICM.Alert do
 
   json_api do
     type "alert"
+  end
+
+  policies do
+    policy always() do
+      authorize_if actor_attribute_equals(:role, :admin)
+    end
   end
 
   attributes do

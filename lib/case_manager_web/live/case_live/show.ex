@@ -23,7 +23,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
         %Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: comment}},
         socket
       ) do
-    comment = comment |> Ash.load!(:user) |> Map.put(:header, nil)
+    comment = comment |> Ash.load!(user: [:team_type], archived_user: [:team_type]) |> Map.put(:header, nil)
     {:noreply, stream_insert(socket, :comments, comment, at: 0)}
   end
 
@@ -65,7 +65,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = ICM.get_alert_by_id!(alert_id)
+    alert = ICM.get_alert_by_id!(alert_id, actor: socket.assigns[:current_user])
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}

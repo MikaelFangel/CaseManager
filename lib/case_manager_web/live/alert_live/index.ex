@@ -9,8 +9,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
-    SelectedAlerts.drop_selected_alerts(socket.assigns.current_user.id)
-    alerts = ICM.list_alerts!()
+    current_user = socket.assigns[:current_user]
+    SelectedAlerts.drop_selected_alerts(current_user.id)
+    alerts = ICM.list_alerts!(actor: current_user)
 
     {:ok,
      socket
@@ -41,7 +42,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = ICM.get_alert_by_id!(alert_id, load: :team)
+    alert = ICM.get_alert_by_id!(alert_id, load: :team, actor: socket.assigns[:current_user])
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}

@@ -10,9 +10,26 @@ defmodule CaseManager.ICM do
 
   json_api do
     routes do
-      base_route "/alerts", ICM.Alert do
+      base_route "/alert", ICM.Alert do
+        index :read_paginated
+        get :read
         post :create
-        patch :update_additional_data
+
+        patch :update_additional_data do
+          route "/:id/additional_data"
+        end
+      end
+
+      base_route "/case", ICM.Case do
+        index :read_paginated
+        get :read
+        post :create
+
+        patch :escalate do
+          route "/:id/escalate/"
+        end
+
+        patch :update
       end
     end
   end

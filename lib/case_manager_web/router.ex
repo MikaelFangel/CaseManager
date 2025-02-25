@@ -2,6 +2,8 @@ defmodule CaseManagerWeb.Router do
   use CaseManagerWeb, :router
   use AshAuthentication.Phoenix.Router
 
+  import AshAuthentication.Plug.Helpers
+
   pipeline :browser do
     plug :accepts, ["html"]
 
@@ -32,6 +34,7 @@ defmodule CaseManagerWeb.Router do
   pipeline :api do
     plug :accepts, ["json"]
     plug :load_from_bearer
+    plug :set_actor, :user
   end
 
   pipeline :onboarding do
