@@ -70,6 +70,8 @@ defmodule CaseManager.ICM.Alert do
       allow_nil? false
     end
 
+    has_many :alerts, CaseManager.ICM.Alert.Enrichment
+
     many_to_many :case, CaseManager.ICM.Case do
       through CaseManager.ICM.CaseAlert
       source_attribute_on_join_resource :alert_id
