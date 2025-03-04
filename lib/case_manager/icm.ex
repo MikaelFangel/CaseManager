@@ -70,6 +70,13 @@ defmodule CaseManager.ICM do
       define :assign_case, args: [:assignee], action: :set_assignee
     end
 
+    resource ICM.Alert.Enrichment do
+      define :get_enrichment_by_id, action: :read, get_by: :id
+      define :update_enrichment, action: :update
+      define :remove_enrichment, action: :destroy
+      define :list_enrichments, action: :read
+    end
+
     resource ICM.CaseAlert
     resource ICM.Comment
     resource ICM.File

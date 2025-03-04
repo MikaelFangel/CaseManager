@@ -91,6 +91,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.ConfirmationModal
       import CaseManagerWeb.FlashGroup
       import CaseManagerWeb.Header
+      import CaseManagerWeb.HorizontalCards
       import CaseManagerWeb.Icon
       import CaseManagerWeb.IconBtn
       import CaseManagerWeb.Input

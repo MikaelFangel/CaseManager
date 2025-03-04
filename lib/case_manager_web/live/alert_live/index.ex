@@ -41,16 +41,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_event("show_modal", %{"alert_id" => alert_id}, socket) do
-    alert = ICM.get_alert_by_id!(alert_id, load: :team, actor: socket.assigns[:current_user])
+  def handle_event("show", %{"alert_id" => alert_id}, socket) do
+    alert = ICM.get_alert_by_id!(alert_id, load: [:team, :enrichments], actor: socket.assigns[:current_user])
     socket = assign(socket, :alert, alert)
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("hide_modal", _params, socket) do
-    socket = assign(socket, :alert, nil)
 
     {:noreply, socket}
   end
