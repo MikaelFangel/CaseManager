@@ -123,6 +123,15 @@
           {@alert.description}
         </span>
       </div>
+
+      <.horizontal_cards cards={@alert.enrichments}>
+        <:inner_content :let={enrichment}>
+          <div class="flex flex-col h-full">
+            <div class="text-xs font-semibold truncate">{enrichment.name}</div>
+            <div class="mt-4 text-xs">{enrichment.summary}</div>
+          </div>
+        </:inner_content>
+      </.horizontal_cards>
       
 <!-- Bottom section with additional data and search link -->
       <div class="flex-none mt-auto pt-4">

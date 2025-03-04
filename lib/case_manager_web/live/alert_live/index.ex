@@ -42,7 +42,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show", %{"alert_id" => alert_id}, socket) do
-    alert = ICM.get_alert_by_id!(alert_id, load: :team, actor: socket.assigns[:current_user])
+    alert = ICM.get_alert_by_id!(alert_id, load: [:team, :enrichments], actor: socket.assigns[:current_user])
     socket = assign(socket, :alert, alert)
 
     {:noreply, socket}
