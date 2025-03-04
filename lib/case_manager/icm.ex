@@ -18,6 +18,10 @@ defmodule CaseManager.ICM do
         patch :update_additional_data do
           route "/:id/additional_data"
         end
+
+        patch :add_enrichment do
+          route "/:id/enrichment"
+        end
       end
 
       base_route "/case", ICM.Case do
