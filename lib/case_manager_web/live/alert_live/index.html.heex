@@ -139,7 +139,7 @@
       <div class="flex-none pt-4">
         <%= if @alert.additional_data != %{} do %>
           <span class="text-md semi-bold">{gettext("Additional Data")}</span>
-          <div class="mb-4 p-4 bg-slate-50 max-h-42 rounded-md shadow overflow-x-auto">
+          <div class="mb-4 p-4 bg-slate-50 max-h-48 rounded-md shadow overflow-x-auto">
             <pre class="inline"><%= @alert.additional_data |> Jason.encode!(pretty: true) %></pre>
           </div>
         <% end %>
