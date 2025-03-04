@@ -4,7 +4,7 @@ defmodule CaseManagerWeb.HorizontalCards do
   use Phoenix.Component
 
   attr :cards, :list, default: [], doc: "List of cards to display"
-  attr :class, :string, default: "p-2 h-36 w-32 flex-shrink-0 rounded-md bg-slate-50 shadow"
+  attr :class, :string, default: "p-2 h-48 min-w-32 max-w-64 flex-shrink-0 rounded-md bg-slate-50 shadow"
   attr :inner_content, :any, required: true, doc: "Function to render each card"
 
   def horizontal_cards(assigns) do
