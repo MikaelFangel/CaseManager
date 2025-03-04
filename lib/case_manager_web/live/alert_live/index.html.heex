@@ -126,7 +126,7 @@
 
       <.horizontal_cards cards={@alert.enrichments}>
         <:inner_content :let={enrichment}>
-          <div class="flex flex-col h-full">
+          <div class="flex flex-col h-full overflow-hidden">
             <div class="text-xs font-semibold truncate">{enrichment.name}</div>
             <div class="mt-4 text-xs">{enrichment.summary}</div>
           </div>
