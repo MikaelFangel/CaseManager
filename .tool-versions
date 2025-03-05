@@ -1,0 +1,4 @@
+github-cli 2.67.0
+elixir 1.18.2-otp-27
+erlang 27.2.4
+postgres 17.4
