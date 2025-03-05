@@ -64,6 +64,26 @@ defmodule CaseManager.Generator do
     )
   end
 
+  def alert_enrichment(opts \\ []) do
+    alert_id =
+      opts[:alert_id] ||
+        once(:default_alert_id, fn ->
+          generate(alert()).id
+        end)
+
+    changeset_generator(
+      ICM.Alert.Enrichment,
+      :create,
+      defaults: [
+        name: StreamData.string(:printable, min_length: 1),
+        source: StreamData.string(:printable, min_length: 1),
+        summary: StreamData.string(:printable, min_length: 1),
+        alert_id: alert_id
+      ],
+      overrides: opts
+    )
+  end
+
   def case(opts \\ []) do
     team_id =
       opts[:team_id] ||

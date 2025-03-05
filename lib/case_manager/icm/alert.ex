@@ -116,6 +116,19 @@ defmodule CaseManager.ICM.Alert do
         :additional_data
       ]
     end
+
+    update :add_enrichment do
+      description "Adds an enrichment to the alert"
+      require_atomic? false
+
+      argument :enrichment, :map, allow_nil?: false
+
+      change manage_relationship(
+               :enrichment,
+               :enrichments,
+               type: :create
+             )
+    end
   end
 
   resource do
