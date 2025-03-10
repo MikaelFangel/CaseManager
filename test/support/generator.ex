@@ -49,6 +49,8 @@ defmodule CaseManager.Generator do
           generate(team()).id
         end)
 
+    admin = generate(user(role: :admin))
+
     changeset_generator(
       ICM.Alert,
       :create,
@@ -59,6 +61,27 @@ defmodule CaseManager.Generator do
         creation_time: DateTime.utc_now() |> DateTime.to_iso8601() |> StreamData.constant(),
         link: StreamData.string(:printable, min_length: 1),
         team_id: team_id
+      ],
+      overrides: opts,
+      actor: admin
+    )
+  end
+
+  def alert_enrichment(opts \\ []) do
+    alert_id =
+      opts[:alert_id] ||
+        once(:default_alert_id, fn ->
+          generate(alert()).id
+        end)
+
+    changeset_generator(
+      ICM.Alert.Enrichment,
+      :create,
+      defaults: [
+        name: StreamData.string(:printable, min_length: 1),
+        source: StreamData.string(:printable, min_length: 1),
+        summary: StreamData.string(:printable, min_length: 1),
+        alert_id: alert_id
       ],
       overrides: opts
     )

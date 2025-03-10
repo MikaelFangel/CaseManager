@@ -18,6 +18,10 @@ defmodule CaseManager.ICM do
         patch :update_additional_data do
           route "/:id/additional_data"
         end
+
+        patch :add_enrichment do
+          route "/:id/enrichment"
+        end
       end
 
       base_route "/case", ICM.Case do
@@ -49,6 +53,7 @@ defmodule CaseManager.ICM do
       define :add_alert, action: :create
       define :update_additional_data_on_alert, action: :update_additional_data
       define :get_alert_by_id, action: :read, get_by: :id, default_options: [load: [:team]]
+      define :add_enrichment_to_alert, action: :add_enrichment
 
       define :list_alerts,
         action: :read_paginated,
