@@ -49,17 +49,18 @@ defmodule CaseManager.ICM.Alert do
   attributes do
     uuid_primary_key :id
 
-    attribute :alert_id, :string, allow_nil?: false
-    attribute :title, :string, allow_nil?: false
-    attribute :description, :string
-    attribute :creation_time, :utc_datetime, allow_nil?: false
-    attribute :link, :string, allow_nil?: false
+    attribute :alert_id, :string, allow_nil?: false, public?: true
+    attribute :title, :string, allow_nil?: false, public?: true
+    attribute :description, :string, public?: true
+    attribute :creation_time, :utc_datetime, allow_nil?: false, public?: true
+    attribute :link, :string, allow_nil?: false, public?: true
 
-    attribute :risk_level, CaseManager.ICM.Enums.RiskLevel, allow_nil?: false
+    attribute :risk_level, CaseManager.ICM.Enums.RiskLevel, allow_nil?: false, public?: true
 
     attribute :additional_data, :map do
       default %{}
       sortable? false
+      public? true
     end
 
     timestamps(public?: true)

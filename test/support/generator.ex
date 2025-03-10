@@ -49,6 +49,8 @@ defmodule CaseManager.Generator do
           generate(team()).id
         end)
 
+    admin = generate(user(role: :admin))
+
     changeset_generator(
       ICM.Alert,
       :create,
@@ -60,7 +62,8 @@ defmodule CaseManager.Generator do
         link: StreamData.string(:printable, min_length: 1),
         team_id: team_id
       ],
-      overrides: opts
+      overrides: opts,
+      actor: admin
     )
   end
 
