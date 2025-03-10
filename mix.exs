@@ -61,7 +61,7 @@ defmodule CaseManager.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.26 and >= 0.26.1"},
       {:jason, "~> 1.2"},
-      {:dns_cluster, "~> 0.1.1"},
+      {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.2"},
       {:ash, ">= 3.4.0 and < 3.4.33 or > 3.4.34"},
       {:picosat_elixir, "~> 0.2"},
