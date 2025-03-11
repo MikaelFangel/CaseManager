@@ -171,7 +171,7 @@ defmodule CaseManager.ICM.Case do
         default ""
       end
 
-      filter expr(contains(title, ^arg(:query)))
+      filter expr(contains(title, ^arg(:query)) or exists(alert, contains(title, ^arg(:query))))
 
       pagination do
         required? true
