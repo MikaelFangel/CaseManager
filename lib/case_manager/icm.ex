@@ -67,6 +67,8 @@ defmodule CaseManager.ICM do
         action: :read_paginated,
         default_options: [query: [sort_input: "-inserted_at", load: [assignee: :full_name]]]
 
+      define :search_cases, action: :search, args: [:query]
+
       define :escalate_case, action: :escalate, get_by: :id
       define :view_case, args: [:time], action: :view
       define :upload_file_to_case, args: [:file], action: :upload_file

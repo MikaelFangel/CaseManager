@@ -162,6 +162,25 @@ defmodule CaseManager.ICM.Case do
       end
     end
 
+    read :search do
+      description "Search cases."
+      filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
+
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(title, ^arg(:query)))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+
     update :update do
       description "Update the case information."
 
