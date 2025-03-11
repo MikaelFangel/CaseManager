@@ -60,6 +60,12 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
+  def handle_event("change-sort", %{"sort_by" => sort}, socket) do
+    params = remove_empty(%{filter: socket.assigns[:filter], sort_by: sort})
+    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
+  end
+
+  @impl true
   def handle_event("load_more_cases", _params, socket) do
     next_page = Ash.page!(socket.assigns.current_page, :next)
 
@@ -110,10 +116,38 @@ defmodule CaseManagerWeb.CaseLive.Index do
     """
   end
 
+  def sort_changer(assigns) do
+    assigns = assign(assigns, :options, sort_options())
+
+    ~H"""
+    <form data-role="cases-sort" class="hidden sm:inline" phx-change="change-sort">
+      <.input
+        type="select"
+        id="sort_by"
+        name="sort_by"
+        options={@options}
+        value={@selected}
+        class="px-2 py-0.5 !w-fit !inline-block pr-8 text-sm"
+      />
+    </form>
+    """
+  end
+
   defp filter_options do
     [
       {"Open Cases", :open},
       {"Closed Cases", :closed}
+    ]
+  end
+
+  defp sort_options do
+    [
+      {"Time since updated", "-updated_at"},
+      {"Priority", "priority"},
+      {"Title", "title"},
+      {"Team", "team.name"},
+      {"Priority", "priority"},
+      {"Escalated", "-escalated"}
     ]
   end
 
