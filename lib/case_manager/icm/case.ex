@@ -81,7 +81,7 @@ defmodule CaseManager.ICM.Case do
   attributes do
     uuid_primary_key :id
 
-    attribute :title, :string, allow_nil?: false
+    attribute :title, :string, allow_nil?: false, public?: true
     attribute :description, :string
     attribute :internal_note, :string
 
@@ -94,9 +94,10 @@ defmodule CaseManager.ICM.Case do
     attribute :escalated, :boolean do
       allow_nil? false
       default false
+      public? true
     end
 
-    attribute :priority, CaseManager.ICM.Enums.RiskLevel, allow_nil?: false
+    attribute :priority, CaseManager.ICM.Enums.RiskLevel, allow_nil?: false, public?: true
 
     timestamps(public?: true)
   end
@@ -104,7 +105,7 @@ defmodule CaseManager.ICM.Case do
   relationships do
     belongs_to :reporter, User, allow_nil?: true
     belongs_to :assignee, User, allow_nil?: true
-    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false
+    belongs_to :team, CaseManager.Teams.Team, allow_nil?: false, public?: true
 
     many_to_many :alert, CaseManager.ICM.Alert do
       through CaseManager.ICM.CaseAlert
@@ -260,5 +261,7 @@ defmodule CaseManager.ICM.Case do
     calculate :updated_since_last?, :boolean, expr(datetime_add(last_viewed, 1, :second) <= updated_at) do
       description "Checks if the last_viewed is before the updated_at field with a calculated error of margin."
     end
+
+    calculate :is_closed, :boolean, expr(status in @closed_states), public?: true
   end
 end

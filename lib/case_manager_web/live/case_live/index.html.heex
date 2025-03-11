@@ -17,12 +17,7 @@
       <div></div>
     <% end %>
     <div class="flex justify-end gap-x-2">
-      <.button icon_name="hero-folder-open" phx-click="open_cases" disabled={@status_type == :open}>
-        {gettext("Open")}
-      </.button>
-      <.button icon_name="hero-lock-closed" phx-click="closed_cases" disabled={@status_type == :closed}>
-        {gettext("Closed")}
-      </.button>
+      <.filter_changer selected={@filter_on} />
     </div>
   </div>
 
