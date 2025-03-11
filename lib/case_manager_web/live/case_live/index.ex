@@ -40,6 +40,8 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> stream(:cases, cases.results, reset: true)
       |> assign(:current_page, cases)
       |> assign(:more_cases?, cases.more?)
+      |> assign(:sort_by, sort_by)
+      |> assign(:filter, filter)
 
     {:noreply, socket}
   end
@@ -53,7 +55,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
         _ -> %{}
       end
 
-    params = %{filter: filter}
+    params = remove_empty(%{filter: filter, sort_by: socket.assigns[:sort_by]})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
@@ -113,6 +115,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
       {"Open Cases", :open},
       {"Closed Cases", :closed}
     ]
+  end
+
+  defp remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" end)
   end
 
   defp subscribe_to_topics(user) do
