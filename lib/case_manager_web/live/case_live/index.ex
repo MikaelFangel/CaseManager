@@ -52,7 +52,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
       case filter_key do
         "open" -> %{is_closed: false}
         "closed" -> %{is_closed: true}
-        _ -> %{}
+        _invalid -> %{}
       end
 
     params = remove_empty(%{filter: filter, sort_by: socket.assigns[:sort_by]})
