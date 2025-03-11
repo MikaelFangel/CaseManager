@@ -24,6 +24,10 @@ defmodule CaseManager.ICM.Alert do
     table "alert"
     repo CaseManager.Repo
 
+    custom_indexes do
+      index "title gin_trgm_ops", name: "alert_title_gin_index", using: "GIN"
+    end
+
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "alert_to_team_fkey"
     end

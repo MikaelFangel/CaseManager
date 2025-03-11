@@ -20,6 +20,10 @@ defmodule CaseManager.ICM.Case do
     table "case"
     repo CaseManager.Repo
 
+    custom_indexes do
+      index "title gin_trgm_ops", name: "case_title_gin_index", using: "GIN"
+    end
+
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "case_to_team_fkey"
       reference :reporter, on_delete: :nilify, on_update: :update, name: "case_to_reporter_fkey"
