@@ -24,6 +24,10 @@ defmodule CaseManager.ICM.Alert do
     table "alert"
     repo CaseManager.Repo
 
+    custom_indexes do
+      index "title gin_trgm_ops", name: "alert_title_gin_index", using: "GIN"
+    end
+
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "alert_to_team_fkey"
     end
@@ -82,6 +86,22 @@ defmodule CaseManager.ICM.Alert do
 
   actions do
     defaults [:read, :destroy, update: :*]
+
+    read :search do
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(title, ^arg(:query)))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
 
     create :create do
       description "Submit an alert."

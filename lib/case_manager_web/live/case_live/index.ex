@@ -26,11 +26,13 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   @impl true
   def handle_params(params, _uri, socket) do
+    query_text = Map.get(params, "q", "")
     sort_by = Map.get(params, "sort_by", "-updated_at")
     filter = Map.get(params, "filter", %{is_closed: false})
 
     cases =
-      ICM.list_cases!(
+      ICM.search_cases!(
+        query_text,
         query: [filter_input: filter, sort_input: sort_by, load: [:last_viewed, :updated_since_last?, :is_closed]],
         actor: socket.assigns[:current_user]
       )
@@ -42,8 +44,15 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> assign(:more_cases?, cases.more?)
       |> assign(:sort_by, sort_by)
       |> assign(:filter, filter)
+      |> assign(:search, query_text)
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("search", %{"search" => search}, socket) do
+    params = remove_empty(%{q: search, filter: socket.assigns[:filter], sort_by: socket.assigns[:sort_by]})
+    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   @impl true
@@ -55,13 +64,13 @@ defmodule CaseManagerWeb.CaseLive.Index do
         _invalid -> %{}
       end
 
-    params = remove_empty(%{filter: filter, sort_by: socket.assigns[:sort_by]})
+    params = remove_empty(%{q: socket.assigns[:search], filter: filter, sort_by: socket.assigns[:sort_by]})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   @impl true
   def handle_event("change-sort", %{"sort_by" => sort}, socket) do
-    params = remove_empty(%{filter: socket.assigns[:filter], sort_by: sort})
+    params = remove_empty(%{q: socket.assigns[:search], filter: socket.assigns[:filter], sort_by: sort})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 

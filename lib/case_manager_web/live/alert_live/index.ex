@@ -11,20 +11,26 @@ defmodule CaseManagerWeb.AlertLive.Index do
     if connected?(socket), do: CaseManagerWeb.Endpoint.subscribe("alert:created")
     current_user = socket.assigns[:current_user]
     SelectedAlerts.drop_selected_alerts(current_user.id)
-    alerts = ICM.list_alerts!(actor: current_user)
 
     {:ok,
      socket
-     |> stream(:alerts, alerts.results)
      |> assign(:logo_img, Helpers.load_logo())
      |> assign(:selected_alerts, [])
-     |> assign(:current_page, alerts)
-     |> assign(:menu_item, :alerts)
-     |> assign(:more_alerts?, alerts.more?)}
+     |> assign(:menu_item, :alerts)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
+    query_text = Map.get(params, "q", "")
+    alerts = ICM.search_alerts!(query_text, actor: socket.assigns[:current_user])
+
+    socket =
+      socket
+      |> stream(:alerts, alerts.results, reset: true)
+      |> assign(:current_page, alerts)
+      |> assign(:more_alerts?, alerts.more?)
+      |> assign(:query, query_text)
+
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
@@ -38,6 +44,12 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_info(%Phoenix.Socket.Broadcast{event: "create", payload: %Ash.Notifier.Notification{data: alert}}, socket) do
     alert = Ash.load!(alert, [:team, :case])
     {:noreply, stream_insert(socket, :alerts, alert, at: 0)}
+  end
+
+  @impl true
+  def handle_event("search", %{"search" => search}, socket) do
+    params = remove_empty(%{q: search})
+    {:noreply, push_patch(socket, to: ~p"/alerts/?#{params}")}
   end
 
   @impl true
@@ -85,5 +97,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> stream(:alerts, alerts)
      |> assign(:current_page, next_page)
      |> assign(:more_alerts?, next_page.more?)}
+  end
+
+  defp remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" end)
   end
 end

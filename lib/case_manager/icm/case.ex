@@ -20,6 +20,10 @@ defmodule CaseManager.ICM.Case do
     table "case"
     repo CaseManager.Repo
 
+    custom_indexes do
+      index "title gin_trgm_ops", name: "case_title_gin_index", using: "GIN"
+    end
+
     references do
       reference :team, on_delete: :delete, on_update: :update, name: "case_to_team_fkey"
       reference :reporter, on_delete: :nilify, on_update: :update, name: "case_to_reporter_fkey"
@@ -153,6 +157,25 @@ defmodule CaseManager.ICM.Case do
     read :read_paginated do
       description "List cases paginated."
       filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+
+    read :search do
+      description "Search cases."
+      filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
+
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(title, ^arg(:query)) or exists(alert, contains(title, ^arg(:query))))
 
       pagination do
         required? true
