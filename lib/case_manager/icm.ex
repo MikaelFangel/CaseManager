@@ -55,6 +55,11 @@ defmodule CaseManager.ICM do
       define :get_alert_by_id, action: :read, get_by: :id, default_options: [load: [:team]]
       define :add_enrichment_to_alert, action: :add_enrichment
 
+      define :search_alerts,
+        action: :search,
+        args: [:query],
+        default_options: [query: [sort_input: "-inserted_at", load: [:team, :case]]]
+
       define :list_alerts,
         action: :read_paginated,
         default_options: [query: [sort_input: "-inserted_at", load: [:team, :case]]]

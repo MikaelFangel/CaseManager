@@ -99,6 +99,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.MenuBar
       import CaseManagerWeb.ModalTemplate
       import CaseManagerWeb.RiskBadge
+      import CaseManagerWeb.SearchBar
       import CaseManagerWeb.SimpleForm
       import CaseManagerWeb.StatusBadge
       import CaseManagerWeb.Table

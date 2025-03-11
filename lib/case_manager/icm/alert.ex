@@ -83,6 +83,22 @@ defmodule CaseManager.ICM.Alert do
   actions do
     defaults [:read, :destroy, update: :*]
 
+    read :search do
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(title, ^arg(:query)))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+
     create :create do
       description "Submit an alert."
       primary? true

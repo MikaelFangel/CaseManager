@@ -108,14 +108,6 @@ defmodule CaseManagerWeb.CaseLive.Index do
     {:noreply, socket}
   end
 
-  def search_bar(assigns) do
-    ~H"""
-    <form data-role="search" class="hidden sm:inline" phx-submit="search">
-      <.input type="text" id="search" name="search" placeholder="Search" value="" class="!inline-block !w-fit" />
-    </form>
-    """
-  end
-
   def filter_changer(assigns) do
     assigns = assign(assigns, :options, filter_options())
 
