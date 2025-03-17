@@ -47,6 +47,7 @@ defmodule CaseManager.Teams do
       define :register_user, action: :register_with_password
       define :get_user_by_id, action: :read_paged, get_by: :id
       define :edit_user, action: :update
+      define :delete_user_by_id, action: :destroy, get_by: :id
 
       define :search_users,
         action: :search,

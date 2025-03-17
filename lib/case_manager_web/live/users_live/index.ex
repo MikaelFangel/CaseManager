@@ -14,7 +14,6 @@ defmodule CaseManagerWeb.UsersLive.Index do
       |> assign(:menu_item, :users)
       |> assign(:logo_img, Helpers.load_logo())
       |> assign(:show_form_modal, false)
-      |> assign(:pending_refresh?, false)
       |> assign(:user_id, nil)
 
     {:ok, socket}
@@ -22,12 +21,10 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def handle_info({:saved_user, _params}, socket) do
-    socket =
-      socket
-      |> assign(:show_form_modal, false)
-      |> assign(:pending_refresh?, true)
+    socket = assign(socket, :show_form_modal, false)
 
-    {:noreply, socket}
+    params = remove_empty(%{q: socket.assigns[:search]})
+    {:noreply, push_patch(socket, to: ~p"/users/?#{params}")}
   end
 
   @impl true
@@ -77,32 +74,19 @@ defmodule CaseManagerWeb.UsersLive.Index do
   end
 
   @impl true
-  def handle_event("refresh_users", _params, socket) do
-    users = Teams.list_users!(actor: socket.assigns.current_user)
-
-    socket =
-      socket
-      |> assign(:users, users.results)
-      |> assign(:page, users)
-      |> assign(:more_users?, users.more?)
-      |> assign(:pending_refresh?, false)
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("delete_user", %{"user_id" => user_id}, socket) do
+    params = remove_empty(%{q: socket.assigns[:search]})
+
     socket =
-      case Teams.get_user_by_id(user_id, actor: socket.assigns.current_user) do
-        {:ok, user} ->
-          Ash.destroy!(user)
-          assign(socket, :pending_refresh?, true)
+      case Teams.delete_user_by_id(user_id, actor: socket.assigns.current_user) do
+        :ok ->
+          socket
 
         {:error, _error} ->
           put_flash(socket, :error, gettext("User already deleted"))
       end
 
-    {:noreply, socket}
+    {:noreply, push_patch(socket, to: ~p"/users/?#{params}")}
   end
 
   @impl true
