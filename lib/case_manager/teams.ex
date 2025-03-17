@@ -35,6 +35,7 @@ defmodule CaseManager.Teams do
     resource Teams.Team do
       define :add_team, action: :create
       define :get_team_by_id, action: :read, get_by: :id
+      define :delete_team_by_id, action: :destroy, get_by: :id
       define :list_teams, action: :read, default_options: [query: [sort_input: "name"]]
       define :list_teams_paged, action: :read_paged, default_options: [query: [sort_input: "name"]]
       define :search_teams, action: :search, args: [:query], default_options: [query: [sort_input: "name"]]
