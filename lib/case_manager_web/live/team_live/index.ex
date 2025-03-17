@@ -15,7 +15,6 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:menu_item, :teams)
       |> assign(:selected_team, nil)
       |> assign(:show_form_modal, false)
-      |> assign(:pending_refresh?, false)
       |> assign(:team_id, nil)
 
     {:ok, socket}
@@ -59,22 +58,6 @@ defmodule CaseManagerWeb.TeamLive.Index do
   end
 
   @impl true
-  def handle_event("refresh_teams", _params, socket) do
-    page = Teams.list_teams_paged!(load: [:email, :phone, :ip])
-    teams = page.results
-
-    socket =
-      socket
-      |> assign(:teams, teams)
-      |> assign(:page, page)
-      |> assign(:more_teams?, page.more?)
-      |> assign(:pending_refresh?, false)
-      |> assign(:selected_team, nil)
-
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("select_team", %{"team_id" => team_id}, socket) do
     team =
       Teams.get_team_by_id!(team_id,
@@ -107,16 +90,16 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("delete_team", %{"team_id" => team_id}, socket) do
     socket =
-      case Teams.get_team_by_id(team_id) do
-        {:ok, team} ->
-          Ash.destroy!(team)
-          assign(socket, :pending_refresh?, true)
+      case Teams.delete_team_by_id(team_id) do
+        :ok ->
+          socket
 
         {:error, _error} ->
           put_flash(socket, :error, gettext("Team already deleted"))
       end
 
-    {:noreply, socket}
+    params = remove_empty(%{q: socket.assigns[:search]})
+    {:noreply, push_patch(socket, to: ~p"/teams/?#{params}")}
   end
 
   @impl true
@@ -157,12 +140,13 @@ defmodule CaseManagerWeb.TeamLive.Index do
     action_opts = [actor: socket.assigns.current_user]
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
-      {:ok, _team} ->
+      {:ok, team} ->
+        url_params = remove_empty(%{q: socket.assigns[:search]})
+
         socket =
           socket
           |> assign(:show_form_modal, false)
-          |> assign(:pending_refresh?, true)
-          |> push_patch(to: ~p"/teams", replace: true)
+          |> push_patch(to: ~p"/teams/?#{url_params}", replace: true)
 
         {:noreply, socket}
 
