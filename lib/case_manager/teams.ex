@@ -37,6 +37,7 @@ defmodule CaseManager.Teams do
       define :get_team_by_id, action: :read, get_by: :id
       define :list_teams, action: :read, default_options: [query: [sort_input: "name"]]
       define :list_teams_paged, action: :read_paged, default_options: [query: [sort_input: "name"]]
+      define :search_teams, action: :search, args: [:query], default_options: [query: [sort_input: "name"]]
       define :add_case_to_team, args: [:case], action: :add_case
       define :add_alert_to_team, args: [:alert], action: :add_alert
     end

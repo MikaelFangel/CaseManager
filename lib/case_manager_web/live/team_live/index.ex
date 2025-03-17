@@ -9,16 +9,10 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    page = Teams.list_teams_paged!(load: [:email, :phone, :ip])
-    teams = page.results
-
     socket =
       socket
       |> assign(:logo_img, Helpers.load_logo())
       |> assign(:menu_item, :teams)
-      |> assign(:teams, teams)
-      |> assign(:page, page)
-      |> assign(:more_teams?, page.more?)
       |> assign(:selected_team, nil)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
@@ -28,8 +22,26 @@ defmodule CaseManagerWeb.TeamLive.Index do
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
+  def handle_params(params, _url, socket) do
+    query_text = Map.get(params, "q", "")
+
+    page = Teams.search_teams!(query_text, load: [:email, :phone, :ip])
+    teams = page.results
+
+    socket =
+      socket
+      |> assign(:teams, teams)
+      |> assign(:page, page)
+      |> assign(:more_teams?, page.more?)
+      |> assign(:search, query_text)
+
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("search", %{"search" => search}, socket) do
+    params = remove_empty(%{q: search})
+    {:noreply, push_patch(socket, to: ~p"/teams/?#{params}")}
   end
 
   @impl true
@@ -191,5 +203,9 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:show_form_modal, true)
 
     {:noreply, socket}
+  end
+
+  defp remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" end)
   end
 end
