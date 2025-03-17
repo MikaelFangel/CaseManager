@@ -29,7 +29,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       |> stream(:alerts, alerts.results, reset: true)
       |> assign(:current_page, alerts)
       |> assign(:more_alerts?, alerts.more?)
-      |> assign(:query, query_text)
+      |> assign(:search, query_text)
 
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
