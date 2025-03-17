@@ -1,22 +1,26 @@
-<div class="h-full flex flex-col">
-  <!-- Top section: Search bar, buttons -->
-  <div class="flex items-center justify-between w-full">
+<div class="flex flex-col h-full">
+  <div class="flex items-center w-full gap-4">
     <%= if @logo_img do %>
-      <%= case @logo_img.content_type do %>
-        <% "image/svg+xml" -> %>
-          <svg height="100px" viewbox="0 0 1500 1000">
-            {raw(@logo_img.binary_data)}
-          </svg>
-        <% _ -> %>
-          <img
-            src={"data:#{@logo_img.content_type};base64," <> Base.encode64(@logo_img.binary_data)}
-            alt="Logo"
-            class="h-20"
-          />
-      <% end %>
+      <div class="flex-shrink-0">
+        <%= case @logo_img.content_type do %>
+          <% "image/svg+xml" -> %>
+            <svg height="100px" viewbox="0 0 1500 1000">
+              {raw(@logo_img.binary_data)}
+            </svg>
+          <% _ -> %>
+            <img
+              src={"data:#{@logo_img.content_type};base64," <> Base.encode64(@logo_img.binary_data)}
+              alt="Logo"
+              class="h-20"
+            />
+        <% end %>
+      </div>
     <% else %>
-      <div></div>
+      <div class="flex-shrink-0"></div>
     <% end %>
+    <div class="flex-grow px-8">
+      <.search_bar placeholder="Search" input_class="w-full px-3 py-2" value={@search} phx-change="search" />
+    </div>
     <div class="flex justify-end gap-x-2">
       <%= if @pending_refresh? do %>
         <.icon_btn icon_name="hero-arrow-path-rounded-square" colour={:tertiary} phx-click="refresh_teams" />

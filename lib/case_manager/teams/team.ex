@@ -93,6 +93,22 @@ defmodule CaseManager.Teams.Team do
       end
     end
 
+    read :search do
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(name, ^arg(:query)))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
+
     defaults [:destroy]
   end
 

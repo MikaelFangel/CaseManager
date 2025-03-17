@@ -20,7 +20,7 @@
     <% end %>
 
     <div class="flex-grow px-8">
-      <.search_bar action="search" placeholder="Search" input_class="w-full px-3 py-2" />
+      <.search_bar placeholder="Search" input_class="w-full px-3 py-2" value={@search} phx-change="search" />
     </div>
     <div class="flex justify-end gap-x-2">
       <.icon_btn icon_name="hero-pause-circle" colour={:tertiary} />

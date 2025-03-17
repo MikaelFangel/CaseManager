@@ -120,6 +120,24 @@ defmodule CaseManager.Teams.User do
         default_limit 20
       end
     end
+
+    read :search do
+      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
+
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(full_name, ^arg(:query)))
+
+      pagination do
+        required? true
+        offset? true
+        countable true
+        default_limit 20
+      end
+    end
   end
 
   resource do
