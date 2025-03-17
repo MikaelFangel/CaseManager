@@ -15,7 +15,7 @@ defmodule CaseManagerWeb.SearchBar do
   def search_bar(assigns) do
     ~H"""
     <form data-role="search" class={@class} phx-submit={@action}>
-      <.input type="text" id="search" name="search" placeholder={@placeholder} value={@value} class={@input_class} />
+      <.input type="search" id="search" name="search" placeholder={@placeholder} value={@value} class={@input_class} />
     </form>
     """
   end
