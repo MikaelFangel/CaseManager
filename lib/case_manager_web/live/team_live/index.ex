@@ -13,7 +13,6 @@ defmodule CaseManagerWeb.TeamLive.Index do
       socket
       |> assign(:logo_img, Helpers.load_logo())
       |> assign(:menu_item, :teams)
-      |> assign(:selected_team, nil)
       |> assign(:show_form_modal, false)
       |> assign(:team_id, nil)
 
@@ -23,9 +22,36 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     query_text = Map.get(params, "q", "")
+    selected_team = Map.get(params, "team", nil)
 
     page = Teams.search_teams!(query_text, load: [:email, :phone, :ip])
     teams = page.results
+
+    team =
+      case Teams.get_team_by_id(selected_team,
+             load: [
+               :alert_with_cases_count,
+               :alert_without_cases_count,
+               :alert_info_count,
+               :alert_low_count,
+               :alert_medium_count,
+               :alert_high_count,
+               :alert_critical_count,
+               :case_in_progress_count,
+               :case_pending_count,
+               :case_t_positive_count,
+               :case_f_positive_count,
+               :case_benign_count,
+               :case_info_count,
+               :case_low_count,
+               :case_medium_count,
+               :case_high_count,
+               :case_critical_count
+             ]
+           ) do
+        {:ok, team} -> team
+        _error -> nil
+      end
 
     socket =
       socket
@@ -33,13 +59,14 @@ defmodule CaseManagerWeb.TeamLive.Index do
       |> assign(:page, page)
       |> assign(:more_teams?, page.more?)
       |> assign(:search, query_text)
+      |> assign(:selected_team, team)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
-    params = remove_empty(%{q: search})
+    params = remove_empty(%{q: search, team: socket.assigns[:selected_team]})
     {:noreply, push_patch(socket, to: ~p"/teams/?#{params}")}
   end
 
@@ -59,32 +86,8 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
   @impl true
   def handle_event("select_team", %{"team_id" => team_id}, socket) do
-    team =
-      Teams.get_team_by_id!(team_id,
-        load: [
-          :alert_with_cases_count,
-          :alert_without_cases_count,
-          :alert_info_count,
-          :alert_low_count,
-          :alert_medium_count,
-          :alert_high_count,
-          :alert_critical_count,
-          :case_in_progress_count,
-          :case_pending_count,
-          :case_t_positive_count,
-          :case_f_positive_count,
-          :case_benign_count,
-          :case_info_count,
-          :case_low_count,
-          :case_medium_count,
-          :case_high_count,
-          :case_critical_count
-        ]
-      )
-
-    socket = assign(socket, :selected_team, team)
-
-    {:noreply, socket}
+    params = remove_empty(%{q: socket.assigns[:search], team: team_id})
+    {:noreply, push_patch(socket, to: ~p"/teams/?#{params}")}
   end
 
   @impl true
@@ -98,7 +101,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
           put_flash(socket, :error, gettext("Team already deleted"))
       end
 
-    params = remove_empty(%{q: socket.assigns[:search]})
+    params = remove_empty(%{q: socket.assigns[:search], team: socket.assigns[:selected_team]})
     {:noreply, push_patch(socket, to: ~p"/teams/?#{params}")}
   end
 
@@ -141,7 +144,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
 
     case AshPhoenix.Form.submit(socket.assigns.form, params: params, action_opts: action_opts) do
       {:ok, team} ->
-        url_params = remove_empty(%{q: socket.assigns[:search]})
+        url_params = remove_empty(%{q: socket.assigns[:search], team: team.id})
 
         socket =
           socket
