@@ -9,17 +9,10 @@ defmodule CaseManagerWeb.UsersLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    current_user = socket.assigns.current_user
-    users = Teams.list_users!(actor: current_user)
-
     socket =
       socket
       |> assign(:menu_item, :users)
       |> assign(:logo_img, Helpers.load_logo())
-      |> assign(current_user: current_user)
-      |> assign(:users, users.results)
-      |> assign(:page, users)
-      |> assign(:more_users?, users.more?)
       |> assign(:show_form_modal, false)
       |> assign(:pending_refresh?, false)
       |> assign(:user_id, nil)
@@ -46,8 +39,27 @@ defmodule CaseManagerWeb.UsersLive.Index do
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
+  def handle_params(params, _url, socket) do
+    query_text = Map.get(params, "q", "")
+
+    current_user = socket.assigns.current_user
+    users = Teams.search_users!(query_text, actor: current_user)
+
+    socket =
+      socket
+      |> assign(current_user: current_user)
+      |> assign(:users, users.results)
+      |> assign(:page, users)
+      |> assign(:more_users?, users.more?)
+      |> assign(search: query_text)
+
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("search", %{"search" => search}, socket) do
+    params = remove_empty(%{q: search})
+    {:noreply, push_patch(socket, to: ~p"/users/?#{params}")}
   end
 
   @impl true
@@ -142,5 +154,9 @@ defmodule CaseManagerWeb.UsersLive.Index do
       |> assign(:show_form_modal, true)
 
     {:noreply, socket}
+  end
+
+  defp remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" end)
   end
 end

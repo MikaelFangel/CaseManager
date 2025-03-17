@@ -46,6 +46,11 @@ defmodule CaseManager.Teams do
       define :get_user_by_id, action: :read_paged, get_by: :id
       define :edit_user, action: :update
 
+      define :search_users,
+        action: :search,
+        args: [:query],
+        default_options: [query: [sort_input: "full_name", load: [:full_name, :team]]]
+
       define :list_users,
         action: :read_paged,
         default_options: [query: [sort_input: "full_name", load: [:full_name, :team]]]
