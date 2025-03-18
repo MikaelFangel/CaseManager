@@ -6,6 +6,8 @@ defmodule CaseManager.ICM.Alert.Enrichment do
     extensions: [AshJsonApi.Resource],
     authorizers: [Ash.Policy.Authorizer]
 
+  alias CaseManager.ICM.Alert
+
   postgres do
     table "alert_enrichments"
     repo CaseManager.Repo
@@ -16,8 +18,16 @@ defmodule CaseManager.ICM.Alert.Enrichment do
   end
 
   policies do
+    bypass actor_attribute_equals(:role, :admin) do
+      authorize_if always()
+    end
+
     policy always() do
-      authorize_if actor_attribute_equals(:role, :admin)
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if accessing_from(Alert, :alert)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
     end
   end
 
@@ -33,7 +43,7 @@ defmodule CaseManager.ICM.Alert.Enrichment do
   end
 
   relationships do
-    belongs_to :alert, CaseManager.ICM.Alert do
+    belongs_to :alert, Alert do
       allow_nil? false
     end
   end

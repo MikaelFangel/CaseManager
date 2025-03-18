@@ -43,9 +43,31 @@ defmodule CaseManager.ICM.AlertTest do
     end
   end
 
+  describe "CaseManager.ICM.add_enrichment_to_alert" do
+    test "only soc users and service accounts can create enrichments" do
+      alert = generate(alert())
+
+      admin = generate(user(role: :admin))
+      soc_admin = generate(user(role: :soc_admin))
+      soc_analyst = generate(user(role: :soc_analyst))
+
+      team_id = generate(team(type: :customer)).id
+      team_admin = generate(user(role: :team_admin, team_id: team_id))
+      team_member = generate(user(role: :team_member, team_id: team_id))
+
+      refute team_admin.team_id == alert.team_id
+      refute team_member.team_id == alert.team_id
+      assert CaseManager.ICM.can_add_enrichment_to_alert?(admin, alert)
+      assert CaseManager.ICM.can_add_enrichment_to_alert?(soc_admin, alert)
+      assert CaseManager.ICM.can_add_enrichment_to_alert?(soc_analyst, alert)
+      refute CaseManager.ICM.can_add_enrichment_to_alert?(team_admin, alert)
+      refute CaseManager.ICM.can_add_enrichment_to_alert?(team_member, alert)
+    end
+  end
+
   describe "JSON" do
     test "can create alert" do
-      user = generate(user(role: :admin))
+      user = generate(user(role: :service_account))
       alert = generate(alert(team_id: user.team_id))
 
       # Assign to variables so they can be pinned and thus work with match
@@ -86,8 +108,8 @@ defmodule CaseManager.ICM.AlertTest do
     end
   end
 
-  test "can add additional data to alert" do
-    user = generate(user(role: :admin))
+  test "can add enrichment to alert" do
+    user = generate(user(role: :service_account))
     alert = generate(alert(team_id: user.team_id))
 
     conn =
