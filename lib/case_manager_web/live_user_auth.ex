@@ -25,7 +25,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
 
   def on_mount(:live_mssp_user, _params, _session, socket) do
     with %User{} = user <- socket.assigns[:current_user],
-         :mssp <- user.team_type do
+         true <- user.role in [:admin, :soc_admin, :soc_analyst] do
       {:cont, socket}
     else
       _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
