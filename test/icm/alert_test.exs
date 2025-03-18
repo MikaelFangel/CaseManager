@@ -18,14 +18,28 @@ defmodule CaseManager.ICM.AlertTest do
       admin = generate(user(role: :admin))
       soc_admin = generate(user(role: :soc_admin))
       soc_analyst = generate(user(role: :soc_analyst))
-      team_admin = generate(user(role: :team_admin))
-      team_member = generate(user(role: :team_member))
 
+      team_id = generate(team(type: :customer)).id
+      team_admin = generate(user(role: :team_admin, team_id: team_id))
+      team_member = generate(user(role: :team_member, team_id: team_id))
+
+      refute team_admin.team_id == alert.team_id
+      refute team_member.team_id == alert.team_id
       assert CaseManager.ICM.can_get_alert_by_id?(admin, alert.id, data: alert)
       assert CaseManager.ICM.can_get_alert_by_id?(soc_admin, alert.id, data: alert)
       assert CaseManager.ICM.can_get_alert_by_id?(soc_analyst, alert.id, data: alert)
       refute CaseManager.ICM.can_get_alert_by_id?(team_admin, alert.id, data: alert)
       refute CaseManager.ICM.can_get_alert_by_id?(team_member, alert.id, data: alert)
+    end
+
+    test "team members can read their related alerts" do
+      alert = generate(alert())
+
+      team_admin = generate(user(role: :team_admin, team_id: alert.team_id))
+      team_member = generate(user(role: :team_member, team_id: alert.team_id))
+
+      assert CaseManager.ICM.can_get_alert_by_id?(team_admin, alert.id, data: alert)
+      assert CaseManager.ICM.can_get_alert_by_id?(team_member, alert.id, data: alert)
     end
   end
 
