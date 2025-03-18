@@ -56,7 +56,14 @@ defmodule CaseManager.ICM.Alert do
       authorize_if expr(team_id == ^actor(:team_id))
     end
 
-    policy action_type([:create, :update, :destroy]) do
+    policy action_type(:update) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
+    end
+
+    policy action_type([:create, :destroy]) do
       forbid_unless actor_attribute_equals(:archived_at, nil)
       authorize_if actor_attribute_equals(:role, :service_account)
     end
