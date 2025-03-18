@@ -4,7 +4,7 @@ defmodule CaseManager.Teams.UserTest do
 
   describe "CaseManager.Teams.get_user_by_id" do
     test "user can only themselves" do
-      user = generate(user(role: :analyst))
+      user = generate(user(role: :soc_analyst))
       other = generate(user())
 
       assert CaseManager.Teams.can_get_user_by_id?(user, user.id, data: user)
