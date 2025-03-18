@@ -19,7 +19,7 @@
           options={
             case @onboarding? do
               true -> [{gettext("Admin"), :admin}]
-              false -> [{gettext("Analyst"), :analyst}, {gettext("Admin"), :admin}]
+              false -> CaseManager.Teams.Role.values()
             end
           }
         />
