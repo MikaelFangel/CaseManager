@@ -29,6 +29,9 @@ defmodule CaseManagerWeb.CaseLive.Index do
     query_text = Map.get(params, "q", "")
     sort_by = Map.get(params, "sort_by", "-updated_at")
     filter = Map.get(params, "filter", %{is_closed: false})
+    team_name = Map.get(params, "team_name", "")
+    team_filter = if team_name == "", do: %{}, else: %{team: %{name: team_name}}
+    filter = Map.merge(filter, team_filter)
 
     cases =
       ICM.search_cases!(
@@ -45,13 +48,34 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> assign(:sort_by, sort_by)
       |> assign(:filter, filter)
       |> assign(:search, query_text)
+      |> assign(:team_filter, team_name)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
-    params = remove_empty(%{q: search, filter: socket.assigns[:filter], sort_by: socket.assigns[:sort_by]})
+    params =
+      remove_empty(%{
+        q: search,
+        filter: socket.assigns[:filter],
+        sort_by: socket.assigns[:sort_by],
+        team_name: socket.assigns[:team_filter]
+      })
+
+    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
+  end
+
+  @impl true
+  def handle_event("change-team", %{"team_filter" => team_name}, socket) do
+    params =
+      remove_empty(%{
+        q: socket.assigns[:search],
+        filter: socket.assigns[:filter],
+        sort_by: socket.assigns[:sort_by],
+        team_name: team_name
+      })
+
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
@@ -64,13 +88,27 @@ defmodule CaseManagerWeb.CaseLive.Index do
         _invalid -> %{}
       end
 
-    params = remove_empty(%{q: socket.assigns[:search], filter: filter, sort_by: socket.assigns[:sort_by]})
+    params =
+      remove_empty(%{
+        q: socket.assigns[:search],
+        filter: filter,
+        sort_by: socket.assigns[:sort_by],
+        team_name: socket.assigns[:team_filter]
+      })
+
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   @impl true
   def handle_event("change-sort", %{"sort_by" => sort}, socket) do
-    params = remove_empty(%{q: socket.assigns[:search], filter: socket.assigns[:filter], sort_by: sort})
+    params =
+      remove_empty(%{
+        q: socket.assigns[:search],
+        filter: socket.assigns[:filter],
+        sort_by: sort,
+        team_name: socket.assigns[:team_filter]
+      })
+
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
@@ -125,6 +163,23 @@ defmodule CaseManagerWeb.CaseLive.Index do
     """
   end
 
+  def team_changer(assigns) do
+    assigns = assign(assigns, :options, team_options())
+
+    ~H"""
+    <form data-role="team-filter" class="hidden sm:inline" phx-change="change-team">
+      <.input
+        type="select"
+        id="team_filter"
+        name="team_filter"
+        options={@options}
+        value={@selected}
+        class="px-2 py-0.5 !w-fit !inline-block pr-8 text-sm"
+      />
+    </form>
+    """
+  end
+
   def sort_changer(assigns) do
     assigns = assign(assigns, :options, sort_options())
 
@@ -142,6 +197,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
     """
   end
 
+  defp team_options do
+    [{"All teams", ""} | Enum.map(CaseManager.Teams.list_teams!(), &{&1.name, &1.name})]
+  end
+
   defp filter_options do
     [
       {"Open Cases", :open},
@@ -155,7 +214,6 @@ defmodule CaseManagerWeb.CaseLive.Index do
       {"Priority", "priority"},
       {"Title", "title"},
       {"Team", "team.name"},
-      {"Priority", "priority"},
       {"Escalated", "-escalated"}
     ]
   end
