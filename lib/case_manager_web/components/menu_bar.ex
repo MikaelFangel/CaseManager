@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.MenuBar do
       <div class="flex-col w-14 px-3 py-5 gap-24 bg-slate-950 justify-center items-start inline-flex">
         <!-- Top content -->
         <div class="flex-col w-full justify-start items-center gap-4 inline-flex">
-          <%= if @current_user.team_type==:mssp do %>
+          <%= if @current_user.role in [:admin, :soc_admin, :analyst] do %>
             <.menu_item
               icon_name="hero-bell"
               active?={@current_page == :alerts}
@@ -43,7 +43,7 @@ defmodule CaseManagerWeb.MenuBar do
             tooltip_txt={gettext("Cases")}
           />
 
-          <%= if @current_user.role==:admin do %>
+          <%= if @current_user.role in [:admin, :team_admin, :soc_admin] do %>
             <div class="w-full border border-neutral-500"></div>
             <.menu_item
               icon_name="hero-users"
@@ -51,7 +51,7 @@ defmodule CaseManagerWeb.MenuBar do
               path="/users"
               tooltip_txt={gettext("Users")}
             />
-            <%= if @current_user.team_type == :mssp do %>
+            <%= if @current_user.role in [:admin, :soc_admin] do %>
               <div class="w-full border border-neutral-500"></div>
               <.menu_item
                 icon_name="hero-building-office"
@@ -64,7 +64,7 @@ defmodule CaseManagerWeb.MenuBar do
         </div>
         <!-- Bottom content -->
         <div class="flex-col w-full h-full justify-end items-center gap-4 inline-flex">
-          <%= if @current_user.role == :admin && @current_user.team_type == :mssp do %>
+          <%= if @current_user.role == :admin do %>
             <.menu_item
               icon_name="hero-cog-8-tooth"
               active?={@current_page == :settings}
