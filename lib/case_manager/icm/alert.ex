@@ -45,8 +45,20 @@ defmodule CaseManager.ICM.Alert do
   end
 
   policies do
-    policy always() do
-      authorize_if actor_attribute_equals(:role, :admin)
+    bypass actor_attribute_equals(:role, :admin) do
+      authorize_if always()
+    end
+
+    policy action_type(:read) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if relates_to_actor_via(:team)
+    end
+
+    policy action_type([:create, :update, :destroy]) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :service_account)
     end
   end
 
