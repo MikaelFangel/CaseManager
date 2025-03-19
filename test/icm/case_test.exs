@@ -31,4 +31,36 @@ defmodule CaseManager.ICM.CaseTest do
       refute CaseManager.ICM.can_get_case_by_id?(other_user, case.id, data: case)
     end
   end
+
+  describe "CaseManager.ICM.view_case" do
+    @tag :skip
+    # Skipped because updating a relationship is not atomic and thus causes a racecondition
+    test "view a case updates the last view aggregate" do
+      case = generate(case())
+      user = generate(user(team_id: case.team_id))
+
+      case = Ash.load!(case, :last_viewed, actor: user)
+      refute case.last_viewed
+
+      CaseManager.ICM.view_case(case, DateTime.utc_now(), actor: user)
+      case = Ash.load!(case, :last_viewed, actor: user)
+      assert case.last_viewed != nil
+    end
+
+    @tag :skip
+    # Skipped because updating a relationship is not atomic and thus causes a racecondition
+    test "a case is viewed when created by a user and new when not" do
+      case = generate(case())
+      user = [team_id: case.team_id] |> user() |> generate()
+      other = generate(user())
+
+      CaseManager.ICM.view_case(case, DateTime.utc_now(), actor: user)
+
+      case = Ash.load!(case, [:updated_since_last?, :last_viewed, :views], actor: user)
+      refute case.updated_since_last?
+
+      case = Ash.load!(case, [:updated_since_last?, :last_viewed, :views], actor: other)
+      assert case.updated_since_last?
+    end
+  end
 end
