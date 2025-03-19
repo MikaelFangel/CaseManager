@@ -281,7 +281,9 @@ defmodule CaseManager.ICM.Case do
   end
 
   calculations do
-    calculate :updated_since_last?, :boolean, expr(datetime_add(last_viewed, 1, :second) <= updated_at) do
+    calculate :updated_since_last?,
+              :boolean,
+              expr(is_nil(last_viewed) or datetime_add(last_viewed, 1, :second) <= updated_at) do
       description "Checks if the last_viewed is before the updated_at field with a calculated error of margin."
     end
 

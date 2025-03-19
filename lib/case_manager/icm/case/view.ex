@@ -24,7 +24,7 @@ defmodule CaseManager.ICM.Case.View do
   attributes do
     uuid_primary_key :id
 
-    attribute :time, :utc_datetime, allow_nil?: false
+    attribute :time, :utc_datetime, allow_nil?: false, public?: true
   end
 
   relationships do
