@@ -10,7 +10,6 @@ defmodule CaseManager.ICM.Case do
 
   alias AshStateMachine.Checks.ValidNextState
   alias CaseManager.Changes.SanitizeHtml
-  alias CaseManager.ICM.Checks.MSSPCreate
   alias CaseManager.ICM.Enums.Status
   alias CaseManager.Teams.User
 
@@ -43,20 +42,34 @@ defmodule CaseManager.ICM.Case do
   end
 
   policies do
+    bypass actor_attribute_equals(:role, :admin) do
+      authorize_if always()
+    end
+
     policy action_type(:create) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
       forbid_unless ValidNextState
-      authorize_if MSSPCreate
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
     end
 
     policy action_type(:update) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
       forbid_unless ValidNextState
-      authorize_if MSSPCreate
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
       authorize_if changing_relationship(:comment)
       authorize_if changing_relationship(:file)
     end
 
     policy action_type(:read) do
-      authorize_if always()
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
+      authorize_if expr(team_id == ^actor(:team_id) and escalated == true)
     end
   end
 
@@ -156,7 +169,6 @@ defmodule CaseManager.ICM.Case do
 
     read :read_paginated do
       description "List cases paginated."
-      filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
 
       pagination do
         required? true
@@ -168,7 +180,6 @@ defmodule CaseManager.ICM.Case do
 
     read :search do
       description "Search cases."
-      filter expr(^actor(:team_type) == :mssp or (^actor(:team_id) == team_id and escalated == true))
 
       argument :query, :ci_string do
         constraints allow_empty?: true
