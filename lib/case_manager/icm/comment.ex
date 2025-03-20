@@ -27,13 +27,16 @@ defmodule CaseManager.ICM.Comment do
   end
 
   policies do
-    policy action_type(:create) do
-      authorize_if CaseManager.ICM.Checks.MSSPCreate
-      authorize_if CaseManager.ICM.Case.Checks.Owner
+    bypass actor_attribute_equals(:role, :admin) do
+      authorize_if always()
     end
 
-    policy action_type(:read) do
-      authorize_if always()
+    policy action_type([:create, :read]) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
+      authorize_if expr(case.team_id == ^actor(:team_id))
     end
   end
 
