@@ -94,14 +94,9 @@ defmodule CaseManager.Generator do
           generate(team()).id
         end)
 
-    mssp_team_id =
-      once(:default_mssp_team_id, fn ->
-        generate(team(type: :mssp)).id
-      end)
-
-    mssp_user =
+    admin =
       once(:default_user_id, fn ->
-        generate(user(team_id: mssp_team_id))
+        generate(user(role: :admin))
       end)
 
     changeset_generator(
@@ -116,7 +111,7 @@ defmodule CaseManager.Generator do
         team_id: team_id
       ],
       overrides: opts,
-      actor: mssp_user
+      actor: admin
     )
   end
 end
