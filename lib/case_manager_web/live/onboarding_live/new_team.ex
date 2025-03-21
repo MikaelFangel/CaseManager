@@ -4,7 +4,7 @@ defmodule CaseManagerWeb.OnboardingLive.NewTeam do
 
   @impl true
   def mount(_params, _session, socket) do
-    form = to_form(CaseManager.Teams.form_to_add_team())
+    form = to_form(CaseManager.Teams.form_to_add_team(authorize?: false))
 
     socket = assign(socket, :form, form)
 

@@ -15,7 +15,8 @@ defmodule CaseManager.Generator do
         name: sequence(:team_name, &"team#{&1}"),
         type: StreamData.one_of([:mssp, :customer])
       ],
-      overrides: opts
+      overrides: opts,
+      authorize?: false
     )
   end
 
