@@ -24,7 +24,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
     query_text = Map.get(params, "q", "")
     selected_team = Map.get(params, "team", nil)
 
-    page = Teams.search_teams!(query_text, load: [:email, :phone, :ip])
+    page = Teams.search_teams!(query_text, load: [:email, :phone, :ip], actor: socket.assigns[:current_user])
     teams = page.results
 
     team =

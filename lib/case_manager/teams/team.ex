@@ -2,11 +2,39 @@ defmodule CaseManager.Teams.Team do
   @moduledoc false
   use Ash.Resource,
     domain: CaseManager.Teams,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer]
 
   postgres do
     table "team"
     repo CaseManager.Repo
+  end
+
+  policies do
+    bypass actor_attribute_equals(:role, :admin) do
+      authorize_if always()
+    end
+
+    policy action_type([:create, :destroy]) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :service_account)
+    end
+
+    policy action_type(:read) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if actor_attribute_equals(:role, :service_account)
+      authorize_if expr(id == ^actor(:team_id))
+    end
+
+    policy action_type([:update]) do
+      forbid_unless actor_attribute_equals(:archived_at, nil)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :service_account)
+      authorize_if expr(id == ^actor(:team_id) and actor_attribute_equals(:role, :team_admin))
+    end
   end
 
   attributes do

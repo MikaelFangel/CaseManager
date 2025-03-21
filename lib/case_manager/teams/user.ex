@@ -110,7 +110,6 @@ defmodule CaseManager.Teams.User do
 
     read :read_paged do
       description "List all users paginated by name"
-      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
 
       pagination do
         required? true
@@ -121,8 +120,6 @@ defmodule CaseManager.Teams.User do
     end
 
     read :search do
-      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
-
       argument :query, :ci_string do
         constraints allow_empty?: true
         default ""
