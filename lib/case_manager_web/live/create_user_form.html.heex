@@ -19,7 +19,7 @@
           options={
             case @onboarding? do
               true -> [{gettext("Admin"), :admin}]
-              false -> [{gettext("Analyst"), :analyst}, {gettext("Admin"), :admin}]
+              false -> CaseManager.Teams.Role.values()
             end
           }
         />
@@ -30,12 +30,8 @@
           field={@form[:team_id]}
           label={"#{gettext("Team")}*"}
           options={
-            if @current_user && @current_user.team_type == :customer do
-              [{@current_user.team.name, @current_user.team.id}]
-            else
-              CaseManager.Teams.list_teams!()
-              |> Enum.map(&{&1.name, &1.id})
-            end
+            CaseManager.Teams.list_teams!(authorize?: !@onboarding?, actor: @current_user)
+            |> Enum.map(&{&1.name, &1.id})
           }
         />
       </div>

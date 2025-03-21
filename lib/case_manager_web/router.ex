@@ -63,7 +63,7 @@ defmodule CaseManagerWeb.Router do
     live "/sign-in", AuthLive.Index, :index
 
     ash_authentication_live_session :admin_user_required,
-      on_mount: {CaseManagerWeb.LiveUserAuth, :live_admin_user} do
+      on_mount: {CaseManagerWeb.LiveUserAuth, :any_admin} do
       live "/users", UsersLive.Index, :index
     end
 

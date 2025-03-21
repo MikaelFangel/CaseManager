@@ -12,25 +12,62 @@ defmodule CaseManager.ICM.AlertTest do
   end
 
   describe "CaseManager.ICM.get_alert_by_id" do
-    # Skipped because policies is not implemented for alerts yet.
-    @tag :skip
-    test "only mssp users can get alerts from a team not belonging to them" do
+    test "only admin and soc users can get alerts from a team not belonging to them" do
       alert = generate(alert())
 
-      mssp_team = generate(team(type: :mssp))
-      mssp_user = generate(user(team_id: mssp_team.id))
+      admin = generate(user(role: :admin))
+      soc_admin = generate(user(role: :soc_admin))
+      soc_analyst = generate(user(role: :soc_analyst))
 
-      customer_team = generate(team(type: :customer))
-      customer_user = generate(user(team_id: customer_team.id))
+      team_id = generate(team(type: :customer)).id
+      team_admin = generate(user(role: :team_admin, team_id: team_id))
+      team_member = generate(user(role: :team_member, team_id: team_id))
 
-      assert CaseManager.ICM.can_get_alert_by_id?(mssp_user, alert.id, data: alert)
-      refute CaseManager.ICM.can_get_alert_by_id?(customer_user, alert.id, data: alert)
+      refute team_admin.team_id == alert.team_id
+      refute team_member.team_id == alert.team_id
+      assert CaseManager.ICM.can_get_alert_by_id?(admin, alert.id, data: alert)
+      assert CaseManager.ICM.can_get_alert_by_id?(soc_admin, alert.id, data: alert)
+      assert CaseManager.ICM.can_get_alert_by_id?(soc_analyst, alert.id, data: alert)
+      refute CaseManager.ICM.can_get_alert_by_id?(team_admin, alert.id, data: alert)
+      refute CaseManager.ICM.can_get_alert_by_id?(team_member, alert.id, data: alert)
+    end
+
+    test "team members can read their related alerts" do
+      alert = generate(alert())
+
+      team_admin = generate(user(role: :team_admin, team_id: alert.team_id))
+      team_member = generate(user(role: :team_member, team_id: alert.team_id))
+
+      assert CaseManager.ICM.can_get_alert_by_id?(team_admin, alert.id, data: alert)
+      assert CaseManager.ICM.can_get_alert_by_id?(team_member, alert.id, data: alert)
+    end
+  end
+
+  describe "CaseManager.ICM.add_enrichment_to_alert" do
+    test "only soc users and service accounts can create enrichments" do
+      alert = generate(alert())
+
+      admin = generate(user(role: :admin))
+      soc_admin = generate(user(role: :soc_admin))
+      soc_analyst = generate(user(role: :soc_analyst))
+
+      team_id = generate(team(type: :customer)).id
+      team_admin = generate(user(role: :team_admin, team_id: team_id))
+      team_member = generate(user(role: :team_member, team_id: team_id))
+
+      refute team_admin.team_id == alert.team_id
+      refute team_member.team_id == alert.team_id
+      assert CaseManager.ICM.can_add_enrichment_to_alert?(admin, alert)
+      assert CaseManager.ICM.can_add_enrichment_to_alert?(soc_admin, alert)
+      assert CaseManager.ICM.can_add_enrichment_to_alert?(soc_analyst, alert)
+      refute CaseManager.ICM.can_add_enrichment_to_alert?(team_admin, alert)
+      refute CaseManager.ICM.can_add_enrichment_to_alert?(team_member, alert)
     end
   end
 
   describe "JSON" do
     test "can create alert" do
-      user = generate(user(role: :admin))
+      user = generate(user(role: :service_account))
       alert = generate(alert(team_id: user.team_id))
 
       # Assign to variables so they can be pinned and thus work with match
@@ -71,8 +108,8 @@ defmodule CaseManager.ICM.AlertTest do
     end
   end
 
-  test "can add additional data to alert" do
-    user = generate(user(role: :admin))
+  test "can add enrichment to alert" do
+    user = generate(user(role: :service_account))
     alert = generate(alert(team_id: user.team_id))
 
     conn =

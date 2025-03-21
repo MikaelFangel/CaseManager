@@ -24,7 +24,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
     query_text = Map.get(params, "q", "")
     selected_team = Map.get(params, "team", nil)
 
-    page = Teams.search_teams!(query_text, load: [:email, :phone, :ip])
+    page = Teams.search_teams!(query_text, load: [:email, :phone, :ip], actor: socket.assigns[:current_user])
     teams = page.results
 
     team =
@@ -47,7 +47,8 @@ defmodule CaseManagerWeb.TeamLive.Index do
                :case_medium_count,
                :case_high_count,
                :case_critical_count
-             ]
+             ],
+             actor: socket.assigns[:current_user]
            ) do
         {:ok, team} -> team
         _error -> nil
@@ -108,7 +109,7 @@ defmodule CaseManagerWeb.TeamLive.Index do
   @impl true
   def handle_event("show_form_modal", %{"team_id" => team_id}, socket) do
     team_id
-    |> Teams.get_team_by_id!(load: [:email, :phone, :ip])
+    |> Teams.get_team_by_id!(load: [:email, :phone, :ip], actor: socket.assigns[:current_user])
     |> Form.for_update(:update, forms: [auto?: true])
     |> set_form_for_modal(socket)
   end
