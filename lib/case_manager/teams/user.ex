@@ -59,8 +59,23 @@ defmodule CaseManager.Teams.User do
       authorize_if always()
     end
 
-    policy action_type([:read, :update, :destroy]) do
+    policy action_type([:read]) do
       authorize_if actor_attribute_equals(:role, :admin)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if expr(role in [:admin, :soc_admin, :soc_analyst])
+      authorize_if expr(team_id == ^actor(:team_id))
+      authorize_if expr(id == ^actor(:id))
+    end
+
+    policy action_type([:update, :destroy]) do
+      authorize_if actor_attribute_equals(:role, :admin)
+
+      authorize_if expr(
+                     team_id == ^actor(:team_id) and
+                       (actor_attribute_equals(:role, :team_admin) or actor_attribute_equals(:role, :soc_admin))
+                   )
+
       authorize_if expr(id == ^actor(:id))
     end
   end
