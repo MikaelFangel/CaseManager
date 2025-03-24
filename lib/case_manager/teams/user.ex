@@ -59,8 +59,23 @@ defmodule CaseManager.Teams.User do
       authorize_if always()
     end
 
-    policy action_type([:read, :update, :destroy]) do
+    policy action_type([:read]) do
       authorize_if actor_attribute_equals(:role, :admin)
+      authorize_if actor_attribute_equals(:role, :soc_admin)
+      authorize_if actor_attribute_equals(:role, :soc_analyst)
+      authorize_if expr(role in [:admin, :soc_admin, :soc_analyst])
+      authorize_if expr(team_id == ^actor(:team_id))
+      authorize_if expr(id == ^actor(:id))
+    end
+
+    policy action_type([:update, :destroy]) do
+      authorize_if actor_attribute_equals(:role, :admin)
+
+      authorize_if expr(
+                     team_id == ^actor(:team_id) and
+                       (actor_attribute_equals(:role, :team_admin) or actor_attribute_equals(:role, :soc_admin))
+                   )
+
       authorize_if expr(id == ^actor(:id))
     end
   end
@@ -73,8 +88,7 @@ defmodule CaseManager.Teams.User do
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
-    attribute :role, :atom do
-      constraints one_of: [:admin, :analyst]
+    attribute :role, CaseManager.Teams.Role do
       allow_nil? false
       public? true
     end
@@ -111,7 +125,6 @@ defmodule CaseManager.Teams.User do
 
     read :read_paged do
       description "List all users paginated by name"
-      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
 
       pagination do
         required? true
@@ -122,8 +135,6 @@ defmodule CaseManager.Teams.User do
     end
 
     read :search do
-      filter expr(^actor(:team_type) == :mssp or team_id == ^actor(:team_id))
-
       argument :query, :ci_string do
         constraints allow_empty?: true
         default ""
