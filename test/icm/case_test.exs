@@ -32,8 +32,8 @@ defmodule CaseManager.ICM.CaseTest do
   end
 
   describe "CaseManager.ICM.view_case" do
-    @tag :skip
     # Skipped because updating a relationship is not atomic and thus causes a racecondition
+    @tag :skip
     test "view a case updates the last view aggregate" do
       case = generate(case())
       user = generate(user(team_id: case.team_id))
@@ -46,8 +46,8 @@ defmodule CaseManager.ICM.CaseTest do
       assert case.last_viewed != nil
     end
 
-    @tag :skip
     # Skipped because updating a relationship is not atomic and thus causes a racecondition
+    @tag :skip
     test "a case is viewed when created by a user and new when not" do
       case = generate(case())
       user = [team_id: case.team_id] |> user() |> generate()

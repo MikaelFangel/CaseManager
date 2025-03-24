@@ -36,7 +36,7 @@ defmodule CaseManager.Generator do
         last_name: "Doe",
         password: "password",
         password_confirmation: "password",
-        role: StreamData.one_of(CaseManager.Teams.Role.values()),
+        role: StreamData.one_of(Teams.Role.values()),
         team_id: team_id
       ],
       overrides: opts
