@@ -15,7 +15,8 @@ defmodule CaseManager.Generator do
         name: sequence(:team_name, &"team#{&1}"),
         type: StreamData.one_of([:mssp, :customer])
       ],
-      overrides: opts
+      overrides: opts,
+      authorize?: false
     )
   end
 
@@ -35,7 +36,7 @@ defmodule CaseManager.Generator do
         last_name: "Doe",
         password: "password",
         password_confirmation: "password",
-        role: StreamData.one_of([:admin, :analyst]),
+        role: StreamData.one_of(Teams.Role.values()),
         team_id: team_id
       ],
       overrides: opts
@@ -94,14 +95,9 @@ defmodule CaseManager.Generator do
           generate(team()).id
         end)
 
-    mssp_team_id =
-      once(:default_mssp_team_id, fn ->
-        generate(team(type: :mssp)).id
-      end)
-
-    mssp_user =
+    admin =
       once(:default_user_id, fn ->
-        generate(user(team_id: mssp_team_id))
+        generate(user(role: :admin))
       end)
 
     changeset_generator(
@@ -116,7 +112,7 @@ defmodule CaseManager.Generator do
         team_id: team_id
       ],
       overrides: opts,
-      actor: mssp_user
+      actor: admin
     )
   end
 end
