@@ -46,6 +46,6 @@ defmodule CaseManagerWeb.Helpers do
   end
 
   def remove_empty(params) do
-    Enum.filter(params, fn {_key, val} -> val != "" end)
+    Enum.filter(params, fn {_key, val} -> val != "" and val != nil end)
   end
 end
