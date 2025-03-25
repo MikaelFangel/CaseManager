@@ -29,9 +29,6 @@ defmodule CaseManagerWeb.CaseLive.Index do
     query_text = Map.get(params, "q", "")
     sort_by = Map.get(params, "sort_by", "-updated_at")
     filter = Map.get(params, "filter", %{is_closed: false})
-    team_name = Map.get(params, "team_name", "")
-    team_filter = if team_name == "", do: %{}, else: %{team: %{name: team_name}}
-    filter = Map.merge(filter, team_filter)
 
     cases =
       ICM.search_cases!(
@@ -48,39 +45,28 @@ defmodule CaseManagerWeb.CaseLive.Index do
       |> assign(:sort_by, sort_by)
       |> assign(:filter, filter)
       |> assign(:search, query_text)
-      |> assign(:team_filter, team_name)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
-    params = update_params(socket, %{q: search})
+    params = Helpers.update_params(socket, %{q: search})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
   @impl true
-  def handle_event("change-team", %{"team_filter" => team_name}, socket) do
-    params = update_params(socket, %{team_name: team_name})
-    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
-  end
-
-  @impl true
-  def handle_event("change-filter", %{"filter_on" => filter_key}, socket) do
+  def handle_event(
+        "change-filtering",
+        %{"team-filter" => team, "cases-filter" => case_status, "cases-sort" => sort},
+        socket
+      ) do
     filter =
-      case filter_key do
-        "open" -> %{is_closed: false}
-        "closed" -> %{is_closed: true}
-        _invalid -> %{}
-      end
+      %{}
+      |> maybe_add_team(team)
+      |> maybe_add_case(case_status)
 
-    params = update_params(socket, %{filter: filter})
-    {:noreply, push_patch(socket, to: ~p"/?#{params}")}
-  end
-
-  @impl true
-  def handle_event("change-sort", %{"sort_by" => sort}, socket) do
-    params = update_params(socket, %{sort_by: sort})
+    params = Helpers.update_params(socket, %{filter: filter, sort_by: sort})
     {:noreply, push_patch(socket, to: ~p"/?#{params}")}
   end
 
@@ -119,40 +105,23 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   def filter_changer(assigns) do
-    assigns = assign(assigns, :options, filter_options())
-    render_changer(assigns, "cases-filter", "change-filter", "filter_on")
-  end
-
-  def team_changer(assigns) do
-    assigns = assign(assigns, :options, team_options())
-    render_changer(assigns, "team-filter", "change-team", "team_filter")
-  end
-
-  def sort_changer(assigns) do
-    assigns = assign(assigns, :options, sort_options())
-    render_changer(assigns, "cases-sort", "change-sort", "sort_by")
-  end
-
-  defp render_changer(assigns, data_role, event, input_id) do
-    assigns = assign(assigns, data_role: data_role, event: event, input_id: input_id)
-
     ~H"""
-    <form data-role={@data_role} class="hidden sm:inline" phx-change={@event}>
-      <.input
-        type="select"
-        id={@input_id}
-        name={@input_id}
-        options={@options}
-        value={@selected}
-        class="px-2 py-0.5 !w-fit !inline-block pr-8 text-sm"
-      />
-    </form>
+    <.filter_input id="cases-filter" options={filter_options()} selected={@selected} />
     """
   end
 
-  defp team_options do
-    [{"All teams", ""} | Enum.map(CaseManager.Teams.list_teams!(), &{&1.name, &1.name})]
+  def sort_changer(assigns) do
+    ~H"""
+    <.filter_input id="cases-sort" options={sort_options()} selected={@selected} />
+    """
   end
+
+  defp maybe_add_team(filter, ""), do: filter
+  defp maybe_add_team(filter, team), do: Map.put(filter, :team, %{name: team})
+
+  defp maybe_add_case(filter, "open"), do: Map.put(filter, :is_closed, false)
+  defp maybe_add_case(filter, "closed"), do: Map.put(filter, :is_closed, true)
+  defp maybe_add_case(filter, _), do: filter
 
   defp filter_options do
     [
@@ -180,18 +149,5 @@ defmodule CaseManagerWeb.CaseLive.Index do
       Endpoint.subscribe("case:escalated:" <> user.team_id)
       Endpoint.subscribe("case:updated:" <> user.team_id)
     end
-  end
-
-  defp update_params(socket, updates) do
-    remove_empty(%{
-      q: Map.get(updates, :q, socket.assigns[:search]),
-      filter: Map.get(updates, :filter, socket.assigns[:filter]),
-      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by]),
-      team_name: Map.get(updates, :team_name, socket.assigns[:team_filter])
-    })
-  end
-
-  defp remove_empty(params) do
-    Enum.filter(params, fn {_key, val} -> val != "" end)
   end
 end

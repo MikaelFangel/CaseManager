@@ -22,12 +22,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     query_text = Map.get(params, "q", "")
-    team_name = Map.get(params, "team_name", "")
-    team_filter = if team_name == "", do: %{}, else: %{team: %{name: team_name}}
+    filter = Map.get(params, "filter", %{})
 
     alerts =
       ICM.search_alerts!(query_text,
-        query: [filter_input: team_filter, load: :team],
+        query: [filter_input: filter, load: :team],
         actor: socket.assigns[:current_user]
       )
 
@@ -37,7 +36,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       |> assign(:current_page, alerts)
       |> assign(:more_alerts?, alerts.more?)
       |> assign(:search, query_text)
-      |> assign(:team_filter, team_name)
+      |> assign(:filter, filter)
 
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -56,23 +55,16 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
-    params = remove_empty(%{q: search})
+    params = Helpers.update_params(socket, %{q: search})
     {:noreply, push_patch(socket, to: ~p"/alerts/?#{params}")}
   end
 
   @impl true
-  def handle_event("change-team", %{"team_filter" => team_name}, socket) do
-    params = update_params(socket, %{team_name: team_name})
-    {:noreply, push_patch(socket, to: ~p"/alerts/?#{params}")}
-  end
+  def handle_event("change-filtering", %{"team-filter" => team_name}, socket) do
+    filter = maybe_add_team(%{}, team_name)
 
-  defp update_params(socket, updates) do
-    remove_empty(%{
-      q: Map.get(updates, :q, socket.assigns[:search]),
-      filter: Map.get(updates, :filter, socket.assigns[:filter]),
-      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by]),
-      team_name: Map.get(updates, :team_name, socket.assigns[:team_filter])
-    })
+    params = Helpers.update_params(socket, %{filter: filter})
+    {:noreply, push_patch(socket, to: ~p"/alerts/?#{params}")}
   end
 
   @impl true
@@ -122,36 +114,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:more_alerts?, next_page.more?)}
   end
 
-  defp remove_empty(params) do
-    Enum.filter(params, fn {_key, val} -> val != "" end)
-  end
-
-  defp team_options(current_user) do
-    [
-      {"All teams", ""}
-      | [actor: current_user] |> CaseManager.Teams.list_teams!() |> Enum.map(&{&1.name, &1.name}) |> Enum.uniq()
-    ]
-  end
-
-  def team_changer(assigns) do
-    assigns = assign(assigns, :options, team_options(assigns.current_user))
-    render_changer(assigns, "team-filter", "change-team", "team_filter")
-  end
-
-  defp render_changer(assigns, data_role, event, input_id) do
-    assigns = assign(assigns, data_role: data_role, event: event, input_id: input_id)
-
-    ~H"""
-    <form data-role={@data_role} class="hidden sm:inline" phx-change={@event}>
-      <.input
-        type="select"
-        id={@input_id}
-        name={@input_id}
-        options={@options}
-        value={@selected}
-        class="px-2 py-0.5 !w-fit !inline-block pr-8 text-sm"
-      />
-    </form>
-    """
-  end
+  defp maybe_add_team(filter, ""), do: filter
+  defp maybe_add_team(filter, team), do: Map.put(filter, :team, %{name: team})
 end

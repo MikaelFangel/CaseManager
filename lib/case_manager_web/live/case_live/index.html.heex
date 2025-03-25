@@ -24,9 +24,15 @@
     </div>
 
     <div class="flex-shrink-0 flex justify-end gap-x-2">
-      <.team_changer selected={@team_filter} />
-      <.sort_changer selected={@sort_by} />
-      <.filter_changer selected={@filter_on} />
+      <form
+        data-role="cases-filter"
+        class="hidden sm:flex sm:flex-row sm:items-center sm:gap-4"
+        phx-change="change-filtering"
+      >
+        <.team_filter selected={@filter["team"]["name"]} current_user={@current_user} />
+        <.sort_changer selected={@sort_by} />
+        <.filter_changer selected={@filter_on} />
+      </form>
     </div>
   </div>
 
