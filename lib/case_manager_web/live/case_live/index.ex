@@ -121,7 +121,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   defp maybe_add_case(filter, "open"), do: Map.put(filter, :is_closed, false)
   defp maybe_add_case(filter, "closed"), do: Map.put(filter, :is_closed, true)
-  defp maybe_add_case(filter, _), do: filter
+  defp maybe_add_case(filter, _other), do: filter
 
   defp filter_options do
     [
