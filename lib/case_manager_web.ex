@@ -89,6 +89,7 @@ defmodule CaseManagerWeb do
       import CaseManagerWeb.BadgeTemplate
       import CaseManagerWeb.Button
       import CaseManagerWeb.ConfirmationModal
+      import CaseManagerWeb.Filters
       import CaseManagerWeb.FlashGroup
       import CaseManagerWeb.Header
       import CaseManagerWeb.HorizontalCards

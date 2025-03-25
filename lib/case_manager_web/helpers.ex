@@ -36,4 +36,16 @@ defmodule CaseManagerWeb.Helpers do
       {:error, _error} -> nil
     end
   end
+
+  def update_params(socket, updates) do
+    remove_empty(%{
+      q: Map.get(updates, :q, socket.assigns[:search]),
+      filter: Map.get(updates, :filter, socket.assigns[:filter]),
+      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by])
+    })
+  end
+
+  def remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" and val != nil end)
+  end
 end

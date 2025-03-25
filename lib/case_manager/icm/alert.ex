@@ -92,6 +92,7 @@ defmodule CaseManager.ICM.Alert do
   relationships do
     belongs_to :team, CaseManager.Teams.Team do
       allow_nil? false
+      public? true
     end
 
     has_many :enrichments, CaseManager.ICM.Alert.Enrichment

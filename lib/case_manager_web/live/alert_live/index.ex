@@ -22,7 +22,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_params(params, _url, socket) do
     query_text = Map.get(params, "q", "")
-    alerts = ICM.search_alerts!(query_text, actor: socket.assigns[:current_user])
+    filter = Map.get(params, "filter", %{})
+
+    alerts =
+      ICM.search_alerts!(query_text,
+        query: [filter_input: filter, load: :team],
+        actor: socket.assigns[:current_user]
+      )
 
     socket =
       socket
@@ -30,6 +36,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       |> assign(:current_page, alerts)
       |> assign(:more_alerts?, alerts.more?)
       |> assign(:search, query_text)
+      |> assign(:filter, filter)
 
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
@@ -48,7 +55,15 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("search", %{"search" => search}, socket) do
-    params = remove_empty(%{q: search})
+    params = Helpers.update_params(socket, %{q: search})
+    {:noreply, push_patch(socket, to: ~p"/alerts/?#{params}")}
+  end
+
+  @impl true
+  def handle_event("change-filtering", %{"team-filter" => team_name}, socket) do
+    filter = maybe_add_team(%{}, team_name)
+
+    params = Helpers.update_params(socket, %{filter: filter})
     {:noreply, push_patch(socket, to: ~p"/alerts/?#{params}")}
   end
 
@@ -99,7 +114,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:more_alerts?, next_page.more?)}
   end
 
-  defp remove_empty(params) do
-    Enum.filter(params, fn {_key, val} -> val != "" end)
-  end
+  defp maybe_add_team(filter, ""), do: filter
+  defp maybe_add_team(filter, team), do: Map.put(filter, :team, %{name: team})
 end
