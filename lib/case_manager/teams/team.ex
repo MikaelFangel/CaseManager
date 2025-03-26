@@ -5,6 +5,7 @@ defmodule CaseManager.Teams.Team do
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer]
 
+  alias CaseManager.Teams.ArchivedUser
   alias CaseManager.Teams.User
 
   postgres do
@@ -24,8 +25,8 @@ defmodule CaseManager.Teams.Team do
     end
 
     policy action_type(:read) do
-      forbid_unless actor_attribute_equals(:archived_at, nil)
       authorize_if accessing_from(User, :team)
+      authorize_if accessing_from(ArchivedUser, :team)
       authorize_if actor_attribute_equals(:role, :soc_admin)
       authorize_if actor_attribute_equals(:role, :soc_analyst)
       authorize_if actor_attribute_equals(:role, :service_account)
@@ -55,6 +56,7 @@ defmodule CaseManager.Teams.Team do
 
   relationships do
     has_many :users, User
+    has_many :archived_users, ArchivedUser
     has_many :alert, CaseManager.ICM.Alert
     has_many :case, CaseManager.ICM.Case
     has_many :ip, CaseManager.Teams.IP
