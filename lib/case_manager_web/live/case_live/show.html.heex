@@ -94,7 +94,7 @@
       </:col>
     </.table>
 
-    <%= if @current_user && @current_user.team_type == :mssp do %>
+    <%= if @current_user.role in [:admin, :soc_admin, :soc_analyst] do %>
       <.label :if={@case.internal_note}>{gettext("Internal Note")}</.label>
       <div :if={@case.internal_note} class="mt-2 bg-slate-50 p-4 min-h-48 rounded-md shadow">
         {if @case.internal_note,
