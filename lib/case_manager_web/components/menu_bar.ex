@@ -79,6 +79,8 @@ defmodule CaseManagerWeb.MenuBar do
             path="/user"
             tooltip_txt={gettext("Profile")}
           />
+          <div class="w-full h-px border border-neutral-500"></div>
+          <.menu_item icon_name="hero-arrow-left-start-on-rectangle" path="/sign-out" tooltip_txt={gettext("Sign out")} />
         </div>
       </div>
       <!-- The screen content -->
