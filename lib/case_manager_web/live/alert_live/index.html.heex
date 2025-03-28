@@ -101,7 +101,7 @@
 
         <div class="flex flex-row justify-between">
           <div class="flex flex-wrap gap-x-2.5">
-            <%= for case <- Ash.load!(@alert, :case).case do %>
+            <%= for case <- Ash.load!(@alert, :case, actor: @current_user).case do %>
               <.tooltip
                 pos={:bottom}
                 tooltip_label={case.status |> to_string() |> String.replace("_", " ") |> String.capitalize()}
