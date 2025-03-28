@@ -26,7 +26,6 @@
       <form data-role="alert-filter" class="hidden sm:inline" phx-change="change-filtering">
         <.team_filter selected={@filter["team"]["name"]} current_user={@current_user} />
       </form>
-      <.icon_btn icon_name="hero-pause-circle" colour={:tertiary} />
       <.link navigate={~p"/case/new"}>
         <.button icon_name="hero-document-plus" disabled={Enum.empty?(@selected_alerts)}>
           {gettext("Create Case")}
