@@ -19,7 +19,7 @@
           options={
             case @onboarding? do
               true -> [{gettext("Admin"), :admin}]
-              false -> CaseManager.Teams.Role.values()
+              false -> CaseManager.Teams.Role.assignable_values(@current_user.role)
             end
           }
         />
