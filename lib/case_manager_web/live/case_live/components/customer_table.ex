@@ -27,7 +27,7 @@ defmodule CaseManagerWeb.CaseLive.Components.CustomerTable do
         <:col :let={{_id, case}} label={gettext("Assignee")}>
           {case.assignee_id}
         </:col>
-        <:col :let={{_id, case}} label={gettext("Updated?")}>
+        <:col :let={{_id, case}}>
           <.icon :if={case.updated_since_last?} name="hero-bell-alert" />
         </:col>
       </.table>
