@@ -9,6 +9,31 @@ defmodule CaseManager.Incidents.Case do
     repo(CaseManager.Repo)
   end
 
+  actions do
+    create :create do
+      description "Add an case"
+      primary? true
+
+      accept :*
+    end
+
+    read :read do
+      description "List cases"
+      primary? true
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
+    update :update do
+      description "Change the case data"
+      primary? true
+    end
+
+    destroy :delete do
+      description "Delete an case"
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 

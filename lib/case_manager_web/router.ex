@@ -37,6 +37,11 @@ defmodule CaseManagerWeb.Router do
     live "/alert/new", AlertLive.Form, :new
     live "/alert/:id/edit", AlertLive.Form, :edit
 
+    live "/case", CaseLive.Index, :index
+    live "/case/new", CaseLive.Form, :new
+    live "/case/:id", CaseLive.Show, :show
+    live "/case/:id/edit", CaseLive.Form, :edit
+
     ash_authentication_live_session :authenticated_routes do
       # in each liveview, add one of the following at the top of the module:
       #

@@ -11,7 +11,14 @@ defmodule CaseManager.Incidents do
       define :delete_alert, action: :delete
     end
 
-    resource CaseManager.Incidents.Case
+    resource CaseManager.Incidents.Case do
+      define :create_case, action: :create
+      define :list_case, action: :read
+      define :get_case, action: :read, get_by: :id
+      define :update_case, action: :update
+      define :delete_case, action: :delete
+    end
+
     resource CaseManager.Incidents.CaseAlert
     resource CaseManager.Incidents.Comment
     resource CaseManager.Incidents.File

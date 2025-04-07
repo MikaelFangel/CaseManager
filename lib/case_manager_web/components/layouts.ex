@@ -23,25 +23,14 @@ defmodule CaseManagerWeb.Layouts do
       <div class="flex-none">
         <ul class="flex flex-column px-1 space-x-4 items-center">
           <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
             <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
           </li>
         </ul>
       </div>
     </header>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
+    <main class="p-4">
+      <div class="mx-auto w-full space-y-4">
         {render_slot(@inner_block)}
       </div>
     </main>
@@ -61,7 +50,11 @@ defmodule CaseManagerWeb.Layouts do
           </a>
         </div>
         <div class="flex-none">
-          <.theme_toggle />
+          <ul class="flex flex-column px-1 space-x-4 items-center">
+            <li>
+              <.theme_toggle />
+            </li>
+          </ul>
         </div>
       </header>
 
@@ -71,7 +64,7 @@ defmodule CaseManagerWeb.Layouts do
 
       <div class="flex flex-1 overflow-hidden">
         <div class="w-1/2 border-r border-base-300 overflow-auto">
-          <div class="p-4">
+          <div class="px-4 pb-4">
             {render_slot(@left)}
           </div>
         </div>
