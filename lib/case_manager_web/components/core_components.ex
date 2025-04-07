@@ -259,11 +259,16 @@ defmodule CaseManagerWeb.CoreComponents do
   end
 
   @doc ~S"""
-  Renders a table with generic styling.
+  Renders a table with generic styling and optional row selection.
 
   ## Examples
 
       <.table id="users" rows={@users}>
+        <:col :let={user} label="id">{user.id}</:col>
+        <:col :let={user} label="username">{user.username}</:col>
+      </.table>
+
+      <.table id="users" rows={@users} selectable={true} selected={@selected_users}>
         <:col :let={user} label="id">{user.id}</:col>
         <:col :let={user} label="username">{user.username}</:col>
       </.table>
@@ -277,6 +282,10 @@ defmodule CaseManagerWeb.CoreComponents do
     default: &Function.identity/1,
     doc: "the function for mapping each row before calling the :col and :action slots"
   )
+
+  attr(:selectable, :boolean, default: false, doc: "enables row selection with checkboxes")
+  attr(:selected, :list, default: [], doc: "list of selected row IDs")
+  attr(:on_toggle_selection, :any, default: nil, doc: "the function to handle selection changes")
 
   slot :col, required: true do
     attr(:label, :string)
@@ -294,6 +303,7 @@ defmodule CaseManagerWeb.CoreComponents do
     <table class="table table-zebra">
       <thead>
         <tr>
+          <th :if={@selectable} class="w-12"></th>
           <th :for={col <- @col}>{col[:label]}</th>
           <th :if={@action != []}>
             <span class="sr-only">{gettext("Actions")}</span>
@@ -301,7 +311,12 @@ defmodule CaseManagerWeb.CoreComponents do
         </tr>
       </thead>
       <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class={get_row_class(row, @selected, @row_id)}>
+          <td :if={@selectable} class="w-12">
+            <label>
+              <input type="checkbox" class="checkbox" checked={selected?(row, @selected, @row_id)} phx-click={@on_toggle_selection && JS.push("toggle_selection", value: %{id: get_row_value(row, @row_id)})} phx-value-id={get_row_value(row, @row_id)} />
+            </label>
+          </td>
           <td :for={col <- @col} phx-click={@row_click && @row_click.(row)} class={@row_click && "hover:cursor-pointer"}>
             {render_slot(col, @row_item.(row))}
           </td>
@@ -316,6 +331,32 @@ defmodule CaseManagerWeb.CoreComponents do
       </tbody>
     </table>
     """
+  end
+
+  # Helper functions for the table component
+  defp get_row_value(row, row_id) when is_function(row_id) do
+    row_id.(row)
+  end
+
+  defp get_row_value({id, _item}, _) do
+    id
+  end
+
+  defp get_row_value(row, _) do
+    Map.get(row, :id)
+  end
+
+  defp selected?(row, selected, row_id) do
+    row_value = get_row_value(row, row_id)
+    row_value in selected
+  end
+
+  defp get_row_class(row, selected, row_id) do
+    if selected?(row, selected, row_id) do
+      "bg-base-200"
+    else
+      ""
+    end
   end
 
   @doc """

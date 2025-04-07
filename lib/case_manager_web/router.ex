@@ -33,6 +33,10 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through(:browser)
 
+    live "/alert", AlertLive.Index, :index
+    live "/alert/new", AlertLive.Form, :new
+    live "/alert/:id/edit", AlertLive.Form, :edit
+
     ash_authentication_live_session :authenticated_routes do
       # in each liveview, add one of the following at the top of the module:
       #

@@ -50,6 +50,39 @@ defmodule CaseManagerWeb.Layouts do
     """
   end
 
+  def split_layout(assigns) do
+    ~H"""
+    <div class="flex flex-col h-screen">
+      <header class="navbar px-4 sm:px-6 lg:px-8">
+        <div class="flex-1">
+          <a href="/" class="flex-1 flex items-center gap-2">
+            <img src={~p"/images/logo.svg"} width="36" />
+            <span class="font-semibold">Case Manager</span>
+          </a>
+        </div>
+        <div class="flex-none">
+          <.theme_toggle />
+        </div>
+      </header>
+
+      <div class="flex h-screen">
+        <div class="w-1/2 border-r border-base-300 overflow-auto">
+          <div class="p-4">
+            {render_slot(@left)}
+          </div>
+        </div>
+        <div class="w-1/2 overflow-auto">
+          <div class="p-4">
+            {render_slot(@right)}
+          </div>
+        </div>
+      </div>
+
+      <.flash_group flash={@flash} />
+    </div>
+    """
+  end
+
   @doc """
   Shows the flash group with standard titles and content.
 
