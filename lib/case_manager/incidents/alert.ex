@@ -7,6 +7,31 @@ defmodule CaseManager.Incidents.Alert do
     repo(CaseManager.Repo)
   end
 
+  actions do
+    create :create do
+      description "Add an alert"
+      primary? true
+
+      accept :*
+    end
+
+    read :read do
+      description "List alerts"
+      primary? true
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
+    update :update do
+      description "Change the alert data"
+      primary? true
+    end
+
+    destroy :delete do
+      description "Delete an alert"
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -24,7 +49,7 @@ defmodule CaseManager.Incidents.Alert do
       public? true
     end
 
-    attribute :risk_level, :atom do
+    attribute :risk_level, CaseManager.Incidents.RiskLevel do
       allow_nil? false
       public? true
     end
