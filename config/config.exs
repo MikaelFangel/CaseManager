@@ -43,7 +43,7 @@ config :case_manager, CaseManagerWeb.Endpoint,
 config :case_manager,
   ecto_repos: [CaseManager.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [CaseManager.Accounts]
+  ash_domains: [CaseManager.Incidents, CaseManager.Organizations, CaseManager.Accounts]
 
 # Configure esbuild (the version is required)
 config :esbuild,
@@ -70,6 +70,7 @@ config :spark,
     remove_parens?: true,
     "Ash.Resource": [
       section_order: [
+        :admin,
         :json_api,
         :authentication,
         :tokens,
@@ -90,7 +91,7 @@ config :spark,
         :identities
       ]
     ],
-    "Ash.Domain": [section_order: [:json_api, :resources, :policies, :authorization, :domain, :execution]]
+    "Ash.Domain": [section_order: [:admin, :json_api, :resources, :policies, :authorization, :domain, :execution]]
   ]
 
 # Configure tailwind (the version is required)
