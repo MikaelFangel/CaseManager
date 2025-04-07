@@ -7,62 +7,34 @@ defmodule CaseManagerWeb.LiveUserAuth do
 
   import Phoenix.Component
 
-  alias CaseManager.Teams.User
+  # This is used for nested liveviews to fetch the current user.
+  # To use, place the following at the top of that liveview:
+  # on_mount {CaseManagerWeb.LiveUserAuth, :current_user}
+  def on_mount(:current_user, _params, session, socket) do
+    {:cont, AshAuthentication.Phoenix.LiveSession.assign_new_resources(socket, session)}
+  end
 
   def on_mount(:live_user_optional, _params, _session, socket) do
-    case socket.assigns[:current_user] do
-      nil -> {:cont, assign(socket, :current_user, nil)}
-      _present -> {:cont, socket}
+    if socket.assigns[:current_user] do
+      {:cont, socket}
+    else
+      {:cont, assign(socket, :current_user, nil)}
     end
   end
 
   def on_mount(:live_user_required, _params, _session, socket) do
-    case socket.assigns[:current_user] do
-      nil -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
-      _present -> {:cont, socket}
-    end
-  end
-
-  def on_mount(:any_admin, _params, _session, socket) do
-    with %User{} = user <- socket.assigns[:current_user],
-         true <- user.role in [:admin, :soc_admin, :team_admin] do
+    if socket.assigns[:current_user] do
       {:cont, socket}
     else
-      _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
-    end
-  end
-
-  def on_mount(:live_mssp_user, _params, _session, socket) do
-    with %User{} = user <- socket.assigns[:current_user],
-         true <- user.role in [:admin, :soc_admin, :soc_analyst] do
-      {:cont, socket}
-    else
-      _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
-    end
-  end
-
-  def on_mount(:live_admin_user, _params, _session, socket) do
-    with %User{} = user <- socket.assigns[:current_user],
-         :admin <- user.role do
-      {:cont, socket}
-    else
-      _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
-    end
-  end
-
-  def on_mount(:live_admin_mssp_user, params, session, socket) do
-    with {:cont, _socket} <- on_mount(:live_mssp_user, params, session, socket),
-         {:cont, _socket} <- on_mount(:live_admin_user, params, session, socket) do
-      {:cont, socket}
-    else
-      _other -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
     end
   end
 
   def on_mount(:live_no_user, _params, _session, socket) do
-    case socket.assigns[:current_user] do
-      nil -> {:cont, assign(socket, :current_user, nil)}
-      _present -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+    if socket.assigns[:current_user] do
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+    else
+      {:cont, assign(socket, :current_user, nil)}
     end
   end
 end

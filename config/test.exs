@@ -1,17 +1,14 @@
 import Config
 
-# Ensure Ash not spawn tasks to execute requests.
-config :ash, :disable_async?, true
-
-# Ignore missed_notifications
-config :ash, :missed_notifications, :ignore
+config :bcrypt_elixir, log_rounds: 1
 
 # Configure your database
+
+# In test we don't send emails
 #
+# to provide built-in test partitioning in CI environment.
 # The MIX_TEST_PARTITION environment variable can be used
 
-# In test we don't send emails.
-# to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :case_manager, CaseManager.Mailer, adapter: Swoosh.Adapters.Test
 
@@ -27,8 +24,10 @@ config :case_manager, CaseManager.Repo,
 
 config :case_manager, CaseManagerWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "kXopkd8auxATMLpfF4ju9iggpIg0NX/NKU8niObTpd+UNzze+tZUJzAIR9scWIwa",
+  secret_key_base: "sySOWHRNwhgR61W7Hy8cVtmjfxuhsgO/bRM7NZAvyAOG2r098b9pe5qFQH04QNjJ",
   server: false
+
+config :case_manager, token_signing_secret: "pY/1Bcs0rI0FaZF+vgA9JWZ7BWzCEsGS"
 
 # Print only warnings and errors during test
 config :logger, level: :warning
@@ -36,7 +35,9 @@ config :logger, level: :warning
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
-config :phoenix_test, :endpoint, CaseManagerWeb.Endpoint
+# Enable helpful, but potentially expensive runtime checks
+config :phoenix_live_view,
+  enable_expensive_runtime_checks: true
 
-# Disable swoosh api client as it is only required for production adapters.
+# Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false

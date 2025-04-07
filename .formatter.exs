@@ -1,18 +1,7 @@
 [
-  import_deps: [
-    :ash_json_api,
-    :ecto,
-    :ecto_sql,
-    :phoenix,
-    :ash,
-    :ash_phoenix,
-    :ash_postgres,
-    :ash_authentication,
-    :ash_archival,
-    :ash_authentication_phoenix
-  ],
-  subdirectories: ["priv/*/migrations"],
-  plugins: [Phoenix.LiveView.HTMLFormatter, Spark.Formatter, Styler],
+  import_deps: [:ash_json_api, :ash_authentication, :ash_authentication_phoenix, :ash, :ash_archival],
   inputs: ["*.{heex,ex,exs}", "{config,lib,test}/**/*.{heex,ex,exs}", "priv/*/seeds.exs"],
-  line_length: 120
+  plugins: [Styler, Phoenix.LiveView.HTMLFormatter, Spark.Formatter],
+  line_length: 120,
+  heex_line_length: 300
 ]

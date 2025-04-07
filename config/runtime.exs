@@ -43,14 +43,14 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "80")
-  keyfile_path = System.get_env("SSL_KEY_PATH") || "priv/cert/selfsigned_key.pem"
-  certfile_path = System.get_env("SSL_CERT_PATH") || "priv/cert/selfsigned.pem"
+  port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :case_manager, CaseManager.Repo,
     # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    # For machines with several cores, consider starting multiple pools of `pool_size`
+    # pool_count: 4,
     socket_options: maybe_ipv6
 
   config :case_manager, CaseManagerWeb.Endpoint,
@@ -63,16 +63,13 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
-    https: [
-      port: 443,
-      cipher_suite: :strong,
-      keyfile: keyfile_path,
-      certfile: certfile_path
-    ],
-    force_ssl: [hsts: true],
     secret_key_base: secret_key_base
 
   config :case_manager, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+
+  config :case_manager,
+    token_signing_secret:
+      System.get_env("TOKEN_SIGNING_SECRET") || raise("Missing environment variable `TOKEN_SIGNING_SECRET`!")
 
   # ## SSL Support
   #
@@ -118,7 +115,7 @@ if config_env() == :prod do
   #       domain: System.get_env("MAILGUN_DOMAIN")
   #
   # For this example you need include a HTTP client required by Swoosh API client.
-  # Swoosh supports Hackney and Finch out of the box:
+  # Swoosh supports Hackney, Req and Finch out of the box:
   #
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #

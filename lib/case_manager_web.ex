@@ -16,6 +16,7 @@ defmodule CaseManagerWeb do
   below. Instead, define additional modules and import
   those modules here.
   """
+
   def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
@@ -38,10 +39,7 @@ defmodule CaseManagerWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: CaseManagerWeb.Layouts]
-
+      use Phoenix.Controller, formats: [:html, :json]
       use Gettext, backend: CaseManagerWeb.Gettext
 
       import Plug.Conn
@@ -52,8 +50,7 @@ defmodule CaseManagerWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {CaseManagerWeb.Layouts, :app}
+      use Phoenix.LiveView
 
       unquote(html_helpers())
     end
@@ -82,38 +79,17 @@ defmodule CaseManagerWeb do
 
   defp html_helpers do
     quote do
+      # Translation
       use Gettext, backend: CaseManagerWeb.Gettext
 
-      import CaseManagerWeb.AlertModal
-      import CaseManagerWeb.Back
-      import CaseManagerWeb.BadgeTemplate
-      import CaseManagerWeb.Button
-      import CaseManagerWeb.ConfirmationModal
-      import CaseManagerWeb.Filters
-      import CaseManagerWeb.FlashGroup
-      import CaseManagerWeb.Header
-      import CaseManagerWeb.HorizontalCards
-      import CaseManagerWeb.Icon
-      import CaseManagerWeb.IconBtn
-      import CaseManagerWeb.Input
-      import CaseManagerWeb.Label
-      import CaseManagerWeb.MenuBar
-      import CaseManagerWeb.ModalTemplate
-      import CaseManagerWeb.RiskBadge
-      import CaseManagerWeb.SearchBar
-      import CaseManagerWeb.SimpleForm
-      import CaseManagerWeb.StatusBadge
-      import CaseManagerWeb.Table
-      import CaseManagerWeb.Tooltip
-      import CaseManagerWeb.TxtLink
+      import CaseManagerWeb.CoreComponents
+
       # HTML escaping functionality
       import Phoenix.HTML
+      # Core UI components
+      alias CaseManagerWeb.Layouts
 
-      # UI components
-
-      # Translation
-
-      # Shortcut for generating JS commands
+      # Common modules used in templates
       alias Phoenix.LiveView.JS
 
       # Routes generation with the ~p sigil
@@ -131,7 +107,7 @@ defmodule CaseManagerWeb do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
