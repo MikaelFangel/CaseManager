@@ -17,7 +17,7 @@ defmodule CaseManagerWeb.Layouts do
       <div class="flex-1">
         <a href="/" class="flex-1 flex items-center gap-2">
           <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
+          <span class="font-semibold">Defensive Shield</span>
         </a>
       </div>
       <div class="flex-none">
@@ -57,13 +57,17 @@ defmodule CaseManagerWeb.Layouts do
         <div class="flex-1">
           <a href="/" class="flex-1 flex items-center gap-2">
             <img src={~p"/images/logo.svg"} width="36" />
-            <span class="font-semibold">Case Manager</span>
+            <span class="font-semibold">Defensive Shield</span>
           </a>
         </div>
         <div class="flex-none">
           <.theme_toggle />
         </div>
       </header>
+
+      <div class="p-4">
+        {render_slot(@top)}
+      </div>
 
       <div class="flex flex-1 overflow-hidden">
         <div class="w-1/2 border-r border-base-300 overflow-auto">

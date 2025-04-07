@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.split_layout flash={@flash}>
-      <:left>
+      <:top>
         <.header>
           <:actions>
             <.button :if={length(@selected_alerts) > 0} variant="primary" phx-click="process_selected">
@@ -19,22 +19,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </.button>
           </:actions>
         </.header>
-
+      </:top>
+      <:left>
         <.table id="alert" rows={@streams.alert_collection} row_click={fn {_id, alert} -> JS.push("show_alert", value: %{id: alert.id}) end} selectable={true} selected={@selected_alerts} on_toggle_selection={JS.push("toggle_selection")}>
           <:col :let={{_id, alert}} label="Company">{alert.company_id}</:col>
           <:col :let={{_id, alert}} label="Title">{alert.title}</:col>
           <:col :let={{_id, alert}} label="Risk Level">{alert.risk_level |> to_string() |> String.capitalize()}</:col>
-          <:action :let={{_id, alert}}>
-            <div class="sr-only">
-              <.link phx-click={JS.push("show_alert", value: %{id: alert.id})}>Show</.link>
-            </div>
-            <.link navigate={~p"/alert/#{alert}/edit"}>Edit</.link>
-          </:action>
-          <:action :let={{id, alert}}>
-            <.link phx-click={JS.push("delete", value: %{id: alert.id}) |> hide("##{id}")} data-confirm="Are you sure?">
-              Delete
-            </.link>
-          </:action>
+          <:col :let={{_id, alert}}><span class="status"></span></:col>
         </.table>
       </:left>
 
