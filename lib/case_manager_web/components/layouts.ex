@@ -65,14 +65,14 @@ defmodule CaseManagerWeb.Layouts do
         </div>
       </header>
 
-      <div class="flex h-screen">
+      <div class="flex flex-1 overflow-hidden">
         <div class="w-1/2 border-r border-base-300 overflow-auto">
           <div class="p-4">
             {render_slot(@left)}
           </div>
         </div>
-        <div class="w-1/2 overflow-auto">
-          <div class="p-4">
+        <div class="w-1/2 overflow-auto flex flex-col">
+          <div class="p-4 flex-1">
             {render_slot(@right)}
           </div>
         </div>

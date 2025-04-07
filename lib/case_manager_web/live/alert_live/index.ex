@@ -8,7 +8,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def render(assigns) do
     ~H"""
     <Layouts.split_layout flash={@flash}>
-      cc
       <:left>
         <.header>
           <:actions>
