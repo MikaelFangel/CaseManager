@@ -7,6 +7,27 @@ defmodule CaseManager.Incidents.Comment do
     repo(CaseManager.Repo)
   end
 
+  actions do
+    create :create do
+      primary? true
+
+      accept :*
+    end
+
+    read :read do
+      primary? true
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
+    update :update do
+      primary? true
+    end
+
+    destroy :delete do
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
@@ -19,10 +40,16 @@ defmodule CaseManager.Incidents.Comment do
   end
 
   relationships do
-    belongs_to :case, CaseManager.Incidents.Case
-    belongs_to :alert, CaseManager.Incidents.Alert
+    belongs_to :case, CaseManager.Incidents.Case do
+      public? true
+    end
+
+    belongs_to :alert, CaseManager.Incidents.Alert do
+      public? true
+    end
 
     belongs_to :user, CaseManager.Accounts.User do
+      public? true
       allow_nil? false
     end
   end

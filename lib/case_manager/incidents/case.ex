@@ -79,5 +79,9 @@ defmodule CaseManager.Incidents.Case do
       allow_nil? false
       public? true
     end
+
+    has_many :comments, CaseManager.Incidents.Comment do
+      public? true
+    end
   end
 end

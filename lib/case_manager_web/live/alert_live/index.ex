@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split_layout flash={@flash}>
+    <Layouts.split flash={@flash}>
       <:top>
         <.header>
           <:actions>
@@ -76,7 +76,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           </div>
         <% end %>
       </:right>
-    </Layouts.split_layout>
+    </Layouts.split>
     """
   end
 
