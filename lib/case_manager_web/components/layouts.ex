@@ -39,7 +39,10 @@ defmodule CaseManagerWeb.Layouts do
     """
   end
 
-  def split_layout(assigns) do
+  attr :left_width, :string, default: "w-1/2", doc: "Width class for left panel"
+  attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
+
+  def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
       <header class="navbar px-4 sm:px-6 lg:px-8">
@@ -63,12 +66,12 @@ defmodule CaseManagerWeb.Layouts do
       </div>
 
       <div class="flex flex-1 overflow-hidden">
-        <div class="w-1/2 border-r border-base-300 overflow-auto">
+        <div class={"#{@left_width} border-r border-base-300 overflow-auto"}>
           <div class="px-4 pb-4">
             {render_slot(@left)}
           </div>
         </div>
-        <div class="w-1/2 overflow-auto flex flex-col">
+        <div class={"#{@right_width} overflow-auto flex flex-col"}>
           <div class="p-4 flex-1">
             {render_slot(@right)}
           </div>

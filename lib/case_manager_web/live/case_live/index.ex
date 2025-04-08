@@ -19,11 +19,6 @@ defmodule CaseManagerWeb.CaseLive.Index do
       <.table id="cases" rows={@streams.cases} row_click={fn {_id, case} -> JS.navigate(~p"/case/#{case}") end}>
         <:col :let={{_id, case}} label="Company">{case.company.name}</:col>
         <:col :let={{_id, case}} label="Title">{case.title}</:col>
-        <:col :let={{_id, case}} label="Risk Level">
-          <.badge type={risk_level_to_badge_type(case.risk_level)}>
-            {case.risk_level |> to_string() |> String.capitalize()}
-          </.badge>
-        </:col>
         <:col :let={{_id, case}} label="Status">
           <.badge type={status_to_badge_type(case.status)} modifier="outline">
             {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
