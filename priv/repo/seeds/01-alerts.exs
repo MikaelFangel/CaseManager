@@ -1,11 +1,18 @@
 alias CaseManager.Incidents.Alert
+alias CaseManager.Organizations.Company
 
 require Ash.Query
 
-# Destroy all data
 Alert
 |> Ash.read!()
 |> Ash.bulk_destroy!(:delete, %{}, authorize?: false)
+
+company_ids =
+  Company
+  |> Ash.read!()
+  |> Enum.map(& &1.id)
+
+random_company_id = fn -> Enum.random(company_ids) end
 
 alerts = [
   %{
@@ -16,6 +23,7 @@ alerts = [
     status: :new,
     creation_time: DateTime.truncate(DateTime.utc_now(), :second),
     link: "https://security-console.example.com/alerts/ALERT-2025-001",
+    company_id: random_company_id.(),
     additional_data: %{
       "ip_address" => "203.0.113.45",
       "location" => "Kyiv, Ukraine",
@@ -32,6 +40,7 @@ alerts = [
     status: :reviewed,
     creation_time: DateTime.utc_now() |> DateTime.add(-2, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-002",
+    company_id: random_company_id.(),
     additional_data: %{
       "endpoint" => "DEV-LAPTOP-42",
       "malware_signature" => "Trojan.Emotet.Gen4",
@@ -48,6 +57,7 @@ alerts = [
     status: :linked_to_case,
     creation_time: DateTime.utc_now() |> DateTime.add(-1, :day) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-003",
+    company_id: random_company_id.(),
     additional_data: %{
       "source_ip" => "10.0.24.56",
       "destination_ip" => "198.51.100.23",
@@ -64,6 +74,7 @@ alerts = [
     status: :new,
     creation_time: DateTime.utc_now() |> DateTime.add(-6, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-004",
+    company_id: random_company_id.(),
     additional_data: %{
       "username" => "helpdesk2",
       "added_groups" => ["Domain Admins", "Enterprise Admins"],
@@ -78,6 +89,7 @@ alerts = [
     status: :false_positive,
     creation_time: DateTime.utc_now() |> DateTime.add(-12, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-005",
+    company_id: random_company_id.(),
     additional_data: %{
       "api_endpoint" => "/api/v2/customers/records",
       "request_volume" => 4573,
@@ -93,6 +105,7 @@ alerts = [
     status: :reviewed,
     creation_time: DateTime.utc_now() |> DateTime.add(-30, :minute) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-006",
+    company_id: random_company_id.(),
     additional_data: %{
       "c2_servers" => ["185.112.83.45", "192.87.134.12"],
       "affected_systems" => ["FILESERVER01", "DC-BACKUP"],
@@ -107,6 +120,7 @@ alerts = [
     status: :linked_to_case,
     creation_time: DateTime.utc_now() |> DateTime.add(-3, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-007",
+    company_id: random_company_id.(),
     additional_data: %{
       "rule_id" => "fw-rule-7842",
       "modified_by" => "admin@example.com",
@@ -123,6 +137,7 @@ alerts = [
     status: :new,
     creation_time: DateTime.utc_now() |> DateTime.add(-2, :day) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-008",
+    company_id: random_company_id.(),
     additional_data: %{
       "affected_users" => 14,
       "email_subject" => "URGENT: Your invoice requires immediate payment",
@@ -138,6 +153,7 @@ alerts = [
     status: :reviewed,
     creation_time: DateTime.utc_now() |> DateTime.add(-4, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-009",
+    company_id: random_company_id.(),
     additional_data: %{
       "bucket_name" => "example-corp-financial-reports",
       "user_identity" => "finance-admin@example.com",
@@ -154,6 +170,7 @@ alerts = [
     status: :false_positive,
     creation_time: DateTime.utc_now() |> DateTime.add(-8, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-010",
+    company_id: random_company_id.(),
     additional_data: %{
       "scanner_ip" => "45.33.192.76",
       "scan_type" => "TCP SYN scan followed by service enumeration",

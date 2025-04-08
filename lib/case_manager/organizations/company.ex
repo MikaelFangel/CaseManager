@@ -15,6 +15,27 @@ defmodule CaseManager.Organizations.Company do
       public? true
     end
 
+    actions do
+      create :create do
+        primary? true
+
+        accept :*
+      end
+
+      read :read do
+        primary? true
+
+        pagination offset?: true, keyset?: true, required?: false
+      end
+
+      update :update do
+        primary? true
+      end
+
+      destroy :delete do
+      end
+    end
+
     timestamps()
   end
 end
