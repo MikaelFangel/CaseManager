@@ -28,11 +28,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <:col :let={{_id, alert}}>
             <.status type={
               case alert.status do
-                :new -> "info"
-                :reviewed -> "warning"
+                :new -> :info
+                :reviewed -> :warning
                 :false_positive -> nil
                 :linked_to_case -> nil
-                _ -> "error"
+                _ -> :error
               end
             } />
           </:col>
