@@ -20,7 +20,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
         <:col :let={{_id, case}} label="Company">{case.company.name}</:col>
         <:col :let={{_id, case}} label="Title">{case.title}</:col>
         <:col :let={{_id, case}} label="Status">
-          <.badge type={status_to_badge_type(case.status)} modifier="outline">
+          <.badge type={status_to_badge_type(case.status)} modifier={:outline}>
             {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
           </.badge>
         </:col>
@@ -45,17 +45,6 @@ defmodule CaseManagerWeb.CaseLive.Index do
     {:ok, _} = Incidents.delete_case(case)
 
     {:noreply, stream_delete(socket, :cases, case)}
-  end
-
-  defp risk_level_to_badge_type(level) do
-    case level do
-      :info -> :info
-      :low -> :success
-      :medium -> :warning
-      :high -> :neutral
-      :critical -> :error
-      _ -> :neutral
-    end
   end
 
   defp status_to_badge_type(status) do
