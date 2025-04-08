@@ -52,16 +52,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <div class="mt-8">
             <h3 class="font-medium text-lg mb-2">Risk Level</h3>
             <div class="mb-6">
-              <span class={[
-                "badge",
-                @selected_alert.risk_level == :critical && "badge-error",
-                @selected_alert.risk_level == :high && "badge-warning",
-                @selected_alert.risk_level == :medium && "badge-neutral",
-                @selected_alert.risk_level == :low && "badge-success",
-                @selected_alert.risk_level == :info && "badge-info"
-              ]}>
+              <.badge type={
+                case @selected_alert.risk_level do
+                  :critical -> :error
+                  :high -> :warning
+                  :medium -> :neutral
+                  :low -> :success
+                  :info -> :info
+                end
+              }>
                 {@selected_alert.risk_level |> to_string() |> String.capitalize()}
-              </span>
+              </.badge>
             </div>
 
             <h3 class="font-medium text-lg mb-2">Description</h3>
