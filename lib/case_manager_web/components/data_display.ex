@@ -35,4 +35,31 @@ defmodule CaseManagerWeb.DataDisplay do
     <div aria-label={@label} class={@class} />
     """
   end
+
+  @doc """
+  Renders a badge
+
+  ## Examples
+
+      <.badge type="success">Success</.badge>
+      <.badge type="error">Error</.badge>
+  """
+
+  attr :type, :atom,
+    values: [:primary, :secondary, :accent, :neutral, :info, :success, :warning, :error, nil],
+    default: nil
+
+  slot :inner_block
+
+  def badge(assigns) do
+    classes = ["badge", assigns.type && "badge-#{assigns.type}"]
+
+    assigns = assign(assigns, :class, classes)
+
+    ~H"""
+    <div class={@class}>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
 end
