@@ -16,6 +16,9 @@ defmodule CaseManagerWeb.CaseLive.Show do
             <.button navigate={~p"/case"}>
               <.icon name="hero-arrow-left" />
             </.button>
+            <.button :if={!@case.escalated}>
+              Escalate case
+            </.button>
             <.button variant="primary" navigate={~p"/case/#{@case}/edit?return_to=show"}>
               <.icon name="hero-pencil-square" /> Edit case
             </.button>
@@ -23,7 +26,9 @@ defmodule CaseManagerWeb.CaseLive.Show do
         </.header>
       </:top>
 
-      <:left></:left>
+      <:left>
+        {@case.description}
+      </:left>
       <:right>
         <div class="flex flex-col h-full">
           <div class="overflow-y-auto flex-grow mb-4">
