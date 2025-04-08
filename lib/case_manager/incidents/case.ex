@@ -46,12 +46,16 @@ defmodule CaseManager.Incidents.Case do
       public? true
     end
 
-    attribute :status, :atom do
+    attribute :status, CaseManager.Incidents.CaseStatus do
       allow_nil? false
       public? true
     end
 
-    attribute :priority, :atom do
+    attribute :resolution_type, CaseManager.Incidents.Resolution do
+      public? true
+    end
+
+    attribute :risk_level, CaseManager.Incidents.RiskLevel do
       public? true
     end
 
@@ -68,10 +72,12 @@ defmodule CaseManager.Incidents.Case do
 
     belongs_to :company, CaseManager.Organizations.Company do
       allow_nil? false
+      public? true
     end
 
     belongs_to :soc, CaseManager.Organizations.SOC do
       allow_nil? false
+      public? true
     end
   end
 end

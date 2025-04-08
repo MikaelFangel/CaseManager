@@ -7,6 +7,27 @@ defmodule CaseManager.Organizations.SOC do
     repo(CaseManager.Repo)
   end
 
+  actions do
+    create :create do
+      primary? true
+
+      accept :*
+    end
+
+    read :read do
+      primary? true
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
+    update :update do
+      primary? true
+    end
+
+    destroy :delete do
+    end
+  end
+
   attributes do
     uuid_primary_key :id
 
