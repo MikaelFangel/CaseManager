@@ -42,7 +42,7 @@ defmodule CaseManagerWeb.CaseLive.Form do
     socket
     |> assign(:page_title, "Edit Case")
     |> assign(:case, case)
-    |> assign(:form, to_form(Incidents.update_case(case)))
+    |> assign(:form, to_form(Incidents.form_to_update_case(case)))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -51,7 +51,7 @@ defmodule CaseManagerWeb.CaseLive.Form do
     socket
     |> assign(:page_title, "New Case")
     |> assign(:case, case)
-    |> assign(:form, to_form(Incidents.update_case(case)))
+    |> assign(:form, to_form(Incidents.form_to_update_case(case)))
   end
 
   @impl true
@@ -90,6 +90,6 @@ defmodule CaseManagerWeb.CaseLive.Form do
     end
   end
 
-  defp return_path("index", _case), do: ~p"/cases"
-  defp return_path("show", case), do: ~p"/cases/#{case}"
+  defp return_path("index", _case), do: ~p"/case"
+  defp return_path("show", case), do: ~p"/case/#{case}"
 end
