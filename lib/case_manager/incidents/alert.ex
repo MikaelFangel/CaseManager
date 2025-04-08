@@ -54,6 +54,12 @@ defmodule CaseManager.Incidents.Alert do
       public? true
     end
 
+    attribute :status, CaseManager.Incidents.Status do
+      allow_nil? false
+      public? true
+      default :new
+    end
+
     attribute :creation_time, :utc_datetime do
       allow_nil? false
       public? true
@@ -73,5 +79,6 @@ defmodule CaseManager.Incidents.Alert do
 
   relationships do
     belongs_to :company, CaseManager.Organizations.Company
+    has_many :comments, CaseManager.Incidents.Comment
   end
 end

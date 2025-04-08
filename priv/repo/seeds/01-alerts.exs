@@ -3,9 +3,9 @@ alias CaseManager.Incidents.Alert
 require Ash.Query
 
 # Destroy all data
-# Alert
-# |> Ash.read!()
-# |> Ash.bulk_destroy!(:delete, %{}, authorize?: false)
+Alert
+|> Ash.read!()
+|> Ash.bulk_destroy!(:delete, %{}, authorize?: false)
 
 alerts = [
   %{
@@ -13,6 +13,7 @@ alerts = [
     title: "Suspicious Login Activity Detected",
     description: "Multiple failed login attempts followed by a successful login from an unusual location.",
     risk_level: :high,
+    status: :new,
     creation_time: DateTime.truncate(DateTime.utc_now(), :second),
     link: "https://security-console.example.com/alerts/ALERT-2025-001",
     additional_data: %{
@@ -28,6 +29,7 @@ alerts = [
     description:
       "Trojan.Emotet detected on workstation DEV-LAPTOP-42. The malware has been quarantined but further investigation is required.",
     risk_level: :critical,
+    status: :reviewed,
     creation_time: DateTime.utc_now() |> DateTime.add(-2, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-002",
     additional_data: %{
@@ -43,6 +45,7 @@ alerts = [
     description:
       "Unusual outbound traffic detected with sensitive data patterns. Large volume of data transferred to unrecognized external endpoint.",
     risk_level: :critical,
+    status: :linked_to_case,
     creation_time: DateTime.utc_now() |> DateTime.add(-1, :day) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-003",
     additional_data: %{
@@ -58,6 +61,7 @@ alerts = [
     description:
       "User account 'helpdesk2' modified group memberships to gain administrator privileges outside normal process.",
     risk_level: :high,
+    status: :new,
     creation_time: DateTime.utc_now() |> DateTime.add(-6, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-004",
     additional_data: %{
@@ -71,6 +75,7 @@ alerts = [
     title: "Suspicious API Access",
     description: "Multiple high-volume API requests accessing customer records from unauthorized application.",
     risk_level: :medium,
+    status: :false_positive,
     creation_time: DateTime.utc_now() |> DateTime.add(-12, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-005",
     additional_data: %{
@@ -85,6 +90,7 @@ alerts = [
     title: "Ransomware IOCs Detected",
     description: "Network traffic matching known BlackCat/ALPHV ransomware command and control servers detected.",
     risk_level: :critical,
+    status: :reviewed,
     creation_time: DateTime.utc_now() |> DateTime.add(-30, :minute) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-006",
     additional_data: %{
@@ -98,6 +104,7 @@ alerts = [
     title: "Firewall Configuration Change",
     description: "Firewall rule added allowing inbound connections to database servers from public internet.",
     risk_level: :high,
+    status: :linked_to_case,
     creation_time: DateTime.utc_now() |> DateTime.add(-3, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-007",
     additional_data: %{
@@ -113,6 +120,7 @@ alerts = [
     description:
       "Multiple users received similar phishing emails with malicious attachments claiming to be invoice documents.",
     risk_level: :medium,
+    status: :new,
     creation_time: DateTime.utc_now() |> DateTime.add(-2, :day) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-008",
     additional_data: %{
@@ -127,6 +135,7 @@ alerts = [
     title: "Unauthorized Cloud Storage Access",
     description: "Sensitive S3 bucket accessed from unrecognized device and unusual location.",
     risk_level: :high,
+    status: :reviewed,
     creation_time: DateTime.utc_now() |> DateTime.add(-4, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-009",
     additional_data: %{
@@ -142,6 +151,7 @@ alerts = [
     description:
       "External IP address performing comprehensive port and vulnerability scanning against production environment.",
     risk_level: :medium,
+    status: :false_positive,
     creation_time: DateTime.utc_now() |> DateTime.add(-8, :hour) |> DateTime.truncate(:second),
     link: "https://security-console.example.com/alerts/ALERT-2025-010",
     additional_data: %{

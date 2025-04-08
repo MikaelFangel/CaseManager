@@ -83,6 +83,7 @@ defmodule CaseManagerWeb do
       use Gettext, backend: CaseManagerWeb.Gettext
 
       import CaseManagerWeb.CoreComponents
+      import CaseManagerWeb.DataDisplay
 
       # HTML escaping functionality
       import Phoenix.HTML
