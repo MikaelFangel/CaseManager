@@ -13,29 +13,22 @@ defmodule CaseManagerWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="font-semibold">Defensive Shield</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex flex-column px-1 space-x-4 items-center">
-          <li>
-            <.theme_toggle />
-          </li>
-        </ul>
-      </div>
-    </header>
+    <div class="flex flex-col h-screen">
+      <.navbar current_user={assigns[:current_user]} search_placeholder="Search">
+        <:nav_links>
+          <li><.link navigate={~p"/alert"}>Alerts</.link></li>
+          <li><.link navigate={~p"/case"}>Cases</.link></li>
+        </:nav_links>
+      </.navbar>
 
-    <main class="p-4">
-      <div class="mx-auto w-full space-y-4">
-        {render_slot(@inner_block)}
-      </div>
-    </main>
+      <main class="flex-1 p-4 overflow-auto">
+        <div class="mx-auto w-full space-y-4">
+          {render_slot(@inner_block)}
+        </div>
+      </main>
 
-    <.flash_group flash={@flash} />
+      <.flash_group flash={@flash} />
+    </div>
     """
   end
 
@@ -45,21 +38,12 @@ defmodule CaseManagerWeb.Layouts do
   def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <header class="navbar px-4 sm:px-6 lg:px-8">
-        <div class="flex-1">
-          <a href="/" class="flex-1 flex items-center gap-2">
-            <img src={~p"/images/logo.svg"} width="36" />
-            <span class="font-semibold">Defensive Shield</span>
-          </a>
-        </div>
-        <div class="flex-none">
-          <ul class="flex flex-column px-1 space-x-4 items-center">
-            <li>
-              <.theme_toggle />
-            </li>
-          </ul>
-        </div>
-      </header>
+      <.navbar current_user={assigns[:current_user]} search_placeholder="Search">
+        <:nav_links>
+          <li><.link navigate={~p"/alert"}>Alerts</.link></li>
+          <li><.link navigate={~p"/case"}>Cases</.link></li>
+        </:nav_links>
+      </.navbar>
 
       <div class="p-4">
         {render_slot(@top)}
@@ -134,6 +118,35 @@ defmodule CaseManagerWeb.Layouts do
         <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
       </button>
     </div>
+    """
+  end
+
+  attr :search_placeholder, :string, default: "Search..."
+  attr :on_search, :any, default: nil
+  slot :nav_links
+
+  def navbar(assigns) do
+    ~H"""
+    <header class="navbar shadow-sm px-4 sm:px-6 lg:px-8">
+      <div class="flex-1">
+        <a href="/" class="flex items-center gap-2">
+          <img src={~p"/images/logo.svg"} width="36" />
+          <span class="font-semibold">Defensive Shield</span>
+        </a>
+      </div>
+
+      <div class="flex-none flex items-center gap-4">
+        <ul class="menu menu-horizontal hidden sm:flex">
+          {render_slot(@nav_links)}
+        </ul>
+
+        <form phx-submit={@on_search || "search"} class="form-control pt-2">
+          <.input type="search" name="query" placeholder={@search_placeholder} value="" phx-debounce="300" class="join-item" />
+        </form>
+
+        <.theme_toggle />
+      </div>
+    </header>
     """
   end
 end
