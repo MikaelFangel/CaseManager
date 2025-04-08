@@ -25,7 +25,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <:col :let={{_id, alert}} label="Company">{alert.company_id}</:col>
           <:col :let={{_id, alert}} label="Title">{alert.title}</:col>
           <:col :let={{_id, alert}} label="Risk Level">{alert.risk_level |> to_string() |> String.capitalize()}</:col>
-          <:col :let={{_id, alert}}><span class="status"></span></:col>
+          <:col :let={{_id, alert}}>
+            <.status type={
+              case alert.status do
+                :new -> "info"
+                :reviewed -> "warning"
+                :false_positive -> nil
+                :linked_to_case -> nil
+                _ -> "error"
+              end
+            } />
+          </:col>
         </.table>
       </:left>
 

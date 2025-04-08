@@ -19,9 +19,8 @@ defmodule CaseManager.Incidents.Comment do
   end
 
   relationships do
-    belongs_to :case, CaseManager.Incidents.Case do
-      allow_nil? false
-    end
+    belongs_to :case, CaseManager.Incidents.Case
+    belongs_to :alert, CaseManager.Incidents.Alert
 
     belongs_to :user, CaseManager.Accounts.User do
       allow_nil? false
