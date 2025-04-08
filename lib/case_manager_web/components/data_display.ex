@@ -49,10 +49,12 @@ defmodule CaseManagerWeb.DataDisplay do
     values: [:primary, :secondary, :accent, :neutral, :info, :success, :warning, :error, nil],
     default: nil
 
+  attr :modifier, :atom, values: [:dash, :outline, :soft, :ghost, nil], default: nil
+
   slot :inner_block
 
   def badge(assigns) do
-    classes = ["badge", assigns.type && "badge-#{assigns.type}"]
+    classes = ["badge", assigns.type && "badge-#{assigns.type}", assigns.modifier && "badge-#{assigns.modifier}"]
 
     assigns = assign(assigns, :class, classes)
 

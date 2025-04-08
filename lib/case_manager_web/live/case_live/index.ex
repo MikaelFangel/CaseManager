@@ -17,11 +17,19 @@ defmodule CaseManagerWeb.CaseLive.Index do
       </.header>
 
       <.table id="cases" rows={@streams.cases} row_click={fn {_id, case} -> JS.navigate(~p"/case/#{case}") end}>
-        <:col :let={{_id, case}} label="Company"></:col>
+        <:col :let={{_id, case}} label="Company">{case.company.name}</:col>
         <:col :let={{_id, case}} label="Title">{case.title}</:col>
-        <:col :let={{_id, case}} label="Priority">{case.priority}</:col>
-        <:col :let={{_id, case}} label="Case ID">{case.id}</:col>
-        <:col :let={{_id, case}} label="Status">{case.status}</:col>
+        <:col :let={{_id, case}} label="Risk Level">
+          <.badge type={risk_level_to_badge_type(case.risk_level)}>
+            {case.risk_level |> to_string() |> String.capitalize()}
+          </.badge>
+        </:col>
+        <:col :let={{_id, case}} label="Status">
+          <.badge type={status_to_badge_type(case.status)} modifier="outline">
+            {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
+          </.badge>
+        </:col>
+
         <:col :let={{_id, case}} label="Assignee">{case.assignee}</:col>
       </.table>
     </Layouts.app>
@@ -42,5 +50,29 @@ defmodule CaseManagerWeb.CaseLive.Index do
     {:ok, _} = Incidents.delete_case(case)
 
     {:noreply, stream_delete(socket, :cases, case)}
+  end
+
+  defp risk_level_to_badge_type(level) do
+    case level do
+      :info -> :info
+      :low -> :success
+      :medium -> :warning
+      :high -> :neutral
+      :critical -> :error
+      _ -> :neutral
+    end
+  end
+
+  defp status_to_badge_type(status) do
+    case status do
+      :new -> :info
+      :open -> :info
+      :in_progress -> :warning
+      :pending -> :warning
+      :resolved -> :success
+      :closed -> :neutral
+      :reopened -> :error
+      _ -> :neutral
+    end
   end
 end
