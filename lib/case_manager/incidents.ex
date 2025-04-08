@@ -5,7 +5,7 @@ defmodule CaseManager.Incidents do
   resources do
     resource CaseManager.Incidents.Alert do
       define :create_alert, action: :create
-      define :list_alert, action: :read
+      define :list_alert, action: :read, default_options: [load: :company]
       define :get_alert, action: :read, get_by: :id
       define :update_alert, action: :update
       define :delete_alert, action: :delete

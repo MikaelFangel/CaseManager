@@ -78,7 +78,11 @@ defmodule CaseManager.Incidents.Alert do
   end
 
   relationships do
-    belongs_to :company, CaseManager.Organizations.Company
+    belongs_to :company, CaseManager.Organizations.Company do
+      allow_nil? false
+      public? true
+    end
+
     has_many :comments, CaseManager.Incidents.Comment
   end
 end

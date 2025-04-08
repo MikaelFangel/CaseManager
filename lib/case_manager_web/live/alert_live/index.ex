@@ -22,7 +22,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       </:top>
       <:left>
         <.table id="alert" rows={@streams.alert_collection} row_click={fn {_id, alert} -> JS.push("show_alert", value: %{id: alert.id}) end} selectable={true} selected={@selected_alerts} on_toggle_selection={JS.push("toggle_selection")}>
-          <:col :let={{_id, alert}} label="Company">{alert.company_id}</:col>
+          <:col :let={{_id, alert}} label="Company">{alert.company.name}</:col>
           <:col :let={{_id, alert}} label="Title">{alert.title}</:col>
           <:col :let={{_id, alert}} label="Risk Level">{alert.risk_level |> to_string() |> String.capitalize()}</:col>
           <:col :let={{_id, alert}}>
