@@ -14,12 +14,7 @@ defmodule CaseManagerWeb.Layouts do
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar current_user={assigns[:current_user]} search_placeholder="Search">
-        <:nav_links>
-          <li><.link navigate={~p"/alert"}>Alerts</.link></li>
-          <li><.link navigate={~p"/case"}>Cases</.link></li>
-        </:nav_links>
-      </.navbar>
+      <.navbar current_user={assigns[:current_user]} search_placeholder="Search"></.navbar>
 
       <main class="flex-1 p-4 overflow-auto">
         <div class="mx-auto w-full space-y-4">
@@ -38,12 +33,7 @@ defmodule CaseManagerWeb.Layouts do
   def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar current_user={assigns[:current_user]} search_placeholder="Search">
-        <:nav_links>
-          <li><.link navigate={~p"/alert"}>Alerts</.link></li>
-          <li><.link navigate={~p"/case"}>Cases</.link></li>
-        </:nav_links>
-      </.navbar>
+      <.navbar current_user={assigns[:current_user]} search_placeholder="Search"></.navbar>
 
       <div class="p-4">
         {render_slot(@top)}
@@ -137,7 +127,9 @@ defmodule CaseManagerWeb.Layouts do
 
       <div class="flex-none flex items-center gap-4">
         <ul class="menu menu-horizontal hidden sm:flex">
-          {render_slot(@nav_links)}
+          <li><.link navigate={~p"/alert"}>Alerts</.link></li>
+          <li><.link navigate={~p"/case"}>Cases</.link></li>
+          <li><.link navigate={~p"/user"}>Users</.link></li>
         </ul>
 
         <form phx-submit={@on_search || "search"} class="form-control pt-2">
