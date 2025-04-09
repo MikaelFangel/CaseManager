@@ -8,7 +8,7 @@ defmodule CaseManager.Accounts do
 
     resource CaseManager.Accounts.User do
       define :create_user, action: :register_with_password
-      define :list_user, action: :read
+      define :list_user, action: :read, default_options: [load: :full_name]
       define :get_user, action: :read, get_by: :id
     end
   end

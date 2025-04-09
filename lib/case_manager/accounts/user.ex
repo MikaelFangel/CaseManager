@@ -280,6 +280,28 @@ defmodule CaseManager.Accounts.User do
     attribute :hashed_password, :string do
       sensitive? true
     end
+
+    attribute :first_name, :string do
+    end
+
+    attribute :last_name, :string do
+    end
+  end
+
+  relationships do
+    many_to_many :socs, CaseManager.Organizations.SOC do
+      through CaseManager.Organizations.SOCUser
+      public? true
+    end
+
+    many_to_many :companies, CaseManager.Organizations.Company do
+      through CaseManager.Organizations.CompanyUser
+      public? true
+    end
+  end
+
+  calculations do
+    calculate :full_name, :string, expr(first_name <> " " <> last_name), public?: true
   end
 
   identities do
