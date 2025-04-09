@@ -19,6 +19,8 @@ defmodule CaseManagerWeb.UserLive.Index do
       <.table id="users" rows={@streams.users} row_click={fn {_id, user} -> JS.navigate(~p"/user/#{user}") end}>
         <:col :let={{_id, user}} label="Email">{user.email}</:col>
         <:col :let={{_id, user}} label="Name">{user.full_name}</:col>
+        <:col :let={{_id, user}} label="SOC">{user.socs |> Enum.join(", ")}</:col>
+        <:col :let={{_id, user}} label="Company">{user.companies |> Enum.join(", ")}</:col>
         <:action :let={{_id, user}}>
           <div class="sr-only">
             <.link navigate={~p"/user/#{user}"}>Show</.link>

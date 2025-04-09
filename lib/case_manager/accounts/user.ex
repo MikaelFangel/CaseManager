@@ -16,13 +16,13 @@ defmodule CaseManager.Accounts.User do
         apply_on_password_change? true
       end
 
-      confirmation :confirm_new_user do
-        monitor_fields [:email]
-        confirm_on_create? true
-        confirm_on_update? false
-        auto_confirm_actions [:sign_in_with_magic_link, :reset_password_with_token]
-        sender CaseManager.Accounts.User.Senders.SendNewUserConfirmationEmail
-      end
+      # confirmation :confirm_new_user do
+      #   monitor_fields [:email]
+      #   confirm_on_create? true
+      #   confirm_on_update? false
+      #   auto_confirm_actions [:sign_in_with_magic_link, :reset_password_with_token]
+      #   sender CaseManager.Accounts.User.Senders.SendNewUserConfirmationEmail
+      # end
     end
 
     tokens do
@@ -34,15 +34,16 @@ defmodule CaseManager.Accounts.User do
     end
 
     strategies do
-      magic_link do
-        identity_field :email
-        registration_enabled? true
+      # magic_link do
+      #   identity_field :email
+      #   registration_enabled? true
 
-        sender CaseManager.Accounts.User.Senders.SendMagicLinkEmail
-      end
+      #   sender CaseManager.Accounts.User.Senders.SendMagicLinkEmail
+      # end
 
       password :password do
         identity_field :email
+        register_action_accept [:first_name, :last_name, :companies, :socs]
 
         resettable do
           sender CaseManager.Accounts.User.Senders.SendPasswordResetEmail
@@ -180,6 +181,8 @@ defmodule CaseManager.Accounts.User do
     create :register_with_password do
       description "Register a new user with a email and password."
 
+      accept [:*]
+
       argument :email, :ci_string do
         allow_nil? false
       end
@@ -265,7 +268,7 @@ defmodule CaseManager.Accounts.User do
     end
 
     policy always() do
-      forbid_if always()
+      authorize_if always()
     end
   end
 
@@ -282,9 +285,13 @@ defmodule CaseManager.Accounts.User do
     end
 
     attribute :first_name, :string do
+      allow_nil? false
+      public? true
     end
 
     attribute :last_name, :string do
+      allow_nil? false
+      public? true
     end
   end
 
