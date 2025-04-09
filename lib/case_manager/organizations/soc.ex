@@ -38,4 +38,11 @@ defmodule CaseManager.Organizations.SOC do
 
     timestamps()
   end
+
+  relationships do
+    many_to_many :users, CaseManager.Accounts.User do
+      through CaseManager.Organizations.SOCUser
+      public? true
+    end
+  end
 end
