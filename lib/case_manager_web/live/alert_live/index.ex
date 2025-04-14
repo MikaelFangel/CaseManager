@@ -77,7 +77,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
               </div>
               <div class="collapse-content flex flex-col text-xs">
                 <p class="mb-4">{case.description}</p>
-                <.button navigate={~p"/case"}>Open</.button>
+                <.button navigate={~p"/case/#{case.id}"}>Open</.button>
               </div>
             </div>
           <% end %>
