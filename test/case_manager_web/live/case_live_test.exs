@@ -1,8 +1,8 @@
 defmodule CaseManagerWeb.CaseLiveTest do
   use CaseManagerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import CaseManager.IncidentsFixtures
+  import Phoenix.LiveViewTest
 
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}

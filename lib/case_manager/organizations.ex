@@ -1,6 +1,10 @@
 defmodule CaseManager.Organizations do
   @moduledoc false
-  use Ash.Domain, otp_app: :case_manager
+  use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain]
+
+  admin do
+    show? true
+  end
 
   resources do
     resource CaseManager.Organizations.Company do

@@ -1,8 +1,8 @@
 defmodule CaseManagerWeb.UserLiveTest do
   use CaseManagerWeb.ConnCase
 
-  import Phoenix.LiveViewTest
   import CaseManager.AccountsFixtures
+  import Phoenix.LiveViewTest
 
   @create_attrs %{email: "some email"}
   @update_attrs %{email: "some updated email"}
