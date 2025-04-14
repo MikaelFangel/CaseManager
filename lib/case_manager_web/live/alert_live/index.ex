@@ -71,6 +71,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
               <input type="radio" name="case-accordion" id={"case-#{index}"} />
               <div class="collapse-title text-sm">
                 {case.title}
+                <.badge type={status_to_badge_type(case.status)} modifier={:outline}>
+                  {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
+                </.badge>
               </div>
               <div class="collapse-content flex flex-col text-xs">
                 <p class="mb-4">{case.description}</p>
@@ -188,6 +191,19 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_event("toggle_minimize", _params, socket) do
     {:noreply, assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)}
+  end
+
+  defp status_to_badge_type(status) do
+    case status do
+      :new -> :info
+      :open -> :info
+      :in_progress -> :warning
+      :pending -> :warning
+      :resolved -> :success
+      :closed -> :neutral
+      :reopened -> :error
+      _ -> :neutral
+    end
   end
 
   def case_form(assigns) do
