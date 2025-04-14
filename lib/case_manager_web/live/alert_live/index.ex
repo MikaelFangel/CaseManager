@@ -66,6 +66,22 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </div>
           </div>
 
+          <%= for {case, index} <- Enum.with_index(@selected_alert.cases || []) do %>
+            <div class="collapse border border-base-300 bg-base-100">
+              <input type="radio" name="case-accordion" id={"case-#{index}"} />
+              <div class="collapse-title text-sm">
+                {case.title}
+              </div>
+              <div class="collapse-content flex flex-col text-xs">
+                <p class="mb-4">{case.description}</p>
+                <.button navigate={~p"/case"}>Open</.button>
+              </div>
+            </div>
+          <% end %>
+          <%= if @selected_alert.cases == [] do %>
+            <div class="p-4 text-sm text-gray-500">No linked cases available.</div>
+          <% end %>
+
           <div class="mt-4">
             <.form for={@comment_form} id="comment-form" phx-submit="add_comment">
               <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." />
@@ -160,7 +176,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
-    alert = Incidents.get_alert!(id, load: [:company, comments: [user: [:full_name]]])
+    alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
     {:noreply, assign(socket, :selected_alert, alert)}
   end
 

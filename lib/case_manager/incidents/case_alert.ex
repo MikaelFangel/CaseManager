@@ -7,18 +7,20 @@ defmodule CaseManager.Incidents.CaseAlert do
     repo(CaseManager.Repo)
   end
 
-  attributes do
-    uuid_primary_key :id
-
-    timestamps()
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
   end
 
   relationships do
     belongs_to :case, CaseManager.Incidents.Case do
+      primary_key? true
+      public? true
       allow_nil? false
     end
 
     belongs_to :alert, CaseManager.Incidents.Alert do
+      primary_key? true
+      public? true
       allow_nil? false
     end
   end
