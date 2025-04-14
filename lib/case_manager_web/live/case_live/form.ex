@@ -8,20 +8,27 @@ defmodule CaseManagerWeb.CaseLive.Form do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
-      <.header>
-        {@page_title}
-        <:subtitle>Use this form to manage case records in your database.</:subtitle>
-      </.header>
+    <Layouts.split flash={@flash}>
+      <:top>
+        <.header>
+          {@page_title}
+        </.header>
+      </:top>
 
-      <.form for={@form} id="case-form" phx-change="validate" phx-submit="save">
-        <.input field={@form[:title]} type="text" label="Title" />
-        <footer>
-          <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>
-          <.button navigate={return_path(@return_to, @case)}>Cancel</.button>
-        </footer>
-      </.form>
-    </Layouts.app>
+      <:left>
+        <.form for={@form} id="case-form" phx-change="validate" phx-submit="save">
+          <.input field={@form[:title]} type="text" label="Title" placeholder="Multiple accounts added to security group" />
+          <.input field={@form[:status]} type="select" label="Status" options={CaseManager.Incidents.CaseStatus.values() |> Enum.map(&{&1, &1})} />
+          <.input field={@form[:risk_level]} type="select" label="Risk Level" options={CaseManager.Incidents.RiskLevel.values() |> Enum.map(&{&1, &1})} />
+          <.input field={@form[:description]} type="textarea" label="Description" />
+          <footer>
+            <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>
+            <.button navigate={return_path(@return_to, @case)}>Cancel</.button>
+          </footer>
+        </.form>
+      </:left>
+      <:right></:right>
+    </Layouts.split>
     """
   end
 

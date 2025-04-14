@@ -14,7 +14,7 @@ defmodule CaseManagerWeb.Layouts do
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar current_user={assigns[:current_user]} search_placeholder="Search"></.navbar>
+      <.navbar search_placeholder="Search" />
 
       <main class="flex-1 p-4 overflow-auto">
         <div class="mx-auto w-full space-y-4">
@@ -33,7 +33,7 @@ defmodule CaseManagerWeb.Layouts do
   def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar current_user={assigns[:current_user]} search_placeholder="Search"></.navbar>
+      <.navbar search_placeholder="Search" />
 
       <div class="p-4">
         {render_slot(@top)}
