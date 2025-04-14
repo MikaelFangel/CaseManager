@@ -38,15 +38,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
       <:right>
         <%= if @selected_alert do %>
-          <.header>
-            {@selected_alert.title}
-            <:subtitle>{@selected_alert.company_id}</:subtitle>
-          </.header>
-
-          <div class="mt-8">
-            <h3 class="font-medium text-lg mb-2">Risk Level</h3>
-            <div class="mb-6">
-              <.badge type={
+          <div class="flex justify-between">
+            <.header>
+              {@selected_alert.title}
+              <:subtitle>{@selected_alert.company.name}</:subtitle>
+            </.header>
+            <.badge
+              type={
                 case @selected_alert.risk_level do
                   :critical -> :error
                   :high -> :warning
@@ -54,15 +52,47 @@ defmodule CaseManagerWeb.AlertLive.Index do
                   :low -> :success
                   :info -> :info
                 end
-              }>
-                {@selected_alert.risk_level |> to_string() |> String.capitalize()}
-              </.badge>
-            </div>
+              }
+              class="ml-auto"
+            >
+              {@selected_alert.risk_level |> to_string() |> String.capitalize()}
+            </.badge>
+          </div>
 
+          <div class="mb-8">
             <h3 class="font-medium text-lg mb-2">Description</h3>
             <div class="prose">
               <p>{@selected_alert.description || "No description provided."}</p>
             </div>
+          </div>
+
+          <div class="mt-4">
+            <.form for={@comment_form} id="comment-form" phx-submit="add_comment">
+              <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." />
+              <footer class="mt-2">
+                <button class="btn btn-primary" phx-disable-with="Adding...">Add Comment</button>
+              </footer>
+            </.form>
+          </div>
+
+          <hr class="my-4 text-base-300" />
+          <div class="flex items-center">
+            <h3 class="font-medium text-md pr-4">Comments</h3>
+            <.badge :if={@selected_alert.comments != []} type={:info}>{length(@selected_alert.comments || [])}</.badge>
+          </div>
+          <div class="chat chat-start">
+            <%= for comment <- @selected_alert.comments || [] do %>
+              <div class="chat-header">
+                {comment.author}
+                <time class="pl-2 text-xs opacity-50">{comment.inserted_at}</time>
+              </div>
+              <div class="chat-bubble">
+                {comment.body}
+              </div>
+            <% end %>
+            <%= if @selected_alert.comments == [] do %>
+              <p class="text-sm opacity-50">No comments available.</p>
+            <% end %>
           </div>
         <% else %>
           <div class="flex h-full items-center justify-center text-base-content/70">
@@ -88,6 +118,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:drawer_open, false)
      |> assign(:drawer_minimized, false)
      |> assign(:form, to_form(Incidents.form_to_create_case()))
+     |> assign(:comment_form, to_form(%{}))
      |> stream(:alert_collection, Incidents.list_alert!())}
   end
 
@@ -131,7 +162,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
-    alert = Incidents.get_alert!(id)
+    alert = Incidents.get_alert!(id, load: [:company, :comments])
     {:noreply, assign(socket, :selected_alert, alert)}
   end
 
