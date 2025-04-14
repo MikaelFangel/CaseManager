@@ -76,24 +76,22 @@ defmodule CaseManagerWeb.AlertLive.Index do
           </div>
 
           <hr class="my-4 text-base-300" />
-          <div class="flex items-center">
+          <div class="flex items-center pb-2">
             <h3 class="font-medium text-md pr-4">Comments</h3>
             <.badge :if={@selected_alert.comments != []} type={:info}>{length(@selected_alert.comments || [])}</.badge>
           </div>
-          <div class="chat chat-start">
-            <%= for comment <- @selected_alert.comments || [] do %>
-              <div class="chat-header">
-                {comment.author}
-                <time class="pl-2 text-xs opacity-50">{comment.inserted_at}</time>
+          <%= for comment <- @selected_alert.comments || [] do %>
+            <div class="pb-2">
+              <div class="flex items-center">
+                <span class="font-bold text-sm pr-2">{comment.user.full_name}</span>
+                <time class="text-xs text-gray-500">{comment.inserted_at}</time>
               </div>
-              <div class="chat-bubble">
-                {comment.body}
-              </div>
-            <% end %>
-            <%= if @selected_alert.comments == [] do %>
-              <p class="text-sm opacity-50">No comments available.</p>
-            <% end %>
-          </div>
+              <p class="mt-1 text-sm">{comment.body}</p>
+            </div>
+          <% end %>
+          <%= if @selected_alert.comments == [] do %>
+            <p class="text-sm opacity-50">No comments available.</p>
+          <% end %>
         <% else %>
           <div class="flex h-full items-center justify-center text-base-content/70">
             <p>Select an alert to view details</p>
@@ -162,7 +160,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
-    alert = Incidents.get_alert!(id, load: [:company, :comments])
+    alert = Incidents.get_alert!(id, load: [:company, comments: [user: [:full_name]]])
     {:noreply, assign(socket, :selected_alert, alert)}
   end
 
