@@ -80,6 +80,11 @@ defmodule CaseManager.Incidents.Case do
       public? true
     end
 
+    many_to_many :cases, CaseManager.Incidents.Alert do
+      through CaseManager.Incidents.CaseAlert
+      public? true
+    end
+
     has_many :comments, CaseManager.Incidents.Comment do
       public? true
     end
