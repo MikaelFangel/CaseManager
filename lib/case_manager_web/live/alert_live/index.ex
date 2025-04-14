@@ -9,13 +9,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
     ~H"""
     <Layouts.split flash={@flash}>
       <:top>
-        <.header>
+        <.header class="h-12">
           <:actions>
             <.button :if={length(@selected_alerts) > 0} variant="primary" phx-click="process_selected">
-              Process {length(@selected_alerts)} Selected
-            </.button>
-            <.button variant="primary" navigate={~p"/alert/new"}>
-              <.icon name="hero-plus" /> New Alert
+              Create case for {length(@selected_alerts)} alerts
             </.button>
           </:actions>
         </.header>
@@ -44,9 +41,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <.header>
             {@selected_alert.title}
             <:subtitle>{@selected_alert.company_id}</:subtitle>
-            <:actions>
-              <.button navigate={~p"/alert/#{@selected_alert}/edit"}>Edit</.button>
-            </:actions>
           </.header>
 
           <div class="mt-8">
@@ -75,6 +69,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
             <p>Select an alert to view details</p>
           </div>
         <% end %>
+
+        <.drawer title="New Case" open={@drawer_open} minimized={@drawer_minimized}>
+          <.case_form form={@form} />
+        </.drawer>
       </:right>
     </Layouts.split>
     """
@@ -87,6 +85,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:page_title, "Listing Alert")
      |> assign(:selected_alerts, [])
      |> assign(:selected_alert, nil)
+     |> assign(:drawer_open, false)
+     |> assign(:drawer_minimized, false)
+     |> assign(:form, to_form(Incidents.form_to_create_case()))
      |> stream(:alert_collection, Incidents.list_alert!())}
   end
 
@@ -125,16 +126,73 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("process_selected", _params, socket) do
-    selected_alerts = socket.assigns.selected_alerts
-
-    socket = put_flash(socket, :info, "Processing #{length(selected_alerts)} alerts")
-
-    {:noreply, socket}
+    {:noreply, assign(socket, :drawer_open, true)}
   end
 
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
     alert = Incidents.get_alert!(id)
     {:noreply, assign(socket, :selected_alert, alert)}
+  end
+
+  @impl true
+  def handle_event("close_drawer", _params, socket) do
+    {:noreply, assign(socket, :drawer_open, false)}
+  end
+
+  @impl true
+  def handle_event("toggle_minimize", _params, socket) do
+    {:noreply, assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)}
+  end
+
+  def case_form(assigns) do
+    ~H"""
+    <.form for={@form} id="case-form" phx-change="validate" phx-submit="save">
+      <.input field={@form[:title]} type="text" label="Title" placeholder="Multiple accounts added to security group" />
+      <.input field={@form[:risk_level]} type="select" label="Risk Level" options={CaseManager.Incidents.RiskLevel.values() |> Enum.map(&{&1, &1})} />
+      <.input field={@form[:description]} type="textarea" label="Description" placeholder="Multiple accounts were added to a security group, potentially indicating a security incident." />
+      <footer>
+        <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>
+      </footer>
+    </.form>
+    """
+  end
+
+  attr :title, :string
+  attr :minimized, :boolean, default: false
+  attr :open, :boolean, default: false
+  slot :inner_block
+
+  def drawer(assigns) do
+    ~H"""
+    <%= if @open do %>
+      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-1/2"} bg-base-200 shadow-xl overflow-y-scroll"}>
+        <div class="h-full flex flex-col py-4">
+          <div class="px-4 sm:px-6 flex justify-between items-center">
+            <h2 class="text-lg font-medium">
+              {@title}
+            </h2>
+            <div class="flex items-center">
+              <button phx-click="toggle_minimize" class="hover:bg-secondary/10 rounded-full w-8 h-8 flex items-center justify-center">
+                <%= if @minimized do %>
+                  <.icon name="hero-arrow-up" />
+                <% else %>
+                  <.icon name="hero-minus-solid" />
+                <% end %>
+              </button>
+              <button phx-click="close_drawer" class="hover:bg-error/50 rounded-full w-8 h-8 flex items-center justify-center ml-2">
+                <.icon name="hero-x-mark-solid" />
+              </button>
+            </div>
+          </div>
+          <div class="mt-6 relative flex-1 px-4 sm:px-6">
+            <%= unless @minimized do %>
+              {render_slot(@inner_block)}
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    """
   end
 end
