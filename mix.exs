@@ -34,6 +34,7 @@ defmodule CaseManager.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:ash_admin, "~> 0.13"},
       # Ash and Phoenix
       {:open_api_spex, "~> 3.0"},
       {:ash_json_api, "~> 1.0"},

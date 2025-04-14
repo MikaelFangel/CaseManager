@@ -1,6 +1,10 @@
 defmodule CaseManager.Incidents do
   @moduledoc false
-  use Ash.Domain, otp_app: :case_manager, extensions: [AshPhoenix]
+  use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain, AshPhoenix]
+
+  admin do
+    show? true
+  end
 
   resources do
     resource CaseManager.Incidents.Alert do
