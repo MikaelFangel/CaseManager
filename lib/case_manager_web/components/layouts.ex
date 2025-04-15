@@ -32,6 +32,11 @@ defmodule CaseManagerWeb.Layouts do
   attr :search_placeholder, :string, default: "Search..."
   attr :left_width, :string, default: "w-1/2", doc: "Width class for left panel"
   attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
+  attr :flash, :map
+
+  slot :top
+  slot :left
+  slot :right
 
   def split(assigns) do
     ~H"""
