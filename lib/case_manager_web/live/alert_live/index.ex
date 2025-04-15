@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash}>
+    <Layouts.split flash={@flash} search_placeholder="Search alerts">
       <:top>
         <.header class="h-12">
           <:actions>
