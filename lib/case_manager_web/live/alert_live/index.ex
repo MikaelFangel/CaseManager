@@ -59,6 +59,35 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </.badge>
           </div>
 
+          <div class="grid grid-cols-3 gap-4 items-center rounded-lg shadow p-4 mb-4 text-sm">
+            <div class="relative group flex items-center space-x-2">
+              <%= if @show_status_form do %>
+                <.form for={@status_form} id="status-form" phx-submit="update_status" class="flex items-center space-x-2">
+                  <div>
+                    <.input field={@status_form[:status]} type="select" options={status_options()} />
+                    <.button variant="primary" phx-disable-with="Updating...">Update</.button>
+                    <.button type="button" phx-click="toggle_status_form">Cancel</.button>
+                  </div>
+                </.form>
+              <% else %>
+                <button phx-click="toggle_status_form" class="flex items-center space-x-2">
+                  <span>
+                    {@selected_alert.status |> to_string |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
+                  </span>
+                  <.icon name="hero-pencil-square" class="hidden group-hover:block cursor-pointer size-3" />
+                </button>
+              <% end %>
+            </div>
+            <div class="text-center">
+              {@selected_alert.creation_time}
+            </div>
+            <div class="text-right">
+              <.link href={@selected_alert.link} class="text-info hover:underline">
+                <.icon name="hero-link" class="size-3" /> Alert link
+              </.link>
+            </div>
+          </div>
+
           <div class="mb-8">
             <h3 class="font-medium text-lg mb-2">Description</h3>
             <div class="prose">
@@ -134,8 +163,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:selected_alert, nil)
      |> assign(:drawer_open, false)
      |> assign(:drawer_minimized, false)
+     |> assign(:show_status_form, false)
      |> assign(:form, to_form(Incidents.form_to_create_case()))
      |> assign(:comment_form, to_form(%{}))
+     |> assign(:status_form, to_form(%{}))
      |> stream(:alert_collection, Incidents.list_alert!())}
   end
 
@@ -184,6 +215,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
+  def handle_event("toggle_status_form", _params, socket) do
+    {:noreply, assign(socket, :show_status_form, !socket.assigns.show_status_form)}
+  end
+
+  @impl true
   def handle_event("close_drawer", _params, socket) do
     {:noreply, assign(socket, :drawer_open, false)}
   end
@@ -204,6 +240,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
       :reopened -> :error
       _ -> :neutral
     end
+  end
+
+  defp status_options do
+    [{"New", :new}, {"False positive", :false_positive}, {"Reviewed", :reviewed}, {"Linked to case", :linked_to_case}]
   end
 
   def case_form(assigns) do
