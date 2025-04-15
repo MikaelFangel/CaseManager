@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.UserLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} search_placeholder="Search users">
       <.header>
         <:actions>
           <.button variant="primary" navigate={~p"/user/new"}>
