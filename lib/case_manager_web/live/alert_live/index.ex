@@ -11,7 +11,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <:top>
         <.header class="h-12">
           <:actions>
-            <.button :if={length(@selected_alerts) > 0} variant="primary" phx-click="process_selected">
+            <.button :if={length(@selected_alerts) > 0} variant="primary" phx-click="open_drawer">
               Create case for {length(@selected_alerts)} alerts
             </.button>
           </:actions>
@@ -123,7 +123,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </.form>
           </div>
 
-          <hr class="my-4 text-base-300" />
+          <div class="divider"></div>
           <div class="flex items-center pb-2">
             <h3 class="font-medium text-md pr-4">Comments</h3>
             <.badge :if={@selected_alert.comments != []} type={:info}>{length(@selected_alert.comments || [])}</.badge>
@@ -147,7 +147,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         <% end %>
 
         <.drawer title="New Case" open={@drawer_open} minimized={@drawer_minimized}>
-          <.case_form form={@form} />
+          <.case_form form={@form} soc_options={@soc_options} />
         </.drawer>
       </:right>
     </Layouts.split>
@@ -156,6 +156,12 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    soc_options =
+      Enum.map(
+        Ash.load!(socket.assigns.current_user, :socs).socs,
+        &{CaseManager.Organizations.get_soc!(&1.id).name, &1.id}
+      )
+
     {:ok,
      socket
      |> assign(:page_title, "Listing Alert")
@@ -164,9 +170,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:drawer_open, false)
      |> assign(:drawer_minimized, false)
      |> assign(:show_status_form, false)
-     |> assign(:form, to_form(Incidents.form_to_create_case()))
      |> assign(:comment_form, to_form(%{}))
      |> assign(:status_form, to_form(%{}))
+     |> assign(:form, to_form(Incidents.form_to_create_case(actor: socket.assigns.current_user)))
+     |> assign(:soc_options, soc_options)
      |> stream(:alert_collection, Incidents.list_alert!())}
   end
 
@@ -204,11 +211,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_event("process_selected", _params, socket) do
-    {:noreply, assign(socket, :drawer_open, true)}
-  end
-
-  @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
     alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
     {:noreply, assign(socket, :selected_alert, alert)}
@@ -220,13 +222,59 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
+  def handle_event("open_drawer", _params, socket) do
+    socket =
+      socket
+      |> assign(:drawer_open, true)
+      |> assign(:drawer_minimized, false)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("close_drawer", _params, socket) do
-    {:noreply, assign(socket, :drawer_open, false)}
+    socket =
+      socket
+      |> assign(:drawer_open, false)
+      |> assign(:drawer_minimized, false)
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("toggle_minimize", _params, socket) do
     {:noreply, assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)}
+  end
+
+  @impl true
+  def handle_event("save_case", %{"form" => form}, socket) do
+    alert =
+      socket.assigns.selected_alerts
+      |> hd()
+      |> String.replace("alert_collection-", "")
+      |> CaseManager.Incidents.get_alert!()
+
+    form =
+      form
+      |> Map.put("alerts", Enum.map(socket.assigns.selected_alerts, &String.replace(&1, "alert_collection-", "")))
+      |> Map.put("company_id", alert.company_id)
+
+    case AshPhoenix.Form.submit(socket.assigns.form, params: form) do
+      {:ok, case} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Case created successfully."))
+         |> push_navigate(to: ~p"/case/#{case.id}")}
+
+      {:error, form} ->
+        IO.inspect(form)
+        {:noreply, assign(socket, :form, form)}
+    end
+  end
+
+  def handle_event("validate_case", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
+    {:noreply, assign(socket, form: form)}
   end
 
   defp status_to_badge_type(status) do
@@ -248,9 +296,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   def case_form(assigns) do
     ~H"""
-    <.form for={@form} id="case-form" phx-change="validate" phx-submit="save">
+    <.form for={@form} id="case-form" phx-change="validate_case" phx-submit="save_case">
       <.input field={@form[:title]} type="text" label="Title" placeholder="Multiple accounts added to security group" />
-      <.input field={@form[:risk_level]} type="select" label="Risk Level" options={CaseManager.Incidents.RiskLevel.values() |> Enum.map(&{&1, &1})} />
+      <.input field={@form[:soc_id]} type="select" label="SOC" prompt="Select SOC" options={@soc_options} />
+      <.input field={@form[:risk_level]} type="select" prompt="Select risk" label="Risk Level" options={CaseManager.Incidents.RiskLevel.values() |> Enum.map(&{&1, &1})} />
       <.input field={@form[:description]} type="textarea" label="Description" placeholder="Multiple accounts were added to a security group, potentially indicating a security incident." />
       <footer>
         <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>
@@ -267,7 +316,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def drawer(assigns) do
     ~H"""
     <%= if @open do %>
-      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-1/2"} bg-base-200 shadow-xl overflow-y-scroll"}>
+      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-3/5"} bg-base-200 shadow-xl overflow-y-scroll"}>
         <div class="h-full flex flex-col py-4">
           <div class="px-4 sm:px-6 flex justify-between items-center">
             <h2 class="text-lg font-medium">

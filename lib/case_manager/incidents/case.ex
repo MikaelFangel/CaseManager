@@ -15,6 +15,11 @@ defmodule CaseManager.Incidents.Case do
       primary? true
 
       accept :*
+
+      argument :alerts, {:array, :string}
+
+      change manage_relationship(:alerts, type: :append_and_remove)
+      change relate_actor(:reporter)
     end
 
     read :read do
@@ -49,6 +54,7 @@ defmodule CaseManager.Incidents.Case do
     attribute :status, CaseManager.Incidents.CaseStatus do
       allow_nil? false
       public? true
+      default :new
     end
 
     attribute :resolution_type, CaseManager.Incidents.Resolution do
@@ -80,7 +86,7 @@ defmodule CaseManager.Incidents.Case do
       public? true
     end
 
-    many_to_many :cases, CaseManager.Incidents.Alert do
+    many_to_many :alerts, CaseManager.Incidents.Alert do
       through CaseManager.Incidents.CaseAlert
       public? true
     end

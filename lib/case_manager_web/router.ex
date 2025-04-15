@@ -33,21 +33,8 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through(:browser)
 
-    live "/alert", AlertLive.Index, :index
-    live "/alert/new", AlertLive.Form, :new
-    live "/alert/:id/edit", AlertLive.Form, :edit
-
-    live "/case", CaseLive.Index, :index
-    live "/case/new", CaseLive.Form, :new
-    live "/case/:id", CaseLive.Show, :show
-    live "/case/:id/edit", CaseLive.Form, :edit
-
-    live "/user", UserLive.Index, :index
-    live "/user/new", UserLive.Form, :new
-    live "/user/:id", UserLive.Show, :show
-    live "/user/:id/edit", UserLive.Form, :edit
-
-    ash_authentication_live_session :authenticated_routes do
+    ash_authentication_live_session :authenticated_routes,
+      on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
       # in each liveview, add one of the following at the top of the module:
       #
       # If an authenticated user must be present:
@@ -58,6 +45,19 @@ defmodule CaseManagerWeb.Router do
       #
       # If an authenticated user must *not* be present:
       # on_mount {CaseManagerWeb.LiveUserAuth, :live_no_user}
+      live "/alert", AlertLive.Index, :index
+      live "/alert/new", AlertLive.Form, :new
+      live "/alert/:id/edit", AlertLive.Form, :edit
+
+      live "/case", CaseLive.Index, :index
+      live "/case/new", CaseLive.Form, :new
+      live "/case/:id", CaseLive.Show, :show
+      live "/case/:id/edit", CaseLive.Form, :edit
+
+      live "/user", UserLive.Index, :index
+      live "/user/new", UserLive.Form, :new
+      live "/user/:id", UserLive.Show, :show
+      live "/user/:id/edit", UserLive.Form, :edit
     end
   end
 
