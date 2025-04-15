@@ -81,33 +81,33 @@ defmodule CaseManager.Accounts.User do
       filter expr(email == ^arg(:email))
     end
 
-    create :sign_in_with_magic_link do
-      description "Sign in or register a user with magic link."
+    # create :sign_in_with_magic_link do
+    #   description "Sign in or register a user with magic link."
 
-      argument :token, :string do
-        description "The token from the magic link that was sent to the user"
-        allow_nil? false
-      end
+    #   argument :token, :string do
+    #     description "The token from the magic link that was sent to the user"
+    #     allow_nil? false
+    #   end
 
-      upsert? true
-      upsert_identity :unique_email
-      upsert_fields [:email]
+    #   upsert? true
+    #   upsert_identity :unique_email
+    #   upsert_fields [:email]
 
-      # Uses the information from the token to create or sign in the user
-      change AshAuthentication.Strategy.MagicLink.SignInChange
+    #   # Uses the information from the token to create or sign in the user
+    #   change AshAuthentication.Strategy.MagicLink.SignInChange
 
-      metadata :token, :string do
-        allow_nil? false
-      end
-    end
+    #   metadata :token, :string do
+    #     allow_nil? false
+    #   end
+    # end
 
-    action :request_magic_link do
-      argument :email, :ci_string do
-        allow_nil? false
-      end
+    # action :request_magic_link do
+    #   argument :email, :ci_string do
+    #     allow_nil? false
+    #   end
 
-      run AshAuthentication.Strategy.MagicLink.Request
-    end
+    #   run AshAuthentication.Strategy.MagicLink.Request
+    # end
 
     update :change_password do
       # Use this action to allow users to change their password by providing

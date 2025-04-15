@@ -49,6 +49,7 @@ defmodule CaseManager.Incidents.Case do
     attribute :status, CaseManager.Incidents.CaseStatus do
       allow_nil? false
       public? true
+      default :new
     end
 
     attribute :resolution_type, CaseManager.Incidents.Resolution do
