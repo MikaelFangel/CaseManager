@@ -11,10 +11,12 @@ defmodule CaseManagerWeb.Layouts do
 
   embed_templates("layouts/*")
 
+  attr :search_placeholder, :string, default: "Search..."
+
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar search_placeholder="Search" />
+      <.navbar search_placeholder={@search_placeholder} />
 
       <main class="flex-1 p-4 overflow-auto">
         <div class="mx-auto w-full space-y-4">
@@ -27,13 +29,14 @@ defmodule CaseManagerWeb.Layouts do
     """
   end
 
+  attr :search_placeholder, :string, default: "Search..."
   attr :left_width, :string, default: "w-1/2", doc: "Width class for left panel"
   attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
 
   def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar search_placeholder="Search" />
+      <.navbar search_placeholder={@search_placeholder} />
 
       <div class="p-4">
         {render_slot(@top)}
