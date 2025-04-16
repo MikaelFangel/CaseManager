@@ -14,6 +14,7 @@ defmodule CaseManager.Incidents do
       define :update_alert, action: :update
       define :delete_alert, action: :delete
       define :add_comment_to_alert, action: :add_comment, args: [:body]
+      define :change_alert_status, action: :change_status, args: [:status]
     end
 
     resource CaseManager.Incidents.Case do
