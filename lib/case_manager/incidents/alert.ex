@@ -27,6 +27,15 @@ defmodule CaseManager.Incidents.Alert do
       primary? true
     end
 
+    update :add_comment do
+      description "Add a comment to an alert"
+      require_atomic? false
+
+      argument :body, :string, allow_nil?: false
+
+      change manage_relationship(:body, :comments, type: :create, value_is_key: :body)
+    end
+
     destroy :delete do
       description "Delete an alert"
     end
