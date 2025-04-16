@@ -19,7 +19,7 @@ defmodule CaseManager.Incidents do
 
     resource CaseManager.Incidents.Case do
       define :create_case, action: :create
-      define :list_case, action: :read, default_options: [load: :company]
+      define :list_case, action: :read, default_options: [load: :company, query: [sort: [updated_at: :desc]]]
       define :get_case, action: :read, get_by: :id
       define :update_case, action: :update
       define :delete_case, action: :delete
