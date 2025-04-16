@@ -270,8 +270,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
         IO.inspect(form)
         {:noreply, assign(socket, :form, form)}
     end
-
-    {:noreply, socket}
   end
 
   def handle_event("validate_case", %{"form" => params}, socket) do
