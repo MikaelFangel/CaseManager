@@ -9,22 +9,29 @@ defmodule CaseManager.Incidents.Comment do
 
   actions do
     create :create do
+      description "Create a comment."
       primary? true
 
       accept :*
+
+      change relate_actor(:user)
     end
 
     read :read do
+      description "List all comments."
       primary? true
 
       pagination offset?: true, keyset?: true, required?: false
     end
 
     update :update do
+      description "Update a comment."
       primary? true
     end
 
     destroy :delete do
+      description "Delete a comment."
+      primary? true
     end
   end
 
@@ -49,7 +56,6 @@ defmodule CaseManager.Incidents.Comment do
     end
 
     belongs_to :user, CaseManager.Accounts.User do
-      public? true
       allow_nil? false
     end
   end
