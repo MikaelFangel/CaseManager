@@ -11,6 +11,8 @@ defmodule CaseManagerWeb.Layouts do
 
   embed_templates("layouts/*")
 
+  attr :search_placeholder, :string, default: "Search..."
+
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
@@ -27,6 +29,7 @@ defmodule CaseManagerWeb.Layouts do
     """
   end
 
+  attr :search_placeholder, :string, default: "Search..."
   attr :left_width, :string, default: "w-1/2", doc: "Width class for left panel"
   attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
   attr :flash, :map
