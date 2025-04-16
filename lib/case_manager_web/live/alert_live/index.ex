@@ -62,7 +62,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <div class="grid grid-cols-3 gap-4 items-center rounded-lg shadow p-4 mb-4 text-sm">
             <div class="relative group flex items-center space-x-2">
               <%= if @show_status_form do %>
-                <.form for={@status_form} id="status-form" phx-submit="update_status" class="flex items-center space-x-2">
+                <.form for={@status_form} id="status-form" phx-change="validate_status" phx-submit="update_status" class="flex items-center space-x-2">
                   <div>
                     <.input field={@status_form[:status]} type="select" options={status_options()} />
                     <.button variant="primary" phx-disable-with="Updating...">Update</.button>
@@ -220,6 +220,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
         :comment_form,
         to_form(Incidents.form_to_add_comment_to_alert(alert, actor: socket.assigns.current_user))
       )
+      |> assign(
+        :status_form,
+        to_form(Incidents.form_to_change_alert_status(alert))
+      )
       |> assign(:selected_alert, alert)
 
     {:noreply, socket}
@@ -267,6 +271,18 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
+  def handle_event("update_status", %{"form" => form}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.status_form, params: form) do
+      {:ok, _status} ->
+        {:noreply,
+         socket |> put_flash(:info, gettext("Status updated successfully.")) |> assign(:show_status_form, false)}
+
+      {:error, form} ->
+        {:noreply, assign(socket, :status_for, form)}
+    end
+  end
+
+  @impl true
   def handle_event("save_case", %{"form" => form}, socket) do
     alert =
       socket.assigns.selected_alerts
@@ -299,6 +315,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_event("validate_comment", %{"form" => params}, socket) do
     form = AshPhoenix.Form.validate(socket.assigns.comment_form, params)
     {:noreply, assign(socket, comment_form: form)}
+  end
+
+  def handle_event("validate_status", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.status_form, params)
+    {:noreply, assign(socket, status_form: form)}
   end
 
   defp status_to_badge_type(status) do
