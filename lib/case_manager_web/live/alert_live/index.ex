@@ -115,7 +115,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <% end %>
 
           <div class="mt-4">
-            <.form for={@comment_form} id="comment-form" phx-submit="add_comment">
+            <.form for={@comment_form} id="comment-form" phx-change="validate_comment" phx-submit="add_comment">
               <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." />
               <footer class="mt-2">
                 <button class="btn btn-primary" phx-disable-with="Adding...">Add Comment</button>
@@ -213,7 +213,16 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
     alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
-    {:noreply, assign(socket, :selected_alert, alert)}
+
+    socket =
+      socket
+      |> assign(
+        :comment_form,
+        to_form(Incidents.form_to_add_comment_to_alert(alert, actor: socket.assigns.current_user))
+      )
+      |> assign(:selected_alert, alert)
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -247,6 +256,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
+  def handle_event("add_comment", %{"form" => form}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form, actor: socket.assigns.current_user) do
+      {:ok, _comment} ->
+        {:noreply, put_flash(socket, :info, gettext("Comment added successfully."))}
+
+      {:error, form} ->
+        {:noreply, assign(socket, :comment_form, form)}
+    end
+  end
+
+  @impl true
   def handle_event("save_case", %{"form" => form}, socket) do
     alert =
       socket.assigns.selected_alerts
@@ -267,7 +287,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
          |> push_navigate(to: ~p"/case/#{case.id}")}
 
       {:error, form} ->
-        IO.inspect(form)
         {:noreply, assign(socket, :form, form)}
     end
   end
@@ -275,6 +294,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_event("validate_case", %{"form" => params}, socket) do
     form = AshPhoenix.Form.validate(socket.assigns.form, params)
     {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("validate_comment", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.comment_form, params)
+    {:noreply, assign(socket, comment_form: form)}
   end
 
   defp status_to_badge_type(status) do
