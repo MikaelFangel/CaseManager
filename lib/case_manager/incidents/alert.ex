@@ -2,6 +2,8 @@ defmodule CaseManager.Incidents.Alert do
   @moduledoc false
   use Ash.Resource, otp_app: :case_manager, domain: CaseManager.Incidents, data_layer: AshPostgres.DataLayer
 
+  alias CaseManager.Incidents.Status
+
   postgres do
     table "alerts"
     repo(CaseManager.Repo)
@@ -25,6 +27,13 @@ defmodule CaseManager.Incidents.Alert do
     update :update do
       description "Change the alert data"
       primary? true
+    end
+
+    update :change_status do
+      description "Change the status."
+      argument :status, Status
+
+      change set_attribute(:status, arg(:status))
     end
 
     update :add_comment do
@@ -63,7 +72,7 @@ defmodule CaseManager.Incidents.Alert do
       public? true
     end
 
-    attribute :status, CaseManager.Incidents.Status do
+    attribute :status, Status do
       allow_nil? false
       public? true
       default :new
