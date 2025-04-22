@@ -11,7 +11,9 @@ defmodule CaseManagerWeb.CaseLive.Show do
       <:top>
         <.header>
           {@case.title}
-          <:subtitle>{@case.id}</:subtitle>
+          <.badge type={status_to_badge_type(@case.status)} modifier={:outline}>
+            {@case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
+          </.badge>
           <:actions>
             <.button navigate={~p"/case"}>
               <.icon name="hero-arrow-left" />
@@ -27,17 +29,47 @@ defmodule CaseManagerWeb.CaseLive.Show do
       </:top>
 
       <:left>
-        {@case.description}
+        <div class="border border-base-300 rounded-lg shadow p-4 mb-4 text-sm">
+          <div class="grid grid-cols-3 gap-4 items-center">
+            <div class="text-left">
+              {@case.company.name}
+            </div>
+            <div class="text-center">
+              {@case.inserted_at}
+            </div>
+            <div class="text-right">
+              {@case.soc.name}
+            </div>
+            <div>Reported by: <span class="font-semibold">{@case.reporter.full_name}</span></div>
+            <div class="text-center">{@case.resolution_type}</div>
+            <div :if={@case.assignee} class="text-right">Assignee: <span class="font-semibold">{@case.assignee.full_name}</span></div>
+          </div>
+          <div class="divider"></div>
+          <p>{@case.description}</p>
+        </div>
+
+        <%= for {alert, index} <- Enum.with_index(@case.alerts || []) do %>
+          <div class="collapse border border-base-300 bg-base-100">
+            <input type="radio" name="alert-accordion" id={"alert-#{index}"} />
+            <div class="collapse-title text-sm">
+              {alert.title} - <span class="text-xs text-base-content/50">{alert.risk_level |> to_string() |> String.capitalize()}</span>
+            </div>
+            <div class="collapse-content flex flex-col text-xs">
+              <p class="mb-4">{alert.description}</p>
+              <%!-- <.button navigate={~p"/alert/#{case.id}"}>Open</.button> --%>
+            </div>
+          </div>
+        <% end %>
       </:left>
       <:right>
         <div class="flex flex-col h-full">
           <div class="overflow-y-auto flex-grow mb-4">
             <%= for {id, comment} <- @case.comments do %>
-              <div>{comment.body}</div>
+              <div id={id}>{comment.body}</div>
             <% end %>
           </div>
           <div class="mt-auto pt-2">
-            <.form phx-submit="save_comment">
+            <.form for={%{}} phx-submit="save_comment">
               <.input type="textarea" name="comment" value="" class="mb-2" />
               <.button>Send</.button>
             </.form>
@@ -53,6 +85,24 @@ defmodule CaseManagerWeb.CaseLive.Show do
     {:ok,
      socket
      |> assign(:page_title, "Show Case")
-     |> assign(:case, Incidents.get_case!(id, load: :comments))}
+     |> assign(
+       :case,
+       Incidents.get_case!(id,
+         load: [:comments, :soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]]
+       )
+     )}
+  end
+
+  defp status_to_badge_type(status) do
+    case status do
+      :new -> :info
+      :open -> :info
+      :in_progress -> :warning
+      :pending -> :warning
+      :resolved -> :success
+      :closed -> :neutral
+      :reopened -> :error
+      _ -> :neutral
+    end
   end
 end
