@@ -102,6 +102,7 @@ defmodule CaseManager.Incidents.Case do
 
     has_many :comments, CaseManager.Incidents.Comment do
       public? true
+      sort inserted_at: :desc
     end
   end
 end

@@ -62,17 +62,57 @@ defmodule CaseManagerWeb.CaseLive.Show do
         <% end %>
       </:left>
       <:right>
-        <div class="flex flex-col h-full">
-          <div class="overflow-y-auto flex-grow mb-4">
-            <%= for {id, comment} <- @case.comments do %>
-              <div id={id}>{comment.body}</div>
+        <div class="flex flex-col h-full sticky top-0">
+          <div class="tabs tabs-boxed sticky top-0 z-10 bg-base-100">
+            <a class={"tab #{if @active_visibility == :public, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="public">
+              <.icon name="hero-globe-alt" class="mr-1 h-4 w-4" /> Public
+            </a>
+            <a class={"tab #{if @active_visibility == :internal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="internal">
+              <.icon name="hero-building-office" class="mr-1 h-4 w-4" /> Internal
+            </a>
+            <a class={"tab #{if @active_visibility == :personal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="personal">
+              <.icon name="hero-lock-closed" class="mr-1 h-4 w-4" /> Personal
+            </a>
+          </div>
+
+          <div class="overflow-y-auto flex-1 my-4 flex flex-col-reverse">
+            <%= if Enum.empty?(@case.comments) do %>
+              <div class="flex-1 h-full flex flex-col justify-center items-center text-base-content/70">
+                <.icon name="hero-chat-bubble-left-ellipsis" class="h-12 w-12 mb-2 opacity-50" />
+                <p>No comments yet</p>
+              </div>
+            <% else %>
+              <%= for comment <- @case.comments do %>
+                <div id={comment.id} class={"chat #{if @user_id != comment.user.id, do: "chat-start", else: "chat-end"} mb-2"}>
+                  <div class="chat-header">
+                    <span class="font-medium">{comment.user.full_name}</span>
+                    <time class="text-xs opacity-50">{comment.inserted_at |> Calendar.strftime("%H:%M - %d-%m-%y")}</time>
+                  </div>
+                  <div class={"chat-bubble #{if @user_id == comment.user.id, do: "chat-bubble-info"}"}>{comment.body}</div>
+                </div>
+              <% end %>
             <% end %>
           </div>
-          <div class="mt-auto pt-2">
-            <.form for={%{}} phx-submit="save_comment">
-              <.input type="textarea" name="comment" value="" class="mb-2" />
-              <.button>Send</.button>
-            </.form>
+
+          <div class="sticky bottom-0 bg-base-100">
+            <div class={"order-base-300 rounded-lg #{visibility_theme_class(@active_visibility)}"}>
+              <.form for={@comment_form} id="comment-form" phx-validate="validate_comment" phx-submit="add_comment" class="mt-2 px-3 pb-3">
+                <.input field={@comment_form[:visibility]} type="hidden" value={@active_visibility} />
+
+                <div class="flex items-center">
+                  <span class={"inline-flex items-center gap-1 text-sm font-medium #{visibility_text_color(@active_visibility)}"}>
+                    Posting to {@active_visibility}
+                  </span>
+                </div>
+                <p class="mb-2 text-xs text-base-content/50">This comment will only be visible to {visibility_audience(@active_visibility)}.</p>
+
+                <.input field={@comment_form[:body]} type="textarea" placeholder="Write a comment..." />
+
+                <button type="submit" class={"btn #{visibility_button_class(@active_visibility)}"}>
+                  <.icon name="hero-paper-airplane" /> Send
+                </button>
+              </.form>
+            </div>
           </div>
         </div>
       </:right>
@@ -82,15 +122,45 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
+    case =
+      Incidents.get_case!(id,
+        load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name], comments: [user: :full_name]]
+      )
+
     {:ok,
      socket
      |> assign(:page_title, "Show Case")
+     |> assign(:active_visibility, :public)
+     |> assign(:case, case)
+     |> assign(:user_id, socket.assigns.current_user.id)
      |> assign(
-       :case,
-       Incidents.get_case!(id,
-         load: [:comments, :soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]]
-       )
+       :comment_form,
+       to_form(CaseManager.Incidents.form_to_add_comment_to_case(case, actor: socket.assigns.current_user))
      )}
+  end
+
+  @impl true
+  def handle_event("switch_visibility", %{"visibility" => visibility}, socket) do
+    {:noreply, assign(socket, :active_visibility, String.to_existing_atom(visibility))}
+  end
+
+  @impl true
+  def handle_event("validate_comment", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.comment_form, params)
+    {:noreply, assign(socket, comment_form: form)}
+  end
+
+  @impl true
+  def handle_event("add_comment", %{"form" => form}, socket) do
+    form = %{comment: form}
+
+    case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form) do
+      {:ok, _comment} ->
+        {:noreply, put_flash(socket, :info, gettext("Comment added successfully."))}
+
+      {:error, form} ->
+        {:noreply, assign(socket, :comment_form, form)}
+    end
   end
 
   defp status_to_badge_type(status) do
@@ -103,6 +173,42 @@ defmodule CaseManagerWeb.CaseLive.Show do
       :closed -> :neutral
       :reopened -> :error
       _ -> :neutral
+    end
+  end
+
+  defp visibility_theme_class(visibility) do
+    case visibility do
+      :public -> "bg-success/10"
+      :internal -> "bg-warning/10"
+      :personal -> "bg-error/10"
+      _ -> ""
+    end
+  end
+
+  defp visibility_button_class(visibility) do
+    case visibility do
+      :public -> "btn-success"
+      :internal -> "btn-warning"
+      :personal -> "btn-error"
+      _ -> "btn-primary"
+    end
+  end
+
+  defp visibility_text_color(visibility) do
+    case visibility do
+      :public -> "text-success"
+      :internal -> "text-warning"
+      :personal -> "text-error"
+      _ -> ""
+    end
+  end
+
+  defp visibility_audience(visibility) do
+    case visibility do
+      :public -> "everyone"
+      :internal -> "MSSP team members"
+      :personal -> "administrators and yourself"
+      _ -> "unknown audience"
     end
   end
 end
