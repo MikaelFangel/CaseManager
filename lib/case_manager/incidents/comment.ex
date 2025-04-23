@@ -43,6 +43,14 @@ defmodule CaseManager.Incidents.Comment do
       public? true
     end
 
+    attribute :visibility, CaseManager.Incidents.Visibility do
+      description "Chooses who can see the comment"
+      allow_nil? false
+      public? true
+
+      default :internal
+    end
+
     timestamps()
   end
 

@@ -23,6 +23,7 @@ defmodule CaseManager.Incidents do
       define :get_case, action: :read, get_by: :id
       define :update_case, action: :update
       define :delete_case, action: :delete
+      define :add_comment_to_case, action: :add_comment, args: [:comment]
     end
 
     resource CaseManager.Incidents.CaseAlert

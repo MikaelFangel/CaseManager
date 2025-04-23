@@ -37,6 +37,15 @@ defmodule CaseManager.Incidents.Case do
     destroy :delete do
       description "Delete an case"
     end
+
+    update :add_comment do
+      description "Add a comment to a case"
+      require_atomic? false
+
+      argument :comment, :map
+
+      change manage_relationship(:comment, :comments, type: :create)
+    end
   end
 
   attributes do
