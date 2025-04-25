@@ -169,7 +169,7 @@ defmodule CaseManagerWeb.Layouts do
 
   attr :text_position, :atom,
     default: :middle,
-    doc: "String to determine the divider text position. [defaults to middle]",
+    doc: "Atom to determine the divider text position. [defaults to middle]",
     values: [:start, :middle, :end]
 
   attr :divider_type, :atom,
