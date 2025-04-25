@@ -171,7 +171,7 @@ defmodule CaseManagerWeb.Layouts do
 
   def divider(assigns) do
     ~H"""
-    <div class={"divider #{@horizontal && "divider-horizontal"} #{@text_position} divider-#{Atom.to_string(@divider_type)}"}>{render_slot(@inner_block)}</div>
+    <div class={"divider #{@horizontal && "divider-horizontal"} #{@text_position} divider-#{@divider_type}"}>{render_slot(@inner_block)}</div>
     """
   end
 end
