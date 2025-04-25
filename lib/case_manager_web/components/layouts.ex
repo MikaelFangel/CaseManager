@@ -12,6 +12,9 @@ defmodule CaseManagerWeb.Layouts do
   embed_templates("layouts/*")
 
   attr :search_placeholder, :string, default: "Search..."
+  attr :flash, :map
+
+  slot :inner_block
 
   def app(assigns) do
     ~H"""
