@@ -153,4 +153,25 @@ defmodule CaseManagerWeb.Layouts do
     </header>
     """
   end
+
+  @doc """
+    Provides a divider component
+
+    ## Examples
+
+      <.divider>
+
+      <.divider horizontal={true} text_position="divider-end" divider_type={:warning}"> divide </.divider>
+  """
+  attr :horizontal, :boolean, default: false, doc: "Boolean to determine the divider orientation. defaults to vertical"
+  attr :text_position, :string, default: "", doc: "String to determine the divider text position. defaults to middle"
+  attr :divider_type, :atom, default: :neutral, doc: "Atom to determine the divider color. default to neutral"
+
+  slot :inner_block
+
+  def divider(assigns) do
+    ~H"""
+    <div class={"divider #{@horizontal && "divider-horizontal"} #{@text_position} divider-#{Atom.to_string(@divider_type)}"}>{render_slot(@inner_block)}</div>
+    """
+  end
 end
