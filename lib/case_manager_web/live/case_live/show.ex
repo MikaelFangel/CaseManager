@@ -44,7 +44,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
             <div class="text-center">{@case.resolution_type}</div>
             <div :if={@case.assignee} class="text-right">Assignee: <span class="font-semibold">{@case.assignee.full_name}</span></div>
           </div>
-          <div class="divider"></div>
+          <Layouts.divider />
           <p>{@case.description}</p>
         </div>
 

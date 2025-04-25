@@ -56,7 +56,7 @@ defmodule CaseManagerWeb.Layouts do
             {render_slot(@left)}
           </div>
         </div>
-        <div class="divider divider-horizontal"></div>
+        <.divider horizontal={true} />
         <div class={"#{@right_width} overflow-auto flex"}>
           <div class="px-4 pb-4 flex-1">
             {render_slot(@right)}
