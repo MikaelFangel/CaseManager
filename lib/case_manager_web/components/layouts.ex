@@ -181,7 +181,7 @@ defmodule CaseManagerWeb.Layouts do
 
   def divider(assigns) do
     ~H"""
-    <div class={"divider #{@horizontal && "divider-horizontal"} divider-#{@text_position} divider-#{@divider_type}"}>21q3{render_slot(@inner_block)}</div>
+    <div class={"divider #{@horizontal && "divider-horizontal"} divider-#{@text_position} divider-#{@divider_type}"}>{render_slot(@inner_block)}</div>
     """
   end
 end
