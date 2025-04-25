@@ -56,7 +56,7 @@ defmodule CaseManagerWeb.Layouts do
             {render_slot(@left)}
           </div>
         </div>
-        <div class="divider divider-horizontal"></div>
+        <.divider horizontal={true} />
         <div class={"#{@right_width} overflow-auto flex"}>
           <div class="px-4 pb-4 flex-1">
             {render_slot(@right)}
@@ -151,6 +151,37 @@ defmodule CaseManagerWeb.Layouts do
         <.theme_toggle />
       </div>
     </header>
+    """
+  end
+
+  @doc """
+    Provides a divider component
+
+    ## Examples
+
+      <.divider>
+
+      <.divider horizontal={true} text_position="divider-end" divider_type={:warning}"> divide </.divider>
+  """
+  attr :horizontal, :boolean,
+    default: false,
+    doc: "Boolean to determine the divider orientation. [defaults to vertical]"
+
+  attr :text_position, :atom,
+    default: :middle,
+    doc: "Atom to determine the divider text position. [defaults to middle]",
+    values: [:start, :middle, :end]
+
+  attr :divider_type, :atom,
+    default: :neutral,
+    doc: "Atom to determine the divider color. [default to neutral]",
+    values: [:neutral, :primary, :secondary, :accent, :success, :warning, :info, :error]
+
+  slot :inner_block
+
+  def divider(assigns) do
+    ~H"""
+    <div class={"divider #{@horizontal && "divider-horizontal"} divider-#{@text_position} divider-#{@divider_type}"}>{render_slot(@inner_block)}</div>
     """
   end
 end

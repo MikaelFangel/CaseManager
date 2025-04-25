@@ -123,7 +123,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </.form>
           </div>
 
-          <div class="divider"></div>
+          <Layouts.divider></Layouts.divider>
           <div class="flex items-center pb-2">
             <h3 class="font-medium text-md pr-4">Comments</h3>
             <.badge :if={@selected_alert.comments != []} type={:info}>{length(@selected_alert.comments || [])}</.badge>
