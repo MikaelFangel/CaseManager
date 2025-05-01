@@ -27,7 +27,14 @@ defmodule CaseManager.Incidents do
     end
 
     resource CaseManager.Incidents.CaseAlert
-    resource CaseManager.Incidents.Comment
+
+    resource CaseManager.Incidents.Comment do
+      define :get_comments_for_case,
+        action: :get_comments_for_case,
+        args: [:case_id, :visibility],
+        default_options: [load: [user: [:full_name]]]
+    end
+
     resource CaseManager.Incidents.File
   end
 end

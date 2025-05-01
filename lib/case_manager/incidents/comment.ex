@@ -2,6 +2,8 @@ defmodule CaseManager.Incidents.Comment do
   @moduledoc false
   use Ash.Resource, otp_app: :case_manager, domain: CaseManager.Incidents, data_layer: AshPostgres.DataLayer
 
+  alias CaseManager.Incidents.Visibility
+
   postgres do
     table "comments"
     repo(CaseManager.Repo)
@@ -24,6 +26,14 @@ defmodule CaseManager.Incidents.Comment do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :get_comments_for_case do
+      description "List comments for specific case"
+      argument :case_id, :uuid
+      argument :visibility, Visibility
+
+      filter expr(case_id == ^arg(:case_id) and visibility == ^arg(:visibility))
+    end
+
     update :update do
       description "Update a comment."
       primary? true
@@ -43,7 +53,7 @@ defmodule CaseManager.Incidents.Comment do
       public? true
     end
 
-    attribute :visibility, CaseManager.Incidents.Visibility do
+    attribute :visibility, Visibility do
       description "Chooses who can see the comment"
       allow_nil? false
       public? true
