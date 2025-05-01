@@ -76,13 +76,13 @@ defmodule CaseManagerWeb.CaseLive.Show do
           </div>
 
           <div class="overflow-y-auto flex-1 my-4 flex flex-col-reverse">
-            <%= if Enum.empty?(@case.comments) do %>
+            <%= if Enum.empty?(@filtered_comments) do %>
               <div class="flex-1 h-full flex flex-col justify-center items-center text-base-content/70">
                 <.icon name="hero-chat-bubble-left-ellipsis" class="h-12 w-12 mb-2 opacity-50" />
-                <p>No comments yet</p>
+                <p>No comments with {@active_visibility} visibility</p>
               </div>
             <% else %>
-              <%= for comment <- @case.comments do %>
+              <%= for comment <- @filtered_comments do %>
                 <div id={comment.id} class={"chat #{if @user_id != comment.user.id, do: "chat-start", else: "chat-end"} mb-2"}>
                   <div class="chat-header">
                     <span class="font-medium">{comment.user.full_name}</span>
@@ -124,14 +124,20 @@ defmodule CaseManagerWeb.CaseLive.Show do
   def mount(%{"id" => id}, _session, socket) do
     case =
       Incidents.get_case!(id,
-        load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name], comments: [user: :full_name]]
+        load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]]
       )
+
+    initial_visibility = :public
+
+    comments = Incidents.get_comments_for_case!(id, initial_visibility)
 
     {:ok,
      socket
      |> assign(:page_title, "Show Case")
-     |> assign(:active_visibility, :public)
+     |> assign(:active_visibility, initial_visibility)
      |> assign(:case, case)
+     # Store filtered comments separately
+     |> assign(:filtered_comments, comments)
      |> assign(:user_id, socket.assigns.current_user.id)
      |> assign(
        :comment_form,
@@ -141,7 +147,13 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_event("switch_visibility", %{"visibility" => visibility}, socket) do
-    {:noreply, assign(socket, :active_visibility, String.to_existing_atom(visibility))}
+    visibility_atom = String.to_existing_atom(visibility)
+    comments = Incidents.get_comments_for_case!(socket.assigns.case.id, visibility_atom)
+
+    {:noreply,
+     socket
+     |> assign(:active_visibility, visibility_atom)
+     |> assign(:filtered_comments, comments)}
   end
 
   @impl true
