@@ -32,7 +32,7 @@ defmodule CaseManager.Incidents do
       define :get_comments_for_case,
         action: :get_comments_for_case,
         args: [:case_id, :visibility],
-        default_options: [load: [user: [:full_name]]]
+        default_options: [load: [user: [:full_name]], query: [sort: [inserted_at: :desc]]]
     end
 
     resource CaseManager.Incidents.File
