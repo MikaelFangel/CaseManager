@@ -15,6 +15,11 @@ defmodule CaseManager.Incidents do
       define :delete_alert, action: :delete
       define :add_comment_to_alert, action: :add_comment, args: [:body]
       define :change_alert_status, action: :change_status, args: [:status]
+
+      define :search_alerts,
+        action: :search,
+        args: [:query],
+        default_options: [load: :company, query: [sort: [creation_time: :desc]]]
     end
 
     resource CaseManager.Incidents.Case do
