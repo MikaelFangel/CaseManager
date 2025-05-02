@@ -24,6 +24,19 @@ defmodule CaseManager.Incidents.Alert do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :search do
+      description "Search alerts."
+
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      pagination offset?: true, keyset?: true, required?: false
+
+      filter expr(contains(title, ^arg(:query)))
+    end
+
     update :update do
       description "Change the alert data"
       primary? true
