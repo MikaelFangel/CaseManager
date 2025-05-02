@@ -81,6 +81,17 @@ defmodule CaseManager.Accounts.User do
       filter expr(email == ^arg(:email))
     end
 
+    read :search do
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(full_name, ^arg(:query)) or contains(email, ^arg(:query)))
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
     # create :sign_in_with_magic_link do
     #   description "Sign in or register a user with magic link."
 
