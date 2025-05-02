@@ -107,12 +107,16 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     {:noreply, assign(socket, :selected_company, company)}
   end
 
-  defp get_companies_for_tab(:all, _user) do
-    Organizations.list_company!()
+  defp get_companies_for_tab(:all, user) do
+    get_companies_for_tab(:managed, user) ++ get_companies_for_tab(:shared, user)
   end
 
-  defp get_companies_for_tab(:managed, _user) do
-    Organizations.list_company!()
+  defp get_companies_for_tab(:managed, user) do
+    user = Ash.load!(user, :socs)
+
+    user.socs
+    |> Enum.flat_map(fn soc -> Organizations.get_managed_companies!(soc.id) end)
+    |> Enum.uniq_by(fn company -> company.id end)
   end
 
   defp get_companies_for_tab(:shared, user) do

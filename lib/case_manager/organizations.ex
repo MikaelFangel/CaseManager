@@ -13,6 +13,7 @@ defmodule CaseManager.Organizations do
       define :get_company, action: :read, get_by: :id
       define :update_company, action: :update
       define :delete_company, action: :delete
+      define :get_managed_companies, action: :get_managed, args: [:soc_id]
     end
 
     resource CaseManager.Organizations.SOC do
