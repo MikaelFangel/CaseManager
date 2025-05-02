@@ -144,7 +144,7 @@ defmodule CaseManagerWeb.Layouts do
           <li><.link navigate={~p"/user"}>Users</.link></li>
         </ul>
 
-        <form phx-submit={@on_search || "search"} class="form-control pt-2">
+        <form phx-change={@on_search || "search"} class="form-control pt-2">
           <.input type="search" name="query" placeholder={@search_placeholder} value="" phx-debounce="300" class="join-item" />
         </form>
 
