@@ -121,8 +121,8 @@ defmodule CaseManagerWeb.Layouts do
 
   attr :search_placeholder, :string, default: "Search..."
   attr :on_search, :any, default: nil
-  attr :value, :string, default: ""
-  attr :show, :boolean, default: true
+  attr :search_value, :string, default: ""
+  attr :show_searchbar, :boolean, default: true
   slot :nav_links
 
   def navbar(assigns) do
@@ -142,8 +142,8 @@ defmodule CaseManagerWeb.Layouts do
           <li><.link navigate={~p"/user"}>Users</.link></li>
         </ul>
 
-        <form :if={@show} phx-change={@on_search || "search"} class="form-control pt-2">
-          <.input type="search" name="query" placeholder={@search_placeholder} value={@value} phx-debounce="300" class="join-item" />
+        <form :if={@show_searchbar} phx-change={@on_search || "search"} class="form-control pt-2">
+          <.input type="search" name="query" placeholder={@search_placeholder} value={@search_value} phx-debounce="300" class="join-item" />
         </form>
 
         <.theme_toggle />
