@@ -559,4 +559,34 @@ defmodule CaseManagerWeb.DataDisplay do
     </div>
     """
   end
+
+  @doc """
+  Renders a chat bubble
+
+  ## Examples
+
+      <DataDisplay.chat_bubble comment={@comment} user_id={@user_id} />
+      <DataDisplay.chat_bubble comment={@comment} user_id={@user_id} profile_pciture={https://linktoprofile.picture/} />
+  """
+
+  attr :comment, :any, required: true
+  attr :user_id, :string, required: true
+  attr :profile_picture, :string, default: nil
+
+  def chat_bubble(assigns) do
+    ~H"""
+    <div id={@comment.id} class={"chat #{if @user_id != @comment.user.id, do: "chat-start", else: "chat-end"} mb-2"}>
+      <div class={"chat-header #{if @user_id == @comment.user.id, do: "flex-row-reverse"}"}>
+        <span class="font-medium">{@comment.user.full_name}</span>
+        <time class="text-xs opacity-50">{@comment.inserted_at |> Calendar.strftime("%H:%M - %d-%m-%y")}</time>
+      </div>
+      <div :if={not is_nil(@profile_picture)} class="chat-image avatar">
+        <div class="w-10 rounded-full">
+          <img alt="User profile picture" src={@profile_picture} />
+        </div>
+      </div>
+      <div class={"chat-bubble #{if @user_id == @comment.user.id, do: "chat-bubble-info"}"}>{@comment.body}</div>
+    </div>
+    """
+  end
 end
