@@ -51,16 +51,12 @@ defmodule CaseManagerWeb.Layouts do
       </div>
 
       <div class="flex flex-1 overflow-hidden">
-        <div class={"#{@left_width} overflow-auto"}>
-          <div class="px-4 pb-4">
-            {render_slot(@left)}
-          </div>
+        <div class={"#{@left_width} overflow-auto px-4 pb-4"}>
+          {render_slot(@left)}
         </div>
         <.divider horizontal={true} />
-        <div class={"#{@right_width} overflow-auto flex"}>
-          <div class="px-4 pb-4 flex-1">
-            {render_slot(@right)}
-          </div>
+        <div class={"#{@right_width} flex-1 overflow-auto px-4 pb-4 "}>
+          {render_slot(@right)}
         </div>
       </div>
 
