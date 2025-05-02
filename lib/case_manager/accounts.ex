@@ -13,6 +13,7 @@ defmodule CaseManager.Accounts do
       define :create_user, action: :register_with_password
       define :list_user, action: :read, default_options: [load: :full_name]
       define :get_user, action: :read, get_by: :id
+      define :search_users, action: :search, args: [:query], default_options: [load: :full_name]
     end
   end
 end
