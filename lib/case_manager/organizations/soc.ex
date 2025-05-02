@@ -44,5 +44,10 @@ defmodule CaseManager.Organizations.SOC do
       through CaseManager.Organizations.SOCUser
       public? true
     end
+
+    many_to_many :company_accesses, CaseManager.Organizations.Company do
+      through CaseManager.Organizations.SOCCompanyAccess
+      public? true
+    end
   end
 end

@@ -140,6 +140,7 @@ defmodule CaseManagerWeb.Layouts do
           <li><.link navigate={~p"/alert"}>Alerts</.link></li>
           <li><.link navigate={~p"/case"}>Cases</.link></li>
           <li><.link navigate={~p"/user"}>Users</.link></li>
+          <li><.link navigate={~p"/company"}>Companies</.link></li>
         </ul>
 
         <form :if={@show_searchbar} phx-change={@on_search || "search"} class="form-control pt-2">

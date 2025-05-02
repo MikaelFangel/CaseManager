@@ -7,19 +7,25 @@ defmodule CaseManager.Organizations.SOCCompanyAccess do
     repo(CaseManager.Repo)
   end
 
-  attributes do
-    uuid_primary_key :id
+  actions do
+    defaults [:read, :destroy, create: :*, update: :*]
+  end
 
+  attributes do
     timestamps()
   end
 
   relationships do
     belongs_to :soc, CaseManager.Organizations.SOC do
+      primary_key? true
       allow_nil? false
+      public? true
     end
 
     belongs_to :company, CaseManager.Organizations.Company do
+      primary_key? true
       allow_nil? false
+      public? true
     end
   end
 end
