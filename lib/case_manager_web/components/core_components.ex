@@ -289,6 +289,7 @@ defmodule CaseManagerWeb.CoreComponents do
 
   slot :col, required: true do
     attr(:label, :string)
+    attr(:class, :string)
   end
 
   slot(:action, doc: "the slot for showing user actions in the last table column")
@@ -304,7 +305,7 @@ defmodule CaseManagerWeb.CoreComponents do
       <thead>
         <tr>
           <th :if={@selectable} class="w-12"></th>
-          <th :for={col <- @col}>{col[:label]}</th>
+          <th :for={col <- @col} class={col[:class]}>{col[:label]}</th>
           <th :if={@action != []}>
             <span class="sr-only">{gettext("Actions")}</span>
           </th>
@@ -313,11 +314,13 @@ defmodule CaseManagerWeb.CoreComponents do
       <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
         <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class={get_row_class(row, @selected, @row_id)}>
           <td :if={@selectable} class="w-12">
-            <label>
-              <input type="checkbox" class="checkbox" checked={selected?(row, @selected, @row_id)} phx-click={@on_toggle_selection && JS.push("toggle_selection", value: %{id: get_row_value(row, @row_id)})} phx-value-id={get_row_value(row, @row_id)} />
-            </label>
+            <div class="flex items-center justify-center h-5">
+              <label>
+                <input type="checkbox" class="checkbox checkbox-sm" checked={selected?(row, @selected, @row_id)} phx-click={@on_toggle_selection && JS.push("toggle_selection", value: %{id: get_row_value(row, @row_id)})} phx-value-id={get_row_value(row, @row_id)} />
+              </label>
+            </div>
           </td>
-          <td :for={col <- @col} phx-click={@row_click && @row_click.(row)} class={@row_click && "hover:cursor-pointer"}>
+          <td :for={col <- @col} phx-click={@row_click && @row_click.(row)} class={[col[:class], @row_click && "hover:cursor-pointer"]}>
             {render_slot(col, @row_item.(row))}
           </td>
           <td :if={@action != []} class="w-0 font-semibold">
