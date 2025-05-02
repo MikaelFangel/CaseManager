@@ -3,6 +3,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Incidents
+  alias CaseManagerWeb.DataDisplay
 
   @impl true
   def render(assigns) do
@@ -83,13 +84,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
               </div>
             <% else %>
               <%= for comment <- @filtered_comments do %>
-                <div id={comment.id} class={"chat #{if @user_id != comment.user.id, do: "chat-start", else: "chat-end"} mb-2"}>
-                  <div class="chat-header">
-                    <span class="font-medium">{comment.user.full_name}</span>
-                    <time class="text-xs opacity-50">{comment.inserted_at |> Calendar.strftime("%H:%M - %d-%m-%y")}</time>
-                  </div>
-                  <div class={"chat-bubble #{if @user_id == comment.user.id, do: "chat-bubble-info"}"}>{comment.body}</div>
-                </div>
+                <DataDisplay.chat_bubble comment={comment} user_id={@user_id} />
               <% end %>
             <% end %>
           </div>
