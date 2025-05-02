@@ -178,6 +178,15 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
+  def handle_params(params, _uri, socket) do
+    query = Map.get(params, "q", "")
+    alerts = Incidents.search_alerts!(query)
+
+    socket = stream(socket, :alert_collection, alerts, reset: true)
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
     alert = Incidents.get_alert!(id)
     {:noreply, assign(socket, :selected_alert, alert)}
@@ -194,6 +203,12 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:ok, _} = Incidents.delete_alert(alert)
 
     {:noreply, stream_delete(socket, :alert_collection, alert)}
+  end
+
+  @impl true
+  def handle_event("search", %{"query" => search}, socket) do
+    params = update_params(socket, %{q: search})
+    {:noreply, push_patch(socket, to: ~p"/alert/?#{params}")}
   end
 
   @impl true
@@ -389,5 +404,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
       </div>
     <% end %>
     """
+  end
+
+  defp update_params(socket, updates) do
+    remove_empty(%{
+      q: Map.get(updates, :q, socket.assigns[:search]),
+      filter: Map.get(updates, :filter, socket.assigns[:filter]),
+      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by])
+    })
+  end
+
+  defp remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" and val != nil end)
   end
 end
