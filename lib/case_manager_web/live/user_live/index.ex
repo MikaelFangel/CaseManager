@@ -46,10 +46,37 @@ defmodule CaseManagerWeb.UserLive.Index do
   end
 
   @impl true
+  def handle_params(params, _uri, socket) do
+    query = Map.get(params, "q", "")
+    users = CaseManager.Accounts.search_users!(query, load: [:companies, :socs, :full_name])
+
+    socket = stream(socket, :users, users, reset: true)
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("search", %{"query" => search}, socket) do
+    params = update_params(socket, %{q: search})
+    {:noreply, push_patch(socket, to: ~p"/user/?#{params}")}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     user = Accounts.get_user!(id)
     {:ok, _} = Accounts.delete_user(user)
 
     {:noreply, stream_delete(socket, :users, user)}
+  end
+
+  defp update_params(socket, updates) do
+    remove_empty(%{
+      q: Map.get(updates, :q, socket.assigns[:search]),
+      filter: Map.get(updates, :filter, socket.assigns[:filter]),
+      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by])
+    })
+  end
+
+  defp remove_empty(params) do
+    Enum.filter(params, fn {_key, val} -> val != "" and val != nil end)
   end
 end
