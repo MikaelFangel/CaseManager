@@ -3,7 +3,6 @@ defmodule CaseManagerWeb.CaseLive.Show do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Incidents
-  alias CaseManagerWeb.DataDisplay
 
   @impl true
   def render(assigns) do
@@ -84,7 +83,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
               </div>
             <% else %>
               <%= for comment <- @filtered_comments do %>
-                <DataDisplay.chat_bubble comment={comment} user_id={@user_id} />
+                <.chat_bubble comment={comment} user_id={@user_id} />
               <% end %>
             <% end %>
           </div>
