@@ -29,6 +29,19 @@ defmodule CaseManager.Incidents.Case do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :search do
+      description "Search cases."
+
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(title, ^arg(:query)) or exists(alerts, contains(title, ^arg(:query))))
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
     update :update do
       description "Change the case data"
       primary? true
