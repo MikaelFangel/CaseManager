@@ -51,16 +51,12 @@ defmodule CaseManagerWeb.Layouts do
       </div>
 
       <div class="flex flex-1 overflow-hidden">
-        <div class={"#{@left_width} overflow-auto"}>
-          <div class="px-4 pb-4">
-            {render_slot(@left)}
-          </div>
+        <div class={"#{@left_width} overflow-auto px-4 pb-4"}>
+          {render_slot(@left)}
         </div>
         <.divider horizontal={true} />
-        <div class={"#{@right_width} overflow-auto flex"}>
-          <div class="px-4 pb-4 flex-1">
-            {render_slot(@right)}
-          </div>
+        <div class={"#{@right_width} flex-1 overflow-auto px-4 pb-4 "}>
+          {render_slot(@right)}
         </div>
       </div>
 
@@ -125,6 +121,8 @@ defmodule CaseManagerWeb.Layouts do
 
   attr :search_placeholder, :string, default: "Search..."
   attr :on_search, :any, default: nil
+  attr :search_value, :string, default: ""
+  attr :show_searchbar, :boolean, default: true
   slot :nav_links
 
   def navbar(assigns) do
@@ -144,8 +142,8 @@ defmodule CaseManagerWeb.Layouts do
           <li><.link navigate={~p"/user"}>Users</.link></li>
         </ul>
 
-        <form phx-change={@on_search || "search"} class="form-control pt-2">
-          <.input type="search" name="query" placeholder={@search_placeholder} value="" phx-debounce="300" class="join-item" />
+        <form :if={@show_searchbar} phx-change={@on_search || "search"} class="form-control pt-2">
+          <.input type="search" name="query" placeholder={@search_placeholder} value={@search_value} phx-debounce="300" class="join-item" />
         </form>
 
         <.theme_toggle />
