@@ -178,22 +178,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_params(params, _uri, socket) do
-    query = Map.get(params, "q", "")
-    alerts = Incidents.search_alerts!(query)
-
-    socket = stream(socket, :alert_collection, alerts, reset: true)
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
     alert = Incidents.get_alert!(id)
     {:noreply, assign(socket, :selected_alert, alert)}
   end
 
   @impl true
-  def handle_params(_params, _uri, socket) do
+  def handle_params(params, _uri, socket) do
+    query = Map.get(params, "q", "")
+    alerts = Incidents.search_alerts!(query)
+
+    socket = stream(socket, :alert_collection, alerts, reset: true)
     {:noreply, socket}
   end
 
