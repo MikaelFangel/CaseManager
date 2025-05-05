@@ -9,6 +9,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     socket =
       socket
       |> assign(:selected_companies, [])
+      |> assign(:company_shared_with, [])
       |> assign(:selected_company, nil)
       |> assign(:active_tab, :all)
 
@@ -66,7 +67,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
         <%= if @selected_company do %>
           <div class="py-4 px-2">
             <h2 class="text-xl font-bold mb-4">{@selected_company.name}</h2>
-            <!-- Company details content here -->
+            <.shared_with_card companies={@company_shared_with} />
           </div>
         <% else %>
           <div class="flex h-full items-center justify-center text-base-content/70">
@@ -103,8 +104,18 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
   @impl true
   def handle_event("show_company", %{"id" => id}, socket) do
-    company = Organizations.get_company!(id)
-    {:noreply, assign(socket, :selected_company, company)}
+    company = Organizations.get_company!(id, load: [:soc_accesses])
+    user = Ash.load!(socket.assigns.current_user, :socs)
+
+    shared_with =
+      Enum.reject(company.soc_accesses, fn soc -> soc.id in user.socs end)
+
+    socket =
+      socket
+      |> assign(:selected_company, company)
+      |> assign(:company_shared_with, shared_with)
+
+    {:noreply, socket}
   end
 
   defp get_companies_for_tab(:all, user) do
@@ -125,5 +136,34 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     user.socs
     |> Enum.flat_map(fn soc -> soc.company_accesses end)
     |> Enum.uniq_by(fn company -> company.id end)
+  end
+
+  defp shared_with_card(assigns) do
+    ~H"""
+    <div class="rounded-lg shadow-sm border p-4">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-sm font-medium text-base-content/70">Shared with SOCs</h3>
+        <.badge :if={@companies != []} type={:primary}>
+          {length(@companies)}
+        </.badge>
+      </div>
+
+      <%= if @companies != [] do %>
+        <div class="space-y-3">
+          <%= for company <- @companies do %>
+            <div class="flex items-center p-2 rounded-md hover:bg-base-200 transition-colors">
+              <div class="flex-1">
+                <div class="font-medium">{company.name}</div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="py-8 flex flex-col items-center text-center text-base-content/60">
+          <p>This company is not shared with any SOCs yet</p>
+        </div>
+      <% end %>
+    </div>
+    """
   end
 end
