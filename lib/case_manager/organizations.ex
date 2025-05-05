@@ -1,6 +1,6 @@
 defmodule CaseManager.Organizations do
   @moduledoc false
-  use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain]
+  use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain, AshPhoenix]
 
   admin do
     show? true
@@ -22,6 +22,7 @@ defmodule CaseManager.Organizations do
       define :get_soc, action: :read, get_by: :id
       define :update_soc, action: :update
       define :delete_soc, action: :delete
+      define :share_companies_with_soc, action: :share_companies, args: [:companies]
     end
 
     resource CaseManager.Organizations.SOCCompanyAccess

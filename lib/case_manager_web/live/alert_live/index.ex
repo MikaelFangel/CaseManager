@@ -368,7 +368,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   attr :open, :boolean, default: false
   slot :inner_block
 
-  def drawer(assigns) do
+  defp drawer(assigns) do
     ~H"""
     <%= if @open do %>
       <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-3/5"} bg-base-200 shadow-xl overflow-y-scroll"}>

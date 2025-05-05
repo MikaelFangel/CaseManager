@@ -24,6 +24,13 @@ defmodule CaseManager.Organizations.SOC do
       primary? true
     end
 
+    update :share_companies do
+      require_atomic? false
+      argument :companies, {:array, :string}
+
+      change manage_relationship(:companies, :company_accesses, type: :append)
+    end
+
     destroy :delete do
     end
   end

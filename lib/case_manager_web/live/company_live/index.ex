@@ -10,8 +10,11 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       socket
       |> assign(:selected_companies, [])
       |> assign(:company_shared_with, [])
+      |> assign(:drawer_open, false)
+      |> assign(:drawer_minimized, false)
       |> assign(:selected_company, nil)
       |> assign(:active_tab, :all)
+      |> assign(:user_socs, [])
 
     {:ok, socket}
   end
@@ -74,6 +77,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
             <p>Select a company to view details</p>
           </div>
         <% end %>
+        <.drawer title="Share Customers" open={@drawer_open} minimized={@drawer_minimized} user_socs={@user_socs} selected_companies={@selected_companies}></.drawer>
       </:right>
     </Layouts.split>
     """
@@ -82,6 +86,16 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   @impl true
   def handle_event("set_tab", %{"tab" => tab}, socket) do
     {:noreply, push_patch(socket, to: ~p"/company?tab=#{tab}")}
+  end
+
+  defp error_to_string(changeset) do
+    changeset
+    |> Ecto.Changeset.traverse_errors(fn {msg, opts} ->
+      Enum.reduce(opts, msg, fn {key, value}, acc ->
+        String.replace(acc, "%{#{key}}", to_string(value))
+      end)
+    end)
+    |> Enum.map_join("; ", fn {k, v} -> "#{k}: #{Enum.join(v, ", ")}" end)
   end
 
   @impl true
@@ -99,6 +113,56 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       {:noreply, assign(socket, :selected_companies, updated_selected)}
     else
       {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("open_drawer", _params, socket) do
+    user = Ash.load!(socket.assigns.current_user, :socs)
+
+    socket =
+      socket
+      |> assign(:drawer_open, true)
+      |> assign(:drawer_minimized, false)
+      |> assign(:user_socs, user.socs)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close_drawer", _params, socket) do
+    socket =
+      socket
+      |> assign(:drawer_open, false)
+      |> assign(:drawer_minimized, false)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("toggle_minimize", _params, socket) do
+    {:noreply, assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)}
+  end
+
+  @impl true
+  def handle_event("share_companies", %{"share_form" => form_data}, socket) do
+    case Organizations.share_companies_with_soc(
+           Ash.get!(CaseManager.Organizations.SOC, form_data["soc_id"]),
+           Enum.map(socket.assigns.selected_companies, &String.replace_prefix(&1, "companies-", ""))
+         ) do
+      {:ok, _result} ->
+        socket =
+          socket
+          |> put_flash(:info, "Companies successfully shared with SOC")
+          |> assign(:drawer_open, false)
+          |> assign(:selected_companies, [])
+
+        {:noreply, socket}
+
+      {:error, changeset} ->
+        socket = put_flash(socket, :error, "Error sharing companies: #{error_to_string(changeset)}")
+
+        {:noreply, socket}
     end
   end
 
@@ -143,7 +207,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     <div class="rounded-lg shadow-sm border p-4">
       <div class="flex justify-between items-center mb-3">
         <h3 class="text-sm font-medium text-base-content/70">Shared with SOCs</h3>
-        <.badge :if={@companies != []} type={:primary}>
+        <.badge :if={@companies != []}>
           {length(@companies)}
         </.badge>
       </div>
@@ -163,6 +227,76 @@ defmodule CaseManagerWeb.CompanyLive.Index do
           <p>This company is not shared with any SOCs yet</p>
         </div>
       <% end %>
+    </div>
+    """
+  end
+
+  attr :title, :string
+  attr :minimized, :boolean, default: false
+  attr :open, :boolean, default: false
+  attr :user_socs, :list, default: []
+  attr :selected_companies, :list, default: []
+  slot :inner_block
+
+  defp drawer(assigns) do
+    ~H"""
+    <%= if @open do %>
+      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-3/5"} bg-base-200 shadow-xl overflow-y-scroll"}>
+        <div class="h-full flex flex-col py-4">
+          <div class="px-4 sm:px-6 flex justify-between items-center">
+            <h2 class="text-lg font-medium">
+              {@title}
+            </h2>
+            <div class="flex items-center">
+              <button phx-click="toggle_minimize" class="hover:bg-secondary/10 rounded-full w-8 h-8 flex items-center justify-center">
+                <%= if @minimized do %>
+                  <.icon name="hero-arrow-up" />
+                <% else %>
+                  <.icon name="hero-minus-solid" />
+                <% end %>
+              </button>
+              <button phx-click="close_drawer" class="hover:bg-error/50 rounded-full w-8 h-8 flex items-center justify-center ml-2">
+                <.icon name="hero-x-mark-solid" />
+              </button>
+            </div>
+          </div>
+          <div class="mt-6 relative flex-1 px-4 sm:px-6">
+            <%= unless @minimized do %>
+              {render_slot(@inner_block)}
+              <.share_form_for_drawer socs={@user_socs} selected_companies={@selected_companies} />
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
+  attr :socs, :list, required: true
+  attr :selected_companies, :list, required: true
+
+  defp share_form_for_drawer(assigns) do
+    ~H"""
+    <div class="space-y-6">
+      <.form for={%{}} as={:share_form} phx-submit="share_companies">
+        <div class="mb-4">
+          <p class="text-base-content/70 mb-2">Selected companies: {length(@selected_companies)}</p>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium mb-2">Select SOC to share with:</label>
+          <select name="share_form[soc_id]" class="select select-bordered w-full" required>
+            <option value="">Choose a SOC...</option>
+            <%= for soc <- @socs do %>
+              <option value={soc.id}>{soc.name}</option>
+            <% end %>
+          </select>
+        </div>
+
+        <div class="flex justify-end space-x-3">
+          <.button type="submit" variant="primary">Share Companies</.button>
+        </div>
+      </.form>
     </div>
     """
   end
