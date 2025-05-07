@@ -77,7 +77,9 @@ defmodule CaseManagerWeb.CompanyLive.Index do
             <p>Select a company to view details</p>
           </div>
         <% end %>
-        <.drawer title="Share Customers" open={@drawer_open} minimized={@drawer_minimized} user_socs={@user_socs} selected_companies={@selected_companies}></.drawer>
+        <.drawer title="Share Customers" open={@drawer_open} minimized={@drawer_minimized} height="1/3">
+          <.share_form socs={@user_socs} selected_companies={@selected_companies} />
+        </.drawer>
       </:right>
     </Layouts.split>
     """
@@ -231,58 +233,13 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     """
   end
 
-  attr :title, :string
-  attr :minimized, :boolean, default: false
-  attr :open, :boolean, default: false
-  attr :user_socs, :list, default: []
-  attr :selected_companies, :list, default: []
-  slot :inner_block
-
-  defp drawer(assigns) do
-    ~H"""
-    <%= if @open do %>
-      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-3/5"} bg-base-200 shadow-xl overflow-y-scroll"}>
-        <div class="h-full flex flex-col py-4">
-          <div class="px-4 sm:px-6 flex justify-between items-center">
-            <h2 class="text-lg font-medium">
-              {@title}
-            </h2>
-            <div class="flex items-center">
-              <button phx-click="toggle_minimize" class="hover:bg-secondary/10 rounded-full w-8 h-8 flex items-center justify-center">
-                <%= if @minimized do %>
-                  <.icon name="hero-arrow-up" />
-                <% else %>
-                  <.icon name="hero-minus-solid" />
-                <% end %>
-              </button>
-              <button phx-click="close_drawer" class="hover:bg-error/50 rounded-full w-8 h-8 flex items-center justify-center ml-2">
-                <.icon name="hero-x-mark-solid" />
-              </button>
-            </div>
-          </div>
-          <div class="mt-6 relative flex-1 px-4 sm:px-6">
-            <%= unless @minimized do %>
-              {render_slot(@inner_block)}
-              <.share_form_for_drawer socs={@user_socs} selected_companies={@selected_companies} />
-            <% end %>
-          </div>
-        </div>
-      </div>
-    <% end %>
-    """
-  end
-
   attr :socs, :list, required: true
   attr :selected_companies, :list, required: true
 
-  defp share_form_for_drawer(assigns) do
+  defp share_form(assigns) do
     ~H"""
     <div class="space-y-6">
       <.form for={%{}} as={:share_form} phx-submit="share_companies">
-        <div class="mb-4">
-          <p class="text-base-content/70 mb-2">Selected companies: {length(@selected_companies)}</p>
-        </div>
-
         <div class="mb-6">
           <label class="block text-sm font-medium mb-2">Select SOC to share with:</label>
           <select name="share_form[soc_id]" class="select select-bordered w-full" required>
