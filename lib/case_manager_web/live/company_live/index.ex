@@ -22,11 +22,12 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   @impl true
   def handle_params(params, _uri, socket) do
     tab = params |> Map.get("tab", "all") |> String.to_existing_atom()
+    companies = get_companies_for_tab(tab, socket.assigns.current_user)
 
     socket =
       socket
       |> assign(:active_tab, tab)
-      |> stream(:companies, get_companies_for_tab(tab, socket.assigns.current_user), reset: true)
+      |> stream(:companies, companies, reset: true)
 
     {:noreply, socket}
   end
@@ -57,26 +58,11 @@ defmodule CaseManagerWeb.CompanyLive.Index do
             </.table>
           </div>
 
-          <div class="mt-auto pt-4 pb-2 flex justify-center">
-            <div role="tablist" class="tabs tabs-box">
-              <a role="tab" class={"tab #{if @active_tab == :all, do: "tab-active"}"} phx-click="set_tab" phx-value-tab="all">All</a>
-              <a role="tab" class={"tab #{if @active_tab == :managed, do: "tab-active"}"} phx-click="set_tab" phx-value-tab="managed">Managed</a>
-              <a role="tab" class={"tab #{if @active_tab == :shared, do: "tab-active"}"} phx-click="set_tab" phx-value-tab="shared">Shared with You</a>
-            </div>
-          </div>
+          <.tabs active={@active_tab} />
         </div>
       </:left>
       <:right>
-        <%= if @selected_company do %>
-          <div class="py-4 px-2">
-            <h2 class="text-xl font-bold mb-4">{@selected_company.name}</h2>
-            <.shared_with_card companies={@company_shared_with} />
-          </div>
-        <% else %>
-          <div class="flex h-full items-center justify-center text-base-content/70">
-            <p>Select a company to view details</p>
-          </div>
-        <% end %>
+        <.company_details company={@selected_company} shared_with={@company_shared_with} />
         <.drawer title="Share Customers" open={@drawer_open} minimized={@drawer_minimized} height="1/3">
           <.share_form socs={@user_socs} selected_companies={@selected_companies} />
         </.drawer>
@@ -102,7 +88,8 @@ defmodule CaseManagerWeb.CompanyLive.Index do
           [id | selected_companies]
         end
 
-      {:noreply, assign(socket, :selected_companies, updated_selected)}
+      socket = assign(socket, :selected_companies, updated_selected)
+      {:noreply, socket}
     else
       {:noreply, socket}
     end
@@ -133,14 +120,15 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
   @impl true
   def handle_event("toggle_minimize", _params, socket) do
-    {:noreply, assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)}
+    socket = assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("share_companies", %{"share_form" => form_data}, socket) do
     soc = Ash.get!(CaseManager.Organizations.SOC, form_data["soc_id"])
     company_ids = Enum.map(socket.assigns.selected_companies, &String.replace_prefix(&1, "companies-", ""))
-    
+
     case Organizations.share_companies_with_soc(soc, company_ids) do
       {:ok, _result} ->
         socket =
@@ -153,7 +141,6 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
       {:error, _changeset} ->
         socket = put_flash(socket, :error, "Unable to share companies. Please try again.")
-
         {:noreply, socket}
     end
   end
@@ -163,8 +150,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     company = Organizations.get_company!(id, load: [:soc_accesses])
     user = Ash.load!(socket.assigns.current_user, :socs)
 
-    shared_with =
-      Enum.reject(company.soc_accesses, fn soc -> soc.id in user.socs end)
+    shared_with = Enum.reject(company.soc_accesses, fn soc -> soc.id in user.socs end)
 
     socket =
       socket
@@ -193,6 +179,40 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     |> Enum.flat_map(fn soc -> soc.company_accesses end)
     |> Enum.uniq_by(fn company -> company.id end)
   end
+
+  attr :active, :atom, required: true
+
+  defp tabs(assigns) do
+    ~H"""
+    <div class="mt-auto pt-4 pb-2 flex justify-center">
+      <div role="tablist" class="tabs tabs-box">
+        <a role="tab" class={"tab #{if @active == :all, do: "tab-active"}"} phx-click="set_tab" phx-value-tab="all">All</a>
+        <a role="tab" class={"tab #{if @active == :managed, do: "tab-active"}"} phx-click="set_tab" phx-value-tab="managed">Managed</a>
+        <a role="tab" class={"tab #{if @active == :shared, do: "tab-active"}"} phx-click="set_tab" phx-value-tab="shared">Shared with You</a>
+      </div>
+    </div>
+    """
+  end
+
+  attr :company, :any, default: nil
+  attr :shared_with, :list, default: []
+
+  defp company_details(assigns) do
+    ~H"""
+    <%= if @company do %>
+      <div class="py-4 px-2">
+        <h2 class="text-xl font-bold mb-4">{@company.name}</h2>
+        <.shared_with_card companies={@shared_with} />
+      </div>
+    <% else %>
+      <div class="flex h-full items-center justify-center text-base-content/70">
+        <p>Select a company to view details</p>
+      </div>
+    <% end %>
+    """
+  end
+
+  attr :companies, :list, required: true
 
   defp shared_with_card(assigns) do
     ~H"""
