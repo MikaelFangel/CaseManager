@@ -2,6 +2,7 @@ defmodule CaseManagerWeb.UserLive.Index do
   @moduledoc false
   use CaseManagerWeb, :live_view
 
+  alias AshPhoenix.Form
   alias CaseManager.Accounts
 
   @impl true
@@ -10,9 +11,9 @@ defmodule CaseManagerWeb.UserLive.Index do
     <Layouts.app flash={@flash} search_placeholder="Search users">
       <.header>
         <:actions>
-          <.button variant="primary" navigate={~p"/user/new"}>
+          <button class="btn btn-primary" onclick="user_modal.showModal()">
             <.icon name="hero-plus" /> New User
-          </.button>
+          </button>
         </:actions>
       </.header>
 
@@ -33,15 +34,65 @@ defmodule CaseManagerWeb.UserLive.Index do
           </.link>
         </:action>
       </.table>
+
+      <dialog id="user_modal" class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg mb-4">Create New User</h3>
+          <.form for={@user_form} phx-submit="save_user" class="space-y-4">
+            <.input field={@user_form[:email]} type="email" label="Email" />
+            <.input field={@user_form[:first_name]} type="text" label="First name" />
+            <.input field={@user_form[:last_name]} type="text" label="Last name" />
+            <.input field={@user_form[:password]} type="password" label="Password" />
+            <.input field={@user_form[:password_confirmation]} type="password" label="Password confirmation" />
+
+            <div class="space-y-2">
+              <label class="block text-sm font-medium">SOCs</label>
+              <div class="space-y-1">
+                <%= for soc <- @socs do %>
+                  <div class="flex items-center">
+                    <input type="checkbox" id={"soc-#{soc.id}"} name="form[socs][]" value={soc.id} class="checkbox checkbox-sm mr-2" />
+                    <label for={"soc-#{soc.id}"}>{soc.name}</label>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-sm font-medium">Companies</label>
+              <div class="space-y-1">
+                <%= for company <- @companies do %>
+                  <div class="flex items-center">
+                    <input type="checkbox" id={"company-#{company.id}"} name="form[companies][]" value={company.id} class="checkbox checkbox-sm mr-2" />
+                    <label for={"company-#{company.id}"}>{company.name}</label>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="modal-action">
+              <button type="button" class="btn" onclick="user_modal.close()">Cancel</button>
+              <button type="submit" class="btn btn-primary">Create User</button>
+            </div>
+          </.form>
+        </div>
+      </dialog>
     </Layouts.app>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
+    companies = CaseManager.Organizations.list_company!()
+    socs = CaseManager.Organizations.list_soc!()
+
+    user_form = to_form(CaseManager.Accounts.form_to_create_user())
+
     {:ok,
      socket
      |> assign(:page_title, "Listing Users")
+     |> assign(:user_form, user_form)
+     |> assign(:companies, companies)
+     |> assign(:socs, socs)
      |> stream(:users, Accounts.list_user!(load: [:companies, :socs, :full_name]))}
   end
 
@@ -61,11 +112,83 @@ defmodule CaseManagerWeb.UserLive.Index do
   end
 
   @impl true
+  def handle_event("add_form", %{"path" => path} = _params, socket) do
+    form = AshPhoenix.Form.add_form(socket.assigns.user_form, path, type: :create)
+    {:noreply, assign(socket, user_form: form)}
+  end
+
+  @impl true
+  def handle_event("remove_form", %{"path" => path} = _params, socket) do
+    form = AshPhoenix.Form.remove_form(socket.assigns.user_form, path)
+    {:noreply, assign(socket, user_form: form)}
+  end
+
+  @impl true
+  def handle_event("validate", %{"form" => params}, socket) do
+    form = Form.validate(socket.assigns.user_form, params)
+    {:noreply, assign(socket, user_form: form)}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     user = Accounts.get_user!(id)
     {:ok, _} = Accounts.delete_user(user)
 
     {:noreply, stream_delete(socket, :users, user)}
+  end
+
+  @impl true
+  def handle_event("save_user", %{"form" => user_params}, socket) do
+    # Log the parameters to help with debugging
+    IO.inspect(user_params, label: "User params before processing")
+
+    # Get SOCs and companies from form
+    socs = Map.get(user_params, "socs", [])
+    companies = Map.get(user_params, "companies", [])
+
+    # Ensure we're working with proper lists
+    socs = if is_list(socs), do: socs, else: [socs]
+    companies = if is_list(companies), do: companies, else: [companies]
+
+    # Filter out any empty values
+    socs = Enum.filter(socs, &(&1 != nil && &1 != ""))
+    companies = Enum.filter(companies, &(&1 != nil && &1 != ""))
+
+    IO.inspect(socs, label: "SOCs after processing")
+    IO.inspect(companies, label: "Companies after processing")
+
+    # Prepare params for submission
+    submission_params = %{
+      "email" => user_params["email"],
+      "password" => user_params["password"],
+      "password_confirmation" => user_params["password_confirmation"],
+      "first_name" => user_params["first_name"],
+      "last_name" => user_params["last_name"],
+      "socs" => socs,
+      "companies" => companies
+    }
+
+    IO.inspect(submission_params, label: "Submission params")
+
+    case AshPhoenix.Form.submit(socket.assigns.user_form, params: submission_params) do
+      {:ok, user} ->
+        # Get the user with relationships loaded
+        loaded_user = Accounts.get_user!(user.id, load: [:companies, :socs, :full_name])
+        IO.inspect(loaded_user, label: "Created user with relationships")
+
+        socket =
+          socket
+          |> put_flash(:info, "User created successfully")
+          |> assign(user_form: to_form(CaseManager.Accounts.form_to_create_user()))
+          |> stream_insert(:users, loaded_user)
+
+        {:noreply, socket}
+
+      {:error, form} ->
+        # Log form errors
+        IO.inspect(form, label: "Form errors")
+        {:noreply, assign(socket, user_form: form)}
+    end
   end
 
   defp update_params(socket, updates) do

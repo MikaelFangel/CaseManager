@@ -214,6 +214,13 @@ defmodule CaseManager.Accounts.User do
       # Sets the email from the argument
       change set_attribute(:email, arg(:email))
 
+      argument :socs, {:array, :string}
+
+      argument :companies, {:array, :string}
+
+      change manage_relationship(:socs, type: :append)
+      change manage_relationship(:companies, type: :append)
+
       # Hashes the provided password
       change HashPasswordChange
 

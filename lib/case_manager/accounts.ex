@@ -1,6 +1,6 @@
 defmodule CaseManager.Accounts do
   @moduledoc false
-  use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain]
+  use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain, AshPhoenix]
 
   admin do
     show? true
