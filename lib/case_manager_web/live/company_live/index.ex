@@ -90,16 +90,6 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     {:noreply, push_patch(socket, to: ~p"/company?tab=#{tab}")}
   end
 
-  defp error_to_string(changeset) do
-    changeset
-    |> Ecto.Changeset.traverse_errors(fn {msg, opts} ->
-      Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
-      end)
-    end)
-    |> Enum.map_join("; ", fn {k, v} -> "#{k}: #{Enum.join(v, ", ")}" end)
-  end
-
   @impl true
   def handle_event("toggle_selection", %{"id" => id}, socket) do
     if socket.assigns.active_tab == :managed do
@@ -148,10 +138,10 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
   @impl true
   def handle_event("share_companies", %{"share_form" => form_data}, socket) do
-    case Organizations.share_companies_with_soc(
-           Ash.get!(CaseManager.Organizations.SOC, form_data["soc_id"]),
-           Enum.map(socket.assigns.selected_companies, &String.replace_prefix(&1, "companies-", ""))
-         ) do
+    soc = Ash.get!(CaseManager.Organizations.SOC, form_data["soc_id"])
+    company_ids = Enum.map(socket.assigns.selected_companies, &String.replace_prefix(&1, "companies-", ""))
+    
+    case Organizations.share_companies_with_soc(soc, company_ids) do
       {:ok, _result} ->
         socket =
           socket
@@ -161,8 +151,8 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
         {:noreply, socket}
 
-      {:error, changeset} ->
-        socket = put_flash(socket, :error, "Error sharing companies: #{error_to_string(changeset)}")
+      {:error, _changeset} ->
+        socket = put_flash(socket, :error, "Unable to share companies. Please try again.")
 
         {:noreply, socket}
     end
