@@ -3,6 +3,8 @@ defmodule CaseManagerWeb.DataDisplay do
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
 
+  import CaseManagerWeb.CoreComponents, only: [icon: 1]
+
   @doc """
   Renders a status indicator
 
@@ -587,6 +589,54 @@ defmodule CaseManagerWeb.DataDisplay do
       </div>
       <div class={"chat-bubble #{if @user_id == @comment.user.id, do: "chat-bubble-info"}"}>{@comment.body}</div>
     </div>
+    """
+  end
+
+  @doc """
+  Renders a drawer component that can be opened, closed, and minimized.
+
+  ## Examples
+
+      <.drawer title="New Case" open={@drawer_open} minimized={@drawer_minimized}>
+        Your drawer content here
+      </.drawer>
+  """
+  attr :title, :string, required: true
+  attr :minimized, :boolean, default: false
+  attr :open, :boolean, default: false
+  attr :height, :string, default: "3/5", doc: "Height of the drawer when open (e.g. '1/3', '1/2', '3/5')"
+  slot :inner_block
+
+  def drawer(assigns) do
+    ~H"""
+    <%= if @open do %>
+      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-#{@height}"} bg-base-200 shadow-xl overflow-y-scroll"}>
+        <div class="h-full flex flex-col py-4">
+          <div class="px-4 sm:px-6 flex justify-between items-center">
+            <h2 class="text-lg font-medium">
+              {@title}
+            </h2>
+            <div class="flex items-center">
+              <button phx-click="toggle_minimize" class="hover:bg-secondary/10 rounded-full w-8 h-8 flex items-center justify-center">
+                <%= if @minimized do %>
+                  <.icon name="hero-arrow-up" />
+                <% else %>
+                  <.icon name="hero-minus-solid" />
+                <% end %>
+              </button>
+              <button phx-click="close_drawer" class="hover:bg-error/50 rounded-full w-8 h-8 flex items-center justify-center ml-2">
+                <.icon name="hero-x-mark-solid" />
+              </button>
+            </div>
+          </div>
+          <div class="mt-6 relative flex-1 px-4 sm:px-6">
+            <%= unless @minimized do %>
+              {render_slot(@inner_block)}
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
     """
   end
 end
