@@ -2,12 +2,14 @@ defmodule CaseManager.Organizations do
   @moduledoc false
   use Ash.Domain, otp_app: :case_manager, extensions: [AshAdmin.Domain, AshPhoenix]
 
+  alias CaseManager.Organizations.Company
+
   admin do
     show? true
   end
 
   resources do
-    resource CaseManager.Organizations.Company do
+    resource Company do
       define :create_company, action: :create
       define :list_company, action: :read
       define :get_company, action: :read, get_by: :id

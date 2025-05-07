@@ -6,15 +6,19 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    user = Ash.load!(socket.assigns.current_user, :socs)
+
     socket =
       socket
       |> assign(:selected_companies, [])
       |> assign(:company_shared_with, [])
       |> assign(:drawer_open, false)
       |> assign(:drawer_minimized, false)
+      |> assign(:drawer_type, :share)
       |> assign(:selected_company, nil)
       |> assign(:active_tab, :all)
-      |> assign(:user_socs, [])
+      |> assign(:user_socs, user.socs)
+      |> assign(:company_form, to_form(Organizations.form_to_create_company()))
 
     {:ok, socket}
   end
@@ -39,9 +43,14 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       <:top>
         <.header class="h-12">
           <:actions>
-            <.button :if={length(@selected_companies) > 0} variant="primary" phx-click="open_drawer">
-              Share {length(@selected_companies)} companies
-            </.button>
+            <div class="flex space-x-3">
+              <.button :if={length(@selected_companies) > 0} variant="primary" phx-click="open_share_drawer">
+                Share {length(@selected_companies)} companies
+              </.button>
+              <.button variant="primary" phx-click="open_create_drawer">
+                <.icon name="hero-plus" class="size-4 mr-1" /> New Company
+              </.button>
+            </div>
           </:actions>
         </.header>
       </:top>
@@ -63,8 +72,12 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       </:left>
       <:right>
         <.company_details company={@selected_company} shared_with={@company_shared_with} />
-        <.drawer title="Share Customers" open={@drawer_open} minimized={@drawer_minimized} height="1/3">
-          <.share_form socs={@user_socs} selected_companies={@selected_companies} />
+        <.drawer title={if @drawer_type == :share, do: "Share Companies", else: "Create New Company"} open={@drawer_open} minimized={@drawer_minimized} height="1/3">
+          <%= if @drawer_type == :share do %>
+            <.share_form socs={@user_socs} selected_companies={@selected_companies} />
+          <% else %>
+            <.company_form form={@company_form} socs={@user_socs} />
+          <% end %>
         </.drawer>
       </:right>
     </Layouts.split>
@@ -96,14 +109,23 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   end
 
   @impl true
-  def handle_event("open_drawer", _params, socket) do
-    user = Ash.load!(socket.assigns.current_user, :socs)
-
+  def handle_event("open_share_drawer", _params, socket) do
     socket =
       socket
       |> assign(:drawer_open, true)
       |> assign(:drawer_minimized, false)
-      |> assign(:user_socs, user.socs)
+      |> assign(:drawer_type, :share)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("open_create_drawer", _params, socket) do
+    socket =
+      socket
+      |> assign(:drawer_open, true)
+      |> assign(:drawer_minimized, false)
+      |> assign(:drawer_type, :create)
 
     {:noreply, socket}
   end
@@ -143,6 +165,31 @@ defmodule CaseManagerWeb.CompanyLive.Index do
         socket = put_flash(socket, :error, "Unable to share companies. Please try again.")
         {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("create_company", %{"form" => params}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.company_form, params: params) do
+      {:ok, company} ->
+        socket =
+          socket
+          |> put_flash(:info, "Company created successfully.")
+          |> assign(:drawer_open, false)
+          |> stream_insert(:companies, company)
+
+        {:noreply, socket}
+
+      {:error, form} ->
+        socket = assign(socket, :company_form, form)
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("validate_company", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.company_form, params)
+    socket = assign(socket, :company_form, form)
+    {:noreply, socket}
   end
 
   @impl true
@@ -262,6 +309,26 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
         <div class="flex justify-end space-x-3">
           <.button type="submit" variant="primary">Share Companies</.button>
+        </div>
+      </.form>
+    </div>
+    """
+  end
+
+  attr :form, :any, required: true
+  attr :socs, :list, required: true
+
+  defp company_form(assigns) do
+    ~H"""
+    <div class="space-y-6">
+      <.form for={@form} id="company-form" phx-change="validate_company" phx-submit="create_company">
+        <div class="mb-6">
+          <.input field={@form[:name]} type="text" label="Company Name" placeholder="Acme Corporation" />
+          <.input field={@form[:soc_id]} type="select" label="Owning SOC" prompt="Select SOC" options={Enum.map(@socs, &{&1.name, &1.id})} required />
+        </div>
+
+        <div class="flex justify-end space-x-3">
+          <.button type="submit" variant="primary">Create Company</.button>
         </div>
       </.form>
     </div>
