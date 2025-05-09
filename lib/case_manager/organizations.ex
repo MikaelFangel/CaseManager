@@ -13,6 +13,7 @@ defmodule CaseManager.Organizations do
       define :create_company, action: :create
       define :list_company, action: :read
       define :get_company, action: :read, get_by: :id
+      define :search_company, action: :search, args: [:query]
       define :update_company, action: :update
       define :delete_company, action: :delete
       define :get_managed_companies, action: :get_managed, args: [:soc_id]

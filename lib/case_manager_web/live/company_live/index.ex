@@ -18,6 +18,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       |> assign(:selected_company, nil)
       |> assign(:active_tab, :all)
       |> assign(:user_socs, user.socs)
+      |> assign(:search_query, "")
       |> assign(:company_form, to_form(Organizations.form_to_create_company()))
 
     {:ok, socket}
@@ -26,11 +27,13 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   @impl true
   def handle_params(params, _uri, socket) do
     tab = params |> Map.get("tab", "all") |> String.to_existing_atom()
-    companies = get_companies_for_tab(tab, socket.assigns.current_user)
+    search_query = Map.get(params, "query", "")
+    companies = get_companies_for_tab(tab, socket.assigns.current_user, search_query)
 
     socket =
       socket
       |> assign(:active_tab, tab)
+      |> assign(:search_query, search_query)
       |> stream(:companies, companies, reset: true)
 
     {:noreply, socket}
@@ -193,6 +196,11 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   end
 
   @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    {:noreply, push_patch(socket, to: ~p"/company?tab=#{socket.assigns.active_tab}&query=#{query}")}
+  end
+
+  @impl true
   def handle_event("show_company", %{"id" => id}, socket) do
     company = Organizations.get_company!(id, load: [:soc_accesses])
     user = Ash.load!(socket.assigns.current_user, :socs)
@@ -207,23 +215,39 @@ defmodule CaseManagerWeb.CompanyLive.Index do
     {:noreply, socket}
   end
 
-  defp get_companies_for_tab(:all, user) do
-    get_companies_for_tab(:managed, user) ++ get_companies_for_tab(:shared, user)
+  defp get_companies_for_tab(:all, user, search_query) do
+    get_companies_for_tab(:managed, user, search_query) ++ get_companies_for_tab(:shared, user, search_query)
   end
 
-  defp get_companies_for_tab(:managed, user) do
+  defp get_companies_for_tab(:managed, user, search_query) do
     user = Ash.load!(user, :socs)
 
     user.socs
-    |> Enum.flat_map(fn soc -> Organizations.get_managed_companies!(soc.id) end)
+    |> Enum.flat_map(fn soc ->
+      if search_query == "" do
+        Organizations.get_managed_companies!(soc.id)
+      else
+        search_query
+        |> Organizations.search_company!()
+        |> Enum.filter(fn company -> company.soc_id == soc.id end)
+      end
+    end)
     |> Enum.uniq_by(fn company -> company.id end)
   end
 
-  defp get_companies_for_tab(:shared, user) do
+  defp get_companies_for_tab(:shared, user, search_query) do
     user = Ash.load!(user, socs: [:company_accesses])
 
     user.socs
-    |> Enum.flat_map(fn soc -> soc.company_accesses end)
+    |> Enum.flat_map(fn soc ->
+      if search_query == "" do
+        soc.company_accesses
+      else
+        companies = Organizations.search_company!(search_query)
+        company_access_ids = Enum.map(soc.company_accesses, & &1.id)
+        Enum.filter(companies, fn company -> company.id in company_access_ids end)
+      end
+    end)
     |> Enum.uniq_by(fn company -> company.id end)
   end
 

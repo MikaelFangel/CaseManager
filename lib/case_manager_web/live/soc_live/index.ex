@@ -32,7 +32,7 @@ defmodule CaseManagerWeb.SOCLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search SOCs" search_value={@search_query}>
+    <Layouts.split flash={@flash} search_placeholder="Search SOCs">
       <:top>
         <.header class="h-12">
           <:actions>
