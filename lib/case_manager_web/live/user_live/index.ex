@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.UserLive.Index do
           <div class="sr-only">
             <.link navigate={~p"/user/#{user}"}>Show</.link>
           </div>
-          <.link navigate={~p"/user/#{user}/edit"}>Edit</.link>
+          <.link navigate={~p"/user/#{user}"}>Edit</.link>
         </:action>
         <:action :let={{id, user}}>
           <.link phx-click={JS.push("delete", value: %{id: user.id}) |> hide("##{id}")} data-confirm="Are you sure?">

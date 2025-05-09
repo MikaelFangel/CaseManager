@@ -15,7 +15,7 @@ defmodule CaseManagerWeb.UserLive.Show do
           <.button navigate={~p"/user"}>
             <.icon name="hero-arrow-left" />
           </.button>
-          <.button variant="primary" navigate={~p"/user/#{@user}/edit?return_to=show"}>
+          <.button variant="primary" navigate={~p"/user/#{@user}"}>
             <.icon name="hero-pencil-square" /> Edit user
           </.button>
         </:actions>
