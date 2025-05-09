@@ -11,21 +11,28 @@ defmodule CaseManagerWeb.SOCLive.Index do
       |> assign(:drawer_open, false)
       |> assign(:drawer_minimized, false)
       |> assign(:selected_soc, nil)
+      |> assign(:search_query, "")
       |> assign(:soc_form, to_form(Organizations.form_to_create_soc()))
-      |> stream(:socs, list_socs())
 
     {:ok, socket}
   end
 
   @impl true
-  def handle_params(_params, _uri, socket) do
+  def handle_params(params, _uri, socket) do
+    search_query = Map.get(params, "query", "")
+
+    socket =
+      socket
+      |> assign(:search_query, search_query)
+      |> stream(:socs, Organizations.search_soc!(search_query), reset: true)
+
     {:noreply, socket}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search SOCs">
+    <Layouts.split flash={@flash} search_placeholder="Search SOCs" search_value={@search_query}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -103,6 +110,11 @@ defmodule CaseManagerWeb.SOCLive.Index do
     form = AshPhoenix.Form.validate(socket.assigns.soc_form, params)
     socket = assign(socket, :soc_form, form)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    {:noreply, push_patch(socket, to: ~p"/soc?q=#{query}")}
   end
 
   @impl true
