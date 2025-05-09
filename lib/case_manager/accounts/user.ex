@@ -61,7 +61,7 @@ defmodule CaseManager.Accounts.User do
   end
 
   actions do
-    defaults [:read]
+    defaults [:read, :destroy]
 
     read :get_by_subject do
       description "Get a user by the subject claim in a JWT"

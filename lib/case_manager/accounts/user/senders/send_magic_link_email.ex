@@ -31,7 +31,8 @@ defmodule CaseManager.Accounts.User.Senders.SendMagicLinkEmail do
   end
 
   defp body(params) do
-    url = url(~p"/auth/user/magic_link/?token=#{params[:token]}")
+    # url(~p"/auth/user/sign_in?token=#{params[:token]}")
+    url = ""
 
     """
     <p>Hello, #{params[:email]}! Click this link to sign in:</p>

@@ -21,8 +21,9 @@ defmodule CaseManager.Accounts.User.Senders.SendNewUserConfirmationEmail do
     |> Mailer.deliver!()
   end
 
-  defp body(params) do
-    url = url(~p"/auth/user/confirm_new_user?#{[confirm: params[:token]]}")
+  defp body(_params) do
+    # url(~p"/auth/user/confirm?confirm=#{params[:token]}")
+    url = ""
 
     """
     <p>Click this link to confirm your email:</p>

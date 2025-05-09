@@ -126,9 +126,6 @@ defmodule CaseManagerWeb.SOCLive.Index do
     {:noreply, socket}
   end
 
-  defp list_socs do
-    Organizations.list_soc!()
-  end
 
   attr :soc, :any, default: nil
 
