@@ -69,8 +69,6 @@ defmodule CaseManagerWeb.Router do
     sign_out_route AuthController
 
     get "/sign-in", AuthController, :sign_in
-    get "/register", AuthController, :register
-    get "/reset", AuthController, :reset_password
   end
 
   # Other scopes may use custom stacks.
