@@ -32,7 +32,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
 
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-out")}
     else
       {:cont, assign(socket, :current_user, nil)}
     end
