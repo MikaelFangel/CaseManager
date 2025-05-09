@@ -20,8 +20,9 @@ defmodule CaseManager.Accounts.User.Senders.SendPasswordResetEmail do
     |> Mailer.deliver!()
   end
 
-  defp body(params) do
-    url = url(~p"/password-reset/#{params[:token]}")
+  defp body(_params) do
+    # url(~p"/password-reset/#{params[:token]}")
+    url = ""
 
     """
     <p>Click this link to reset your password:</p>
