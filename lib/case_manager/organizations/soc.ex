@@ -20,6 +20,17 @@ defmodule CaseManager.Organizations.SOC do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :search do
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(name, ^arg(:query)))
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
     update :update do
       primary? true
     end

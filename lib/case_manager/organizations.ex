@@ -22,6 +22,7 @@ defmodule CaseManager.Organizations do
       define :create_soc, action: :create
       define :list_soc, action: :read
       define :get_soc, action: :read, get_by: :id
+      define :search_soc, action: :search, args: [:query]
       define :update_soc, action: :update
       define :delete_soc, action: :delete
       define :share_companies_with_soc, action: :share_companies, args: [:companies]
