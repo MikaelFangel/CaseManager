@@ -4,8 +4,6 @@ defmodule CaseManagerWeb.Router do
 
   import AshAuthentication.Plug.Helpers
 
-  alias AshAuthentication.Phoenix.Overrides.Default
-
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
@@ -64,7 +62,6 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through(:browser)
 
-    get "/", PageController, :home
     auth_routes AuthController, CaseManager.Accounts.User, path: "/auth"
     sign_out_route AuthController
 
