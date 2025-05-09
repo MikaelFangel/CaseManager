@@ -11,7 +11,18 @@ defmodule CaseManager.MixProject do
       consolidate_protocols: Mix.env() != :dev,
       aliases: aliases(),
       deps: deps(),
+      name: "Case Manager",
+      soruce_url: "https://github.com/MikaelFangel/CaseManager",
+      docs: &docs/0,
       listeners: [Phoenix.CodeReloader]
+    ]
+  end
+
+  defp docs do
+    [
+      main: "CaseManager",
+      output: "docs",
+      extras: ["README.md"]
     ]
   end
 
@@ -75,6 +86,7 @@ defmodule CaseManager.MixProject do
 
       # Development
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.34", only: :dev, runtime: false},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.4", only: [:dev, :test], runtime: false}
