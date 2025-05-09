@@ -129,7 +129,7 @@ defmodule CaseManagerWeb.Layouts do
     ~H"""
     <header class="navbar shadow-sm px-4 sm:px-6 lg:px-8">
       <div class="flex-1">
-        <a href="/" class="flex items-center gap-2">
+        <a href="/case" class="flex items-center gap-2">
           <img src={~p"/images/logo.svg"} width="36" />
           <span class="font-semibold">Defensive Shield</span>
         </a>

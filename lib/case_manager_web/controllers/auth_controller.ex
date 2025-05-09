@@ -12,7 +12,7 @@ defmodule CaseManagerWeb.AuthController do
   end
 
   def success(conn, activity, user, _token) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    return_to = get_session(conn, :return_to) || ~p"/case"
 
     message =
       case activity do
@@ -53,7 +53,7 @@ defmodule CaseManagerWeb.AuthController do
   end
 
   def sign_out(conn, _params) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    return_to = get_session(conn, :return_to) || ~p"/sign-in"
 
     conn
     |> clear_session()
