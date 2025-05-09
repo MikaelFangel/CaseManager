@@ -10,10 +10,11 @@ defmodule CaseManagerWeb.CaseLive.Index do
     <Layouts.app flash={@flash} search_placeholder="Search cases">
       <.header>
         <:actions>
-          <.button variant="primary" navigate={~p"/case/new"}>
+          <.button variant="primary" navigate={~p"/case/new"} hidden>
             <.icon name="hero-plus" /> New Case
           </.button>
         </:actions>
+        <div class="h-12" />
       </.header>
 
       <.table id="cases" rows={@streams.cases} row_click={fn {_id, case} -> JS.navigate(~p"/case/#{case}") end}>

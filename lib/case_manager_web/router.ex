@@ -58,6 +58,11 @@ defmodule CaseManagerWeb.Router do
       live "/user/:id/edit", UserLive.Form, :edit
 
       live "/company", CompanyLive.Index, :index
+      
+      live "/soc", SOCLive.Index, :index
+      live "/soc/new", SOCLive.Form, :new
+      live "/soc/:id", SOCLive.Show, :show
+      live "/soc/:id/edit", SOCLive.Form, :edit
     end
   end
 
