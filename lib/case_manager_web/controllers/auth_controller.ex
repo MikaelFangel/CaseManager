@@ -2,8 +2,17 @@ defmodule CaseManagerWeb.AuthController do
   use CaseManagerWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+  alias AshPhoenix.Form
+  alias CaseManager.Accounts.User
+
+  def sign_in(conn, _params) do
+    conn = assign(conn, :form, Form.for_read(User, :sign_in_with_password, as: "user"))
+
+    render(conn, :sign_in)
+  end
+
   def success(conn, activity, user, _token) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    return_to = get_session(conn, :return_to) || ~p"/case"
 
     message =
       case activity do
@@ -15,7 +24,6 @@ defmodule CaseManagerWeb.AuthController do
     conn
     |> delete_session(:return_to)
     |> store_in_session(user)
-    # If your resource has a different name, update the assign name here (i.e :current_admin)
     |> assign(:current_user, user)
     |> put_flash(:info, message)
     |> redirect(to: return_to)
@@ -45,7 +53,7 @@ defmodule CaseManagerWeb.AuthController do
   end
 
   def sign_out(conn, _params) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    return_to = get_session(conn, :return_to) || ~p"/sign-in"
 
     conn
     |> clear_session()

@@ -64,20 +64,11 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :home)
+    get "/", PageController, :home
     auth_routes AuthController, CaseManager.Accounts.User, path: "/auth"
     sign_out_route AuthController
 
-    # Remove these if you'd like to use your own authentication views
-    sign_in_route register_path: "/register",
-                  reset_path: "/reset",
-                  auth_routes_prefix: "/auth",
-                  on_mount: [{CaseManagerWeb.LiveUserAuth, :live_no_user}],
-                  overrides: [CaseManagerWeb.AuthOverrides, Default]
-
-    # Remove this if you do not want to use the reset password feature
-    reset_route auth_routes_prefix: "/auth",
-                overrides: [CaseManagerWeb.AuthOverrides, Default]
+    get "/sign-in", AuthController, :sign_in
   end
 
   # Other scopes may use custom stacks.
