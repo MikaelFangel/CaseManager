@@ -139,9 +139,6 @@ defmodule CaseManagerWeb.UserLive.Index do
 
   @impl true
   def handle_event("save_user", %{"form" => user_params}, socket) do
-    # Log the parameters to help with debugging
-    IO.inspect(user_params, label: "User params before processing")
-
     # Get SOCs and companies from form
     socs = Map.get(user_params, "socs", [])
     companies = Map.get(user_params, "companies", [])
@@ -154,9 +151,6 @@ defmodule CaseManagerWeb.UserLive.Index do
     socs = Enum.filter(socs, &(&1 != nil && &1 != ""))
     companies = Enum.filter(companies, &(&1 != nil && &1 != ""))
 
-    IO.inspect(socs, label: "SOCs after processing")
-    IO.inspect(companies, label: "Companies after processing")
-
     # Prepare params for submission
     submission_params = %{
       "email" => user_params["email"],
@@ -168,13 +162,10 @@ defmodule CaseManagerWeb.UserLive.Index do
       "companies" => companies
     }
 
-    IO.inspect(submission_params, label: "Submission params")
-
     case AshPhoenix.Form.submit(socket.assigns.user_form, params: submission_params) do
       {:ok, user} ->
         # Get the user with relationships loaded
         loaded_user = Accounts.get_user!(user.id, load: [:companies, :socs, :full_name])
-        IO.inspect(loaded_user, label: "Created user with relationships")
 
         socket =
           socket
@@ -185,8 +176,6 @@ defmodule CaseManagerWeb.UserLive.Index do
         {:noreply, socket}
 
       {:error, form} ->
-        # Log form errors
-        IO.inspect(form, label: "Form errors")
         {:noreply, assign(socket, user_form: form)}
     end
   end
