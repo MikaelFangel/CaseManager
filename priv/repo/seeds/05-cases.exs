@@ -1,3 +1,10 @@
+# Seeds for Case records and Case Comments
+#
+# This seed file creates security cases and associated comments.
+# This should run after users, companies, and SOCs have been created.
+# Run with: `mix run priv/repo/seeds/05-cases.exs`
+# For cleanup only: `SEED_CLEAN_ONLY=true mix run priv/repo/seeds/05-cases.exs`
+
 alias CaseManager.Accounts.User
 alias CaseManager.Incidents.Case
 alias CaseManager.Incidents.Comment
@@ -6,10 +13,28 @@ alias CaseManager.Organizations.SOC
 
 require Ash.Query
 
+# Check if we're in cleanup-only mode
+clean_only = System.get_env("SEED_CLEAN_ONLY") == "true"
+
+# Clean up existing data before creating new ones
+# First delete case comments (preserving alert comments), then cases to avoid dependency issues
+IO.puts("Cleaning existing case comments...")
+Comment
+|> Ash.Query.filter(not is_nil(case_id))
+|> Ash.read!()
+|> Ash.bulk_destroy!(:delete, %{}, authorize?: false)
+
 Case
 |> Ash.read!()
 |> Ash.bulk_destroy!(:delete, %{}, authorize?: false)
 
+# Exit early if we're only cleaning
+if clean_only do
+  IO.puts("✅ Cleanup completed. Exiting without creating new data.")
+  System.halt(0)
+end
+
+# Get all company and SOC IDs to assign cases randomly
 company_ids =
   Company
   |> Ash.read!()
@@ -20,11 +45,16 @@ soc_ids =
   |> Ash.read!()
   |> Enum.map(& &1.id)
 
+# Get a random user as the default actor for case creation
 user = Enum.random(Ash.read!(User))
 
+# Helper functions for random assignment
 random_company_id = fn -> Enum.random(company_ids) end
 random_soc_id = fn -> Enum.random(soc_ids) end
 
+
+
+# Define case data with various statuses, risk levels, and descriptions
 cases = [
   %{
     title: "Investigation of Suspicious Login Activity",
@@ -34,7 +64,8 @@ cases = [
     risk_level: :high,
     escalated: false,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Emotet Malware Infection Incident",
@@ -44,7 +75,8 @@ cases = [
     risk_level: :critical,
     escalated: true,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Data Exfiltration Investigation",
@@ -54,7 +86,8 @@ cases = [
     risk_level: :critical,
     escalated: true,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Privilege Escalation Investigation",
@@ -64,7 +97,8 @@ cases = [
     risk_level: :high,
     escalated: false,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Unauthorized API Usage Review",
@@ -75,7 +109,8 @@ cases = [
     escalated: false,
     resolution_type: :benign,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "BlackCat Ransomware Detection",
@@ -85,7 +120,8 @@ cases = [
     risk_level: :critical,
     escalated: true,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Unauthorized Firewall Configuration Change",
@@ -96,7 +132,8 @@ cases = [
     escalated: true,
     resolution_type: :true_positive,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Corporate Phishing Campaign Analysis",
@@ -107,7 +144,8 @@ cases = [
     escalated: false,
     resolution_type: :true_positive,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Cloud Storage Unauthorized Access",
@@ -118,7 +156,8 @@ cases = [
     escalated: false,
     resolution_type: :benign,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "External Vulnerability Scanning Investigation",
@@ -129,7 +168,8 @@ cases = [
     escalated: false,
     resolution_type: :false_positive,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "New Alert from EDR System",
@@ -139,7 +179,8 @@ cases = [
     risk_level: :medium,
     escalated: false,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Web Server Authentication Bypass Attempt",
@@ -148,7 +189,8 @@ cases = [
     risk_level: :high,
     escalated: true,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
   },
   %{
     title: "Expired Certificate Incident",
@@ -158,13 +200,38 @@ cases = [
     escalated: true,
     resolution_type: :inconclusive,
     company_id: random_company_id.(),
-    soc_id: random_soc_id.()
+    soc_id: random_soc_id.(),
+
+  },
+  %{
+    title: "DDoS Attack on Corporate Website",
+    description: "Distributed denial of service attack targeting the main corporate website. Traffic volume exceeding normal by 500%.",
+    status: :in_progress,
+    risk_level: :high,
+    escalated: true,
+    company_id: random_company_id.(),
+    soc_id: random_soc_id.(),
+
+  },
+  %{
+    title: "Supply Chain Software Compromise",
+    description: "Third-party software component found to contain backdoor. Need to identify affected systems and potential exploitation.",
+    status: :open,
+    risk_level: :critical,
+    escalated: true,
+    company_id: random_company_id.(),
+    soc_id: random_soc_id.(),
+
   }
 ]
 
-Ash.bulk_create!(cases, Case, :create, return_errors?: true, authorize?: false, actor: user)
+# Create the cases in the database
+IO.puts("Creating #{length(cases)} cases...")
+created_cases = Ash.bulk_create!(cases, Case, :create, return_errors?: true, authorize?: false, actor: user)
+IO.puts("✅ Cases created successfully")
 
 # After creating the cases, add comments to them
+IO.puts("Adding comments to cases...")
 cases = Ash.read!(Case, load: [:comments])
 
 # Get users for assigning as comment authors
@@ -189,6 +256,11 @@ Enum.each(cases, fn case ->
             body: "Looking at initial indicators. Gathering logs from affected systems.",
             visibility: :internal,
             case_id: case.id
+          },
+          %{
+            body: "Reminder to myself: Need to check similar incidents from last month.",
+            visibility: :personal,
+            case_id: case.id
           }
         ]
 
@@ -209,6 +281,11 @@ Enum.each(cases, fn case ->
           %{
             body: "Customer has been notified about the ongoing investigation.",
             visibility: :public,
+            case_id: case.id
+          },
+          %{
+            body: "Personal note: I've seen this attack pattern before. Checking my archived notes from that case.",
+            visibility: :personal,
             case_id: case.id
           }
         ]
@@ -231,6 +308,11 @@ Enum.each(cases, fn case ->
             body: "Final report has been sent to the customer.",
             visibility: :public,
             case_id: case.id
+          },
+          %{
+            body: "Note to self: Follow up with customer next week to verify everything is still working correctly.",
+            visibility: :personal,
+            case_id: case.id
           }
         ]
 
@@ -245,6 +327,11 @@ Enum.each(cases, fn case ->
             body: "Need additional log data to proceed. Requesting from customer.",
             visibility: :internal,
             case_id: case.id
+          },
+          %{
+            body: "My thoughts: This alert pattern seems unusual. Need to dig deeper into the network flows.",
+            visibility: :personal,
+            case_id: case.id
           }
         ]
     end
@@ -257,13 +344,35 @@ Enum.each(cases, fn case ->
       comments
     end
 
+  # Add some random personal comments to each case
+  personal_comments = [
+    "Adding this case to my priority list for tomorrow.",
+    "Reminds me of that case from last quarter - should review those notes.",
+    "Need to talk to the threat intel team about this indicator privately.",
+    "I think I've seen this attacker's TTPs before in another case.",
+    "Following my own checklist for this type of incident.",
+    "Going to do some extra research on this attack vector tonight."
+  ]
+  
+  # Randomly add a personal comment
+  comments = if Enum.random(1..2) == 1 do
+    personal_comment = %{
+      body: Enum.random(personal_comments),
+      visibility: :personal,
+      case_id: case.id
+    }
+    [personal_comment | comments]
+  else
+    comments
+  end
+  
   # Create the comments using random users as actors
   Enum.each(comments, fn comment_attrs ->
     Ash.create!(Comment, comment_attrs, actor: Enum.random(users), authorize?: false)
   end)
 end)
 
-# Add some specific comments to notable cases
+# Add some specific comments to notable cases with more detailed information
 emotet_case = Enum.find(cases, fn c -> String.contains?(c.title, "Emotet") end)
 
 if emotet_case do
@@ -272,6 +381,42 @@ if emotet_case do
     %{
       body:
         "URGENT: Found evidence that Emotet has been present for 3 weeks. Attacker accessed finance share drive. Beginning incident response protocol.",
+      visibility: :internal,
+      case_id: emotet_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+  
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Personal note: I need to check if my other clients are vulnerable to this Emotet variant. This strain looks similar to what I saw at FinCorp last month.",
+      visibility: :personal,
+      case_id: emotet_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Initial investigation shows the infection vector was a phishing email with macro-enabled Excel attachment. User reports opening file from accounting@trusted-partner.com that contained invoice details.",
+      visibility: :internal,
+      case_id: emotet_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "FORENSIC UPDATE: Malware established persistence via scheduled task and registry keys. Found evidence of credential harvesting and lateral movement attempts to HR and finance systems.",
       visibility: :internal,
       case_id: emotet_case.id
     },
@@ -293,6 +438,17 @@ if ransomware_case do
     actor: Enum.random(users),
     authorize?: false
   )
+  
+  Ash.create!(
+    Comment,
+    %{
+      body: "This is the third BlackCat case I've worked this month. Starting to see patterns in initial access. Need to document this for myself.",
+      visibility: :personal,
+      case_id: ransomware_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
 
   Ash.create!(
     Comment,
@@ -305,4 +461,125 @@ if ransomware_case do
     actor: Enum.random(users),
     authorize?: false
   )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "CRITICAL UPDATE: Confirmed BlackCat/ALPHV ransomware deployment on three file servers. Detected file encryption in progress on FILESERVER01. Triggering full network isolation and DR protocols.",
+      visibility: :internal,
+      case_id: ransomware_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "IR Team deployed EDR rollout to all systems. Found ransomware binary at C:\\Windows\\Temp\\svc64.exe with BlackCat signatures. Initial infection vector appears to be compromised admin credentials.",
+      visibility: :internal,
+      case_id: ransomware_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
 end
+
+# Add specific comments to supply chain case
+supply_chain_case = Enum.find(cases, fn c -> String.contains?(c.title, "Supply Chain") end)
+
+if supply_chain_case do
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "ALERT: Vendor disclosed critical vulnerability in LogProcessor library v2.3.4-2.4.1 used in our application stack. Contains hardcoded backdoor credential.",
+      visibility: :internal,
+      case_id: supply_chain_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+  
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Private research note: This looks similar to the SolarWinds attack methodology. Planning to write up a comparison for my personal knowledge base.",
+      visibility: :personal,
+      case_id: supply_chain_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Initial scan shows 17 applications using vulnerable component. Prioritizing production systems for emergency patching. No evidence of exploitation yet.",
+      visibility: :internal,
+      case_id: supply_chain_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+end
+
+# Add comments to the DDoS case
+ddos_case = Enum.find(cases, fn c -> String.contains?(c.title, "DDoS") end)
+
+if ddos_case do
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Attack traffic analysis: Layer 7 HTTP flood targeting login and checkout APIs. Traffic originating from ~2,000 unique IPs across 40 countries. Signature matches DDoS-as-a-Service provider.",
+      visibility: :internal,
+      case_id: ddos_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+  
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Reminder: Need to check my notes on that DDoS mitigation webinar from last month. Pretty sure they mentioned this exact botnet pattern.",
+      visibility: :personal,
+      case_id: ddos_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "CDN mitigation rules deployed and working. Rate limiting and geo-blocking implemented. Traffic normal at edge but origin servers still seeing intermittent availability issues.",
+      visibility: :internal,
+      case_id: ddos_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+
+  Ash.create!(
+    Comment,
+    %{
+      body:
+        "Our website is currently experiencing technical difficulties. Our team is working to restore full service. We appreciate your patience.",
+      visibility: :public,
+      case_id: ddos_case.id
+    },
+    actor: Enum.random(users),
+    authorize?: false
+  )
+end
+
+IO.puts("✅ Case comments created successfully")
+IO.puts("All seed data has been loaded successfully!")
