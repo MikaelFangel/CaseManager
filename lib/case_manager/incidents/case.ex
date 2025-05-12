@@ -1,8 +1,16 @@
 defmodule CaseManager.Incidents.Case do
   @moduledoc false
-  use Ash.Resource, otp_app: :case_manager, domain: CaseManager.Incidents, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :case_manager,
+    domain: CaseManager.Incidents,
+    data_layer: AshPostgres.DataLayer,
+    extensions: [AshJsonApi.Resource]
 
   alias CaseManager.Accounts.User
+
+  json_api do
+    type "case"
+  end
 
   postgres do
     table "cases"
