@@ -43,6 +43,8 @@ defmodule CaseManagerWeb.Router do
       #
       # If an authenticated user must *not* be present:
       # on_mount {CaseManagerWeb.LiveUserAuth, :live_no_user}
+      live "/", AlertLive.Index, :index
+
       live "/alert", AlertLive.Index, :index
 
       live "/case", CaseLive.Index, :index
