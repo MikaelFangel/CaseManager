@@ -4,7 +4,8 @@ defmodule CaseManager.Incidents.Case do
     otp_app: :case_manager,
     domain: CaseManager.Incidents,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshJsonApi.Resource]
+    extensions: [AshJsonApi.Resource],
+    authorizers: [Ash.Policy.Authorizer]
 
   alias CaseManager.Accounts.User
 
@@ -66,6 +67,26 @@ defmodule CaseManager.Incidents.Case do
       argument :comment, :map
 
       change manage_relationship(:comment, :comments, type: :create)
+    end
+  end
+
+  policies do
+    policy action_type(:read) do
+      authorize_if actor_attribute_equals(:super_admin?, true)
+      authorize_if expr(soc.users == ^actor(:id))
+      authorize_if expr(company.users == ^actor(:id))
+    end
+
+    policy action_type(:create) do
+      authorize_if expr(soc.users == ^actor(:id))
+    end
+
+    policy action_type(:update) do
+      authorize_if expr(soc.users == ^actor(:id))
+    end
+
+    policy action_type(:destroy) do
+      authorize_if actor_attribute_equals(:super_admin?, true)
     end
   end
 

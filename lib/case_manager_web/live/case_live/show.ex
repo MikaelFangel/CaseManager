@@ -116,16 +116,17 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?])
 
     case =
       Incidents.get_case!(id,
-        load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]]
+        load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]],
+        actor: user
       )
 
     initial_visibility = :public
 
-    comments = Incidents.get_comments_for_case!(id, initial_visibility)
+    comments = Incidents.get_comments_for_case!(id, initial_visibility, actor: user)
 
     {:ok,
      socket
@@ -138,14 +139,17 @@ defmodule CaseManagerWeb.CaseLive.Show do
      |> assign(:user_id, socket.assigns.current_user.id)
      |> assign(
        :comment_form,
-       to_form(CaseManager.Incidents.form_to_add_comment_to_case(case, actor: socket.assigns.current_user))
+       to_form(CaseManager.Incidents.form_to_add_comment_to_case(case, actor: user))
      )}
   end
 
   @impl true
   def handle_event("switch_visibility", %{"visibility" => visibility}, socket) do
     visibility_atom = String.to_existing_atom(visibility)
-    comments = Incidents.get_comments_for_case!(socket.assigns.case.id, visibility_atom)
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
+    comments =
+      Incidents.get_comments_for_case!(socket.assigns.case.id, visibility_atom, actor: user)
 
     {:noreply,
      socket

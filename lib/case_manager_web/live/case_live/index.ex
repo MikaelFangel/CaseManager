@@ -34,19 +34,20 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?])
 
     {:ok,
      socket
      |> assign(:page_title, "Listing Cases")
      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
-     |> stream(:cases, Incidents.list_case!())}
+     |> stream(:cases, Incidents.list_case!(actor: user))}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
     query = Map.get(params, "q", "")
-    cases = Incidents.search_cases!(query)
+    cases = Incidents.search_cases!(query, actor: user)
 
     socket = stream(socket, :cases, cases, reset: true)
     {:noreply, socket}
@@ -60,8 +61,8 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    case = Incidents.get_case!(id)
-    {:ok, _} = Incidents.delete_case(case)
+    case = Incidents.get_case!(id, actor: socket.assigns.current_user)
+    {:ok, _} = Incidents.delete_case(case, actor: socket.assigns.current_user)
 
     {:noreply, stream_delete(socket, :cases, case)}
   end
