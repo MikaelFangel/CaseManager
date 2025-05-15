@@ -91,7 +91,7 @@ defmodule CaseManager.Incidents.Case do
       public? true
     end
 
-    attribute :risk_level, CaseManager.Incidents.RiskLevel do
+    attribute :severity, CaseManager.Incidents.Severity do
       public? true
     end
 

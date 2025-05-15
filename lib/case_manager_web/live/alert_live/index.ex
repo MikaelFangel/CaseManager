@@ -21,7 +21,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         <.table id="alert" rows={@streams.alert_collection} row_click={fn {_id, alert} -> JS.push("show_alert", value: %{id: alert.id}) end} selectable={true} selected={@selected_alerts} on_toggle_selection={JS.push("toggle_selection")}>
           <:col :let={{_id, alert}} label="Company">{alert.company.name}</:col>
           <:col :let={{_id, alert}} label="Title">{alert.title}</:col>
-          <:col :let={{_id, alert}} label="Risk Level">{alert.risk_level |> to_string() |> String.capitalize()}</:col>
+          <:col :let={{_id, alert}} label="Severity">{alert.severity |> to_string() |> String.capitalize()}</:col>
           <:col :let={{_id, alert}}>
             <.status type={
               case alert.status do
@@ -45,7 +45,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </.header>
             <.badge
               type={
-                case @selected_alert.risk_level do
+                case @selected_alert.severity do
                   :critical -> :error
                   :high -> :warning
                   :medium -> :neutral
@@ -55,7 +55,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
               }
               class="ml-auto"
             >
-              {@selected_alert.risk_level |> to_string() |> String.capitalize()}
+              {@selected_alert.severity |> to_string() |> String.capitalize()}
             </.badge>
           </div>
 
@@ -354,7 +354,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <.form for={@form} id="case-form" phx-change="validate_case" phx-submit="save_case">
       <.input field={@form[:title]} type="text" label="Title" placeholder="Multiple accounts added to security group" />
       <.input field={@form[:soc_id]} type="select" label="SOC" prompt="Select SOC" options={@soc_options} />
-      <.input field={@form[:risk_level]} type="select" prompt="Select risk" label="Risk Level" options={CaseManager.Incidents.RiskLevel.values() |> Enum.map(&{&1, &1})} />
+      <.input field={@form[:severity]} type="select" prompt="Select risk" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1, &1})} />
       <.input field={@form[:description]} type="textarea" label="Description" placeholder="Multiple accounts were added to a security group, potentially indicating a security incident." />
       <footer>
         <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>

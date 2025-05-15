@@ -52,7 +52,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
           <div class="collapse border border-base-300 bg-base-100">
             <input type="radio" name="alert-accordion" id={"alert-#{index}"} />
             <div class="collapse-title text-sm">
-              {alert.title} - <span class="text-xs text-base-content/50">{alert.risk_level |> to_string() |> String.capitalize()}</span>
+              {alert.title} - <span class="text-xs text-base-content/50">{alert.severity |> to_string() |> String.capitalize()}</span>
             </div>
             <div class="collapse-content flex flex-col text-xs">
               <p class="mb-4">{alert.description}</p>

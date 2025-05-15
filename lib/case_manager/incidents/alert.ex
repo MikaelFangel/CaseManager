@@ -88,7 +88,7 @@ defmodule CaseManager.Incidents.Alert do
       public? true
     end
 
-    attribute :risk_level, CaseManager.Incidents.RiskLevel do
+    attribute :severity, CaseManager.Incidents.Severity do
       allow_nil? false
       public? true
     end

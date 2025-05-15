@@ -19,7 +19,7 @@ defmodule CaseManagerWeb.CaseLive.Form do
         <.form for={@form} id="case-form" phx-change="validate" phx-submit="save">
           <.input field={@form[:title]} type="text" label="Title" placeholder="Multiple accounts added to security group" />
           <.input field={@form[:status]} type="select" label="Status" options={CaseManager.Incidents.CaseStatus.values() |> Enum.map(&{&1, &1})} />
-          <.input field={@form[:risk_level]} type="select" label="Risk Level" options={CaseManager.Incidents.RiskLevel.values() |> Enum.map(&{&1, &1})} />
+          <.input field={@form[:severity]} type="select" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1, &1})} />
           <.input field={@form[:description]} type="textarea" label="Description" />
           <footer>
             <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>

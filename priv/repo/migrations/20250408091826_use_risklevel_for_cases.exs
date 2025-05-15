@@ -8,7 +8,7 @@ defmodule CaseManager.Repo.Migrations.UseRisklevelForCases do
   use Ecto.Migration
 
   def up do
-    rename(table(:cases), :priority, to: :risk_level)
+    rename(table(:cases), :priority, to: :severity)
 
     alter table(:alerts) do
       modify(:company_id, :uuid, null: false)
@@ -20,6 +20,6 @@ defmodule CaseManager.Repo.Migrations.UseRisklevelForCases do
       modify(:company_id, :uuid, null: true)
     end
 
-    rename(table(:cases), :risk_level, to: :priority)
+    rename(table(:cases), :severity, to: :priority)
   end
 end
