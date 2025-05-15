@@ -6,10 +6,11 @@ defmodule CaseManagerWeb.CompanyLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    user = Ash.load!(socket.assigns.current_user, :socs)
+    user = Ash.load!(socket.assigns.current_user, [:socs, :soc_roles, :company_roles])
 
     socket =
       socket
+      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
       |> assign(:selected_companies, [])
       |> assign(:company_shared_with, [])
       |> assign(:drawer_open, false)
@@ -42,7 +43,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search companies">
+    <Layouts.split flash={@flash} search_placeholder="Search companies" user_roles={@user_roles}>
       <:top>
         <.header class="h-12">
           <:actions>

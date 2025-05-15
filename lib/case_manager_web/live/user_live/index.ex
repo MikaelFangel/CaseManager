@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.UserLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} search_placeholder="Search users">
+    <Layouts.app flash={@flash} search_placeholder="Search users" user_roles={@user_roles}>
       <.header>
         <:actions>
           <button class="btn btn-primary" onclick="user_modal.showModal()">
@@ -87,9 +87,12 @@ defmodule CaseManagerWeb.UserLive.Index do
 
     user_form = to_form(CaseManager.Accounts.form_to_create_user())
 
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+
     {:ok,
      socket
      |> assign(:page_title, "Listing Users")
+     |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> assign(:user_form, user_form)
      |> assign(:companies, companies)
      |> assign(:socs, socs)

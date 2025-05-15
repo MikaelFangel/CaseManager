@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search alerts">
+    <Layouts.split flash={@flash} search_placeholder="Search alerts" user_roles={@user_roles}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -156,6 +156,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+
     soc_options =
       Enum.map(
         Ash.load!(socket.assigns.current_user, :socs).socs,
@@ -165,6 +167,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Listing Alert")
+     |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> assign(:selected_alerts, [])
      |> assign(:selected_alert, nil)
      |> assign(:drawer_open, false)

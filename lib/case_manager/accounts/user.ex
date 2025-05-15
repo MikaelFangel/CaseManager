@@ -340,6 +340,9 @@ defmodule CaseManager.Accounts.User do
     count :soc_admin, :socs_join_assoc, filter: [user_role: :admin]
     count :soc_analyst, :socs_join_assoc, filter: [user_role: :analyst]
     count :super_admin, :socs_join_assoc, filter: [user_role: :super_admin]
+
+    list :soc_roles, :socs_join_assoc, :user_role
+    list :company_roles, :companies_join_assoc, :user_role
   end
 
   identities do

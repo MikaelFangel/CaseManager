@@ -6,8 +6,11 @@ defmodule CaseManagerWeb.SOCLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+
     socket =
       socket
+      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
       |> assign(:drawer_open, false)
       |> assign(:drawer_minimized, false)
       |> assign(:selected_soc, nil)
@@ -32,7 +35,7 @@ defmodule CaseManagerWeb.SOCLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search SOCs">
+    <Layouts.split flash={@flash} search_placeholder="Search SOCs" user_roles={@user_roles}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -125,7 +128,6 @@ defmodule CaseManagerWeb.SOCLive.Index do
 
     {:noreply, socket}
   end
-
 
   attr :soc, :any, default: nil
 

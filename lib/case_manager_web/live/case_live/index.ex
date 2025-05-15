@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} search_placeholder="Search cases">
+    <Layouts.app flash={@flash} search_placeholder="Search cases" user_roles={@user_roles}>
       <.header>
         <:actions>
           <.button variant="primary" navigate={~p"/case/new"} hidden>
@@ -34,9 +34,12 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+
     {:ok,
      socket
      |> assign(:page_title, "Listing Cases")
+     |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> stream(:cases, Incidents.list_case!())}
   end
 

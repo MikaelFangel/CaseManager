@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} left_width="w-2/3" right_width="w-1/3">
+    <Layouts.split flash={@flash} left_width="w-2/3" right_width="w-1/3" user_roles={@user_roles}>
       <:top>
         <.header>
           {@case.title}
@@ -116,6 +116,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+
     case =
       Incidents.get_case!(id,
         load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]]
@@ -128,6 +130,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
     {:ok,
      socket
      |> assign(:page_title, "Show Case")
+     |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> assign(:active_visibility, initial_visibility)
      |> assign(:case, case)
      # Store filtered comments separately

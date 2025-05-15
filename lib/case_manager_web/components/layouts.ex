@@ -12,6 +12,7 @@ defmodule CaseManagerWeb.Layouts do
   embed_templates("layouts/*")
 
   attr :search_placeholder, :string, default: "Search..."
+  attr :user_roles, :list, default: [], doc: "A list of the user_roles that the user has"
   attr :flash, :map
 
   slot :inner_block
@@ -19,7 +20,7 @@ defmodule CaseManagerWeb.Layouts do
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar search_placeholder={@search_placeholder} />
+      <.navbar search_placeholder={@search_placeholder} user_roles={@user_roles} />
 
       <main class="flex-1 p-4 overflow-auto">
         <div class="mx-auto w-full space-y-4">
@@ -35,6 +36,7 @@ defmodule CaseManagerWeb.Layouts do
   attr :search_placeholder, :string, default: "Search..."
   attr :left_width, :string, default: "w-1/2", doc: "Width class for left panel"
   attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
+  attr :user_roles, :list, default: [], doc: "A list of the user_roles that the user has"
   attr :flash, :map
 
   slot :top
@@ -44,7 +46,7 @@ defmodule CaseManagerWeb.Layouts do
   def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar search_placeholder={@search_placeholder} />
+      <.navbar search_placeholder={@search_placeholder} user_roles={@user_roles} />
 
       <div class="p-4">
         {render_slot(@top)}
@@ -123,6 +125,7 @@ defmodule CaseManagerWeb.Layouts do
   attr :on_search, :any, default: nil
   attr :search_value, :string, default: ""
   attr :show_searchbar, :boolean, default: true
+  attr :user_roles, :list, default: [], doc: "A list of the user_roles that the user has"
   slot :nav_links
 
   def navbar(assigns) do
@@ -137,11 +140,11 @@ defmodule CaseManagerWeb.Layouts do
 
       <div class="flex-none flex items-center gap-4">
         <ul class="menu menu-horizontal hidden sm:flex">
-          <li><.link navigate={~p"/alert"}>Alerts</.link></li>
+          <li :if={(@user_roles -- [:soc_analyst, :admin, :super_admin]) |> then(fn r -> length(r) < length(@user_roles) end)}><.link navigate={~p"/alert"}>Alerts</.link></li>
           <li><.link navigate={~p"/case"}>Cases</.link></li>
-          <li><.link navigate={~p"/user"}>Users</.link></li>
-          <li><.link navigate={~p"/company"}>Companies</.link></li>
-          <li><.link navigate={~p"/soc"}>SOCs</.link></li>
+          <li :if={(@user_roles -- [:super_admin]) |> then(fn r -> length(r) < length(@user_roles) end)}><.link navigate={~p"/user"}>Users</.link></li>
+          <li :if={(@user_roles -- [:super_admin]) |> then(fn r -> length(r) < length(@user_roles) end)}><.link navigate={~p"/company"}>Companies</.link></li>
+          <li :if={(@user_roles -- [:super_admin]) |> then(fn r -> length(r) < length(@user_roles) end)}><.link navigate={~p"/soc"}>SOCs</.link></li>
         </ul>
 
         <form :if={@show_searchbar} phx-change={@on_search || "search"} class="form-control pt-2">
