@@ -11,6 +11,12 @@ defmodule CaseManager.Organizations.CompanyUser do
     defaults [:read, :destroy, create: :*, update: :*]
   end
 
+  attributes do
+    attribute :user_role, CaseManager.Organizations.CompanyRoles do
+      public? true
+    end
+  end
+
   relationships do
     belongs_to :user, CaseManager.Accounts.User do
       primary_key? true

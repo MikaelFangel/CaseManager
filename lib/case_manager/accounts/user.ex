@@ -327,6 +327,19 @@ defmodule CaseManager.Accounts.User do
 
   calculations do
     calculate :full_name, :string, expr(first_name <> " " <> last_name), public?: true
+
+    calculate :admin?, :boolean, expr(super_admin > 0 or soc_admin > 0 or company_admin > 0)
+    calculate :company_analyst?, :boolean, expr(company_analyst > 0)
+    calculate :soc_analyst?, :boolean, expr(soc_analyst > 0)
+    calculate :super_admin?, :boolean, expr(super_admin > 0)
+  end
+
+  aggregates do
+    count :company_admin, :companies_join_assoc, filter: [user_role: :admin]
+    count :company_analyst, :companies_join_assoc, filter: [user_role: :analyst]
+    count :soc_admin, :socs_join_assoc, filter: [user_role: :admin]
+    count :soc_analyst, :socs_join_assoc, filter: [user_role: :analyst]
+    count :super_admin, :socs_join_assoc, filter: [user_role: :super_admin]
   end
 
   identities do
