@@ -330,6 +330,7 @@ defmodule CaseManager.Accounts.User do
 
     calculate :admin?, :boolean, expr(super_admin > 0 or soc_admin > 0 or company_admin > 0)
     calculate :company_analyst?, :boolean, expr(company_analyst > 0)
+    calculate :soc_admin?, :boolean, expr(soc_admin > 0)
     calculate :soc_analyst?, :boolean, expr(soc_analyst > 0)
     calculate :super_admin?, :boolean, expr(super_admin > 0)
   end

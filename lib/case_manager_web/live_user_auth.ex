@@ -30,6 +30,24 @@ defmodule CaseManagerWeb.LiveUserAuth do
     end
   end
 
+  def on_mount(:super_admin_required, _params, _session, socket) do
+    with {:ok, user} <- Ash.load(socket.assigns[:current_user], :super_admin?),
+         true <- user.super_admin? do
+      {:cont, socket}
+    else
+      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/case")}
+    end
+  end
+
+  def on_mount(:soc_user_required, _params, _session, socket) do
+    with {:ok, user} <- Ash.load(socket.assigns[:current_user], [:super_admin?, :soc_admin?, :soc_analyst?]),
+         true <- user.super_admin? || user.soc_analyst? || user.soc_admin? do
+      {:cont, socket}
+    else
+      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/case")}
+    end
+  end
+
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-out")}

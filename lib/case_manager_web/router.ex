@@ -33,30 +33,24 @@ defmodule CaseManagerWeb.Router do
 
     ash_authentication_live_session :authenticated_routes,
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
-      # in each liveview, add one of the following at the top of the module:
-      #
-      # If an authenticated user must be present:
-      # on_mount {CaseManagerWeb.LiveUserAuth, :live_user_required}
-      #
-      # If an authenticated user *may* be present:
-      # on_mount {CaseManagerWeb.LiveUserAuth, :live_user_optional}
-      #
-      # If an authenticated user must *not* be present:
-      # on_mount {CaseManagerWeb.LiveUserAuth, :live_no_user}
       live "/", AlertLive.Index, :index
-
-      live "/alert", AlertLive.Index, :index
 
       live "/case", CaseLive.Index, :index
       live "/case/new", CaseLive.Form, :new
       live "/case/:id", CaseLive.Show, :show
       live "/case/:id/edit", CaseLive.Form, :edit
+    end
 
+    ash_authentication_live_session :soc_user_routes,
+      on_mount: {CaseManagerWeb.LiveUserAuth, :soc_user_required} do
+      live "/alert", AlertLive.Index, :index
+    end
+
+    ash_authentication_live_session :super_admin_routes,
+      on_mount: {CaseManagerWeb.LiveUserAuth, :super_admin_required} do
       live "/user", UserLive.Index, :index
       live "/user/:id", UserLive.Show, :show
-
       live "/company", CompanyLive.Index, :index
-
       live "/soc", SOCLive.Index, :index
     end
   end
