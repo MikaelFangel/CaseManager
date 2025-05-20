@@ -34,7 +34,16 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?])
+    user = Ash.load!(socket.assigns.current_user, [:companies, :socs, :soc_roles, :company_roles, :super_admin?])
+
+    if connected?(socket) do
+      if user.super_admin? do
+        CaseManagerWeb.Endpoint.subscribe("case")
+      end
+
+      Enum.each(user.companies, fn company -> CaseManagerWeb.Endpoint.subscribe("case:#{company.id}") end)
+      Enum.each(user.socs, fn soc -> CaseManagerWeb.Endpoint.subscribe("case:#{soc.id}") end)
+    end
 
     {:ok,
      socket
@@ -65,6 +74,14 @@ defmodule CaseManagerWeb.CaseLive.Index do
     {:ok, _} = Incidents.delete_case(case, actor: socket.assigns.current_user)
 
     {:noreply, stream_delete(socket, :cases, case)}
+  end
+
+  @impl true
+  def handle_info(%{topic: "case:" <> _company, event: "create", payload: notification}, socket) do
+    case = Ash.load!(notification.data, [:company])
+    socket = stream_insert(socket, :cases, case, at: 0)
+
+    {:noreply, socket}
   end
 
   defp status_to_badge_type(status) do

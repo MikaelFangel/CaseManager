@@ -1,5 +1,7 @@
 import Config
 
+config :ash, :pub_sub, debug?: true
+
 # Configure your database
 config :case_manager, CaseManager.Repo,
   # For development, we disable any cache and enable

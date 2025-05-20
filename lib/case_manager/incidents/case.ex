@@ -2,10 +2,11 @@ defmodule CaseManager.Incidents.Case do
   @moduledoc false
   use Ash.Resource,
     otp_app: :case_manager,
-    domain: CaseManager.Incidents,
+    authorizers: [Ash.Policy.Authorizer],
     data_layer: AshPostgres.DataLayer,
+    domain: CaseManager.Incidents,
     extensions: [AshJsonApi.Resource],
-    authorizers: [Ash.Policy.Authorizer]
+    notifiers: [Ash.Notifier.PubSub]
 
   alias CaseManager.Accounts.User
 
@@ -78,6 +79,7 @@ defmodule CaseManager.Incidents.Case do
     end
 
     policy action_type(:create) do
+      authorize_if always()
       authorize_if expr(soc.users == ^actor(:id))
     end
 
@@ -88,6 +90,13 @@ defmodule CaseManager.Incidents.Case do
     policy action_type(:destroy) do
       authorize_if actor_attribute_equals(:super_admin?, true)
     end
+  end
+
+  pub_sub do
+    module CaseManagerWeb.Endpoint
+
+    prefix "case"
+    publish :create, [[:company_id, :soc_id, nil], [:id, nil]]
   end
 
   attributes do
