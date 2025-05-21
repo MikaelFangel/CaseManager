@@ -6,6 +6,7 @@ services:
     environment:
       DATABASE_URL_FILE: /run/secrets/databaseurl
       SECRET_KEY_BASE_FILE: /run/secrets/secretkeybase
+      TOKEN_SIGNING_SECRET: /run/secrets/token_signing_secret
       PHX_HOST: "localhost"
     deploy:
       restart_policy:
@@ -48,6 +49,8 @@ secrets:
     file: ./.secrets/.secretkeybase
   postgrespassword:
     file: ./.secrets/.postgrespassword
+  token_signing_secret:
+    file: ./.secrets/.token_signing_secret
 
 volumes:
   db_data:
