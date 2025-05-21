@@ -31,6 +31,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
         <:col :let={{_id, case}} label="Assignee">{case.assignee}</:col>
       </.table>
+
+      <%= if @page_results do %>
+        <.pagination page_results={@page_results} current_page={@current_page} limit={@limit} offset={@offset} />
+      <% end %>
     </Layouts.app>
     """
   end
@@ -51,7 +55,11 @@ defmodule CaseManagerWeb.CaseLive.Index do
     {:ok,
      socket
      |> assign(:page_title, "Listing Cases")
-     |> assign(:user_roles, user.soc_roles ++ user.company_roles)}
+     |> assign(:user_roles, user.soc_roles ++ user.company_roles)
+     |> assign(:current_page, 1)
+     |> assign(:limit, 10)
+     |> assign(:offset, 0)
+     |> assign(:page_results, nil)}
   end
 
   @impl true
@@ -62,27 +70,42 @@ defmodule CaseManagerWeb.CaseLive.Index do
     filter_option = Map.get(params, "filter", "all")
     filter = get_filter_for_option(filter_option)
 
-    cases = Incidents.search_cases!(query, query: [filter_input: filter, load: [:company]], actor: user)
+    limit = String.to_integer(params["limit"] || "10")
+    offset = String.to_integer(params["offset"] || "0")
+
+    page_results =
+      Incidents.search_cases!(
+        query,
+        query: [filter_input: filter, load: [:company]],
+        page: [limit: limit, offset: offset, count: true],
+        actor: user
+      )
+
+    current_page = div(offset, limit) + 1
 
     socket =
       socket
-      |> stream(:cases, cases, reset: true)
+      |> stream(:cases, page_results.results, reset: true)
       |> assign(query: query)
       |> assign(filter_option: filter_option)
       |> assign(filter: filter)
+      |> assign(:page_results, page_results)
+      |> assign(:current_page, current_page)
+      |> assign(:limit, limit)
+      |> assign(:offset, offset)
 
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("search", %{"query" => search}, socket) do
-    params = update_params(socket, %{q: search})
+    params = %{q: search, limit: socket.assigns.limit, offset: 0}
     {:noreply, push_patch(socket, to: ~p"/case/?#{params}")}
   end
 
   @impl true
   def handle_event("filter", %{"status-filter" => filter}, socket) do
-    params = update_params(socket, %{filter: filter})
+    params = %{filter: filter, limit: socket.assigns.limit, offset: 0}
     {:noreply, push_patch(socket, to: ~p"/case/?#{params}")}
   end
 
@@ -95,11 +118,106 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_info(%{topic: "case:" <> _company, event: "create", payload: notification}, socket) do
-    case = Ash.load!(notification.data, [:company])
-    socket = stream_insert(socket, :cases, case, at: 0)
+  def handle_event("prev-page", _, socket) do
+    new_offset = max(0, socket.assigns.offset - socket.assigns.limit)
 
-    {:noreply, socket}
+    params = %{
+      q: socket.assigns.query,
+      filter: socket.assigns.filter_option,
+      limit: socket.assigns.limit,
+      offset: new_offset
+    }
+
+    {:noreply, push_patch(socket, to: ~p"/case/?#{params}")}
+  end
+
+  @impl true
+  def handle_event("next-page", _, socket) do
+    new_offset = socket.assigns.offset + socket.assigns.limit
+
+    params = %{
+      q: socket.assigns.query,
+      filter: socket.assigns.filter_option,
+      limit: socket.assigns.limit,
+      offset: new_offset
+    }
+
+    {:noreply, push_patch(socket, to: ~p"/case/?#{params}")}
+  end
+
+  @impl true
+  def handle_event("change-limit", %{"pagination" => %{"limit" => limit_str}}, socket) do
+    limit = String.to_integer(limit_str)
+
+    params = %{
+      q: socket.assigns.query,
+      filter: socket.assigns.filter_option,
+      limit: limit,
+      offset: 0
+    }
+
+    {:noreply, push_patch(socket, to: ~p"/case/?#{params}")}
+  end
+
+  @impl true
+  def handle_info(%{event: "create", payload: notification}, socket) do
+    case = Ash.load!(notification.data, [:company])
+    filter = socket.assigns.filter
+    limit = socket.assigns.limit
+
+    if socket.assigns.offset == 0 && case_matches_filter?(case, filter) do
+      socket =
+        if socket.assigns.page_results && length(socket.assigns.page_results.results) >= limit do
+          last_case = List.last(socket.assigns.page_results.results)
+
+          socket
+          |> stream_delete(:cases, last_case)
+          |> stream_insert(:cases, case, at: 0)
+        else
+          socket
+        end
+
+      {:noreply, socket}
+    else
+      socket = put_flash(socket, :info, "New case has been created: #{case.title}. Refresh to see updates.")
+      {:noreply, socket}
+    end
+  end
+
+  defp case_matches_filter?(case, %{status: [in: statuses]}) when is_list(statuses), do: case.status in statuses
+  defp case_matches_filter?(_case, %{}), do: true
+  defp case_matches_filter?(_case, _filter), do: false
+
+  def pagination(assigns) do
+    ~H"""
+    <div class="flex items-center justify-between mt-6 gap-4">
+      <div class="text-sm text-base-content/30">
+        <%= if @page_results && @page_results.count do %>
+          Showing {@offset + 1}-{min(@offset + @limit, @page_results.count)} of {@page_results.count} results
+        <% end %>
+      </div>
+
+      <div class="flex gap-2">
+        <.form :let={f} for={%{}} as={:pagination} phx-change="change-limit">
+          <div class="flex items-center gap-2">
+            <.input type="select" field={f[:limit]} options={[{"10", "10"}, {"25", "25"}, {"50", "50"}, {"100", "100"}]} value={@limit} class="select select-sm" />
+          </div>
+        </.form>
+
+        <div class="join mt-1">
+          <button class="join-item btn" phx-click="prev-page" disabled={@offset <= 0}>
+            <.icon name="hero-chevron-left" />
+          </button>
+
+          <span class="join-item btn">Page {@current_page}</span>
+
+          <button class="join-item btn" phx-click="next-page" disabled={@page_results && !@page_results.more?}>
+            <.icon name="hero-chevron-right" />
+          </button>
+        </div>
+      </div>
+    </div>
+    """
   end
 
   defp status_to_badge_type(status) do
