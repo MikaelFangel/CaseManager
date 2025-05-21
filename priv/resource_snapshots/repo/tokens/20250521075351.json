@@ -1,24 +1,14 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "confirmed_at",
-      "type": "utc_datetime_usec"
-    },
-    {
       "allow_nil?": false,
-      "default": "fragment(\"gen_random_uuid()\")",
+      "default": "nil",
       "generated?": false,
       "primary_key?": true,
       "references": null,
       "size": null,
-      "source": "id",
-      "type": "uuid"
+      "source": "jti",
+      "type": "text"
     },
     {
       "allow_nil?": false,
@@ -27,8 +17,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "email",
-      "type": "citext"
+      "source": "subject",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "expires_at",
+      "type": "utc_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "purpose",
+      "type": "text"
     },
     {
       "allow_nil?": true,
@@ -37,28 +47,28 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "hashed_password",
-      "type": "text"
+      "source": "extra_data",
+      "type": "map"
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "first_name",
-      "type": "text"
+      "source": "created_at",
+      "type": "utc_datetime_usec"
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "last_name",
-      "type": "text"
+      "source": "updated_at",
+      "type": "utc_datetime_usec"
     }
   ],
   "base_filter": null,
@@ -66,23 +76,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "6B7E676AEE813035E5FF7D5464EA7410D0473E56DC0A77C1E5CAA652330D8198",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "users_unique_email_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "email"
-        }
-      ],
-      "name": "unique_email",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "5907FCC0CFF5BCC4E646152DA013EE3D1EF1D48EB053F29E5ED91B9C1DB4A169",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -90,5 +85,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "users"
+  "table": "tokens"
 }

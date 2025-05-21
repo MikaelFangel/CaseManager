@@ -1,16 +1,6 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "user_role",
-      "type": "text"
-    },
-    {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
@@ -28,15 +18,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "company_users_user_id_fkey",
+        "name": "case_alerts_case_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "cases"
       },
       "size": null,
-      "source": "user_id",
+      "source": "case_id",
       "type": "uuid"
     },
     {
@@ -57,15 +47,15 @@
           "global": null,
           "strategy": null
         },
-        "name": "company_users_company_id_fkey",
+        "name": "case_alerts_alert_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "companies"
+        "table": "alerts"
       },
       "size": null,
-      "source": "company_id",
+      "source": "alert_id",
       "type": "uuid"
     }
   ],
@@ -74,7 +64,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "C487132888079A88461F9B262308324754FE88F6C928B6D2AB7A31616A6DC280",
+  "hash": "F1E391770EBE48834FA41C36482A800B4FF672388BB4AA1C038BF97BEF26F8DF",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -83,5 +73,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "company_users"
+  "table": "case_alerts"
 }

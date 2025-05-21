@@ -17,6 +17,16 @@
       "primary_key?": false,
       "references": null,
       "size": null,
+      "source": "alert_id",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
       "source": "title",
       "type": "text"
     },
@@ -32,26 +42,6 @@
     },
     {
       "allow_nil?": false,
-      "default": "\"new\"",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "status",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "resolution_type",
-      "type": "text"
-    },
-    {
-      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
@@ -61,14 +51,44 @@
       "type": "text"
     },
     {
+      "allow_nil?": false,
+      "default": "\"new\"",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "status",
+      "type": "text"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "creation_time",
+      "type": "utc_datetime"
+    },
+    {
+      "allow_nil?": false,
+      "default": "nil",
+      "generated?": false,
+      "primary_key?": false,
+      "references": null,
+      "size": null,
+      "source": "link",
+      "type": "text"
+    },
+    {
       "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "escalated",
-      "type": "boolean"
+      "source": "additional_data",
+      "type": "map"
     },
     {
       "allow_nil?": false,
@@ -91,64 +111,6 @@
       "type": "utc_datetime_usec"
     },
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "cases_reporter_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "reporter_id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "cases_assignee_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "users"
-      },
-      "size": null,
-      "source": "assignee_id",
-      "type": "uuid"
-    },
-    {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
@@ -166,7 +128,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "cases_company_id_fkey",
+        "name": "alerts_company_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -176,35 +138,6 @@
       "size": null,
       "source": "company_id",
       "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "cases_soc_id_fkey",
-        "on_delete": null,
-        "on_update": null,
-        "primary_key?": true,
-        "schema": "public",
-        "table": "socs"
-      },
-      "size": null,
-      "source": "soc_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -212,7 +145,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "FADFFC90CF29C9D5547A5E1E0E984A04DB61590F9D6F0CBB1EC4DDCE0958B77B",
+  "hash": "F2139FFAE7C2F25C9BDE2D6469E7315114E5E95E88D29692AEBA1CB6C2C2E497",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -221,5 +154,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "cases"
+  "table": "alerts"
 }

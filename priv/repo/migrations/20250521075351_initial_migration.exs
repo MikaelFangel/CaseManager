@@ -1,4 +1,4 @@
-defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
+defmodule CaseManager.Repo.Migrations.InitialMigration do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -8,6 +8,26 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
   use Ecto.Migration
 
   def up do
+    create table(:users, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:email, :citext, null: false)
+      add(:hashed_password, :text)
+      add(:first_name, :text, null: false)
+      add(:last_name, :text, null: false)
+    end
+
+    create unique_index(:users, [:email], name: "users_unique_email_index")
+
+    create table(:tokens, primary_key: false) do
+      add(:jti, :text, null: false, primary_key: true)
+      add(:subject, :text, null: false)
+      add(:expires_at, :utc_datetime, null: false)
+      add(:purpose, :text, null: false)
+      add(:extra_data, :map)
+      add(:created_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+    end
+
     create table(:socs, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:name, :text, null: false)
@@ -16,31 +36,31 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
     end
 
     create table(:soc_users, primary_key: false) do
-      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
-      add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
-      add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:user_role, :text)
 
       add(:user_id, references(:users, column: :id, name: "soc_users_user_id_fkey", type: :uuid, prefix: "public"),
+        primary_key: true,
         null: false
       )
 
       add(:soc_id, references(:socs, column: :id, name: "soc_users_soc_id_fkey", type: :uuid, prefix: "public"),
+        primary_key: true,
         null: false
       )
     end
 
     create table(:soc_company_accesses, primary_key: false) do
-      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
 
       add(
         :soc_id,
         references(:socs, column: :id, name: "soc_company_accesses_soc_id_fkey", type: :uuid, prefix: "public"),
+        primary_key: true,
         null: false
       )
 
-      add(:company_id, :uuid, null: false)
+      add(:company_id, :uuid, null: false, primary_key: true)
     end
 
     create table(:files, primary_key: false) do
@@ -54,15 +74,14 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
     end
 
     create table(:company_users, primary_key: false) do
-      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
-      add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
-      add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:user_role, :text)
 
       add(:user_id, references(:users, column: :id, name: "company_users_user_id_fkey", type: :uuid, prefix: "public"),
+        primary_key: true,
         null: false
       )
 
-      add(:soc_id, :uuid, null: false)
+      add(:company_id, :uuid, null: false, primary_key: true)
     end
 
     create table(:companies, primary_key: false) do
@@ -78,8 +97,8 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
 
     alter table(:company_users) do
       modify(
-        :soc_id,
-        references(:companies, column: :id, name: "company_users_soc_id_fkey", type: :uuid, prefix: "public")
+        :company_id,
+        references(:companies, column: :id, name: "company_users_company_id_fkey", type: :uuid, prefix: "public")
       )
     end
 
@@ -87,14 +106,17 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
       add(:name, :text, null: false)
       add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:soc_id, references(:socs, column: :id, name: "companies_soc_id_fkey", type: :uuid, prefix: "public"))
     end
 
     create table(:comments, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:body, :text, null: false)
+      add(:visibility, :text, null: false, default: "internal")
       add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
-      add(:case_id, :uuid, null: false)
+      add(:case_id, :uuid)
+      add(:alert_id, :uuid)
       add(:user_id, :uuid, null: false)
     end
 
@@ -108,14 +130,14 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
 
     alter table(:comments) do
       modify(:case_id, references(:cases, column: :id, name: "comments_case_id_fkey", type: :uuid, prefix: "public"))
-      modify(:user_id, references(:users, column: :id, name: "comments_user_id_fkey", type: :uuid, prefix: "public"))
     end
 
     alter table(:cases) do
       add(:title, :text, null: false)
       add(:description, :text)
-      add(:status, :text, null: false)
-      add(:priority, :text)
+      add(:status, :text, null: false, default: "new")
+      add(:resolution_type, :text)
+      add(:severity, :text)
       add(:escalated, :boolean)
       add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
@@ -134,19 +156,21 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
     end
 
     create table(:case_alerts, primary_key: false) do
-      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
-      add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
-      add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
-
       add(:case_id, references(:cases, column: :id, name: "case_alerts_case_id_fkey", type: :uuid, prefix: "public"),
+        primary_key: true,
         null: false
       )
 
-      add(:alert_id, :uuid, null: false)
+      add(:alert_id, :uuid, null: false, primary_key: true)
     end
 
     create table(:alerts, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+    end
+
+    alter table(:comments) do
+      modify(:alert_id, references(:alerts, column: :id, name: "comments_alert_id_fkey", type: :uuid, prefix: "public"))
+      modify(:user_id, references(:users, column: :id, name: "comments_user_id_fkey", type: :uuid, prefix: "public"))
     end
 
     alter table(:case_alerts) do
@@ -161,6 +185,7 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
       add(:title, :text, null: false)
       add(:description, :text)
       add(:severity, :text, null: false)
+      add(:status, :text, null: false, default: "new")
       add(:creation_time, :utc_datetime, null: false)
       add(:link, :text, null: false)
       add(:additional_data, :map)
@@ -169,7 +194,8 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
 
       add(
         :company_id,
-        references(:companies, column: :id, name: "alerts_company_id_fkey", type: :uuid, prefix: "public")
+        references(:companies, column: :id, name: "alerts_company_id_fkey", type: :uuid, prefix: "public"),
+        null: false
       )
     end
   end
@@ -184,6 +210,7 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
       remove(:additional_data)
       remove(:link)
       remove(:creation_time)
+      remove(:status)
       remove(:severity)
       remove(:description)
       remove(:title)
@@ -193,6 +220,15 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
     drop(constraint(:case_alerts, "case_alerts_alert_id_fkey"))
 
     alter table(:case_alerts) do
+      modify(:alert_id, :uuid)
+    end
+
+    drop(constraint(:comments, "comments_alert_id_fkey"))
+
+    drop(constraint(:comments, "comments_user_id_fkey"))
+
+    alter table(:comments) do
+      modify(:user_id, :uuid)
       modify(:alert_id, :uuid)
     end
 
@@ -218,7 +254,8 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
       remove(:updated_at)
       remove(:inserted_at)
       remove(:escalated)
-      remove(:priority)
+      remove(:severity)
+      remove(:resolution_type)
       remove(:status)
       remove(:description)
       remove(:title)
@@ -226,10 +263,7 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
 
     drop(constraint(:comments, "comments_case_id_fkey"))
 
-    drop(constraint(:comments, "comments_user_id_fkey"))
-
     alter table(:comments) do
-      modify(:user_id, :uuid)
       modify(:case_id, :uuid)
     end
 
@@ -243,16 +277,19 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
 
     drop(table(:comments))
 
+    drop(constraint(:companies, "companies_soc_id_fkey"))
+
     alter table(:companies) do
+      remove(:soc_id)
       remove(:updated_at)
       remove(:inserted_at)
       remove(:name)
     end
 
-    drop(constraint(:company_users, "company_users_soc_id_fkey"))
+    drop(constraint(:company_users, "company_users_company_id_fkey"))
 
     alter table(:company_users) do
-      modify(:soc_id, :uuid)
+      modify(:company_id, :uuid)
     end
 
     drop(constraint(:soc_company_accesses, "soc_company_accesses_company_id_fkey"))
@@ -280,5 +317,11 @@ defmodule CaseManager.Repo.Migrations.AddIncidentsAndOrgs do
     drop(table(:soc_users))
 
     drop(table(:socs))
+
+    drop(table(:tokens))
+
+    drop_if_exists(unique_index(:users, [:email], name: "users_unique_email_index"))
+
+    drop(table(:users))
   end
 end

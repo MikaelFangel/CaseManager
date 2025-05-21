@@ -32,7 +32,7 @@
     },
     {
       "allow_nil?": false,
-      "default": "nil",
+      "default": "\"new\"",
       "generated?": false,
       "primary_key?": false,
       "references": null,
@@ -57,7 +57,7 @@
       "primary_key?": false,
       "references": null,
       "size": null,
-      "source": "risk_level",
+      "source": "severity",
       "type": "text"
     },
     {
@@ -212,7 +212,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "CCB8D2EFD19D659AD094E1A851D07207A1BD62325964D09BB0C85CD53E355EDB",
+  "hash": "385D79BC6895BDC68800F50E7A6F69FD03176E19183AC0800EA8DBA806813979",
   "identities": [],
   "multitenancy": {
     "attribute": null,
