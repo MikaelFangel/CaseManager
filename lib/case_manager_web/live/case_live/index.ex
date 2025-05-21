@@ -28,6 +28,9 @@ defmodule CaseManagerWeb.CaseLive.Index do
             {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
           </.badge>
         </:col>
+        <:col :let={{_id, case}} label="Last modified">
+          {time_ago(case.updated_at)}
+        </:col>
 
         <:col :let={{_id, case}} label="Assignee">{case.assignee}</:col>
       </.table>
@@ -273,4 +276,26 @@ defmodule CaseManagerWeb.CaseLive.Index do
   defp get_filter_for_option("closed"), do: %{status: [in: [:closed]]}
   defp get_filter_for_option("reopened"), do: %{status: [in: [:reopened]]}
   defp get_filter_for_option(_), do: %{status: [in: [:closed, :resolved]]}
+
+  defp time_ago(datetime) when is_struct(datetime) do
+    now = DateTime.utc_now()
+    diff_seconds = DateTime.diff(now, datetime, :second)
+
+    cond do
+      diff_seconds < 30 -> "just now"
+      diff_seconds < 60 -> "#{diff_seconds} seconds ago"
+      diff_seconds < 120 -> "1 minute ago"
+      diff_seconds < 3600 -> "#{div(diff_seconds, 60)} minutes ago"
+      diff_seconds < 7200 -> "1 hour ago"
+      diff_seconds < 86_400 -> "#{div(diff_seconds, 3600)} hours ago"
+      diff_seconds < 172_800 -> "1 day ago"
+      diff_seconds < 2_592_000 -> "#{div(diff_seconds, 86_400)} days ago"
+      diff_seconds < 5_184_000 -> "1 month ago"
+      diff_seconds < 31_536_000 -> "#{div(diff_seconds, 2_592_000)} months ago"
+      diff_seconds < 63_072_000 -> "1 year ago"
+      true -> "#{div(diff_seconds, 31_536_000)} years ago"
+    end
+  end
+
+  defp time_ago(_), do: "unknown"
 end
