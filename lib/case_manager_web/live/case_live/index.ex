@@ -187,6 +187,20 @@ defmodule CaseManagerWeb.CaseLive.Index do
     end
   end
 
+  @impl true
+  def handle_info(%{event: "update", payload: notification}, socket) do
+    updated_case = Ash.load!(notification.data, [:company])
+
+    socket =
+      if Enum.any?(socket.assigns.page_results.results, fn case -> case.id == updated_case.id end) do
+        stream_insert(socket, :cases, updated_case)
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
   defp case_matches_filter?(case, %{status: [in: statuses]}) when is_list(statuses), do: case.status in statuses
   defp case_matches_filter?(_case, %{}), do: true
   defp case_matches_filter?(_case, _filter), do: false

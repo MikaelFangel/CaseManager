@@ -55,6 +55,8 @@ defmodule CaseManager.Incidents.Case do
     update :update do
       description "Change the case data"
       primary? true
+
+      accept [:*]
     end
 
     destroy :delete do
@@ -97,6 +99,7 @@ defmodule CaseManager.Incidents.Case do
 
     prefix "case"
     publish :create, [[:company_id, :soc_id, nil], [:id, nil]]
+    publish :update, [[:company_id, :soc_id, nil], [:id, nil]]
   end
 
   attributes do
