@@ -2,8 +2,8 @@
   <img src={~p"/images/background.png"} alt="Background" class="absolute inset-0 w-full h-full object-cover -z-10" />
   <div class="bg-base-100 border-base-300 border w-full p-6 m-auto rounded-md shadow-md max-w-lg absolute bottom-20 right-20">
     <div class="grid grid-flow-col grid-cols-3 justify-items-start my-2">
-      <img src={~p"/images/logo.svg"} width="36" />
-      <h1 class="text-3xl font-semibold text-center text-base-content justify-self-center">Sign in</h1>
+      <img src={~p"/images/logo.png"} width="52" />
+      <h1 class="text-xl font-semibold text-center text-base-content justify-self-center">Sign in</h1>
     </div>
     <.form :let={user} for={@form} action={~p"/auth/user/password/sign_in"}>
       <.input field={user[:email]} type="email" placeholder="Email address" label="Email" />
