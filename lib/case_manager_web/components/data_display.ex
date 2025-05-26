@@ -574,10 +574,11 @@ defmodule CaseManagerWeb.DataDisplay do
   attr :comment, :any, required: true
   attr :user_id, :string, required: true
   attr :profile_picture, :string, default: nil
+  attr :id, :string, required: true
 
   def chat_bubble(assigns) do
     ~H"""
-    <div id={@comment.id} class={"chat #{if @user_id != @comment.user.id, do: "chat-start", else: "chat-end"} mb-2"}>
+    <div id={@id} class={"chat #{if @user_id != @comment.user.id, do: "chat-start", else: "chat-end"} mb-2"}>
       <div class={"chat-header #{if @user_id == @comment.user.id, do: "flex-row-reverse"}"}>
         <span class="font-medium">{@comment.user.full_name}</span>
         <time class="text-xs opacity-50">{@comment.inserted_at |> Calendar.strftime("%H:%M - %d-%m-%y")}</time>

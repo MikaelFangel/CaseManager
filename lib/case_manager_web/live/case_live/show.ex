@@ -75,15 +75,15 @@ defmodule CaseManagerWeb.CaseLive.Show do
             </a>
           </div>
 
-          <div class="overflow-y-auto flex-1 my-4 flex flex-col-reverse">
-            <%= if Enum.empty?(@filtered_comments) do %>
+          <div class="overflow-y-auto flex-1 my-4 flex flex-col-reverse" id="comments" phx-update="stream">
+            <%= if @streams.comments == [] do %>
               <div class="flex-1 h-full flex flex-col justify-center items-center text-base-content/70">
                 <.icon name="hero-chat-bubble-left-ellipsis" class="h-12 w-12 mb-2 opacity-50" />
                 <p>No comments with {@active_visibility} visibility</p>
               </div>
             <% else %>
-              <%= for comment <- @filtered_comments do %>
-                <.chat_bubble comment={comment} user_id={@user_id} />
+              <%= for {id, comment} <- @streams.comments do %>
+                <.chat_bubble id={id} comment={comment} user_id={@user_id} />
               <% end %>
             <% end %>
           </div>
@@ -102,7 +102,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
                 <.input field={@comment_form[:body]} type="textarea" placeholder="Write a comment..." />
 
-                <button type="submit" class={"btn #{visibility_button_class(@active_visibility)}"}>
+                <button class={"btn #{visibility_button_class(@active_visibility)}"}>
                   <.icon name="hero-paper-airplane" /> Send
                 </button>
               </.form>
@@ -117,6 +117,10 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?])
+
+    if connected?(socket) do
+      CaseManagerWeb.Endpoint.subscribe("comment:" <> id)
+    end
 
     case =
       Incidents.get_case!(id,
@@ -134,13 +138,22 @@ defmodule CaseManagerWeb.CaseLive.Show do
      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> assign(:active_visibility, initial_visibility)
      |> assign(:case, case)
-     # Store filtered comments separately
-     |> assign(:filtered_comments, comments)
-     |> assign(:user_id, socket.assigns.current_user.id)
-     |> assign(
-       :comment_form,
-       to_form(CaseManager.Incidents.form_to_add_comment_to_case(case, actor: user))
-     )}
+     |> stream(:comments, comments)
+     |> assign(:user_id, socket.assigns.current_user.id)}
+  end
+
+  @impl true
+  def handle_params(_unsigned_params, _uri, socket) do
+    socket =
+      assign(
+        socket,
+        :comment_form,
+        to_form(
+          CaseManager.Incidents.form_to_add_comment_to_case(socket.assigns.case, actor: socket.assigns.current_user)
+        )
+      )
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -154,7 +167,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
     {:noreply,
      socket
      |> assign(:active_visibility, visibility_atom)
-     |> assign(:filtered_comments, comments)}
+     |> stream(:comments, comments, reset: true)}
   end
 
   @impl true
@@ -169,10 +182,21 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
     case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form) do
       {:ok, _comment} ->
-        {:noreply, put_flash(socket, :info, gettext("Comment added successfully."))}
+        socket = push_navigate(socket, to: ~p"/case/" <> socket.assigns.case.id)
+        {:noreply, socket}
 
       {:error, form} ->
         {:noreply, assign(socket, :comment_form, form)}
+    end
+  end
+
+  @impl true
+  def handle_info(%{topic: "comment" <> _, event: "create", payload: notification}, socket) do
+    if notification.data.visibility == socket.assigns.active_visibility do
+      comment = Ash.load!(notification.data, user: [:full_name])
+      {:noreply, stream_insert(socket, :comments, comment, at: 0)}
+    else
+      {:noreply, socket}
     end
   end
 

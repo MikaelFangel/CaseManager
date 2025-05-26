@@ -1,6 +1,10 @@
 defmodule CaseManager.Incidents.Comment do
   @moduledoc false
-  use Ash.Resource, otp_app: :case_manager, domain: CaseManager.Incidents, data_layer: AshPostgres.DataLayer
+  use Ash.Resource,
+    otp_app: :case_manager,
+    domain: CaseManager.Incidents,
+    data_layer: AshPostgres.DataLayer,
+    notifiers: [Ash.Notifier.PubSub]
 
   alias CaseManager.Incidents.Visibility
 
@@ -43,6 +47,12 @@ defmodule CaseManager.Incidents.Comment do
       description "Delete a comment."
       primary? true
     end
+  end
+
+  pub_sub do
+    module CaseManagerWeb.Endpoint
+    prefix "comment"
+    publish :create, [[:case_id, "comments", nil]]
   end
 
   attributes do
