@@ -3,11 +3,12 @@ defmodule CaseManagerWeb.AlertLive.Index do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Incidents
+  alias CaseManager.Incidents.Alert
 
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search alerts" user_roles={@user_roles}>
+    <Layouts.split flash={@flash} search_placeholder="Search alerts" search_value={@query} user_roles={@user_roles}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -18,22 +19,48 @@ defmodule CaseManagerWeb.AlertLive.Index do
         </.header>
       </:top>
       <:left>
-        <.table id="alert" rows={@streams.alert_collection} row_click={fn {_id, alert} -> JS.push("show_alert", value: %{id: alert.id}) end} selectable={true} selected={@selected_alerts} on_toggle_selection={JS.push("toggle_selection")}>
-          <:col :let={{_id, alert}} label="Company">{alert.company.name}</:col>
-          <:col :let={{_id, alert}} label="Title">{alert.title}</:col>
-          <:col :let={{_id, alert}} label="Severity">{alert.severity |> to_string() |> String.capitalize()}</:col>
-          <:col :let={{_id, alert}}>
-            <.status type={
-              case alert.status do
-                :new -> :info
-                :reviewed -> :warning
-                :false_positive -> nil
-                :linked_to_case -> nil
-                _ -> :error
-              end
-            } />
-          </:col>
-        </.table>
+        <%= if @loading && @page == 1 do %>
+          <div class="flex justify-center items-center p-8">
+            <span class="loading loading-spinner loading-md"></span>
+            <span class="ml-2">Loading alerts...</span>
+          </div>
+        <% else %>
+          <div>
+            <div
+              id="alerts"
+              phx-update="stream"
+              phx-viewport-top={@page > 1 && JS.push("prev-page", page_loading: true)}
+              phx-viewport-bottom={!@end_of_timeline? && JS.push("next-page", page_loading: true)}
+              class={[
+                if(@end_of_timeline?, do: "pb-4", else: "pb-8"),
+                if(@page == 1, do: "pt-4", else: "pt-8")
+              ]}
+            >
+              <.table id="alert" rows={@streams.alert_collection} row_click={fn {_id, alert} -> JS.push("show_alert", value: %{id: alert.id}) end} selectable={true} selected={@selected_alerts} on_toggle_selection={JS.push("toggle_selection")}>
+                <:col :let={{_id, alert}} label="Company">{alert.company.name}</:col>
+                <:col :let={{_id, alert}} label="Title">{alert.title}</:col>
+                <:col :let={{_id, alert}} label="Severity">{alert.severity |> to_string() |> String.capitalize()}</:col>
+                <:col :let={{_id, alert}}>
+                  <.status type={
+                    case alert.status do
+                      :new -> :info
+                      :reviewed -> :warning
+                      :false_positive -> nil
+                      :linked_to_case -> nil
+                      _ -> :error
+                    end
+                  } />
+                </:col>
+              </.table>
+            </div>
+
+            <%= if @end_of_timeline? do %>
+              <div class="mt-5 text-center text-base-content/50">
+                🎉 You've reached the end of the alerts 🎉
+              </div>
+            <% end %>
+          </div>
+        <% end %>
       </:left>
 
       <:right>
@@ -147,7 +174,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         <% end %>
 
         <.drawer title="New Case" open={@drawer_open} minimized={@drawer_minimized}>
-          <.case_form form={@form} soc_options={@soc_options} />
+          <.case_form form={@form} soc_options={@soc_options} selected_alerts={@selected_alerts} />
         </.drawer>
       </:right>
     </Layouts.split>
@@ -156,7 +183,16 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+    user = Ash.load!(socket.assigns.current_user, [:companies, :socs, :soc_roles, :company_roles, :super_admin?])
+
+    if connected?(socket) do
+      if user.super_admin? do
+        CaseManagerWeb.Endpoint.subscribe("alert")
+      end
+
+      Enum.each(user.companies, fn company -> CaseManagerWeb.Endpoint.subscribe("alert:#{company.id}") end)
+      Enum.each(user.socs, fn soc -> CaseManagerWeb.Endpoint.subscribe("alert:#{soc.id}") end)
+    end
 
     soc_options =
       Enum.map(
@@ -166,47 +202,93 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
     {:ok,
      socket
-     |> assign(:page_title, "Listing Alert")
+     |> assign(:page_title, "Listing Alerts")
      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> assign(:selected_alerts, [])
      |> assign(:selected_alert, nil)
      |> assign(:drawer_open, false)
      |> assign(:drawer_minimized, false)
      |> assign(:show_status_form, false)
-     |> assign(:comment_form, to_form(%{}))
-     |> assign(:status_form, to_form(%{}))
      |> assign(:form, to_form(Incidents.form_to_create_case(actor: socket.assigns.current_user)))
      |> assign(:soc_options, soc_options)
-     |> stream(:alert_collection, Incidents.list_alert!())}
-  end
-
-  @impl true
-  def handle_params(%{"id" => id}, _uri, socket) do
-    alert = Incidents.get_alert!(id)
-    {:noreply, assign(socket, :selected_alert, alert)}
+     |> assign(:page, 1)
+     |> assign(:per_page, 20)
+     |> assign(:query, "")
+     |> assign(:loading, false)
+     |> assign(:end_of_timeline?, false)}
   end
 
   @impl true
   def handle_params(params, _uri, socket) do
     query = Map.get(params, "q", "")
-    alerts = Incidents.search_alerts!(query)
+    id = Map.get(params, "id")
 
-    socket = stream(socket, :alert_collection, alerts, reset: true)
+    # Load the selected alert if there's an ID in params
+    selected_alert =
+      if id do
+        try do
+          Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
+        rescue
+          _ -> nil
+        end
+      end
+
+    socket =
+      socket
+      |> assign(:query, query)
+      |> assign(:selected_alert, selected_alert)
+      |> assign(
+        :comment_form,
+        if(selected_alert,
+          do: to_form(Incidents.form_to_add_comment_to_alert(selected_alert, actor: socket.assigns.current_user)),
+          else: to_form(%{})
+        )
+      )
+      |> assign(
+        :status_form,
+        if(selected_alert, do: to_form(Incidents.form_to_change_alert_status(selected_alert)), else: to_form(%{}))
+      )
+      |> assign(:show_status_form, false)
+      |> assign(:page, 1)
+      |> assign(:end_of_timeline?, false)
+      |> stream(:alert_collection, [], reset: true)
+
+    # Apply pagination with the search query after assigns are set
+    socket = paginate_alerts(socket, 1)
+
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    alert = Incidents.get_alert!(id)
-    {:ok, _} = Incidents.delete_alert(alert)
-
-    {:noreply, stream_delete(socket, :alert_collection, alert)}
+  def handle_event("next-page", _, socket) do
+    {:noreply, paginate_alerts(socket, socket.assigns.page + 1)}
   end
 
   @impl true
-  def handle_event("search", %{"query" => search}, socket) do
-    params = update_params(socket, %{q: search})
-    {:noreply, push_patch(socket, to: ~p"/alert/?#{params}")}
+  def handle_event("prev-page", %{"_overran" => true}, socket) do
+    {:noreply, paginate_alerts(socket, 1)}
+  end
+
+  @impl true
+  def handle_event("prev-page", _, socket) do
+    if socket.assigns.page > 1 do
+      {:noreply, paginate_alerts(socket, socket.assigns.page - 1)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("search", params, socket) do
+    search = params["query"] || params["q"] || params[:query] || params[:q] || ""
+    search_params = %{q: search}
+
+    search_params =
+      if socket.assigns.selected_alert,
+        do: Map.put(search_params, :id, socket.assigns.selected_alert.id),
+        else: search_params
+
+    {:noreply, push_patch(socket, to: ~p"/alert/?#{search_params}")}
   end
 
   @impl true
@@ -239,7 +321,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
       )
       |> assign(:selected_alert, alert)
 
-    {:noreply, socket}
+    params = %{q: socket.assigns.query}
+    params = Map.put(params, :id, id)
+
+    {:noreply, push_patch(socket, to: ~p"/alert/?#{params}")}
   end
 
   @impl true
@@ -270,6 +355,12 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def handle_event("toggle_minimize", _params, socket) do
     {:noreply, assign(socket, :drawer_minimized, !socket.assigns.drawer_minimized)}
+  end
+
+  @impl true
+  def handle_event("clear_selected_alert", _params, socket) do
+    params = %{q: socket.assigns.query}
+    {:noreply, push_patch(socket, to: ~p"/alert/?#{params}")}
   end
 
   @impl true
@@ -335,6 +426,120 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, assign(socket, status_form: form)}
   end
 
+  defp paginate_alerts(socket, new_page) when new_page >= 1 do
+    %{per_page: per_page, page: cur_page, query: query} = socket.assigns
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
+    try do
+      alerts =
+        Incidents.search_alerts!(
+          query,
+          page: [limit: per_page, offset: (new_page - 1) * per_page],
+          actor: user
+        ).results
+
+      {alerts, at, limit} =
+        if new_page >= cur_page do
+          {alerts, -1, per_page * 3 * -1}
+        else
+          {Enum.reverse(alerts), 0, per_page * 3}
+        end
+
+      case alerts do
+        [] ->
+          assign(socket, end_of_timeline?: at == -1)
+
+        [_ | _] = alerts ->
+          socket
+          |> assign(end_of_timeline?: false)
+          |> assign(:page, new_page)
+          |> stream(:alert_collection, alerts, at: at, limit: limit)
+      end
+    rescue
+      error ->
+        socket
+        |> assign(:loading, false)
+        |> put_flash(:error, "Failed to load alerts: #{inspect(error)}")
+    end
+  end
+
+  def handle_info(%{event: "create", payload: notification}, socket) do
+    alert = Ash.load!(notification.data, [:company])
+
+    # Only add new alerts when viewing the first page to prevent jumping
+    if socket.assigns.page == 1 do
+      socket = stream_insert(socket, :alert_collection, alert, at: 0, limit: socket.assigns.per_page * 3 * -1)
+
+      {:noreply, socket}
+    else
+      # If not on first page, show a flash message instead
+      socket = put_flash(socket, :info, "New alert has been created: #{alert.title}. Refresh to see updates.")
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(%{event: "update", payload: notification}, socket) do
+    updated_alert = Ash.load!(notification.data, [:company])
+
+    socket = stream_insert(socket, :alert_collection, updated_alert)
+
+    socket =
+      if socket.assigns.selected_alert && socket.assigns.selected_alert.id == updated_alert.id do
+        updated_alert_with_relations =
+          Incidents.get_alert!(updated_alert.id, load: [:company, :cases, comments: [user: [:full_name]]])
+
+        assign(socket, :selected_alert, updated_alert_with_relations)
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
+  defp status_options do
+    [
+      {"New", "new"},
+      {"Reviewed", "reviewed"},
+      {"False Positive", "false_positive"},
+      {"Linked to Case", "linked_to_case"}
+    ]
+  end
+
+  def case_form(assigns) do
+    ~H"""
+    <.form for={@form} id="case-form" phx-change="validate_case" phx-submit="save_case">
+      <.input field={@form[:title]} type="text" label="Title" required />
+      <.input field={@form[:description]} type="textarea" label="Description" />
+      <.input field={@form[:soc_id]} type="select" label="SOC" options={@soc_options} prompt="Select SOC" required />
+      <.input field={@form[:severity]} type="select" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1 |> to_string() |> String.capitalize(), &1})} prompt="Select Severity" />
+
+      <div class="mt-4 p-3 bg-base-200 rounded-lg">
+        <h4 class="font-medium mb-2">Selected Alerts (<span class="badge badge-primary">{length(@selected_alerts || [])}</span>)</h4>
+        <%= if length(@selected_alerts || []) > 0 do %>
+          <div class="text-sm text-base-content/70 mb-2">
+            This case will be linked to the selected {length(@selected_alerts)} alert(s).
+          </div>
+          <div class="text-xs text-base-content/50">
+            Alert IDs: {Enum.join(@selected_alerts || [], ", ")}
+          </div>
+        <% else %>
+          <div class="text-sm text-warning">
+            No alerts selected. Please select alerts first.
+          </div>
+        <% end %>
+      </div>
+
+      <footer class="mt-4">
+        <button class={["btn btn-primary", if(length(@selected_alerts || []) == 0, do: "btn-disabled", else: "")]} phx-disable-with="Creating..." disabled={length(@selected_alerts || []) == 0}>
+          Create Case
+        </button>
+        <button type="button" class="btn" phx-click="close_drawer">Cancel</button>
+      </footer>
+    </.form>
+    """
+  end
+
   defp status_to_badge_type(status) do
     case status do
       :new -> :info
@@ -346,35 +551,5 @@ defmodule CaseManagerWeb.AlertLive.Index do
       :reopened -> :error
       _ -> :neutral
     end
-  end
-
-  defp status_options do
-    [{"New", :new}, {"False positive", :false_positive}, {"Reviewed", :reviewed}, {"Linked to case", :linked_to_case}]
-  end
-
-  def case_form(assigns) do
-    ~H"""
-    <.form for={@form} id="case-form" phx-change="validate_case" phx-submit="save_case">
-      <.input field={@form[:title]} type="text" label="Title" placeholder="Multiple accounts added to security group" />
-      <.input field={@form[:soc_id]} type="select" label="SOC" prompt="Select SOC" options={@soc_options} />
-      <.input field={@form[:severity]} type="select" prompt="Select risk" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1, &1})} />
-      <.input field={@form[:description]} type="textarea" label="Description" placeholder="Multiple accounts were added to a security group, potentially indicating a security incident." />
-      <footer>
-        <.button phx-disable-with="Saving..." variant="primary">Save Case</.button>
-      </footer>
-    </.form>
-    """
-  end
-
-  defp update_params(socket, updates) do
-    remove_empty(%{
-      q: Map.get(updates, :q, socket.assigns[:search]),
-      filter: Map.get(updates, :filter, socket.assigns[:filter]),
-      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by])
-    })
-  end
-
-  defp remove_empty(params) do
-    Enum.filter(params, fn {_key, val} -> val != "" and val != nil end)
   end
 end

@@ -12,6 +12,7 @@ defmodule CaseManagerWeb.Layouts do
   embed_templates("layouts/*")
 
   attr :search_placeholder, :string, default: "Search..."
+  attr :search_value, :string, default: ""
   attr :user_roles, :list, default: [], doc: "A list of the user_roles that the user has"
   attr :flash, :map
 
@@ -20,7 +21,7 @@ defmodule CaseManagerWeb.Layouts do
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar search_placeholder={@search_placeholder} user_roles={@user_roles} />
+      <.navbar search_placeholder={@search_placeholder} search_value={@search_value} user_roles={@user_roles} />
 
       <main class="flex-1 p-4 overflow-auto">
         <div class="mx-auto w-full space-y-4">
@@ -34,6 +35,7 @@ defmodule CaseManagerWeb.Layouts do
   end
 
   attr :search_placeholder, :string, default: "Search..."
+  attr :search_value, :string, default: ""
   attr :left_width, :string, default: "w-1/2", doc: "Width class for left panel"
   attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
   attr :user_roles, :list, default: [], doc: "A list of the user_roles that the user has"
@@ -46,7 +48,7 @@ defmodule CaseManagerWeb.Layouts do
   def split(assigns) do
     ~H"""
     <div class="flex flex-col h-screen">
-      <.navbar search_placeholder={@search_placeholder} user_roles={@user_roles} />
+      <.navbar search_placeholder={@search_placeholder} search_value={@search_value} user_roles={@user_roles} />
 
       <div class="p-4">
         {render_slot(@top)}
@@ -146,7 +148,7 @@ defmodule CaseManagerWeb.Layouts do
           <li :if={(@user_roles -- [:super_admin]) |> then(fn r -> length(r) < length(@user_roles) end)}><.link navigate={~p"/soc"}>SOCs</.link></li>
         </ul>
 
-        <form :if={@show_searchbar} phx-change={@on_search || "search"} class="form-control pt-2">
+        <form :if={@show_searchbar} phx-change={@on_search || "search"} phx-submit={@on_search || "search"} class="form-control pt-2">
           <.input type="search" name="query" placeholder={@search_placeholder} value={@search_value} phx-debounce="300" class="join-item" />
         </form>
 
