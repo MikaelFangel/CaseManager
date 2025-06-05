@@ -74,10 +74,13 @@ defmodule CaseManager.Incidents.Case do
   end
 
   policies do
+    bypass actor_attribute_equals(:super_admin?, true) do
+      authorize_if always()
+    end
+
     policy action_type(:read) do
-      authorize_if actor_attribute_equals(:super_admin?, true)
       authorize_if expr(soc.users == ^actor(:id))
-      authorize_if expr(company.users == ^actor(:id))
+      authorize_if expr(company.users == ^actor(:id) && escalated)
     end
 
     policy action_type(:create) do

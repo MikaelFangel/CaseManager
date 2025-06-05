@@ -18,7 +18,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
             <.button navigate={~p"/case"}>
               <.icon name="hero-arrow-left" />
             </.button>
-            <.button :if={!@case.escalated}>
+            <.button :if={!@case.escalated} phx-click="escalate_case">
               Escalate case
             </.button>
             <.button variant="primary" navigate={~p"/case/#{@case}/edit?return_to=show"}>
@@ -188,6 +188,13 @@ defmodule CaseManagerWeb.CaseLive.Show do
       {:error, form} ->
         {:noreply, assign(socket, :comment_form, form)}
     end
+  end
+
+  @impl true
+  def handle_event("escalate_case", _params, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+    updated_case = Incidents.update_case!(socket.assigns.case, %{escalated: true}, actor: user)
+    {:noreply, assign(socket, :case, updated_case)}
   end
 
   @impl true
