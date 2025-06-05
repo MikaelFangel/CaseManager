@@ -8,6 +8,8 @@ services:
       SECRET_KEY_BASE_FILE: /run/secrets/secretkeybase
       TOKEN_SIGNING_SECRET: /run/secrets/token_signing_secret
       PHX_HOST: "localhost"
+      SSL_KEY_FILE: /run/secrets/ssl_key.pem
+      SSL_CERT_FILE: /run/secrets/ssl_cert.pem
     deploy:
       restart_policy:
         condition: on-failure
@@ -24,6 +26,8 @@ services:
     secrets:
       - databaseurl
       - secretkeybase
+      - ssl_key.pem
+      - ssl_cert.pem
 
   db:
     image: postgres:16
@@ -52,6 +56,10 @@ secrets:
     file: ./.secrets/.postgrespassword
   token_signing_secret:
     file: ./.secrets/.token_signing_secret
+  ssl_key.pem:
+    file: ./.secrets/.ssl_key.pem
+  ssl_cert.pem:
+    file: ./.secrets/.ssl_cert.pem
 
 volumes:
   db_data:
