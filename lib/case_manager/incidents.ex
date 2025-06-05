@@ -70,6 +70,15 @@ defmodule CaseManager.Incidents do
   end
 
   domain do
-    description "Domain for incidents where alerts is send and cases is incidents build on top of alerts."
+    description """
+    Domain for security incidents management.
+
+    This domain handles the complete lifecycle of security events:
+    - Alerts: Raw security events from monitoring systems
+    - Cases: Investigation workflows built from one or more alerts
+    - Comments: Analyst notes and communication throughout the process
+
+    Designed for MSSP/SOC operations with multi-tenant company isolation.
+    """
   end
 end

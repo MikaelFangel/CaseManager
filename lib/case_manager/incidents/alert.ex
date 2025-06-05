@@ -1,5 +1,10 @@
 defmodule CaseManager.Incidents.Alert do
-  @moduledoc false
+  @moduledoc """
+  Represents a security alert received from monitoring systems.
+
+  Alerts are the primary input for security incidents and contain
+  all relevant metadata for security analysis and case creation.
+  """
   use Ash.Resource,
     otp_app: :case_manager,
     domain: CaseManager.Incidents,
@@ -19,10 +24,10 @@ defmodule CaseManager.Incidents.Alert do
 
   actions do
     create :create do
-      description "Add an alert"
+      description "Create a new security alert"
       primary? true
 
-      accept :*
+      accept [:alert_id, :title, :description, :severity, :creation_time, :link, :additional_data, :company_id]
     end
 
     read :read do
@@ -33,7 +38,7 @@ defmodule CaseManager.Incidents.Alert do
     end
 
     read :search do
-      description "Search alerts."
+      description "Search alerts by title, description, or alert ID."
 
       argument :query, :ci_string do
         constraints allow_empty?: true
@@ -42,17 +47,21 @@ defmodule CaseManager.Incidents.Alert do
 
       pagination offset?: true, keyset?: true, required?: false
 
-      filter expr(contains(title, ^arg(:query)))
+      filter expr(
+               contains(title, ^arg(:query)) or contains(description, ^arg(:query)) or contains(alert_id, ^arg(:query))
+             )
     end
 
     update :update do
       description "Change the alert data"
       primary? true
+      require_atomic? false
     end
 
     update :change_status do
-      description "Change the status."
-      argument :status, Status
+      description "Change the alert status."
+      argument :status, Status, allow_nil?: false
+      require_atomic? false
 
       change set_attribute(:status, arg(:status))
     end
@@ -71,24 +80,35 @@ defmodule CaseManager.Incidents.Alert do
     end
   end
 
+  validations do
+    validate {CaseManager.Validations.Url, attribute: :link, message: "must be a valid HTTP or HTTPS URL"}
+  end
+
   attributes do
     uuid_primary_key :id
 
     attribute :alert_id, :string do
+      description "External alert identifier from the monitoring system"
       allow_nil? false
       public? true
+      constraints max_length: 255
     end
 
     attribute :title, :string do
+      description "Brief description of the security alert"
       allow_nil? false
       public? true
+      constraints max_length: 500
     end
 
     attribute :description, :string do
+      description "Detailed description of the security alert"
       public? true
+      constraints max_length: 5000
     end
 
     attribute :severity, CaseManager.Incidents.Severity do
+      description "Security severity level of the alert"
       allow_nil? false
       public? true
     end
@@ -100,17 +120,22 @@ defmodule CaseManager.Incidents.Alert do
     end
 
     attribute :creation_time, :utc_datetime do
+      description "When the alert was originally created in the monitoring system"
       allow_nil? false
       public? true
     end
 
     attribute :link, :string do
+      description "URL link to the original alert in the monitoring system"
       allow_nil? false
       public? true
+      constraints max_length: 2000
     end
 
     attribute :additional_data, :map do
+      description "Additional metadata from the monitoring system"
       public? true
+      default %{}
     end
 
     timestamps()
@@ -118,15 +143,26 @@ defmodule CaseManager.Incidents.Alert do
 
   relationships do
     belongs_to :company, CaseManager.Organizations.Company do
+      description "The company this alert belongs to"
       allow_nil? false
       public? true
     end
 
     many_to_many :cases, CaseManager.Incidents.Case do
+      description "Cases that this alert is linked to"
       through CaseManager.Incidents.CaseAlert
       public? true
     end
 
-    has_many :comments, CaseManager.Incidents.Comment
+    has_many :comments, CaseManager.Incidents.Comment do
+      description "Comments and notes on this alert"
+      public? true
+    end
+  end
+
+  identities do
+    identity :unique_alert_per_company, [:alert_id, :company_id] do
+      message "Alert ID must be unique within the company"
+    end
   end
 end
