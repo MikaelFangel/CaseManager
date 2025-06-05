@@ -135,7 +135,7 @@ defmodule CaseManager.Incidents.Case do
       public? true
     end
 
-    timestamps()
+    timestamps(public?: true)
   end
 
   relationships do

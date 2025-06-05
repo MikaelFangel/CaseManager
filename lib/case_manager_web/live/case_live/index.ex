@@ -79,7 +79,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
     page_results =
       Incidents.search_cases!(
         query,
-        query: [filter_input: filter, load: [:company]],
+        query: [filter_input: filter, sort_input: "-updated_at", load: [:company]],
         page: [limit: limit, offset: offset, count: true],
         actor: user
       )
