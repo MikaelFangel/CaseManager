@@ -15,6 +15,7 @@ defmodule CaseManagerWeb.SOCLive.Index do
       |> assign(:drawer_minimized, false)
       |> assign(:selected_soc, nil)
       |> assign(:search_query, "")
+      |> assign(:show_mobile_panel, false)
       |> assign(:soc_form, to_form(Organizations.form_to_create_soc()))
 
     {:ok, socket}
@@ -35,7 +36,7 @@ defmodule CaseManagerWeb.SOCLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search SOCs" user_roles={@user_roles}>
+    <Layouts.split flash={@flash} search_placeholder="Search SOCs" user_roles={@user_roles} show_mobile_panel={@show_mobile_panel}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -91,6 +92,11 @@ defmodule CaseManagerWeb.SOCLive.Index do
   end
 
   @impl true
+  def handle_event("toggle_mobile_panel", _params, socket) do
+    {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
+  end
+
+  @impl true
   def handle_event("create_soc", %{"form" => params}, socket) do
     case AshPhoenix.Form.submit(socket.assigns.soc_form, params: params) do
       {:ok, soc} ->
@@ -124,7 +130,10 @@ defmodule CaseManagerWeb.SOCLive.Index do
   def handle_event("show_soc", %{"id" => id}, socket) do
     soc = Organizations.get_soc!(id)
 
-    socket = assign(socket, :selected_soc, soc)
+    socket = 
+      socket
+      |> assign(:selected_soc, soc)
+      |> assign(:show_mobile_panel, true)
 
     {:noreply, socket}
   end

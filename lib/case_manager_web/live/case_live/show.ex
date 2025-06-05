@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} left_width="w-2/3" right_width="w-1/3" user_roles={@user_roles}>
+    <Layouts.split flash={@flash} left_width="w-2/3" right_width="w-1/3" user_roles={@user_roles} show_mobile_panel={@show_mobile_panel}>
       <:top>
         <.header>
           {@case.title}
@@ -90,7 +90,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
           <div class="sticky bottom-0 bg-base-100">
             <div class={"order-base-300 rounded-lg #{visibility_theme_class(@active_visibility)}"}>
-              <.form for={@comment_form} id="comment-form" phx-validate="validate_comment" phx-submit="add_comment" class="mt-2 px-3 pb-3">
+              <.form for={@comment_form} id="comment-form" phx-validate="validate_comment" phx-submit="add_comment" class="w-full mt-2 px-3 pb-3">
                 <.input field={@comment_form[:visibility]} type="hidden" value={@active_visibility} />
 
                 <div class="flex items-center">
@@ -100,9 +100,9 @@ defmodule CaseManagerWeb.CaseLive.Show do
                 </div>
                 <p class="mb-2 text-xs text-base-content/50">This comment will only be visible to {visibility_audience(@active_visibility)}.</p>
 
-                <.input field={@comment_form[:body]} type="textarea" placeholder="Write a comment..." />
+                <.input field={@comment_form[:body]} type="textarea" placeholder="Write a comment..." class="w-full" />
 
-                <button class={"btn #{visibility_button_class(@active_visibility)}"}>
+                <button class={"btn w-full #{visibility_button_class(@active_visibility)}"}>
                   <.icon name="hero-paper-airplane" /> Send
                 </button>
               </.form>
@@ -138,6 +138,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
      |> assign(:active_visibility, initial_visibility)
      |> assign(:case, case)
+     |> assign(:show_mobile_panel, false)
      |> stream(:comments, comments)
      |> assign(:user_id, socket.assigns.current_user.id)}
   end
@@ -195,6 +196,11 @@ defmodule CaseManagerWeb.CaseLive.Show do
     user = Ash.load!(socket.assigns.current_user, :super_admin?)
     updated_case = Incidents.update_case!(socket.assigns.case, %{escalated: true}, actor: user)
     {:noreply, assign(socket, :case, updated_case)}
+  end
+
+  @impl true
+  def handle_event("toggle_mobile_panel", _params, socket) do
+    {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
   end
 
   @impl true

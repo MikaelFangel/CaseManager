@@ -20,6 +20,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       |> assign(:active_tab, :all)
       |> assign(:user_socs, user.socs)
       |> assign(:search_query, "")
+      |> assign(:show_mobile_panel, false)
       |> assign(:company_form, to_form(Organizations.form_to_create_company()))
 
     {:ok, socket}
@@ -43,7 +44,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search companies" user_roles={@user_roles}>
+    <Layouts.split flash={@flash} search_placeholder="Search companies" user_roles={@user_roles} show_mobile_panel={@show_mobile_panel}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -151,6 +152,11 @@ defmodule CaseManagerWeb.CompanyLive.Index do
   end
 
   @impl true
+  def handle_event("toggle_mobile_panel", _params, socket) do
+    {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
+  end
+
+  @impl true
   def handle_event("share_companies", %{"share_form" => form_data}, socket) do
     soc = Ash.get!(CaseManager.Organizations.SOC, form_data["soc_id"])
     company_ids = Enum.map(socket.assigns.selected_companies, &String.replace_prefix(&1, "companies-", ""))
@@ -212,6 +218,7 @@ defmodule CaseManagerWeb.CompanyLive.Index do
       socket
       |> assign(:selected_company, company)
       |> assign(:company_shared_with, shared_with)
+      |> assign(:show_mobile_panel, true)
 
     {:noreply, socket}
   end

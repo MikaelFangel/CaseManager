@@ -8,7 +8,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.split flash={@flash} search_placeholder="Search alerts" search_value={@query} user_roles={@user_roles}>
+    <Layouts.split flash={@flash} search_placeholder="Search alerts" search_value={@query} user_roles={@user_roles} show_mobile_panel={@show_mobile_panel}>
       <:top>
         <.header class="h-12">
           <:actions>
@@ -209,6 +209,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:drawer_open, false)
      |> assign(:drawer_minimized, false)
      |> assign(:show_status_form, false)
+     |> assign(:show_mobile_panel, false)
      |> assign(:form, to_form(Incidents.form_to_create_case(actor: socket.assigns.current_user)))
      |> assign(:soc_options, soc_options)
      |> assign(:page, 1)
@@ -320,6 +321,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         to_form(Incidents.form_to_change_alert_status(alert))
       )
       |> assign(:selected_alert, alert)
+      |> assign(:show_mobile_panel, true)
 
     params = %{q: socket.assigns.query}
     params = Map.put(params, :id, id)
@@ -421,9 +423,15 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, assign(socket, comment_form: form)}
   end
 
+  @impl true
   def handle_event("validate_status", %{"form" => params}, socket) do
     form = AshPhoenix.Form.validate(socket.assigns.status_form, params)
-    {:noreply, assign(socket, status_form: form)}
+    {:noreply, assign(socket, :status_form, form)}
+  end
+
+  @impl true
+  def handle_event("toggle_mobile_panel", _params, socket) do
+    {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
   end
 
   defp paginate_alerts(socket, new_page) when new_page >= 1 do

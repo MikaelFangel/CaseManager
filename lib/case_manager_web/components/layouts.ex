@@ -20,7 +20,7 @@ defmodule CaseManagerWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col h-screen overflow-x-hidden">
       <.navbar search_placeholder={@search_placeholder} search_value={@search_value} user_roles={@user_roles} />
 
       <main class="flex-1 p-4 overflow-auto">
@@ -40,6 +40,7 @@ defmodule CaseManagerWeb.Layouts do
   attr :right_width, :string, default: "w-1/2", doc: "Width class for right panel"
   attr :user_roles, :list, default: [], doc: "A list of the user_roles that the user has"
   attr :flash, :map
+  attr :show_mobile_panel, :boolean, default: false, doc: "Whether to show the right panel on mobile"
 
   slot :top
   slot :left
@@ -50,20 +51,46 @@ defmodule CaseManagerWeb.Layouts do
     <div class="flex flex-col h-screen">
       <.navbar search_placeholder={@search_placeholder} search_value={@search_value} user_roles={@user_roles} />
 
-      <div class="p-4">
-        {render_slot(@top)}
+      <div class="p-4 relative">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            {render_slot(@top)}
+          </div>
+          <!-- Mobile panel toggle button -->
+          <.button class="lg:hidden ml-4" phx-click="toggle_mobile_panel">
+            <.icon name={if @show_mobile_panel, do: "hero-x-mark", else: "hero-bars-3"} class="h-5 w-5" />
+          </.button>
+        </div>
       </div>
 
       <div class="flex flex-1 overflow-hidden">
-        <div class={"#{@left_width} overflow-auto px-4 pb-4"}>
+        <div class={"w-full #{@left_width} overflow-auto px-4 pb-4"}>
           {render_slot(@left)}
         </div>
-        <.divider horizontal={true} />
-        <div class={"#{@right_width} flex-1 overflow-auto px-4 pb-4 "}>
+        <.divider horizontal={true} class="hidden lg:flex" />
+        <div class={"hidden lg:block #{@right_width} lg:flex-shrink-0 overflow-auto px-4 pb-4"}>
           {render_slot(@right)}
         </div>
       </div>
-
+      
+    <!-- Mobile overlay panel -->
+      <div class={[
+        "lg:hidden fixed inset-y-0 z-50 w-full bg-base-100 transition-all duration-300 ease-in-out flex flex-col px-4 pb-4",
+        if(@show_mobile_panel, do: "left-0", else: "left-full")
+      ]}>
+        <!-- Mobile panel header -->
+        <div class="flex items-center justify-between p-4 m-2 shadow-sm flex-shrink-0">
+          <h3 class="font-semibold">Panel</h3>
+          <.button phx-click="toggle_mobile_panel">
+            <.icon name="hero-x-mark" class="h-5 w-5" />
+          </.button>
+        </div>
+        
+    <!-- Right panel content -->
+        <div class="flex-1 overflow-auto w-full min-w-0">
+          {render_slot(@right)}
+        </div>
+      </div>
       <.flash_group flash={@flash} />
     </div>
     """
@@ -181,11 +208,13 @@ defmodule CaseManagerWeb.Layouts do
     doc: "Atom to determine the divider color. [default to neutral]",
     values: [:neutral, :primary, :secondary, :accent, :success, :warning, :info, :error]
 
+  attr :class, :string, default: "", doc: "Additional CSS classes"
+
   slot :inner_block
 
   def divider(assigns) do
     ~H"""
-    <div class={"divider #{@horizontal && "divider-horizontal"} divider-#{@text_position} divider-#{@divider_type}"}>{render_slot(@inner_block)}</div>
+    <div class={"divider #{@horizontal && "divider-horizontal"} divider-#{@text_position} divider-#{@divider_type} #{@class}"}>{render_slot(@inner_block)}</div>
     """
   end
 end
