@@ -63,16 +63,18 @@ defmodule CaseManagerWeb.CaseLive.Show do
       </:left>
       <:right>
         <div class="flex flex-col h-full sticky top-0">
-          <div class="tabs tabs-boxed sticky top-0 z-10 bg-base-100">
-            <a class={"tab #{if @active_visibility == :public, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="public">
-              <.icon name="hero-globe-alt" class="mr-1 h-4 w-4" /> Public
-            </a>
-            <a class={"tab #{if @active_visibility == :internal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="internal">
-              <.icon name="hero-building-office" class="mr-1 h-4 w-4" /> Internal
-            </a>
-            <a class={"tab #{if @active_visibility == :personal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="personal">
-              <.icon name="hero-lock-closed" class="mr-1 h-4 w-4" /> Personal
-            </a>
+          <div class="flex flex-col items-center">
+            <div class="tabs tabs-boxed sticky top-0 z-10 bg-base-100">
+              <a class={"tab #{if @active_visibility == :public, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="public">
+                <.icon name="hero-globe-alt" class="mr-1 h-4 w-4" /> Public
+              </a>
+              <a class={"tab #{if @active_visibility == :internal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="internal">
+                <.icon name="hero-building-office" class="mr-1 h-4 w-4" /> Internal
+              </a>
+              <a class={"tab #{if @active_visibility == :personal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="personal">
+                <.icon name="hero-lock-closed" class="mr-1 h-4 w-4" /> Personal
+              </a>
+            </div>
           </div>
 
           <div class="overflow-y-auto flex-1 my-4 flex flex-col-reverse" id="comments" phx-update="stream">
