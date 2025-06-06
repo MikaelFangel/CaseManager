@@ -270,18 +270,6 @@ defmodule CaseManagerWeb.CaseLive.Index do
     ]
   end
 
-  defp update_params(socket, updates) do
-    remove_empty(%{
-      q: Map.get(updates, :q, socket.assigns[:search]),
-      filter: Map.get(updates, :filter, socket.assigns[:filter]),
-      sort_by: Map.get(updates, :sort_by, socket.assigns[:sort_by])
-    })
-  end
-
-  defp remove_empty(params) do
-    Enum.filter(params, fn {_key, val} -> val != "" and val != nil end)
-  end
-
   defp get_filter_for_option("all"), do: %{}
   defp get_filter_for_option("open"), do: %{status: [in: [:new, :open, :reopened]]}
   defp get_filter_for_option("in_progress"), do: %{status: [in: [:in_progress]]}

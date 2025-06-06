@@ -3,7 +3,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Incidents
-  alias CaseManager.Incidents.Alert
 
   @impl true
   def render(assigns) do
