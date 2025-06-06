@@ -71,6 +71,22 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 
+// Handle modal close events from LiveView
+window.addEventListener("phx:close-modal", (e) => {
+  const modal = document.getElementById(e.detail.id)
+  if (modal && modal.close) {
+    modal.close()
+  }
+})
+
+// Handle modal open events from LiveView
+window.addEventListener("phx:open-modal", (e) => {
+  const modal = document.getElementById(e.detail.id)
+  if (modal && modal.showModal) {
+    modal.showModal()
+  }
+})
+
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session

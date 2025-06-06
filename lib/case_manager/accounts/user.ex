@@ -293,6 +293,11 @@ defmodule CaseManager.Accounts.User do
       argument :api_key, :string, allow_nil?: false
       prepare AshAuthentication.Strategy.ApiKey.SignInPreparation
     end
+
+    update :update do
+      primary? true
+      accept [:first_name, :last_name, :email]
+    end
   end
 
   policies do

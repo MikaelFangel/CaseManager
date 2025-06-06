@@ -30,7 +30,21 @@ defmodule CaseManager.Organizations do
     end
 
     resource CaseManager.Organizations.SOCCompanyAccess
-    resource CaseManager.Organizations.SOCUser
-    resource CaseManager.Organizations.CompanyUser
+
+    resource CaseManager.Organizations.SOCUser do
+      define :create_soc_user, action: :create
+      define :list_soc_users, action: :read
+      define :get_soc_user, action: :read, get_by: [:user_id, :soc_id]
+      define :update_soc_user, action: :update
+      define :delete_soc_user, action: :destroy
+    end
+
+    resource CaseManager.Organizations.CompanyUser do
+      define :create_company_user, action: :create
+      define :list_company_users, action: :read
+      define :get_company_user, action: :read, get_by: [:user_id, :company_id]
+      define :update_company_user, action: :update
+      define :delete_company_user, action: :destroy
+    end
   end
 end

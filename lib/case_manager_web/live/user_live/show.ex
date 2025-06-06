@@ -29,6 +29,92 @@ defmodule CaseManagerWeb.UserLive.Show do
 
       <div class="mt-8">
         <.header>
+          Company Memberships
+          <:subtitle>Organizations this user belongs to as a company member.</:subtitle>
+          <:actions>
+            <button class="btn btn-primary" onclick="company_modal.showModal()">
+              <.icon name="hero-plus" /> Add Company
+            </button>
+          </:actions>
+        </.header>
+
+        <%= if Enum.empty?(@company_users) do %>
+          <div class="hero min-h-32">
+            <div class="hero-content text-center">
+              <div class="max-w-md">
+                <.icon name="hero-building-office" class="mx-auto h-12 w-12 text-base-content/40" />
+                <h3 class="mt-2 text-lg font-bold">No company memberships</h3>
+                <p class="mt-1 text-sm opacity-60">This user is not a member of any companies.</p>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <.table id="companies" rows={@company_users}>
+            <:col :let={company_user} label="Company Name">
+              {company_user.company.name}
+            </:col>
+            <:col :let={company_user} label="Role">
+              <.badge type={:info}>{company_user.user_role}</.badge>
+            </:col>
+            <:action :let={company_user}>
+              <div class="flex gap-2">
+                <button phx-click="edit_company_membership" phx-value-company-id={company_user.company.id} class="btn btn-sm btn-primary btn-outline">
+                  Edit
+                </button>
+                <button phx-click="remove_company_membership" phx-value-company-id={company_user.company.id} data-confirm="Are you sure you want to remove this company membership?" class="btn btn-sm btn-error btn-outline">
+                  Remove
+                </button>
+              </div>
+            </:action>
+          </.table>
+        <% end %>
+      </div>
+
+      <div class="mt-8">
+        <.header>
+          SOC Memberships
+          <:subtitle>Security Operations Centers this user belongs to.</:subtitle>
+          <:actions>
+            <button class="btn btn-primary" onclick="soc_modal.showModal()">
+              <.icon name="hero-plus" /> Add SOC
+            </button>
+          </:actions>
+        </.header>
+
+        <%= if Enum.empty?(@soc_users) do %>
+          <div class="hero min-h-32">
+            <div class="hero-content text-center">
+              <div class="max-w-md">
+                <.icon name="hero-shield-check" class="mx-auto h-12 w-12 text-base-content/40" />
+                <h3 class="mt-2 text-lg font-bold">No SOC memberships</h3>
+                <p class="mt-1 text-sm opacity-60">This user is not a member of any SOCs.</p>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <.table id="socs" rows={@soc_users}>
+            <:col :let={soc_user} label="SOC Name">
+              {soc_user.soc.name}
+            </:col>
+            <:col :let={soc_user} label="Role">
+              <.badge type={:info}>{soc_user.user_role}</.badge>
+            </:col>
+            <:action :let={soc_user}>
+              <div class="flex gap-2">
+                <button phx-click="edit_soc_membership" phx-value-soc-id={soc_user.soc.id} class="btn btn-sm btn-primary btn-outline">
+                  Edit
+                </button>
+                <button phx-click="remove_soc_membership" phx-value-soc-id={soc_user.soc.id} data-confirm="Are you sure you want to remove this SOC membership?" class="btn btn-sm btn-error btn-outline">
+                  Remove
+                </button>
+              </div>
+            </:action>
+          </.table>
+        <% end %>
+      </div>
+
+      <div class="mt-8">
+        <.header>
           API Keys
           <:subtitle>Manage API keys for this user. Keys expire after 1 year.</:subtitle>
           <:actions>
@@ -97,6 +183,142 @@ defmodule CaseManagerWeb.UserLive.Show do
           <% end %>
         </div>
       </div>
+
+      <dialog id="company_modal" class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">Add Company Membership</h3>
+          <p class="py-4">Select a company and role for {@user.first_name} {@user.last_name}</p>
+
+          <form id="add-company-form" phx-submit="create_company_membership">
+            <.input
+              type="select"
+              name="company_id"
+              label="Company"
+              value=""
+              prompt="Select a company..."
+              options={Enum.map(@available_companies, &{&1.name, &1.id})}
+              required
+            />
+
+            <.input
+              type="select"
+              name="user_role"
+              label="Role"
+              value=""
+              prompt="Select a role..."
+              options={[
+                {"Admin", "admin"},
+                {"Analyst", "analyst"}
+              ]}
+              required
+            />
+
+            <div class="modal-action">
+              <button type="submit" class="btn btn-primary">Add Membership</button>
+              <button type="button" class="btn" onclick="company_modal.close()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+
+      <dialog id="soc_modal" class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">Add SOC Membership</h3>
+          <p class="py-4">Select a SOC and role for {@user.first_name} {@user.last_name}</p>
+
+          <form id="add-soc-form" phx-submit="create_soc_membership">
+            <.input
+              type="select"
+              name="soc_id"
+              label="SOC"
+              value=""
+              prompt="Select a SOC..."
+              options={Enum.map(@available_socs, &{&1.name, &1.id})}
+              required
+            />
+
+            <.input
+              type="select"
+              name="user_role"
+              label="Role"
+              value=""
+              prompt="Select a role..."
+              options={[
+                {"Super Admin", "super_admin"},
+                {"Admin", "admin"},
+                {"Analyst", "analyst"}
+              ]}
+              required
+            />
+
+            <div class="modal-action">
+              <button type="submit" class="btn btn-primary">Add Membership</button>
+              <button type="button" class="btn" onclick="soc_modal.close()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </dialog>
+
+      <dialog id="edit_company_modal" class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">Edit Company Membership</h3>
+          <%= if @edit_company_membership do %>
+            <p class="py-4">Edit role for {@user.first_name} {@user.last_name} at {@edit_company_membership.company.name}</p>
+
+            <form id="edit-company-form" phx-submit="update_company_membership">
+              <input type="hidden" name="company_id" value={@edit_company_membership.company.id} />
+              
+              <.input
+                type="select"
+                name="user_role"
+                label="Role"
+                value={@edit_company_membership.role}
+                options={[
+                  {"Admin", "admin"},
+                  {"Analyst", "analyst"}
+                ]}
+                required
+              />
+
+              <div class="modal-action">
+                <button type="submit" class="btn btn-primary">Update Membership</button>
+                <button type="button" class="btn" onclick="edit_company_modal.close()" phx-click="close_edit_company_modal">Cancel</button>
+              </div>
+            </form>
+          <% end %>
+        </div>
+      </dialog>
+
+      <dialog id="edit_soc_modal" class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">Edit SOC Membership</h3>
+          <%= if @edit_soc_membership do %>
+            <p class="py-4">Edit role for {@user.first_name} {@user.last_name} at {@edit_soc_membership.soc.name}</p>
+
+            <form id="edit-soc-form" phx-submit="update_soc_membership">
+              <input type="hidden" name="soc_id" value={@edit_soc_membership.soc.id} />
+              
+              <.input
+                type="select"
+                name="user_role"
+                label="Role"
+                value={@edit_soc_membership.role}
+                options={[
+                  {"Super Admin", "super_admin"},
+                  {"Admin", "admin"},
+                  {"Analyst", "analyst"}
+                ]}
+                required
+              />
+
+              <div class="modal-action">
+                <button type="submit" class="btn btn-primary">Update Membership</button>
+                <button type="button" class="btn" onclick="edit_soc_modal.close()" phx-click="close_edit_soc_modal">Cancel</button>
+              </div>
+            </form>
+          <% end %>
+        </div>
+      </dialog>
     </Layouts.app>
     """
   end
@@ -105,13 +327,36 @@ defmodule CaseManagerWeb.UserLive.Show do
   def mount(%{"id" => id}, _session, socket) do
     user = Accounts.get_user!(id)
     api_keys = load_user_api_keys(user.id)
+    available_companies = CaseManager.Organizations.list_company!()
+    available_socs = CaseManager.Organizations.list_soc!()
+    
+    # Load join table records directly to ensure correct company/role pairing
+    company_users = CaseManager.Organizations.list_company_users!(
+      query: [
+        filter: [user_id: user.id],
+        load: [:company]
+      ]
+    )
+    
+    soc_users = CaseManager.Organizations.list_soc_users!(
+      query: [
+        filter: [user_id: user.id],
+        load: [:soc]
+      ]
+    )
 
     {:ok,
      socket
      |> assign(:page_title, "Show User")
      |> assign(:user, user)
      |> assign(:api_keys, api_keys)
-     |> assign(:new_api_key, nil)}
+     |> assign(:new_api_key, nil)
+     |> assign(:available_companies, available_companies)
+     |> assign(:available_socs, available_socs)
+     |> assign(:company_users, company_users)
+     |> assign(:soc_users, soc_users)
+     |> assign(:edit_company_membership, nil)
+     |> assign(:edit_soc_membership, nil)}
   end
 
   @impl true
@@ -153,7 +398,7 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def handle_event("delete_api_key", %{"id" => api_key_id}, socket) do
     case CaseManager.Accounts.delete_api_key(api_key_id) do
-      :ok ->
+      {:ok, _} ->
         # Reload API keys list
         api_keys = load_user_api_keys(socket.assigns.user.id)
 
@@ -166,6 +411,260 @@ defmodule CaseManagerWeb.UserLive.Show do
       {:error, _error} ->
         {:noreply, put_flash(socket, :error, "Failed to delete API key")}
     end
+  end
+
+  @impl true
+  def handle_event("edit_company_membership", %{"company-id" => company_id}, socket) do
+    user = socket.assigns.user
+    
+    case CaseManager.Organizations.get_company_user(user.id, company_id) do
+      {:ok, company_user} ->
+        # Load the company relationship if not already loaded
+        company_user = Ash.load!(company_user, :company)
+        company = company_user.company
+        role = company_user.user_role
+        
+        {:noreply,
+         socket
+         |> assign(:edit_company_membership, %{company: company, role: role})
+         |> push_event("open-modal", %{id: "edit_company_modal"})}
+         
+      {:error, _error} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Company membership not found")}
+    end
+  end
+
+  @impl true
+  def handle_event("remove_company_membership", %{"company-id" => company_id}, socket) do
+    user = socket.assigns.user
+
+    case CaseManager.Organizations.get_company_user(user.id, company_id) do
+      {:ok, company_user} ->
+        case CaseManager.Organizations.delete_company_user(company_user) do
+          {:ok, _} ->
+            # Reload join table records
+            company_users = CaseManager.Organizations.list_company_users!(
+              query: [
+                filter: [user_id: user.id],
+                load: [:company]
+              ]
+            )
+
+            {:noreply,
+             socket
+             |> assign(:company_users, company_users)
+             |> put_flash(:info, "Company membership removed successfully")}
+
+          {:error, _error} ->
+            {:noreply, put_flash(socket, :error, "Failed to remove company membership")}
+        end
+
+      {:error, _error} ->
+        {:noreply, put_flash(socket, :error, "Company membership not found")}
+    end
+  end
+
+  @impl true
+  def handle_event("edit_soc_membership", %{"soc-id" => soc_id}, socket) do
+    user = socket.assigns.user
+    
+    case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
+      {:ok, soc_user} ->
+        # Load the soc relationship if not already loaded
+        soc_user = Ash.load!(soc_user, :soc)
+        soc = soc_user.soc
+        role = soc_user.user_role
+        
+        {:noreply,
+         socket
+         |> assign(:edit_soc_membership, %{soc: soc, role: role})
+         |> push_event("open-modal", %{id: "edit_soc_modal"})}
+         
+      {:error, _error} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "SOC membership not found")}
+    end
+  end
+
+  @impl true
+  def handle_event("remove_soc_membership", %{"soc-id" => soc_id}, socket) do
+    user = socket.assigns.user
+
+    case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
+      {:ok, soc_user} ->
+        case CaseManager.Organizations.delete_soc_user(soc_user) do
+          {:ok, _} ->
+            # Reload join table records
+            soc_users = CaseManager.Organizations.list_soc_users!(
+              query: [
+                filter: [user_id: user.id],
+                load: [:soc]
+              ]
+            )
+
+            {:noreply,
+             socket
+             |> assign(:soc_users, soc_users)
+             |> put_flash(:info, "SOC membership removed successfully")}
+
+          {:error, _error} ->
+            {:noreply, put_flash(socket, :error, "Failed to remove SOC membership")}
+        end
+
+      {:error, _error} ->
+        {:noreply, put_flash(socket, :error, "SOC membership not found")}
+    end
+  end
+
+  @impl true
+  def handle_event("create_company_membership", %{"company_id" => company_id, "user_role" => user_role}, socket) do
+    user = socket.assigns.user
+    
+    case CaseManager.Organizations.create_company_user(%{
+      user_id: user.id,
+      company_id: company_id,
+      user_role: user_role
+    }) do
+      {:ok, _company_user} ->
+        # Reload join table records
+        company_users = CaseManager.Organizations.list_company_users!(
+          query: [
+            filter: [user_id: user.id],
+            load: [:company]
+          ]
+        )
+        
+        {:noreply,
+         socket
+         |> assign(:company_users, company_users)
+         |> push_event("close-modal", %{id: "company_modal"})
+         |> put_flash(:info, "Company membership added successfully")}
+         
+      {:error, _error} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to add company membership")}
+    end
+  end
+
+  @impl true
+  def handle_event("create_soc_membership", %{"soc_id" => soc_id, "user_role" => user_role}, socket) do
+    user = socket.assigns.user
+    
+    case CaseManager.Organizations.create_soc_user(%{
+      user_id: user.id,
+      soc_id: soc_id,
+      user_role: user_role
+    }) do
+      {:ok, _soc_user} ->
+        # Reload join table records
+        soc_users = CaseManager.Organizations.list_soc_users!(
+          query: [
+            filter: [user_id: user.id],
+            load: [:soc]
+          ]
+        )
+        
+        {:noreply,
+         socket
+         |> assign(:soc_users, soc_users)
+         |> push_event("close-modal", %{id: "soc_modal"})
+         |> put_flash(:info, "SOC membership added successfully")}
+         
+      {:error, _error} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Failed to add SOC membership")}
+    end
+  end
+
+  @impl true
+  def handle_event("update_company_membership", %{"company_id" => company_id, "user_role" => user_role}, socket) do
+    user = socket.assigns.user
+    
+    case CaseManager.Organizations.get_company_user(user.id, company_id) do
+      {:ok, company_user} ->
+        case CaseManager.Organizations.update_company_user(company_user, %{user_role: user_role}) do
+          {:ok, _updated_company_user} ->
+            # Reload join table records
+            company_users = CaseManager.Organizations.list_company_users!(
+              query: [
+                filter: [user_id: user.id],
+                load: [:company]
+              ]
+            )
+            
+            {:noreply,
+             socket
+             |> assign(:company_users, company_users)
+             |> assign(:edit_company_membership, nil)
+             |> push_event("close-modal", %{id: "edit_company_modal"})
+             |> put_flash(:info, "Company membership updated successfully")}
+             
+          {:error, _error} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Failed to update company membership")}
+        end
+        
+      {:error, _error} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Company membership not found")}
+    end
+  end
+
+  @impl true
+  def handle_event("update_soc_membership", %{"soc_id" => soc_id, "user_role" => user_role}, socket) do
+    user = socket.assigns.user
+    
+    case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
+      {:ok, soc_user} ->
+        case CaseManager.Organizations.update_soc_user(soc_user, %{user_role: user_role}) do
+          {:ok, _updated_soc_user} ->
+            # Reload join table records
+            soc_users = CaseManager.Organizations.list_soc_users!(
+              query: [
+                filter: [user_id: user.id],
+                load: [:soc]
+              ]
+            )
+            
+            {:noreply,
+             socket
+             |> assign(:soc_users, soc_users)
+             |> assign(:edit_soc_membership, nil)
+             |> push_event("close-modal", %{id: "edit_soc_modal"})
+             |> put_flash(:info, "SOC membership updated successfully")}
+             
+          {:error, _error} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Failed to update SOC membership")}
+        end
+        
+      {:error, _error} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "SOC membership not found")}
+    end
+  end
+
+  @impl true
+  def handle_event("close_edit_company_modal", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:edit_company_membership, nil)}
+  end
+
+  @impl true
+  def handle_event("close_edit_soc_modal", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(:edit_soc_membership, nil)}
   end
 
   defp load_user_api_keys(user_id) do
