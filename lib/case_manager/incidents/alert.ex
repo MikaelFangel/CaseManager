@@ -9,6 +9,7 @@ defmodule CaseManager.Incidents.Alert do
     otp_app: :case_manager,
     domain: CaseManager.Incidents,
     data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer],
     extensions: [AshJsonApi.Resource]
 
   alias CaseManager.Incidents.Status
@@ -77,6 +78,28 @@ defmodule CaseManager.Incidents.Alert do
 
     destroy :delete do
       description "Delete an alert"
+    end
+  end
+
+  policies do
+    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
+      authorize_if always()
+    end
+
+    policy action_type(:read) do
+      authorize_if always()
+    end
+
+    policy action_type(:create) do
+      authorize_if always()
+    end
+
+    policy action_type(:update) do
+      authorize_if always()
+    end
+
+    policy action_type(:destroy) do
+      authorize_if always()
     end
   end
 

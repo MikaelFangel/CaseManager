@@ -4,11 +4,16 @@ defmodule CaseManager.Accounts.User do
     otp_app: :case_manager,
     domain: CaseManager.Accounts,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshAuthentication],
+    extensions: [AshAuthentication, AshJsonApi.Resource],
     data_layer: AshPostgres.DataLayer
 
+  alias AshAuthentication.Checks.AshAuthenticationInteraction
   alias AshAuthentication.Strategy.Password.HashPasswordChange
   alias AshAuthentication.Strategy.Password.PasswordConfirmationValidation
+
+  json_api do
+    type "user"
+  end
 
   authentication do
     add_ons do
@@ -51,6 +56,11 @@ defmodule CaseManager.Accounts.User do
           password_reset_action_name :reset_password_with_token
           request_password_reset_action_name :request_password_reset_token
         end
+      end
+
+      api_key do
+        api_key_relationship :valid_api_keys
+        api_key_hash_attribute :api_key_hash
       end
     end
   end
@@ -278,14 +288,27 @@ defmodule CaseManager.Accounts.User do
       # Generates an authentication token for the user
       change AshAuthentication.GenerateTokenChange
     end
+
+    read :sign_in_with_api_key do
+      argument :api_key, :string, allow_nil?: false
+      prepare AshAuthentication.Strategy.ApiKey.SignInPreparation
+    end
   end
 
   policies do
-    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
+    bypass AshAuthenticationInteraction do
       authorize_if always()
     end
 
-    policy always() do
+    bypass action([:sign_in_with_password, :sign_in_with_token]) do
+      authorize_if always()
+    end
+
+    bypass actor_attribute_equals(:super_admin?, true) do
+      authorize_if always()
+    end
+
+    policy action(:read) do
       authorize_if always()
     end
   end
@@ -322,6 +345,10 @@ defmodule CaseManager.Accounts.User do
     many_to_many :companies, CaseManager.Organizations.Company do
       through CaseManager.Organizations.CompanyUser
       public? true
+    end
+
+    has_many :valid_api_keys, CaseManager.Accounts.ApiKey do
+      filter expr(valid)
     end
   end
 

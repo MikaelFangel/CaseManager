@@ -74,6 +74,10 @@ defmodule CaseManager.Incidents.Case do
   end
 
   policies do
+    bypass AshAuthentication.Checks.AshAuthenticationInteraction do
+      authorize_if always()
+    end
+
     bypass actor_attribute_equals(:super_admin?, true) do
       authorize_if always()
     end
@@ -84,7 +88,6 @@ defmodule CaseManager.Incidents.Case do
     end
 
     policy action_type(:create) do
-      authorize_if always()
       authorize_if expr(soc.users == ^actor(:id))
     end
 

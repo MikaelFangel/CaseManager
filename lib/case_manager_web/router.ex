@@ -4,6 +4,9 @@ defmodule CaseManagerWeb.Router do
 
   import AshAuthentication.Plug.Helpers
 
+  alias CaseManager.Accounts.User
+  alias CaseManagerWeb.Plugs.ConditionalApiKey
+
   pipeline :browser do
     plug(:accepts, ["html"])
     plug(:fetch_session)
@@ -18,13 +21,13 @@ defmodule CaseManagerWeb.Router do
     plug(:accepts, ["json"])
     plug(:load_from_bearer)
     plug(:set_actor, :user)
+    plug ConditionalApiKey, resource: User
   end
 
   scope "/api/json" do
     pipe_through([:api])
 
     forward("/swaggerui", OpenApiSpex.Plug.SwaggerUI, path: "/api/json/open_api", default_model_expand_depth: 4)
-
     forward("/", CaseManagerWeb.AshJsonApiRouter)
   end
 
@@ -58,7 +61,7 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through(:browser)
 
-    auth_routes AuthController, CaseManager.Accounts.User, path: "/auth"
+    auth_routes AuthController, User, path: "/auth"
     sign_out_route AuthController
 
     get "/sign-in", AuthController, :sign_in

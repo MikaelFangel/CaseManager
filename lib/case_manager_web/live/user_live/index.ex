@@ -101,8 +101,9 @@ defmodule CaseManagerWeb.UserLive.Index do
 
   @impl true
   def handle_params(params, _uri, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
     query = Map.get(params, "q", "")
-    users = CaseManager.Accounts.search_users!(query, load: [:companies, :socs, :full_name])
+    users = CaseManager.Accounts.search_users!(query, load: [:companies, :socs, :full_name], actor: user)
 
     socket = stream(socket, :users, users, reset: true)
     {:noreply, socket}
