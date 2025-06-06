@@ -44,7 +44,8 @@ defmodule CaseManagerWeb.CaseLive.Form do
   defp return_to(_), do: "index"
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    case = Incidents.get_case!(id)
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+    case = Incidents.get_case!(id, actor: user)
 
     socket
     |> assign(:page_title, "Edit Case")
