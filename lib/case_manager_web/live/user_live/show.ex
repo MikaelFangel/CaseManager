@@ -9,7 +9,7 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash}>
+    <Layouts.app flash={@flash} user_roles={@user_roles}>
       <.header>
         {@user.first_name} {@user.last_name}
         <:actions>
@@ -190,15 +190,7 @@ defmodule CaseManagerWeb.UserLive.Show do
           <p class="py-4">Select a company and role for {@user.first_name} {@user.last_name}</p>
 
           <form id="add-company-form" phx-submit="create_company_membership">
-            <.input
-              type="select"
-              name="company_id"
-              label="Company"
-              value=""
-              prompt="Select a company..."
-              options={Enum.map(@available_companies, &{&1.name, &1.id})}
-              required
-            />
+            <.input type="select" name="company_id" label="Company" value="" prompt="Select a company..." options={Enum.map(@available_companies, &{&1.name, &1.id})} required />
 
             <.input
               type="select"
@@ -227,15 +219,7 @@ defmodule CaseManagerWeb.UserLive.Show do
           <p class="py-4">Select a SOC and role for {@user.first_name} {@user.last_name}</p>
 
           <form id="add-soc-form" phx-submit="create_soc_membership">
-            <.input
-              type="select"
-              name="soc_id"
-              label="SOC"
-              value=""
-              prompt="Select a SOC..."
-              options={Enum.map(@available_socs, &{&1.name, &1.id})}
-              required
-            />
+            <.input type="select" name="soc_id" label="SOC" value="" prompt="Select a SOC..." options={Enum.map(@available_socs, &{&1.name, &1.id})} required />
 
             <.input
               type="select"
@@ -267,7 +251,7 @@ defmodule CaseManagerWeb.UserLive.Show do
 
             <form id="edit-company-form" phx-submit="update_company_membership">
               <input type="hidden" name="company_id" value={@edit_company_membership.company.id} />
-              
+
               <.input
                 type="select"
                 name="user_role"
@@ -297,7 +281,7 @@ defmodule CaseManagerWeb.UserLive.Show do
 
             <form id="edit-soc-form" phx-submit="update_soc_membership">
               <input type="hidden" name="soc_id" value={@edit_soc_membership.soc.id} />
-              
+
               <.input
                 type="select"
                 name="user_role"
@@ -326,24 +310,27 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def mount(%{"id" => id}, _session, socket) do
     user = Accounts.get_user!(id)
+    current_user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
     api_keys = load_user_api_keys(user.id)
     available_companies = CaseManager.Organizations.list_company!()
     available_socs = CaseManager.Organizations.list_soc!()
-    
+
     # Load join table records directly to ensure correct company/role pairing
-    company_users = CaseManager.Organizations.list_company_users!(
-      query: [
-        filter: [user_id: user.id],
-        load: [:company]
-      ]
-    )
-    
-    soc_users = CaseManager.Organizations.list_soc_users!(
-      query: [
-        filter: [user_id: user.id],
-        load: [:soc]
-      ]
-    )
+    company_users =
+      CaseManager.Organizations.list_company_users!(
+        query: [
+          filter: [user_id: user.id],
+          load: [:company]
+        ]
+      )
+
+    soc_users =
+      CaseManager.Organizations.list_soc_users!(
+        query: [
+          filter: [user_id: user.id],
+          load: [:soc]
+        ]
+      )
 
     {:ok,
      socket
@@ -355,6 +342,7 @@ defmodule CaseManagerWeb.UserLive.Show do
      |> assign(:available_socs, available_socs)
      |> assign(:company_users, company_users)
      |> assign(:soc_users, soc_users)
+     |> assign(:user_roles, current_user.soc_roles ++ current_user.company_roles)
      |> assign(:edit_company_membership, nil)
      |> assign(:edit_soc_membership, nil)}
   end
@@ -416,23 +404,21 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def handle_event("edit_company_membership", %{"company-id" => company_id}, socket) do
     user = socket.assigns.user
-    
+
     case CaseManager.Organizations.get_company_user(user.id, company_id) do
       {:ok, company_user} ->
         # Load the company relationship if not already loaded
         company_user = Ash.load!(company_user, :company)
         company = company_user.company
         role = company_user.user_role
-        
+
         {:noreply,
          socket
          |> assign(:edit_company_membership, %{company: company, role: role})
          |> push_event("open-modal", %{id: "edit_company_modal"})}
-         
+
       {:error, _error} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Company membership not found")}
+        {:noreply, put_flash(socket, :error, "Company membership not found")}
     end
   end
 
@@ -445,12 +431,13 @@ defmodule CaseManagerWeb.UserLive.Show do
         case CaseManager.Organizations.delete_company_user(company_user) do
           {:ok, _} ->
             # Reload join table records
-            company_users = CaseManager.Organizations.list_company_users!(
-              query: [
-                filter: [user_id: user.id],
-                load: [:company]
-              ]
-            )
+            company_users =
+              CaseManager.Organizations.list_company_users!(
+                query: [
+                  filter: [user_id: user.id],
+                  load: [:company]
+                ]
+              )
 
             {:noreply,
              socket
@@ -469,23 +456,21 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def handle_event("edit_soc_membership", %{"soc-id" => soc_id}, socket) do
     user = socket.assigns.user
-    
+
     case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
       {:ok, soc_user} ->
         # Load the soc relationship if not already loaded
         soc_user = Ash.load!(soc_user, :soc)
         soc = soc_user.soc
         role = soc_user.user_role
-        
+
         {:noreply,
          socket
          |> assign(:edit_soc_membership, %{soc: soc, role: role})
          |> push_event("open-modal", %{id: "edit_soc_modal"})}
-         
+
       {:error, _error} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "SOC membership not found")}
+        {:noreply, put_flash(socket, :error, "SOC membership not found")}
     end
   end
 
@@ -498,12 +483,13 @@ defmodule CaseManagerWeb.UserLive.Show do
         case CaseManager.Organizations.delete_soc_user(soc_user) do
           {:ok, _} ->
             # Reload join table records
-            soc_users = CaseManager.Organizations.list_soc_users!(
-              query: [
-                filter: [user_id: user.id],
-                load: [:soc]
-              ]
-            )
+            soc_users =
+              CaseManager.Organizations.list_soc_users!(
+                query: [
+                  filter: [user_id: user.id],
+                  load: [:soc]
+                ]
+              )
 
             {:noreply,
              socket
@@ -522,149 +508,137 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def handle_event("create_company_membership", %{"company_id" => company_id, "user_role" => user_role}, socket) do
     user = socket.assigns.user
-    
+
     case CaseManager.Organizations.create_company_user(%{
-      user_id: user.id,
-      company_id: company_id,
-      user_role: user_role
-    }) do
+           user_id: user.id,
+           company_id: company_id,
+           user_role: user_role
+         }) do
       {:ok, _company_user} ->
         # Reload join table records
-        company_users = CaseManager.Organizations.list_company_users!(
-          query: [
-            filter: [user_id: user.id],
-            load: [:company]
-          ]
-        )
-        
+        company_users =
+          CaseManager.Organizations.list_company_users!(
+            query: [
+              filter: [user_id: user.id],
+              load: [:company]
+            ]
+          )
+
         {:noreply,
          socket
          |> assign(:company_users, company_users)
          |> push_event("close-modal", %{id: "company_modal"})
          |> put_flash(:info, "Company membership added successfully")}
-         
+
       {:error, _error} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Failed to add company membership")}
+        {:noreply, put_flash(socket, :error, "Failed to add company membership")}
     end
   end
 
   @impl true
   def handle_event("create_soc_membership", %{"soc_id" => soc_id, "user_role" => user_role}, socket) do
     user = socket.assigns.user
-    
+
     case CaseManager.Organizations.create_soc_user(%{
-      user_id: user.id,
-      soc_id: soc_id,
-      user_role: user_role
-    }) do
+           user_id: user.id,
+           soc_id: soc_id,
+           user_role: user_role
+         }) do
       {:ok, _soc_user} ->
         # Reload join table records
-        soc_users = CaseManager.Organizations.list_soc_users!(
-          query: [
-            filter: [user_id: user.id],
-            load: [:soc]
-          ]
-        )
-        
+        soc_users =
+          CaseManager.Organizations.list_soc_users!(
+            query: [
+              filter: [user_id: user.id],
+              load: [:soc]
+            ]
+          )
+
         {:noreply,
          socket
          |> assign(:soc_users, soc_users)
          |> push_event("close-modal", %{id: "soc_modal"})
          |> put_flash(:info, "SOC membership added successfully")}
-         
+
       {:error, _error} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Failed to add SOC membership")}
+        {:noreply, put_flash(socket, :error, "Failed to add SOC membership")}
     end
   end
 
   @impl true
   def handle_event("update_company_membership", %{"company_id" => company_id, "user_role" => user_role}, socket) do
     user = socket.assigns.user
-    
+
     case CaseManager.Organizations.get_company_user(user.id, company_id) do
       {:ok, company_user} ->
         case CaseManager.Organizations.update_company_user(company_user, %{user_role: user_role}) do
           {:ok, _updated_company_user} ->
             # Reload join table records
-            company_users = CaseManager.Organizations.list_company_users!(
-              query: [
-                filter: [user_id: user.id],
-                load: [:company]
-              ]
-            )
-            
+            company_users =
+              CaseManager.Organizations.list_company_users!(
+                query: [
+                  filter: [user_id: user.id],
+                  load: [:company]
+                ]
+              )
+
             {:noreply,
              socket
              |> assign(:company_users, company_users)
              |> assign(:edit_company_membership, nil)
              |> push_event("close-modal", %{id: "edit_company_modal"})
              |> put_flash(:info, "Company membership updated successfully")}
-             
+
           {:error, _error} ->
-            {:noreply,
-             socket
-             |> put_flash(:error, "Failed to update company membership")}
+            {:noreply, put_flash(socket, :error, "Failed to update company membership")}
         end
-        
+
       {:error, _error} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "Company membership not found")}
+        {:noreply, put_flash(socket, :error, "Company membership not found")}
     end
   end
 
   @impl true
   def handle_event("update_soc_membership", %{"soc_id" => soc_id, "user_role" => user_role}, socket) do
     user = socket.assigns.user
-    
+
     case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
       {:ok, soc_user} ->
         case CaseManager.Organizations.update_soc_user(soc_user, %{user_role: user_role}) do
           {:ok, _updated_soc_user} ->
             # Reload join table records
-            soc_users = CaseManager.Organizations.list_soc_users!(
-              query: [
-                filter: [user_id: user.id],
-                load: [:soc]
-              ]
-            )
-            
+            soc_users =
+              CaseManager.Organizations.list_soc_users!(
+                query: [
+                  filter: [user_id: user.id],
+                  load: [:soc]
+                ]
+              )
+
             {:noreply,
              socket
              |> assign(:soc_users, soc_users)
              |> assign(:edit_soc_membership, nil)
              |> push_event("close-modal", %{id: "edit_soc_modal"})
              |> put_flash(:info, "SOC membership updated successfully")}
-             
+
           {:error, _error} ->
-            {:noreply,
-             socket
-             |> put_flash(:error, "Failed to update SOC membership")}
+            {:noreply, put_flash(socket, :error, "Failed to update SOC membership")}
         end
-        
+
       {:error, _error} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, "SOC membership not found")}
+        {:noreply, put_flash(socket, :error, "SOC membership not found")}
     end
   end
 
   @impl true
   def handle_event("close_edit_company_modal", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(:edit_company_membership, nil)}
+    {:noreply, assign(socket, :edit_company_membership, nil)}
   end
 
   @impl true
   def handle_event("close_edit_soc_modal", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(:edit_soc_membership, nil)}
+    {:noreply, assign(socket, :edit_soc_membership, nil)}
   end
 
   defp load_user_api_keys(user_id) do
