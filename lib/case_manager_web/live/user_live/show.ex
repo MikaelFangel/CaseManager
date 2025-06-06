@@ -54,7 +54,7 @@ defmodule CaseManagerWeb.UserLive.Show do
               {company_user.company.name}
             </:col>
             <:col :let={company_user} label="Role">
-              <.badge type={:info}>{company_user.user_role}</.badge>
+              <.badge :if={company_user.user_role} type={:info}>{company_user.user_role}</.badge>
             </:col>
             <:action :let={company_user}>
               <div class="flex gap-2">
@@ -97,7 +97,7 @@ defmodule CaseManagerWeb.UserLive.Show do
               {soc_user.soc.name}
             </:col>
             <:col :let={soc_user} label="Role">
-              <.badge type={:info}>{soc_user.user_role}</.badge>
+              <.badge :if={soc_user.user_role} type={:info}>{soc_user.user_role}</.badge>
             </:col>
             <:action :let={soc_user}>
               <div class="flex gap-2">
