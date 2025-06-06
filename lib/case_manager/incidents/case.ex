@@ -91,8 +91,13 @@ defmodule CaseManager.Incidents.Case do
       authorize_if expr(soc.users == ^actor(:id))
     end
 
-    policy action_type(:update) do
+    policy action(:update) do
       authorize_if expr(soc.users == ^actor(:id))
+    end
+
+    policy action(:add_comment) do
+      authorize_if expr(soc.users == ^actor(:id))
+      authorize_if expr(company.users == ^actor(:id) && escalated)
     end
 
     policy action_type(:destroy) do

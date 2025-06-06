@@ -147,13 +147,13 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_params(_unsigned_params, _uri, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
     socket =
       assign(
         socket,
         :comment_form,
-        to_form(
-          CaseManager.Incidents.form_to_add_comment_to_case(socket.assigns.case, actor: socket.assigns.current_user)
-        )
+        to_form(CaseManager.Incidents.form_to_add_comment_to_case(socket.assigns.case, actor: user))
       )
 
     {:noreply, socket}
