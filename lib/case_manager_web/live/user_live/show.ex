@@ -429,7 +429,7 @@ defmodule CaseManagerWeb.UserLive.Show do
     case CaseManager.Organizations.get_company_user(user.id, company_id) do
       {:ok, company_user} ->
         case CaseManager.Organizations.delete_company_user(company_user) do
-          {:ok, _user} ->
+          :ok ->
             # Reload join table records
             company_users =
               CaseManager.Organizations.list_company_users!(
@@ -444,7 +444,7 @@ defmodule CaseManagerWeb.UserLive.Show do
              |> assign(:company_users, company_users)
              |> put_flash(:info, "Company membership removed successfully")}
 
-          {:error, _error} ->
+          _error ->
             {:noreply, put_flash(socket, :error, "Failed to remove company membership")}
         end
 
@@ -481,7 +481,7 @@ defmodule CaseManagerWeb.UserLive.Show do
     case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
       {:ok, soc_user} ->
         case CaseManager.Organizations.delete_soc_user(soc_user) do
-          {:ok, _user} ->
+          :ok ->
             # Reload join table records
             soc_users =
               CaseManager.Organizations.list_soc_users!(
@@ -496,7 +496,7 @@ defmodule CaseManagerWeb.UserLive.Show do
              |> assign(:soc_users, soc_users)
              |> put_flash(:info, "SOC membership removed successfully")}
 
-          {:error, _error} ->
+          _error ->
             {:noreply, put_flash(socket, :error, "Failed to remove SOC membership")}
         end
 

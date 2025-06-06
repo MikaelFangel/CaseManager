@@ -82,12 +82,12 @@ defmodule CaseManagerWeb.UserLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
+    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?])
+
     companies = CaseManager.Organizations.list_company!()
     socs = CaseManager.Organizations.list_soc!()
 
-    user_form = to_form(CaseManager.Accounts.form_to_create_user())
-
-    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles])
+    user_form = to_form(CaseManager.Accounts.form_to_create_user(actor: user))
 
     {:ok,
      socket
@@ -143,6 +143,8 @@ defmodule CaseManagerWeb.UserLive.Index do
 
   @impl true
   def handle_event("save_user", %{"form" => user_params}, socket) do
+    current_user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
     # Get SOCs and companies from form
     socs = Map.get(user_params, "socs", [])
     companies = Map.get(user_params, "companies", [])
@@ -174,7 +176,7 @@ defmodule CaseManagerWeb.UserLive.Index do
         socket =
           socket
           |> put_flash(:info, "User created successfully")
-          |> assign(user_form: to_form(CaseManager.Accounts.form_to_create_user()))
+          |> assign(user_form: to_form(CaseManager.Accounts.form_to_create_user(actor: current_user)))
           |> stream_insert(:users, loaded_user)
 
         {:noreply, socket}

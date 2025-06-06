@@ -88,6 +88,7 @@ defmodule CaseManager.Incidents.Case do
     end
 
     policy action_type(:create) do
+      authorize_if always()
       authorize_if expr(soc.users == ^actor(:id))
     end
 
