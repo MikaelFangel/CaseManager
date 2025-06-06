@@ -2,7 +2,7 @@ defmodule CaseManagerWeb.Plugs.ConditionalApiKey do
   @moduledoc """
   A plug that conditionally applies API key authentication.
 
-  Skips API key authentication for documentation endpoints like 
+  Skips API key authentication for documentation endpoints like
   OpenAPI spec and Swagger UI, but requires it for actual data endpoints.
   """
 
@@ -37,7 +37,7 @@ defmodule CaseManagerWeb.Plugs.ConditionalApiKey do
           String.contains?(path, "open_api") or
           String.contains?(path, "json_schema")
 
-      _ ->
+      _no_match ->
         false
     end
   end

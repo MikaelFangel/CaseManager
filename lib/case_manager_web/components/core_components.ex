@@ -29,6 +29,7 @@ defmodule CaseManagerWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: CaseManagerWeb.Gettext
 
+  alias Phoenix.HTML.Form
   alias Phoenix.HTML.FormField
   alias Phoenix.LiveView.JS
 
@@ -149,7 +150,7 @@ defmodule CaseManagerWeb.CoreComponents do
   attr(:errors, :list, default: [])
   attr(:checked, :boolean, doc: "the checked flag for checkbox inputs")
   attr(:prompt, :string, default: nil, doc: "the prompt for select inputs")
-  attr(:options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2")
+  attr(:options, :list, doc: "the options to pass to Form.options_for_select/2")
   attr(:multiple, :boolean, default: false, doc: "the multiple flag for select inputs")
 
   attr(:rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
@@ -169,7 +170,7 @@ defmodule CaseManagerWeb.CoreComponents do
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
-        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+        Form.normalize_value("checkbox", assigns[:value])
       end)
 
     ~H"""
@@ -192,7 +193,7 @@ defmodule CaseManagerWeb.CoreComponents do
         <span :if={@label} class="fieldset-label mb-1">{@label}</span>
         <select id={@id} name={@name} class={["w-full select", @errors != [] && "select-error"]} multiple={@multiple} {@rest}>
           <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
+          {Form.options_for_select(@options, @value)}
         </select>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
@@ -205,7 +206,7 @@ defmodule CaseManagerWeb.CoreComponents do
     <fieldset class="fieldset mb-2">
       <label>
         <span :if={@label} class="fieldset-label mb-1">{@label}</span>
-        <textarea id={@id} name={@name} class={["w-full textarea", @errors != [] && "textarea-error"]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+        <textarea id={@id} name={@name} class={["w-full textarea", @errors != [] && "textarea-error"]} {@rest}>{Form.normalize_value("textarea", @value)}</textarea>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </fieldset>
@@ -218,7 +219,7 @@ defmodule CaseManagerWeb.CoreComponents do
     <fieldset class="fieldset mb-2">
       <label>
         <span :if={@label} class="fieldset-label mb-1">{@label}</span>
-        <input type={@type} name={@name} id={@id} value={Phoenix.HTML.Form.normalize_value(@type, @value)} class={["w-full input", @errors != [] && "input-error"]} {@rest} />
+        <input type={@type} name={@name} id={@id} value={Form.normalize_value(@type, @value)} class={["w-full input", @errors != [] && "input-error"]} {@rest} />
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </fieldset>
@@ -343,11 +344,11 @@ defmodule CaseManagerWeb.CoreComponents do
     row_id.(row)
   end
 
-  defp get_row_value({id, _item}, _) do
+  defp get_row_value({id, _item}, _row_id) do
     id
   end
 
-  defp get_row_value(row, _) do
+  defp get_row_value(row, _row_id) do
     Map.get(row, :id)
   end
 
@@ -412,7 +413,7 @@ defmodule CaseManagerWeb.CoreComponents do
   attr(:name, :string, required: true)
   attr(:class, :string, default: "size-4")
 
-  def icon(%{name: "hero-" <> _} = assigns) do
+  def icon(%{name: "hero-" <> _icon} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
     """

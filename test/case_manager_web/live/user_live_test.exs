@@ -1,5 +1,5 @@
 defmodule CaseManagerWeb.UserLiveTest do
-  use CaseManagerWeb.ConnCase
+  use CaseManagerWeb.ConnCase, async: true
 
   import CaseManager.AccountsFixtures
   import Phoenix.LiveViewTest
@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.UserLiveTest do
   @create_attrs %{email: "some email"}
   @update_attrs %{email: "some updated email"}
   @invalid_attrs %{email: nil}
-  defp create_user(_) do
+  defp create_user(_opts) do
     user = user_fixture()
 
     %{user: user}
@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.UserLiveTest do
     test "saves new user", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/users")
 
-      assert {:ok, form_live, _} =
+      assert {:ok, form_live, _html} =
                index_live
                |> element("a", "New User")
                |> render_click()
@@ -96,7 +96,7 @@ defmodule CaseManagerWeb.UserLiveTest do
     test "updates user and returns to show", %{conn: conn, user: user} do
       {:ok, show_live, _html} = live(conn, ~p"/users/#{user}")
 
-      assert {:ok, form_live, _} =
+      assert {:ok, form_live, _html} =
                show_live
                |> element("a", "Edit")
                |> render_click()

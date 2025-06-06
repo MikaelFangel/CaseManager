@@ -230,7 +230,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         try do
           Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
         rescue
-          _ -> nil
+          _error -> nil
         end
       end
 
@@ -261,7 +261,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_event("next-page", _, socket) do
+  def handle_event("next-page", _params, socket) do
     {:noreply, paginate_alerts(socket, socket.assigns.page + 1)}
   end
 
@@ -271,7 +271,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_event("prev-page", _, socket) do
+  def handle_event("prev-page", _params, socket) do
     if socket.assigns.page > 1 do
       {:noreply, paginate_alerts(socket, socket.assigns.page - 1)}
     else
@@ -457,7 +457,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
         [] ->
           assign(socket, end_of_timeline?: at == -1)
 
-        [_ | _] = alerts ->
+        [_head | _tail] = alerts ->
           socket
           |> assign(end_of_timeline?: false)
           |> assign(:page, new_page)
@@ -557,7 +557,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       :resolved -> :success
       :closed -> :neutral
       :reopened -> :error
-      _ -> :neutral
+      _other -> :neutral
     end
   end
 end

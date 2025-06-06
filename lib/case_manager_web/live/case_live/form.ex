@@ -41,7 +41,7 @@ defmodule CaseManagerWeb.CaseLive.Form do
   end
 
   defp return_to("show"), do: "show"
-  defp return_to(_), do: "index"
+  defp return_to(_other), do: "index"
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     user = Ash.load!(socket.assigns.current_user, :super_admin?)

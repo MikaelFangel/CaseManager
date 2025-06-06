@@ -18,7 +18,7 @@ defmodule CaseManagerWeb.AuthController do
       case activity do
         {:confirm_new_user, :confirm} -> "Your email address has now been confirmed"
         {:password, :reset} -> "Your password has successfully been reset"
-        _ -> "You are now signed in"
+        _success -> "You are now signed in"
       end
 
     conn
@@ -32,7 +32,7 @@ defmodule CaseManagerWeb.AuthController do
   def failure(conn, activity, reason) do
     message =
       case {activity, reason} do
-        {_,
+        {_activity,
          %AshAuthentication.Errors.AuthenticationFailed{
            caused_by: %Ash.Error.Forbidden{
              errors: [%AshAuthentication.Errors.CannotConfirmUnconfirmedUser{}]
@@ -43,7 +43,7 @@ defmodule CaseManagerWeb.AuthController do
           You can confirm your account using the link we sent to you, or by resetting your password.
           """
 
-        _ ->
+        _error ->
           "Incorrect email or password"
       end
 

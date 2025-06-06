@@ -386,7 +386,7 @@ defmodule CaseManagerWeb.UserLive.Show do
   @impl true
   def handle_event("delete_api_key", %{"id" => api_key_id}, socket) do
     case CaseManager.Accounts.delete_api_key(api_key_id) do
-      {:ok, _} ->
+      :ok ->
         # Reload API keys list
         api_keys = load_user_api_keys(socket.assigns.user.id)
 
@@ -396,7 +396,7 @@ defmodule CaseManagerWeb.UserLive.Show do
          |> assign(:new_api_key, nil)
          |> put_flash(:info, "API key deleted successfully")}
 
-      {:error, _error} ->
+      _error ->
         {:noreply, put_flash(socket, :error, "Failed to delete API key")}
     end
   end
@@ -429,7 +429,7 @@ defmodule CaseManagerWeb.UserLive.Show do
     case CaseManager.Organizations.get_company_user(user.id, company_id) do
       {:ok, company_user} ->
         case CaseManager.Organizations.delete_company_user(company_user) do
-          {:ok, _} ->
+          {:ok, _user} ->
             # Reload join table records
             company_users =
               CaseManager.Organizations.list_company_users!(
@@ -481,7 +481,7 @@ defmodule CaseManagerWeb.UserLive.Show do
     case CaseManager.Organizations.get_soc_user(user.id, soc_id) do
       {:ok, soc_user} ->
         case CaseManager.Organizations.delete_soc_user(soc_user) do
-          {:ok, _} ->
+          {:ok, _user} ->
             # Reload join table records
             soc_users =
               CaseManager.Organizations.list_soc_users!(

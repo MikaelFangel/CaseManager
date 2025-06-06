@@ -13,7 +13,7 @@ defmodule Mix.Tasks.Seed do
 
       --clean, -c        Clean the database without seeding
       --soc, -s          Run SOC seed only
-      --company, -C      Run Company seed only  
+      --company, -C      Run Company seed only
       --user, -u         Run User seed only
       --alert, -a        Run Alert seed only
       --case, -i         Run Case/Incident seed only
@@ -36,7 +36,7 @@ defmodule Mix.Tasks.Seed do
   @impl Mix.Task
   def run(args) do
     # Parse command-line arguments
-    {opts, _, _} =
+    {opts, _argv, _errors} =
       OptionParser.parse(args,
         strict: [
           clean: :boolean,

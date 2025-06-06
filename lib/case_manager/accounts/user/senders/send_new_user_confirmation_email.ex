@@ -11,7 +11,7 @@ defmodule CaseManager.Accounts.User.Senders.SendNewUserConfirmationEmail do
   alias CaseManager.Mailer
 
   @impl true
-  def send(user, token, _) do
+  def send(user, token, _opts) do
     new()
     |> from({"noreply", "noreply@example.com"})
     |> to(to_string(user.email))

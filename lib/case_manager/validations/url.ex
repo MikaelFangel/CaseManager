@@ -52,12 +52,12 @@ defmodule CaseManager.Validations.Url do
       %URI{host: nil} ->
         {:error, :missing_host}
 
-      _ ->
+      _error ->
         {:error, :invalid_format}
     end
   end
 
-  defp validate_url(_), do: {:error, :not_string}
+  defp validate_url(_other), do: {:error, :not_string}
 
   defp validate_host(host) when is_binary(host) do
     if String.trim(host) == "" do

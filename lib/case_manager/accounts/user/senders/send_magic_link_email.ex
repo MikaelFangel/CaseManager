@@ -11,7 +11,7 @@ defmodule CaseManager.Accounts.User.Senders.SendMagicLinkEmail do
   alias CaseManager.Mailer
 
   @impl true
-  def send(user_or_email, token, _) do
+  def send(user_or_email, token, _opts) do
     # if you get a user, its for a user that already exists.
     # if you get an email, then the user does not yet exist.
 

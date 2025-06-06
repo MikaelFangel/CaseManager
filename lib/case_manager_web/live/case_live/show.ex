@@ -206,7 +206,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   end
 
   @impl true
-  def handle_info(%{topic: "comment" <> _, event: "create", payload: notification}, socket) do
+  def handle_info(%{topic: "comment" <> _rest, event: "create", payload: notification}, socket) do
     if notification.data.visibility == socket.assigns.active_visibility do
       comment = Ash.load!(notification.data, user: [:full_name])
       {:noreply, stream_insert(socket, :comments, comment, at: 0)}
@@ -224,7 +224,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       :resolved -> :success
       :closed -> :neutral
       :reopened -> :error
-      _ -> :neutral
+      _other -> :neutral
     end
   end
 
@@ -233,7 +233,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       :public -> "bg-success/10"
       :internal -> "bg-warning/10"
       :personal -> "bg-error/10"
-      _ -> ""
+      _other -> ""
     end
   end
 
@@ -242,7 +242,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       :public -> "btn-success"
       :internal -> "btn-warning"
       :personal -> "btn-error"
-      _ -> "btn-primary"
+      _other -> "btn-primary"
     end
   end
 
@@ -251,7 +251,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       :public -> "text-success"
       :internal -> "text-warning"
       :personal -> "text-error"
-      _ -> ""
+      _other -> ""
     end
   end
 
@@ -260,7 +260,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       :public -> "everyone"
       :internal -> "MSSP team members"
       :personal -> "administrators and yourself"
-      _ -> "unknown audience"
+      _other -> "unknown audience"
     end
   end
 end

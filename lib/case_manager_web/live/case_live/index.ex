@@ -115,13 +115,13 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     case = Incidents.get_case!(id, actor: socket.assigns.current_user)
-    {:ok, _} = Incidents.delete_case(case, actor: socket.assigns.current_user)
+    {:ok, _case} = Incidents.delete_case(case, actor: socket.assigns.current_user)
 
     {:noreply, stream_delete(socket, :cases, case)}
   end
 
   @impl true
-  def handle_event("prev-page", _, socket) do
+  def handle_event("prev-page", _params, socket) do
     new_offset = max(0, socket.assigns.offset - socket.assigns.limit)
 
     params = %{
@@ -135,7 +135,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_event("next-page", _, socket) do
+  def handle_event("next-page", _params, socket) do
     new_offset = socket.assigns.offset + socket.assigns.limit
 
     params = %{
@@ -246,7 +246,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
       :resolved -> :success
       :closed -> :neutral
       :reopened -> :error
-      _ -> :neutral
+      _other -> :neutral
     end
   end
 
@@ -289,7 +289,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   defp get_filter_for_option("resolved"), do: %{status: [in: [:resolved]]}
   defp get_filter_for_option("closed"), do: %{status: [in: [:closed]]}
   defp get_filter_for_option("reopened"), do: %{status: [in: [:reopened]]}
-  defp get_filter_for_option(_), do: %{status: [in: [:closed, :resolved]]}
+  defp get_filter_for_option(_other), do: %{status: [in: [:closed, :resolved]]}
 
   defp time_ago(datetime) when is_struct(datetime) do
     now = DateTime.utc_now()
@@ -311,5 +311,5 @@ defmodule CaseManagerWeb.CaseLive.Index do
     end
   end
 
-  defp time_ago(_), do: "unknown"
+  defp time_ago(_other), do: "unknown"
 end

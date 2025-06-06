@@ -7,11 +7,13 @@ defmodule CaseManagerWeb.LiveUserAuth do
 
   import Phoenix.Component
 
+  alias AshAuthentication.Phoenix.LiveSession
+
   # This is used for nested liveviews to fetch the current user.
   # To use, place the following at the top of that liveview:
   # on_mount {CaseManagerWeb.LiveUserAuth, :current_user}
   def on_mount(:current_user, _params, session, socket) do
-    {:cont, AshAuthentication.Phoenix.LiveSession.assign_new_resources(socket, session)}
+    {:cont, LiveSession.assign_new_resources(socket, session)}
   end
 
   def on_mount(:live_user_optional, _params, _session, socket) do
@@ -35,7 +37,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
          true <- user.super_admin? do
       {:cont, socket}
     else
-      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/case")}
+      _error -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/case")}
     end
   end
 
@@ -44,7 +46,7 @@ defmodule CaseManagerWeb.LiveUserAuth do
          true <- user.super_admin? || user.soc_analyst? || user.soc_admin? do
       {:cont, socket}
     else
-      _ -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/case")}
+      _error -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/case")}
     end
   end
 

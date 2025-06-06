@@ -1,5 +1,5 @@
 defmodule CaseManagerWeb.AlertLiveTest do
-  use CaseManagerWeb.ConnCase
+  use CaseManagerWeb.ConnCase, async: true
 
   import CaseManager.IncidentsFixtures
   import Phoenix.LiveViewTest
@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.AlertLiveTest do
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}
   @invalid_attrs %{title: nil}
-  defp create_alert(_) do
+  defp create_alert(_opts) do
     alert = alert_fixture()
 
     %{alert: alert}
@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.AlertLiveTest do
     test "saves new alert", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/alert")
 
-      assert {:ok, form_live, _} =
+      assert {:ok, form_live, _html} =
                index_live
                |> element("a", "New Alert")
                |> render_click()
@@ -96,7 +96,7 @@ defmodule CaseManagerWeb.AlertLiveTest do
     test "updates alert and returns to show", %{conn: conn, alert: alert} do
       {:ok, show_live, _html} = live(conn, ~p"/alert/#{alert}")
 
-      assert {:ok, form_live, _} =
+      assert {:ok, form_live, _html} =
                show_live
                |> element("a", "Edit")
                |> render_click()

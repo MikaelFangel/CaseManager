@@ -1,5 +1,5 @@
 defmodule CaseManagerWeb.CaseLiveTest do
-  use CaseManagerWeb.ConnCase
+  use CaseManagerWeb.ConnCase, async: true
 
   import CaseManager.IncidentsFixtures
   import Phoenix.LiveViewTest
@@ -7,7 +7,7 @@ defmodule CaseManagerWeb.CaseLiveTest do
   @create_attrs %{title: "some title"}
   @update_attrs %{title: "some updated title"}
   @invalid_attrs %{title: nil}
-  defp create_case(_) do
+  defp create_case(_opts) do
     case = case_fixture()
 
     %{case: case}
@@ -26,7 +26,7 @@ defmodule CaseManagerWeb.CaseLiveTest do
     test "saves new case", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/cases")
 
-      assert {:ok, form_live, _} =
+      assert {:ok, form_live, _html} =
                index_live
                |> element("a", "New Case")
                |> render_click()
@@ -96,7 +96,7 @@ defmodule CaseManagerWeb.CaseLiveTest do
     test "updates case and returns to show", %{conn: conn, case: case} do
       {:ok, show_live, _html} = live(conn, ~p"/cases/#{case}")
 
-      assert {:ok, form_live, _} =
+      assert {:ok, form_live, _html} =
                show_live
                |> element("a", "Edit")
                |> render_click()
