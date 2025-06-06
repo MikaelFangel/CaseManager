@@ -67,11 +67,6 @@ defmodule CaseManagerWeb.Router do
     get "/sign-in", AuthController, :sign_in
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", CaseManagerWeb do
-  #   pipe_through :api
-  # end
-
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:case_manager, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
