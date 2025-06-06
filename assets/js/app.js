@@ -25,9 +25,42 @@ import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+
+// LiveView hooks
+const hooks = {
+  CopyToClipboard: {
+    mounted() {
+      this.el.addEventListener("click", () => {
+        const targetId = this.el.dataset.target
+        const targetElement = document.getElementById(targetId)
+        
+        if (targetElement) {
+          const text = targetElement.innerText || targetElement.textContent
+          
+          navigator.clipboard.writeText(text).then(() => {
+            // Optional: trigger a LiveView event to show feedback
+            this.pushEvent("api_key_copied", {})
+            
+            // Visual feedback - temporarily change button text
+            const originalHTML = this.el.innerHTML
+            this.el.innerHTML = '<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>'
+            
+            setTimeout(() => {
+              this.el.innerHTML = originalHTML
+            }, 1500)
+          }).catch(err => {
+            console.error('Failed to copy text: ', err)
+          })
+        }
+      })
+    }
+  }
+}
+
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
+  params: {_csrf_token: csrfToken},
+  hooks: hooks
 })
 
 // Show progress bar on live navigation and form submits

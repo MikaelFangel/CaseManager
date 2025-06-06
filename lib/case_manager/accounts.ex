@@ -21,6 +21,11 @@ defmodule CaseManager.Accounts do
       define :delete_user, action: :destroy
     end
 
-    resource CaseManager.Accounts.ApiKey
+    resource CaseManager.Accounts.ApiKey do
+      define :create_api_key, action: :create
+      define :list_api_keys, action: :read
+      define :get_api_key, action: :read, get_by: :id
+      define :delete_api_key, action: :destroy
+    end
   end
 end
