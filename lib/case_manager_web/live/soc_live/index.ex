@@ -130,7 +130,7 @@ defmodule CaseManagerWeb.SOCLive.Index do
   def handle_event("show_soc", %{"id" => id}, socket) do
     soc = Organizations.get_soc!(id)
 
-    socket = 
+    socket =
       socket
       |> assign(:selected_soc, soc)
       |> assign(:show_mobile_panel, true)

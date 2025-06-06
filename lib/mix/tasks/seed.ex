@@ -1,4 +1,6 @@
 defmodule Mix.Tasks.Seed do
+  @shortdoc "Seeds the database with test data"
+
   @moduledoc """
   Seeds the database with test data.
 
@@ -31,31 +33,30 @@ defmodule Mix.Tasks.Seed do
 
   use Mix.Task
 
-  @shortdoc "Seeds the database with test data"
-
   @impl Mix.Task
   def run(args) do
     # Parse command-line arguments
-    {opts, _, _} = OptionParser.parse(args, 
-      strict: [
-        clean: :boolean,
-        soc: :boolean,
-        company: :boolean,
-        user: :boolean,
-        alert: :boolean,
-        case: :boolean,
-        help: :boolean
-      ],
-      aliases: [
-        c: :clean,
-        s: :soc,
-        C: :company,
-        u: :user,
-        a: :alert,
-        i: :case,
-        h: :help
-      ]
-    )
+    {opts, _, _} =
+      OptionParser.parse(args,
+        strict: [
+          clean: :boolean,
+          soc: :boolean,
+          company: :boolean,
+          user: :boolean,
+          alert: :boolean,
+          case: :boolean,
+          help: :boolean
+        ],
+        aliases: [
+          c: :clean,
+          s: :soc,
+          C: :company,
+          u: :user,
+          a: :alert,
+          i: :case,
+          h: :help
+        ]
+      )
 
     cond do
       opts[:help] ->
@@ -68,12 +69,15 @@ defmodule Mix.Tasks.Seed do
 
       Enum.any?([:soc, :company, :user, :alert, :case], &Keyword.has_key?(opts, &1)) ->
         # Run specific seed files
-        args = Enum.reduce([:soc, :company, :user, :alert, :case], [], fn key, acc ->
-          case opts[key] do
-            true -> acc ++ ["-#{flag_for_key(key)}"]
-            _ -> acc
-          end
-        end)
+        args =
+          Enum.reduce([:soc, :company, :user, :alert, :case], [], fn key, acc ->
+            if opts[key] do
+              acc ++ ["-#{flag_for_key(key)}"]
+            else
+              acc
+            end
+          end)
+
         run_seed_script(args)
 
       true ->
@@ -98,13 +102,13 @@ defmodule Mix.Tasks.Seed do
 
     # Build command with arguments
     cmd = [script_path] ++ args
-    
+
     # Execute the script
     {output, exit_code} = System.cmd("bash", cmd, stderr_to_stdout: true)
-    
+
     # Display the output
     Mix.shell().info(output)
-    
+
     # Exit with the same exit code as the script
     if exit_code != 0 do
       Mix.shell().info("Seed script completed with exit code #{exit_code}")

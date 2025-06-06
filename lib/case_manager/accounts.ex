@@ -8,8 +8,6 @@ defmodule CaseManager.Accounts do
     show? true
   end
 
-
-
   resources do
     resource CaseManager.Accounts.Token
 
