@@ -21,7 +21,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
             <.button :if={!@case.escalated} phx-click="escalate_case">
               Escalate case
             </.button>
-            <.button variant="primary" navigate={~p"/case/#{@case}/edit?return_to=show"}>
+            <.button :if={@soc_user} variant="primary" navigate={~p"/case/#{@case}/edit?return_to=show"}>
               <.icon name="hero-pencil-square" /> Edit case
             </.button>
           </:actions>
@@ -118,7 +118,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    user = Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?])
+    user =
+      Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?, :socs])
 
     if connected?(socket) do
       CaseManagerWeb.Endpoint.subscribe("comment:" <> id)
@@ -134,15 +135,18 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
     comments = Incidents.get_comments_for_case!(id, initial_visibility, actor: user)
 
-    {:ok,
-     socket
-     |> assign(:page_title, "Show Case")
-     |> assign(:user_roles, user.soc_roles ++ user.company_roles)
-     |> assign(:active_visibility, initial_visibility)
-     |> assign(:case, case)
-     |> assign(:show_mobile_panel, false)
-     |> stream(:comments, comments)
-     |> assign(:user_id, socket.assigns.current_user.id)}
+    socket =
+      socket
+      |> assign(:page_title, "Show Case")
+      |> assign(:user_roles, user.soc_roles ++ user.company_roles)
+      |> assign(:active_visibility, initial_visibility)
+      |> assign(:case, case)
+      |> assign(:soc_user, Enum.any?(user.socs, fn soc -> soc.id == case.soc.id end) or user.super_admin?)
+      |> assign(:show_mobile_panel, false)
+      |> stream(:comments, comments)
+      |> assign(:user_id, socket.assigns.current_user.id)
+
+    {:ok, socket}
   end
 
   @impl true
