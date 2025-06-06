@@ -3,7 +3,6 @@ defmodule CaseManagerWeb.CaseLive.Form do
   use CaseManagerWeb, :live_view
 
   alias CaseManager.Incidents
-  alias CaseManager.Incidents.Case
 
   @impl true
   def render(assigns) do
@@ -50,51 +49,29 @@ defmodule CaseManagerWeb.CaseLive.Form do
     socket
     |> assign(:page_title, "Edit Case")
     |> assign(:case, case)
-    |> assign(:form, to_form(Incidents.form_to_update_case(case)))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    case = %Case{}
-
-    socket
-    |> assign(:page_title, "New Case")
-    |> assign(:case, case)
-    |> assign(:form, to_form(Incidents.form_to_update_case(case)))
+    |> assign(:form, to_form(Incidents.form_to_update_case(case, actor: user)))
   end
 
   @impl true
-  def handle_event("validate", %{"case" => case_params}, socket) do
-    changeset = Incidents.update_case(socket.assigns.case, case_params)
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+  def handle_event("validate", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
+    {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event("save", %{"case" => case_params}, socket) do
-    save_case(socket, socket.assigns.live_action, case_params)
-  end
+  @impl true
+  def handle_event("save", %{"form" => params}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
+      {:ok, _case} ->
+        socket =
+          socket
+          |> put_flash(:info, "Case updated successfully.")
+          |> push_navigate(to: return_path("show", socket.assigns.case))
 
-  defp save_case(socket, :edit, case_params) do
-    case Incidents.update_case(socket.assigns.case, case_params) do
-      {:ok, case} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Case updated successfully")
-         |> push_navigate(to: return_path(socket.assigns.return_to, case))}
+        {:noreply, socket}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  defp save_case(socket, :new, case_params) do
-    case Incidents.create_case(case_params) do
-      {:ok, case} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, "Case created successfully")
-         |> push_navigate(to: return_path(socket.assigns.return_to, case))}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
+      {:error, form} ->
+        socket = assign(socket, :form, form)
+        {:noreply, socket}
     end
   end
 
