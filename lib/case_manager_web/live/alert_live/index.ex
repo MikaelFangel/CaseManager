@@ -335,7 +335,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
-    user = Ash.load!(socket.assigns.curren_user, :super_admin?)
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
     alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]], actor: user)
 
     # Handle comment subscription changes

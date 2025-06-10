@@ -222,8 +222,25 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
   @impl true
   def handle_info(%{topic: "comment" <> _rest, event: "create", payload: notification}, socket) do
-    if notification.data.visibility == socket.assigns.active_visibility do
-      comment = Ash.load!(notification.data, user: [:full_name])
+    comment_data = notification.data
+    current_user = socket.assigns.current_user
+
+    authorized =
+      case comment_data.visibility do
+        :public ->
+          true
+
+        :personal ->
+          comment_data.user_id == current_user.id
+
+        :internal ->
+          user_with_socs = Ash.load!(current_user, [:socs, :super_admin?])
+          case_soc_id = socket.assigns.case.soc.id
+          Enum.any?(user_with_socs.socs, fn soc -> soc.id == case_soc_id end) or user_with_socs.super_admin?
+      end
+
+    if authorized and comment_data.visibility == socket.assigns.active_visibility do
+      comment = Ash.load!(comment_data, user: [:full_name])
       {:noreply, stream_insert(socket, :comments, comment, at: 0)}
     else
       {:noreply, socket}
