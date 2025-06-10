@@ -4,7 +4,8 @@ defmodule CaseManager.Incidents.Comment do
     otp_app: :case_manager,
     domain: CaseManager.Incidents,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    authorizers: [Ash.Policy.Authorizer]
 
   alias CaseManager.Incidents.Visibility
 
@@ -46,6 +47,30 @@ defmodule CaseManager.Incidents.Comment do
     destroy :delete do
       description "Delete a comment."
       primary? true
+    end
+  end
+
+  policies do
+    bypass actor_attribute_equals(:super_admin?, true) do
+      authorize_if always()
+    end
+
+    policy action_type(:create) do
+      authorize_if always()
+    end
+
+    policy action_type(:read) do
+      authorize_if expr(visibility == :public)
+      authorize_if expr(visibility == :personal && user_id == ^actor(:id))
+      authorize_if expr(visibility == :internal && exists(case.soc.users, id == ^actor(:id)))
+    end
+
+    policy action_type(:update) do
+      authorize_if always()
+    end
+
+    policy action_type(:destroy) do
+      authorize_if always()
     end
   end
 
