@@ -54,6 +54,16 @@ const hooks = {
         }
       })
     }
+  },
+  CtrlEnterSubmit: {
+    mounted() {
+      this.el.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          this.el.form.dispatchEvent(
+            new Event('submit', {bubbles: true, cancelable: true}));
+        }
+      })
+    }
   }
 }
 

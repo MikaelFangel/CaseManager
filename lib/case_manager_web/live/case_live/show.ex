@@ -102,11 +102,16 @@ defmodule CaseManagerWeb.CaseLive.Show do
                 </div>
                 <p class="mb-2 text-xs text-base-content/50">This comment will only be visible to {visibility_audience(@active_visibility)}.</p>
 
-                <.input field={@comment_form[:body]} type="textarea" placeholder="Write a comment..." class="w-full" />
+                <.input field={@comment_form[:body]} type="textarea" placeholder="Write a comment..." class="w-full" phx-hook="CtrlEnterSubmit" />
 
-                <button class={"btn w-full #{visibility_button_class(@active_visibility)}"}>
-                  <.icon name="hero-paper-airplane" /> Send
-                </button>
+                <div class="flex items-center justify-between mt-2">
+                  <div class="text-xs text-base-content/50 flex items-center gap-1">
+                    <kbd class="kbd kbd-sm">ctrl</kbd> + <kbd class="kbd kbd-sm">↵</kbd> or <kbd class="kbd kbd-sm">⌘</kbd> + <kbd class="kbd kbd-sm">↵</kbd>
+                  </div>
+                  <button class={"btn #{visibility_button_class(@active_visibility)}"}>
+                    <.icon name="hero-paper-airplane" /> Send
+                  </button>
+                </div>
               </.form>
             </div>
           </div>
@@ -208,6 +213,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
   def handle_event("toggle_mobile_panel", _params, socket) do
     {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
   end
+
+
 
   @impl true
   def handle_info(%{topic: "comment" <> _rest, event: "create", payload: notification}, socket) do

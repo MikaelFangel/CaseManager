@@ -10,7 +10,8 @@ defmodule CaseManager.Incidents.Alert do
     domain: CaseManager.Incidents,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshJsonApi.Resource]
+    extensions: [AshJsonApi.Resource],
+    notifiers: [Ash.Notifier.PubSub]
 
   alias CaseManager.Incidents.Status
 
@@ -101,6 +102,15 @@ defmodule CaseManager.Incidents.Alert do
     policy action_type(:destroy) do
       authorize_if always()
     end
+  end
+
+  pub_sub do
+    module CaseManagerWeb.Endpoint
+
+    prefix "alert"
+    publish :create, [[:company_id, nil], [:id, nil]]
+    publish :update, [[:company_id, nil], [:id, nil]]
+    publish :change_status, [[:company_id, nil], [:id, nil]]
   end
 
   validations do

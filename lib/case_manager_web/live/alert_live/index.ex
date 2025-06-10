@@ -90,7 +90,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
               <%= if @show_status_form do %>
                 <.form for={@status_form} id="status-form" phx-change="validate_status" phx-submit="update_status" class="flex items-center space-x-2">
                   <div>
-                    <.input field={@status_form[:status]} type="select" options={status_options()} />
+                    <.input field={@status_form[:status]} type="select" options={status_options()} value={@selected_alert.status} />
                     <.button variant="primary" phx-disable-with="Updating...">Update</.button>
                     <.button type="button" phx-click="toggle_status_form">Cancel</.button>
                   </div>
@@ -142,8 +142,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
           <div class="mt-4">
             <.form for={@comment_form} id="comment-form" phx-change="validate_comment" phx-submit="add_comment">
-              <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." />
-              <footer class="mt-2">
+              <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." phx-hook="CtrlEnterSubmit" />
+              <footer class="mt-2 flex items-center justify-between">
+                <div class="text-xs text-base-content/50 flex items-center gap-1">
+                  <kbd class="kbd kbd-sm">ctrl</kbd> + <kbd class="kbd kbd-sm">↵</kbd> or <kbd class="kbd kbd-sm">⌘</kbd> + <kbd class="kbd kbd-sm">↵</kbd>
+                </div>
                 <button class="btn btn-primary" phx-disable-with="Adding...">Add Comment</button>
               </footer>
             </.form>
@@ -218,7 +221,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:query, "")
      |> assign(:loading, false)
      |> assign(:end_of_timeline?, false)
-     |> assign(:current_alert_subscription, nil)}
+     |> assign(:current_alert_subscription, nil)
+     |> assign(:current_alert_ids, [])}
   end
 
   @impl true
@@ -427,11 +431,21 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_event("update_status", %{"form" => form}, socket) do
     case AshPhoenix.Form.submit(socket.assigns.status_form, params: form) do
       {:ok, _status} ->
-        {:noreply,
-         socket |> put_flash(:info, gettext("Status updated successfully.")) |> assign(:show_status_form, false)}
+        updated_alert =
+          Incidents.get_alert!(socket.assigns.selected_alert.id,
+            load: [:company, :cases, comments: [user: [:full_name]]]
+          )
+
+        socket =
+          socket
+          |> assign(:selected_alert, updated_alert)
+          |> assign(:status_form, to_form(Incidents.form_to_change_alert_status(updated_alert)))
+          |> assign(:show_status_form, false)
+
+        {:noreply, socket}
 
       {:error, form} ->
-        {:noreply, assign(socket, :status_for, form)}
+        {:noreply, assign(socket, :status_form, form)}
     end
   end
 
@@ -481,6 +495,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
   end
 
+
+
   defp paginate_alerts(socket, new_page) when new_page >= 1 do
     %{per_page: per_page, page: cur_page, query: query} = socket.assigns
     user = Ash.load!(socket.assigns.current_user, :super_admin?)
@@ -505,9 +521,12 @@ defmodule CaseManagerWeb.AlertLive.Index do
           assign(socket, end_of_timeline?: at == -1)
 
         [_head | _tail] = alerts ->
+          alert_ids = Enum.map(alerts, & &1.id)
+
           socket
           |> assign(end_of_timeline?: false)
           |> assign(:page, new_page)
+          |> assign(:current_alert_ids, alert_ids)
           |> stream(:alert_collection, alerts, at: at, limit: limit)
       end
     rescue
@@ -552,6 +571,30 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, socket}
   end
 
+  def handle_info(%{topic: "alert" <> _, event: "change_status", payload: notification}, socket) do
+    updated_alert = Ash.load!(notification.data, [:company])
+
+    # Only update if the alert is already visible on current page
+    socket =
+      if updated_alert.id in socket.assigns.current_alert_ids do
+        stream_insert(socket, :alert_collection, updated_alert)
+      else
+        socket
+      end
+
+    socket =
+      if socket.assigns.selected_alert && socket.assigns.selected_alert.id == updated_alert.id do
+        updated_alert_with_relations =
+          Incidents.get_alert!(updated_alert.id, load: [:company, :cases, comments: [user: [:full_name]]])
+
+        assign(socket, :selected_alert, updated_alert_with_relations)
+      else
+        socket
+      end
+
+    {:noreply, socket}
+  end
+
   def handle_info(%{topic: "comment:" <> _, event: "create", payload: %{data: comment}}, socket) do
     if socket.assigns.selected_alert && comment.alert_id == socket.assigns.selected_alert.id do
       comment_with_user = Ash.load!(comment, user: [:full_name])
@@ -575,7 +618,10 @@ defmodule CaseManagerWeb.AlertLive.Index do
     ~H"""
     <.form for={@form} id="case-form" phx-change="validate_case" phx-submit="save_case">
       <.input field={@form[:title]} type="text" label="Title" required />
-      <.input field={@form[:description]} type="textarea" label="Description" />
+      <.input field={@form[:description]} type="textarea" label="Description" placeholder="Describe the case..." phx-hook="CtrlEnterSubmit" />
+      <div class="text-xs text-base-content/50 flex items-center gap-1 -mt-1 mb-2">
+        <kbd class="kbd kbd-sm">ctrl</kbd> + <kbd class="kbd kbd-sm">↵</kbd> or <kbd class="kbd kbd-sm">⌘</kbd> + <kbd class="kbd kbd-sm">↵</kbd>
+      </div>
       <.input field={@form[:soc_id]} type="select" label="SOC" options={@soc_options} prompt="Select SOC" required />
       <.input field={@form[:severity]} type="select" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1 |> to_string() |> String.capitalize(), &1})} prompt="Select Severity" />
 
