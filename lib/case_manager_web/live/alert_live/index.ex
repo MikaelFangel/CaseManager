@@ -154,15 +154,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
             <h3 class="font-medium text-md pr-4">Comments</h3>
             <.badge :if={@selected_alert.comments != []} type={:info}>{length(@selected_alert.comments || [])}</.badge>
           </div>
-          <%= for comment <- @selected_alert.comments |> Enum.reverse() || [] do %>
-            <div class="pb-2">
-              <div class="flex items-center">
-                <span class="font-bold text-sm pr-2">{comment.user.full_name}</span>
-                <time class="text-xs text-gray-500">{comment.inserted_at}</time>
+          <div id="comments-stream" phx-update="stream">
+            <%= for {id, comment} <- @streams.comments do %>
+              <div id={id} class="pb-2">
+                <div class="flex items-center">
+                  <span class="font-bold text-sm pr-2">{comment.user.full_name}</span>
+                  <time class="text-xs text-gray-500">{comment.inserted_at}</time>
+                </div>
+                <p class="mt-1 text-sm">{comment.body}</p>
               </div>
-              <p class="mt-1 text-sm">{comment.body}</p>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
           <%= if @selected_alert.comments == [] do %>
             <p class="text-sm opacity-50">No comments available.</p>
           <% end %>
@@ -215,7 +217,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:per_page, 20)
      |> assign(:query, "")
      |> assign(:loading, false)
-     |> assign(:end_of_timeline?, false)}
+     |> assign(:end_of_timeline?, false)
+     |> assign(:current_alert_subscription, nil)}
   end
 
   @impl true
@@ -231,6 +234,21 @@ defmodule CaseManagerWeb.AlertLive.Index do
         rescue
           _error -> nil
         end
+      end
+
+    socket =
+      if connected?(socket) do
+        if socket.assigns.current_alert_subscription do
+          CaseManagerWeb.Endpoint.unsubscribe("comment:#{socket.assigns.current_alert_subscription}:comments")
+        end
+
+        if id do
+          CaseManagerWeb.Endpoint.subscribe("comment:#{id}:comments")
+        end
+
+        socket
+      else
+        socket
       end
 
     socket =
@@ -251,7 +269,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
       |> assign(:show_status_form, false)
       |> assign(:page, 1)
       |> assign(:end_of_timeline?, false)
+      |> assign(:current_alert_subscription, id)
       |> stream(:alert_collection, [], reset: true)
+      |> stream(:comments, if(selected_alert, do: selected_alert.comments || [], else: []), reset: true)
 
     # Apply pagination with the search query after assigns are set
     socket = paginate_alerts(socket, 1)
@@ -309,6 +329,22 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_event("show_alert", %{"id" => id}, socket) do
     alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
 
+    # Handle comment subscription changes
+    socket =
+      if connected?(socket) do
+        # Unsubscribe from previous alert comments if any
+        if socket.assigns.current_alert_subscription do
+          CaseManagerWeb.Endpoint.unsubscribe("comment:#{socket.assigns.current_alert_subscription}:comments")
+        end
+
+        # Subscribe to new alert comments
+        CaseManagerWeb.Endpoint.subscribe("comment:#{id}:comments")
+
+        socket
+      else
+        socket
+      end
+
     socket =
       socket
       |> assign(
@@ -320,6 +356,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
         to_form(Incidents.form_to_change_alert_status(alert))
       )
       |> assign(:selected_alert, alert)
+      |> assign(:current_alert_subscription, id)
+      |> stream(:comments, alert.comments, reset?: true)
       |> assign(:show_mobile_panel, true)
 
     params = %{q: socket.assigns.query}
@@ -368,7 +406,17 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_event("add_comment", %{"form" => form}, socket) do
     case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form, actor: socket.assigns.current_user) do
       {:ok, _comment} ->
-        {:noreply, put_flash(socket, :info, gettext("Comment added successfully."))}
+        # Reset form to clear textarea
+        socket =
+          assign(
+            socket,
+            :comment_form,
+            to_form(
+              Incidents.form_to_add_comment_to_alert(socket.assigns.selected_alert, actor: socket.assigns.current_user)
+            )
+          )
+
+        {:noreply, socket}
 
       {:error, form} ->
         {:noreply, assign(socket, :comment_form, form)}
@@ -470,7 +518,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     end
   end
 
-  def handle_info(%{event: "create", payload: notification}, socket) do
+  def handle_info(%{topic: "alert" <> _, event: "create", payload: notification}, socket) do
     alert = Ash.load!(notification.data, [:company])
 
     # Only add new alerts when viewing the first page to prevent jumping
@@ -486,7 +534,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   @impl true
-  def handle_info(%{event: "update", payload: notification}, socket) do
+  def handle_info(%{topic: "alert" <> _, event: "update", payload: notification}, socket) do
     updated_alert = Ash.load!(notification.data, [:company])
 
     socket = stream_insert(socket, :alert_collection, updated_alert)
@@ -502,6 +550,16 @@ defmodule CaseManagerWeb.AlertLive.Index do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_info(%{topic: "comment:" <> _, event: "create", payload: %{data: comment}}, socket) do
+    if socket.assigns.selected_alert && comment.alert_id == socket.assigns.selected_alert.id do
+      comment_with_user = Ash.load!(comment, user: [:full_name])
+      socket = stream_insert(socket, :comments, comment_with_user, at: 0)
+      {:noreply, socket}
+    else
+      {:noreply, socket}
+    end
   end
 
   defp status_options do

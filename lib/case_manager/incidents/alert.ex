@@ -180,6 +180,7 @@ defmodule CaseManager.Incidents.Alert do
     has_many :comments, CaseManager.Incidents.Comment do
       description "Comments and notes on this alert"
       public? true
+      sort inserted_at: :desc
     end
   end
 

@@ -52,7 +52,7 @@ defmodule CaseManager.Incidents.Comment do
   pub_sub do
     module CaseManagerWeb.Endpoint
     prefix "comment"
-    publish :create, [[:case_id, "comments", nil]]
+    publish :create, [[:case_id, :alert_id], "comments", nil]
   end
 
   attributes do
@@ -85,6 +85,7 @@ defmodule CaseManager.Incidents.Comment do
 
     belongs_to :user, CaseManager.Accounts.User do
       allow_nil? false
+      public? true
     end
   end
 end
