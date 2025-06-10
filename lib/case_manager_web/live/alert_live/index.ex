@@ -7,6 +7,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+    <div id="platform-detector" phx-hook="PlatformDetector" style="display: none;"></div>
     <Layouts.split flash={@flash} search_placeholder="Search alerts" search_value={@query} user_roles={@user_roles} show_mobile_panel={@show_mobile_panel}>
       <:top>
         <.header class="h-12">
@@ -145,7 +146,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
               <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." phx-hook="CtrlEnterSubmit" />
               <footer class="mt-2 flex items-center justify-between">
                 <div class="text-xs text-base-content/50 flex items-center gap-1">
-                  <kbd class="kbd kbd-sm">ctrl</kbd> + <kbd class="kbd kbd-sm">↵</kbd> or <kbd class="kbd kbd-sm">⌘</kbd> + <kbd class="kbd kbd-sm">↵</kbd>
+                  <kbd class="kbd kbd-sm">{if @is_mac, do: "⌘", else: "ctrl"}</kbd> + <kbd class="kbd kbd-sm">↵</kbd> to send
                 </div>
                 <button class="btn btn-primary" phx-disable-with="Adding...">Add Comment</button>
               </footer>
@@ -222,7 +223,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:loading, false)
      |> assign(:end_of_timeline?, false)
      |> assign(:current_alert_subscription, nil)
-     |> assign(:current_alert_ids, [])}
+     |> assign(:current_alert_ids, [])
+     |> assign(:is_mac, false)}
   end
 
   @impl true
@@ -495,7 +497,9 @@ defmodule CaseManagerWeb.AlertLive.Index do
     {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
   end
 
-
+  def handle_event("platform_detected", %{"is_mac" => is_mac}, socket) do
+    {:noreply, assign(socket, :is_mac, is_mac)}
+  end
 
   defp paginate_alerts(socket, new_page) when new_page >= 1 do
     %{per_page: per_page, page: cur_page, query: query} = socket.assigns
@@ -619,9 +623,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     <.form for={@form} id="case-form" phx-change="validate_case" phx-submit="save_case">
       <.input field={@form[:title]} type="text" label="Title" required />
       <.input field={@form[:description]} type="textarea" label="Description" placeholder="Describe the case..." phx-hook="CtrlEnterSubmit" />
-      <div class="text-xs text-base-content/50 flex items-center gap-1 -mt-1 mb-2">
-        <kbd class="kbd kbd-sm">ctrl</kbd> + <kbd class="kbd kbd-sm">↵</kbd> or <kbd class="kbd kbd-sm">⌘</kbd> + <kbd class="kbd kbd-sm">↵</kbd>
-      </div>
+      <div class="text-xs text-base-content/50 flex items-center gap-1 -mt-1 mb-2"></div>
       <.input field={@form[:soc_id]} type="select" label="SOC" options={@soc_options} prompt="Select SOC" required />
       <.input field={@form[:severity]} type="select" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1 |> to_string() |> String.capitalize(), &1})} prompt="Select Severity" />
 

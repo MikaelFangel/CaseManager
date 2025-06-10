@@ -7,6 +7,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
+    <div id="platform-detector-case" phx-hook="PlatformDetector" style="display: none;"></div>
     <Layouts.split flash={@flash} left_width="w-2/3" right_width="w-1/3" user_roles={@user_roles} show_mobile_panel={@show_mobile_panel}>
       <:top>
         <.header>
@@ -106,7 +107,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
                 <div class="flex items-center justify-between mt-2">
                   <div class="text-xs text-base-content/50 flex items-center gap-1">
-                    <kbd class="kbd kbd-sm">ctrl</kbd> + <kbd class="kbd kbd-sm">↵</kbd> or <kbd class="kbd kbd-sm">⌘</kbd> + <kbd class="kbd kbd-sm">↵</kbd>
+                    <kbd class="kbd kbd-sm">{if @is_mac, do: "⌘", else: "ctrl"}</kbd> + <kbd class="kbd kbd-sm">↵</kbd> to send
                   </div>
                   <button class={"btn #{visibility_button_class(@active_visibility)}"}>
                     <.icon name="hero-paper-airplane" /> Send
@@ -150,6 +151,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       |> assign(:show_mobile_panel, false)
       |> stream(:comments, comments)
       |> assign(:user_id, socket.assigns.current_user.id)
+      |> assign(:is_mac, false)
 
     {:ok, socket}
   end
@@ -214,7 +216,9 @@ defmodule CaseManagerWeb.CaseLive.Show do
     {:noreply, assign(socket, :show_mobile_panel, !socket.assigns.show_mobile_panel)}
   end
 
-
+  def handle_event("platform_detected", %{"is_mac" => is_mac}, socket) do
+    {:noreply, assign(socket, :is_mac, is_mac)}
+  end
 
   @impl true
   def handle_info(%{topic: "comment" <> _rest, event: "create", payload: notification}, socket) do
