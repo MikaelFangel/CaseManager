@@ -93,7 +93,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
           <div class="sticky bottom-0 bg-base-100">
             <div class={"order-base-300 rounded-lg #{visibility_theme_class(@active_visibility)}"}>
-              <.form for={@comment_form} id="comment-form" phx-validate="validate_comment" phx-submit="add_comment" class="w-full mt-2 px-3 pb-3">
+              <.form for={@comment_form} id="comment-form" phx-validate="validate_comment" phx-submit="add_comment" class="w-full mt-2 px-3 pb-3" phx-hook="ClearTextarea">
                 <.input field={@comment_form[:visibility]} type="hidden" value={@active_visibility} />
 
                 <div class="flex items-center">
@@ -128,7 +128,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       Ash.load!(socket.assigns.current_user, [:soc_roles, :company_roles, :super_admin?, :socs])
 
     if connected?(socket) do
-      CaseManagerWeb.Endpoint.subscribe("comment:" <> id)
+      CaseManagerWeb.Endpoint.subscribe("comment:" <> id <> ":comments")
     end
 
     case =
@@ -196,7 +196,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
     case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form) do
       {:ok, _comment} ->
-        socket = push_navigate(socket, to: ~p"/case/" <> socket.assigns.case.id)
+        socket = push_event(socket, "clear-textarea", %{})
         {:noreply, socket}
 
       {:error, form} ->

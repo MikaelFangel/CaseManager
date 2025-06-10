@@ -104,6 +104,17 @@ const hooks = {
       this.pushEvent("platform_detected", { is_mac: isMac });
     },
   },
+  ClearTextarea: {
+    mounted() {
+      this.handleEvent("clear-textarea", () => {
+        const textarea = this.el.querySelector("textarea");
+        if (textarea) {
+          textarea.value = "";
+          textarea.focus();
+        }
+      });
+    },
+  },
 };
 
 const liveSocket = new LiveSocket("/live", Socket, {

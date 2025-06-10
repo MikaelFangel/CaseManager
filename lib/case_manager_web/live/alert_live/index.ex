@@ -142,7 +142,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <% end %>
 
           <div class="mt-4">
-            <.form for={@comment_form} id="comment-form" phx-change="validate_comment" phx-submit="add_comment">
+            <.form for={@comment_form} id="comment-form" phx-change="validate_comment" phx-submit="add_comment" phx-hook="ClearTextarea">
               <.input field={@comment_form[:body]} type="textarea" placeholder="Add comment..." phx-hook="CtrlEnterSubmit" />
               <footer class="mt-2 flex items-center justify-between">
                 <div class="text-xs text-base-content/50 flex items-center gap-1">
@@ -232,11 +232,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
     query = Map.get(params, "q", "")
     id = Map.get(params, "id")
 
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
     # Load the selected alert if there's an ID in params
     selected_alert =
       if id do
         try do
-          Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
+          Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]], actor: user)
         rescue
           _error -> nil
         end
@@ -333,7 +335,8 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("show_alert", %{"id" => id}, socket) do
-    alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]])
+    user = Ash.load!(socket.assigns.curren_user, :super_admin?)
+    alert = Incidents.get_alert!(id, load: [:cases, :company, comments: [user: [:full_name]]], actor: user)
 
     # Handle comment subscription changes
     socket =
@@ -412,16 +415,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   def handle_event("add_comment", %{"form" => form}, socket) do
     case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form, actor: socket.assigns.current_user) do
       {:ok, _comment} ->
-        # Reset form to clear textarea
-        socket =
-          assign(
-            socket,
-            :comment_form,
-            to_form(
-              Incidents.form_to_add_comment_to_alert(socket.assigns.selected_alert, actor: socket.assigns.current_user)
-            )
-          )
-
+        socket = push_event(socket, "clear-textarea", %{})
         {:noreply, socket}
 
       {:error, form} ->
@@ -431,11 +425,14 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("update_status", %{"form" => form}, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
     case AshPhoenix.Form.submit(socket.assigns.status_form, params: form) do
       {:ok, _status} ->
         updated_alert =
           Incidents.get_alert!(socket.assigns.selected_alert.id,
-            load: [:company, :cases, comments: [user: [:full_name]]]
+            load: [:company, :cases, comments: [user: [:full_name]]],
+            actor: user
           )
 
         socket =
@@ -453,11 +450,13 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_event("save_case", %{"form" => form}, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
     alert =
       socket.assigns.selected_alerts
       |> hd()
       |> String.replace("alert_collection-", "")
-      |> CaseManager.Incidents.get_alert!()
+      |> CaseManager.Incidents.get_alert!(actor: user)
 
     form =
       form
@@ -558,6 +557,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   @impl true
   def handle_info(%{topic: "alert" <> _, event: "update", payload: notification}, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
     updated_alert = Ash.load!(notification.data, [:company])
 
     socket = stream_insert(socket, :alert_collection, updated_alert)
@@ -565,7 +565,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     socket =
       if socket.assigns.selected_alert && socket.assigns.selected_alert.id == updated_alert.id do
         updated_alert_with_relations =
-          Incidents.get_alert!(updated_alert.id, load: [:company, :cases, comments: [user: [:full_name]]])
+          Incidents.get_alert!(updated_alert.id, load: [:company, :cases, comments: [user: [:full_name]]], actor: user)
 
         assign(socket, :selected_alert, updated_alert_with_relations)
       else
@@ -576,6 +576,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
   end
 
   def handle_info(%{topic: "alert" <> _, event: "change_status", payload: notification}, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
     updated_alert = Ash.load!(notification.data, [:company])
 
     # Only update if the alert is already visible on current page
@@ -589,7 +590,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     socket =
       if socket.assigns.selected_alert && socket.assigns.selected_alert.id == updated_alert.id do
         updated_alert_with_relations =
-          Incidents.get_alert!(updated_alert.id, load: [:company, :cases, comments: [user: [:full_name]]])
+          Incidents.get_alert!(updated_alert.id, load: [:company, :cases, comments: [user: [:full_name]]], actor: user)
 
         assign(socket, :selected_alert, updated_alert_with_relations)
       else
