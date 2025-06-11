@@ -56,25 +56,26 @@ defmodule CaseManager.Incidents.Alert do
 
     read :older_than do
       description "Find alerts older than specified duration for cleanup"
-      
+
       argument :duration, :integer do
         allow_nil? false
         description "Number of time units"
         default 6
       end
-      
+
       argument :unit, :atom do
         allow_nil? false
         description "Time unit (:second, :minute, :hour, :day, :week, :month, :year)"
         default :month
         constraints one_of: [:second, :minute, :hour, :day, :week, :month, :year]
       end
-      
+
       filter expr(inserted_at <= ago(^arg(:duration), ^arg(:unit)))
     end
 
     update :update do
       description "Change the alert data"
+      accept [:title, :description, :severity, :additional_data]
       primary? true
       require_atomic? false
     end
