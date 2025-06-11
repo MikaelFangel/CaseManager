@@ -71,6 +71,15 @@ defmodule CaseManager.Incidents.Case do
 
       change manage_relationship(:comment, :comments, type: :create)
     end
+
+    update :assign_user do
+      description "Assign a user to the case"
+      argument :user_id, :uuid, allow_nil?: true
+      require_atomic? false
+
+      change set_attribute(:assignee_id, arg(:user_id))
+    end
+
   end
 
   policies do
@@ -101,6 +110,10 @@ defmodule CaseManager.Incidents.Case do
       authorize_if expr(company.users == ^actor(:id) && escalated)
     end
 
+    policy action(:assign_user) do
+      authorize_if expr(soc.users == ^actor(:id))
+    end
+
     policy action_type(:destroy) do
       authorize_if actor_attribute_equals(:super_admin?, true)
     end
@@ -112,6 +125,7 @@ defmodule CaseManager.Incidents.Case do
     prefix "case"
     publish :create, [[:company_id, :soc_id, nil], [:id, nil]]
     publish :update, [[:company_id, :soc_id, nil], [:id, nil]]
+    publish :assign_user, [[:company_id, :soc_id, nil], [:id, nil]]
   end
 
   attributes do

@@ -102,6 +102,18 @@ defmodule CaseManager.Accounts.User do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :get_by_company do
+      description "Get users by company ID"
+      
+      argument :company_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(companies.id == ^arg(:company_id))
+      
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
     # create :sign_in_with_magic_link do
     #   description "Sign in or register a user with magic link."
 

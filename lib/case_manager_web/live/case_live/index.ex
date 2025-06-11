@@ -32,7 +32,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
           {time_ago(case.updated_at)}
         </:col>
 
-        <:col :let={{_id, case}} label="Assignee">{case.assignee}</:col>
+        <:col :let={{_id, case}} label="Assignee">{case.assignee && case.assignee.full_name}</:col>
       </.table>
 
       <%= if @page_results do %>
@@ -79,7 +79,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
     page_results =
       Incidents.search_cases!(
         query,
-        query: [filter_input: filter, sort_input: "-updated_at", load: [:company]],
+        query: [filter_input: filter, sort_input: "-updated_at", load: [:company, assignee: [:full_name]]],
         page: [limit: limit, offset: offset, count: true],
         actor: user
       )

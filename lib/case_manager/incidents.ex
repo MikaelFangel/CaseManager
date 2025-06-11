@@ -50,6 +50,7 @@ defmodule CaseManager.Incidents do
       define :update_case, action: :update
       define :delete_case, action: :delete
       define :add_comment_to_case, action: :add_comment, args: [:comment]
+      define :assign_user_to_case, action: :assign_user, args: [:user_id]
 
       define :search_cases,
         action: :search,

@@ -43,7 +43,32 @@ defmodule CaseManagerWeb.CaseLive.Show do
             </div>
             <div>Reported by: <span class="font-semibold">{@case.reporter.full_name}</span></div>
             <div class="text-center">{@case.resolution_type}</div>
-            <div :if={@case.assignee} class="text-right">Assignee: <span class="font-semibold">{@case.assignee.full_name}</span></div>
+            <div class="text-right">
+              <%= if @case.assignee do %>
+                <div class="flex items-center justify-end gap-2">
+                  <span>Assignee: <span class="font-semibold">{@case.assignee.full_name}</span></span>
+                  <button :if={@soc_user} phx-click="toggle_assign_form" class="btn btn-xs btn-ghost">
+                    <.icon name="hero-pencil" class="w-3 h-3" />
+                  </button>
+                </div>
+              <% else %>
+                <div class="flex items-center justify-end gap-2">
+                  <span class="text-base-content/50">No assignee</span>
+                  <button :if={@soc_user} phx-click="toggle_assign_form" class="btn btn-xs btn-primary">
+                    <.icon name="hero-plus" class="w-3 h-3" /> Assign
+                  </button>
+                </div>
+              <% end %>
+              <%= if @show_assign_form do %>
+                <.form for={@assign_form} id="assign-form" phx-change="validate_assign" phx-submit="assign_user" class="mt-2">
+                  <div class="flex items-center gap-2">
+                    <.input field={@assign_form[:user_id]} type="select" options={assignee_options(@company_users)} value={@case.assignee && @case.assignee.id} class="select select-sm" />
+                    <.button variant="primary" phx-disable-with="Assigning...">Assign</.button>
+                    <.button type="button" phx-click="toggle_assign_form">Cancel</.button>
+                  </div>
+                </.form>
+              <% end %>
+            </div>
           </div>
           <Layouts.divider />
           <p>{@case.description}</p>
@@ -141,6 +166,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
 
     comments = Incidents.get_comments_for_case!(id, initial_visibility, actor: user)
 
+    company_users = CaseManager.Accounts.get_users_by_company!(case.company.id, actor: user)
+
     socket =
       socket
       |> assign(:page_title, "Show Case")
@@ -149,6 +176,8 @@ defmodule CaseManagerWeb.CaseLive.Show do
       |> assign(:case, case)
       |> assign(:soc_user, Enum.any?(user.socs, fn soc -> soc.id == case.soc.id end) or user.super_admin?)
       |> assign(:show_mobile_panel, false)
+      |> assign(:company_users, company_users)
+      |> assign(:show_assign_form, false)
       |> stream(:comments, comments)
       |> assign(:user_id, socket.assigns.current_user.id)
       |> assign(:is_mac, false)
@@ -161,10 +190,14 @@ defmodule CaseManagerWeb.CaseLive.Show do
     user = Ash.load!(socket.assigns.current_user, :super_admin?)
 
     socket =
-      assign(
-        socket,
+      socket
+      |> assign(
         :comment_form,
-        to_form(CaseManager.Incidents.form_to_add_comment_to_case(socket.assigns.case, actor: user))
+        to_form(Incidents.form_to_add_comment_to_case(socket.assigns.case, actor: user))
+      )
+      |> assign(
+        :assign_form,
+        to_form(Incidents.form_to_assign_user_to_case(socket.assigns.case, actor: user))
       )
 
     {:noreply, socket}
@@ -221,6 +254,41 @@ defmodule CaseManagerWeb.CaseLive.Show do
   end
 
   @impl true
+  def handle_event("toggle_assign_form", _params, socket) do
+    {:noreply, assign(socket, :show_assign_form, !socket.assigns.show_assign_form)}
+  end
+
+  @impl true
+  def handle_event("validate_assign", %{"form" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.assign_form, params)
+    {:noreply, assign(socket, assign_form: form)}
+  end
+
+  @impl true
+  def handle_event("assign_user", %{"form" => form}, socket) do
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
+    case AshPhoenix.Form.submit(socket.assigns.assign_form, params: form) do
+      {:ok, _assignment} ->
+        updated_case =
+          CaseManager.Incidents.get_case!(socket.assigns.case.id,
+            load: [:soc, :company, :alerts, reporter: [:full_name], assignee: [:full_name]],
+            actor: user
+          )
+
+        socket =
+          socket
+          |> assign(:case, updated_case)
+          |> assign(:show_assign_form, false)
+
+        {:noreply, socket}
+
+      {:error, form} ->
+        {:noreply, assign(socket, :assign_form, form)}
+    end
+  end
+
+  @impl true
   def handle_info(%{topic: "comment" <> _rest, event: "create", payload: notification}, socket) do
     comment_data = notification.data
     current_user = socket.assigns.current_user
@@ -245,6 +313,10 @@ defmodule CaseManagerWeb.CaseLive.Show do
     else
       {:noreply, socket}
     end
+  end
+
+  defp assignee_options(users) do
+    [{"No assignee", nil}] ++ Enum.map(users, fn user -> {user.full_name, user.id} end)
   end
 
   defp status_to_badge_type(status) do

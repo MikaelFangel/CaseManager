@@ -16,6 +16,7 @@ defmodule CaseManager.Accounts do
       define :list_user, action: :read, default_options: [load: :full_name]
       define :get_user, action: :read, get_by: :id
       define :search_users, action: :search, args: [:query], default_options: [load: :full_name]
+      define :get_users_by_company, action: :get_by_company, args: [:company_id], default_options: [load: :full_name]
       define :update_user, action: :update
       define :delete_user, action: :destroy
     end
