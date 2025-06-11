@@ -358,11 +358,11 @@ defmodule CaseManagerWeb.AlertLive.Index do
       socket
       |> assign(
         :comment_form,
-        to_form(Incidents.form_to_add_comment_to_alert(alert, actor: socket.assigns.current_user))
+        to_form(Incidents.form_to_add_comment_to_alert(alert, actor: user))
       )
       |> assign(
         :status_form,
-        to_form(Incidents.form_to_change_alert_status(alert))
+        to_form(Incidents.form_to_change_alert_status(alert), actor: user)
       )
       |> assign(:selected_alert, alert)
       |> assign(:current_alert_subscription, id)
