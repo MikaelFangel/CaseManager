@@ -122,22 +122,23 @@ defmodule CaseManagerWeb.AlertLive.Index do
             </div>
           </div>
 
-          <%= for {case, index} <- Enum.with_index(@selected_alert.cases || []) do %>
-            <div class="collapse border border-base-300 bg-base-100">
-              <input :if={!@drawer_open} type="radio" name="case-accordion" id={"case-#{index}"} />
-              <div class="collapse-title text-sm">
-                {case.title}
-                <.badge type={status_to_badge_type(case.status)} modifier={:outline}>
-                  {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
-                </.badge>
+          <%= if @selected_alert.cases != [] do %>
+            <%= for case <- @selected_alert.cases do %>
+              <div class="collapse border border-base-300 bg-base-100">
+                <input :if={!@drawer_open} type="radio" name="case-accordion" id={"case-#{case.id}"} />
+                <div class="collapse-title text-sm">
+                  {case.title}
+                  <.badge type={status_to_badge_type(case.status)} modifier={:outline}>
+                    {case.status |> to_string() |> String.split("_") |> Enum.join(" ") |> String.capitalize()}
+                  </.badge>
+                </div>
+                <div class="collapse-content flex flex-col text-xs">
+                  <p class="mb-4">{case.description}</p>
+                  <.button navigate={~p"/case/#{case.id}"}>Open</.button>
+                </div>
               </div>
-              <div class="collapse-content flex flex-col text-xs">
-                <p class="mb-4">{case.description}</p>
-                <.button navigate={~p"/case/#{case.id}"}>Open</.button>
-              </div>
-            </div>
-          <% end %>
-          <%= if @selected_alert.cases == [] do %>
+            <% end %>
+          <% else %>
             <div class="p-4 text-sm text-gray-500">No linked cases available.</div>
           <% end %>
 
@@ -372,7 +373,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     params = %{q: socket.assigns.query}
     params = Map.put(params, :id, id)
 
-    {:noreply, push_patch(socket, to: ~p"/alert/?#{params}")}
+    {:noreply, push_navigate(socket, to: ~p"/alert/?#{params}")}
   end
 
   @impl true
