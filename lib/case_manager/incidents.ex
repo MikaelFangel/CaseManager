@@ -41,6 +41,8 @@ defmodule CaseManager.Incidents do
         action: :search,
         args: [:query],
         default_options: [load: :company, query: [sort: [creation_time: :desc]]]
+
+      define :list_old_alerts, action: :older_than, args: [{:optional, :duration}, {:optional, :unit}]
     end
 
     resource Case do
@@ -56,6 +58,8 @@ defmodule CaseManager.Incidents do
         action: :search,
         args: [:query],
         default_options: [load: :company, query: [sort: [updated_at: :desc]]]
+
+      define :list_old_cases, action: :older_than, args: [{:optional, :duration}, {:optional, :unit}]
     end
 
     resource CaseManager.Incidents.CaseAlert

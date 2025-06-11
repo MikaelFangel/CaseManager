@@ -5,6 +5,11 @@ defmodule CaseManager.Incidents.CaseAlert do
   postgres do
     table "case_alerts"
     repo(CaseManager.Repo)
+
+    references do
+      reference :case, on_delete: :delete, on_update: :update, name: "case_alerts_case_id_fkey"
+      reference :alert, on_delete: :delete, on_update: :update, name: "case_alerts_alert_id_fkey"
+    end
   end
 
   actions do

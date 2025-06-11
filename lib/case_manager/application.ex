@@ -10,6 +10,7 @@ defmodule CaseManager.Application do
     children = [
       CaseManagerWeb.Telemetry,
       CaseManager.Repo,
+      {Oban, Application.fetch_env!(:case_manager, Oban)},
       {DNSCluster, query: Application.get_env(:case_manager, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: CaseManager.PubSub},
       # Start a worker by calling: CaseManager.Worker.start_link(arg)

@@ -52,6 +52,25 @@ defmodule CaseManager.Incidents.Case do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :older_than do
+      description "Find cases older than specified duration for cleanup"
+      
+      argument :duration, :integer do
+        allow_nil? false
+        description "Number of time units"
+        default 6
+      end
+      
+      argument :unit, :atom do
+        allow_nil? false
+        description "Time unit (:second, :minute, :hour, :day, :week, :month, :year)"
+        default :month
+        constraints one_of: [:second, :minute, :hour, :day, :week, :month, :year]
+      end
+      
+      filter expr(inserted_at <= ago(^arg(:duration), ^arg(:unit)))
+    end
+
     update :update do
       description "Change the case data"
       primary? true
@@ -79,7 +98,6 @@ defmodule CaseManager.Incidents.Case do
 
       change set_attribute(:assignee_id, arg(:user_id))
     end
-
   end
 
   policies do

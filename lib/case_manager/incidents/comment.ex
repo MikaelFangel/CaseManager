@@ -12,6 +12,11 @@ defmodule CaseManager.Incidents.Comment do
   postgres do
     table "comments"
     repo(CaseManager.Repo)
+
+    references do
+      reference :case, on_delete: :delete, on_update: :update, name: "comments_case_id_fkey"
+      reference :alert, on_delete: :delete, on_update: :update, name: "comments_alert_id_fkey"
+    end
   end
 
   actions do

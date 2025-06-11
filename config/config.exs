@@ -40,6 +40,31 @@ config :case_manager, CaseManagerWeb.Endpoint,
   pubsub_server: CaseManager.PubSub,
   live_view: [signing_salt: "xaVnwDuj"]
 
+# Oban configuration for background jobs
+config :case_manager, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [
+    # Single worker to avoid DB conflicts
+    ttl_cleanup: 1,
+    default: 10
+  ],
+  repo: CaseManager.Repo,
+  plugins: [
+    # Automatic cleanup of completed jobs (keep 7 days of history)
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7},
+
+    # Scheduled jobs
+    {Oban.Plugins.Cron,
+     crontab: [
+       # TTL cleanup - runs daily at 2 AM UTC for GDPR compliance
+       {"0 2 * * *", CaseManager.Workers.TTLCleanup, queue: :ttl_cleanup}
+     ]},
+
+    # Monitor job failures and stuck jobs
+    {Oban.Plugins.Stager, interval: to_timeout(second: 5)},
+    {Oban.Plugins.Lifeline, rescue_after: to_timeout(minute: 30)}
+  ]
+
 config :case_manager,
   ecto_repos: [CaseManager.Repo],
   generators: [timestamp_type: :utc_datetime],
