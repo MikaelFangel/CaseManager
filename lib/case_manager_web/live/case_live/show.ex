@@ -94,7 +94,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
               <a class={"tab #{if @active_visibility == :public, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="public">
                 <.icon name="hero-globe-alt" class="mr-1 h-4 w-4" /> Public
               </a>
-              <a class={"tab #{if @active_visibility == :internal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="internal">
+              <a :if={@soc_user} class={"tab #{if @active_visibility == :internal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="internal">
                 <.icon name="hero-building-office" class="mr-1 h-4 w-4" /> Internal
               </a>
               <a class={"tab #{if @active_visibility == :personal, do: "tab-active"}"} phx-click="switch_visibility" phx-value-visibility="personal">
@@ -302,9 +302,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
           comment_data.user_id == current_user.id
 
         :internal ->
-          user_with_socs = Ash.load!(current_user, [:socs, :super_admin?])
-          case_soc_id = socket.assigns.case.soc.id
-          Enum.any?(user_with_socs.socs, fn soc -> soc.id == case_soc_id end) or user_with_socs.super_admin?
+          socket.assigns.soc_user
       end
 
     if authorized and comment_data.visibility == socket.assigns.active_visibility do

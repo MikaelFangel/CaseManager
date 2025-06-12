@@ -104,13 +104,13 @@ defmodule CaseManager.Accounts.User do
 
     read :get_by_company do
       description "Get users by company ID"
-      
+
       argument :company_id, :uuid do
         allow_nil? false
       end
 
       filter expr(companies.id == ^arg(:company_id))
-      
+
       pagination offset?: true, keyset?: true, required?: false
     end
 
@@ -325,7 +325,7 @@ defmodule CaseManager.Accounts.User do
       authorize_if always()
     end
 
-    policy action(:read) do
+    policy action([:read, :get_by_company]) do
       authorize_if always()
     end
   end
