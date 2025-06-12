@@ -13,6 +13,7 @@ defmodule CaseManager.Incidents.Alert do
     extensions: [AshJsonApi.Resource],
     notifiers: [Ash.Notifier.PubSub]
 
+  alias CaseManager.Incidents
   alias CaseManager.Incidents.Status
 
   json_api do
@@ -107,8 +108,13 @@ defmodule CaseManager.Incidents.Alert do
       authorize_if always()
     end
 
-    policy action_type(:read) do
+    bypass actor_attribute_equals(:super_admin?, true) do
       authorize_if always()
+    end
+
+    policy action_type(:read) do
+      authorize_if accessing_from(Incidents.Case, :cases)
+      authorize_if expr(company.soc.users == ^actor(:id))
     end
 
     policy action_type(:create) do

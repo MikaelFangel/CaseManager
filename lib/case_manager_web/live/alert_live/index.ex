@@ -504,7 +504,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
 
   defp paginate_alerts(socket, new_page) when new_page >= 1 do
     %{per_page: per_page, page: cur_page, query: query} = socket.assigns
-    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+    user = Ash.load!(socket.assigns.current_user, [:super_admin?, :socs])
 
     try do
       alerts =
@@ -539,20 +539,26 @@ defmodule CaseManagerWeb.AlertLive.Index do
         socket
         |> assign(:loading, false)
         |> put_flash(:error, "Failed to load alerts: #{inspect(error)}")
+        |> dbg()
     end
   end
 
   def handle_info(%{topic: "alert" <> _, event: "create", payload: notification}, socket) do
     alert = Ash.load!(notification.data, [:company])
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
 
-    # Only add new alerts when viewing the first page to prevent jumping
-    if socket.assigns.page == 1 do
-      socket = stream_insert(socket, :alert_collection, alert, at: 0, limit: socket.assigns.per_page * 3 * -1)
+    if Incidents.can_get_alert?(user, alert) do
+      # Only add new alerts when viewing the first page to prevent jumping
+      if socket.assigns.page == 1 do
+        socket = stream_insert(socket, :alert_collection, alert, at: 0, limit: socket.assigns.per_page * 3 * -1)
 
-      {:noreply, socket}
+        {:noreply, socket}
+      else
+        # If not on first page, show a flash message instead
+        socket = put_flash(socket, :info, "New alert has been created: #{alert.title}. Refresh to see updates.")
+        {:noreply, socket}
+      end
     else
-      # If not on first page, show a flash message instead
-      socket = put_flash(socket, :info, "New alert has been created: #{alert.title}. Refresh to see updates.")
       {:noreply, socket}
     end
   end

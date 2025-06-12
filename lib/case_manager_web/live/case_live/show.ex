@@ -296,13 +296,13 @@ defmodule CaseManagerWeb.CaseLive.Show do
     authorized =
       case comment_data.visibility do
         :public ->
-          true
+          Incidents.can_get_comments_for_case?(current_user, comment_data.case, :public)
 
         :personal ->
           comment_data.user_id == current_user.id
 
         :internal ->
-          socket.assigns.soc_user
+          Incidents.can_get_comments_for_case?(current_user, comment_data.case, :internal)
       end
 
     if authorized and comment_data.visibility == socket.assigns.active_visibility do
