@@ -220,12 +220,28 @@ defmodule CaseManagerWeb.CaseLive.Index do
   @impl true
   def handle_info(%{event: "assign_user", payload: notification}, socket) do
     updated_case = Ash.load!(notification.data, [:company, assignee: [:full_name]])
+    filter = socket.assigns.filter
+    limit = socket.assigns.limit
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
 
     socket =
       if Enum.any?(socket.assigns.page_results.results, fn case -> case.id == updated_case.id end) do
         stream_insert(socket, :cases, updated_case)
       else
-        socket
+        if socket.assigns.offset == 0 && case_matches_filter?(updated_case, filter) &&
+             Incidents.can_get_case(user, updated_case) do
+          if socket.assigns.page_results && length(socket.assigns.page_results.results) >= limit do
+            last_case = List.last(socket.assigns.page_results.results)
+
+            socket
+            |> stream_delete(:cases, last_case)
+            |> stream_insert(:cases, updated_case, at: 0)
+          else
+            stream_insert(socket, :cases, updated_case, at: 0)
+          end
+        else
+          put_flash(socket, :info, "Case '#{updated_case.title}' has been assigned. Refresh to see changes.")
+        end
       end
 
     {:noreply, socket}
