@@ -264,6 +264,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
       socket
       |> assign(:query, query)
       |> assign(:selected_alert, selected_alert)
+      |> assign(:selected_alerts, socket.assigns.selected_alerts || [])
       |> assign(
         :comment_form,
         if(selected_alert,
@@ -373,7 +374,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
     params = %{q: socket.assigns.query}
     params = Map.put(params, :id, id)
 
-    {:noreply, push_navigate(socket, to: ~p"/alert/?#{params}")}
+    {:noreply, push_patch(socket, to: ~p"/alert/?#{params}")}
   end
 
   @impl true
