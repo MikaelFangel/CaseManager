@@ -216,7 +216,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
      |> assign(:drawer_minimized, false)
      |> assign(:show_status_form, false)
      |> assign(:show_mobile_panel, false)
-     |> assign(:form, to_form(Incidents.form_to_create_case(actor: socket.assigns.current_user)))
+     |> assign(:form, to_form(Incidents.form_to_create_case(actor: user)))
      |> assign(:soc_options, soc_options)
      |> assign(:page, 1)
      |> assign(:per_page, 20)
@@ -473,6 +473,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
          |> push_navigate(to: ~p"/case/#{case.id}")}
 
       {:error, form} ->
+        IO.inspect(form)
         {:noreply, assign(socket, :form, form)}
     end
   end

@@ -28,7 +28,7 @@ defmodule CaseManager.Incidents.Case do
 
       argument :alerts, {:array, :string}
 
-      change manage_relationship(:alerts, type: :append_and_remove)
+      change manage_relationship(:alerts, type: :append)
       change relate_actor(:reporter)
     end
 
