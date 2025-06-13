@@ -129,6 +129,7 @@ defmodule CaseManager.Incidents.Case do
     end
 
     policy action(:assign_user) do
+      authorize_if expr(company.users == ^actor(:id))
       authorize_if expr(soc.users == ^actor(:id))
     end
 
