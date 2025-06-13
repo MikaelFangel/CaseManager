@@ -6,6 +6,7 @@ defmodule CaseManagerWeb.Router do
 
   alias CaseManager.Accounts.User
   alias CaseManagerWeb.Plugs.ConditionalApiKey
+  alias CaseManagerWeb.Plugs.CSP
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -14,6 +15,7 @@ defmodule CaseManagerWeb.Router do
     plug(:put_root_layout, html: {CaseManagerWeb.Layouts, :root})
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+    plug(CSP)
     plug(:load_from_session)
   end
 
@@ -21,7 +23,7 @@ defmodule CaseManagerWeb.Router do
     plug(:accepts, ["json"])
     plug(:load_from_bearer)
     plug(:set_actor, :user)
-    plug ConditionalApiKey, resource: User
+    plug(ConditionalApiKey, resource: User)
   end
 
   scope "/api/json" do
@@ -90,7 +92,7 @@ defmodule CaseManagerWeb.Router do
     scope "/admin" do
       pipe_through :browser
 
-      ash_admin "/"
+      ash_admin("/", csp_nonce_assign_key: :csp_nonce)
     end
   end
 end
