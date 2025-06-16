@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="ExDoc v0.38.2">
+    <meta name="project" content="Case Manager v0.1.0">
+
+
+    <title>API Reference — Case Manager v0.1.0</title>
+
+    <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
+
+    <script defer src="dist/sidebar_items-B0A68664.js"></script>
+    <script defer src="docs_config.js"></script>
+    <script defer src="dist/html-DPJLHKSM.js"></script>
+
+  </head>
+  <body>
+    <script>(()=>{var t="ex_doc:settings",e="dark";var o="dark",s="light";var E="sidebar_state",n="closed";var r="sidebar_width";var a="sidebar-open";var i=new URLSearchParams(window.location.search),S=i.get("theme")||JSON.parse(localStorage.getItem(t)||"{}").theme;(S===o||S!==s&&window.matchMedia("(prefers-color-scheme: dark)").matches)&&document.body.classList.add(e);var d=sessionStorage.getItem(E),A=d!==n&&!window.matchMedia(`screen and (max-width: ${768}px)`).matches;document.body.classList.toggle(a,A);var c=sessionStorage.getItem(r);c&&document.body.style.setProperty("--sidebarWidth",`${c}px`);var p=/(Macintosh|iPhone|iPad|iPod)/.test(window.navigator.userAgent);document.documentElement.classList.toggle("apple-os",p);})();
+</script>
+
+<div class="body-wrapper">
+
+<button id="sidebar-menu" class="sidebar-button sidebar-toggle" aria-label="toggle sidebar" aria-controls="sidebar">
+  <i class="ri-menu-line ri-lg" title="Collapse/expand sidebar"></i>
+</button>
+
+<nav id="sidebar" class="sidebar">
+
+  <div class="sidebar-header">
+    <div class="sidebar-projectInfo">
+
+      <div>
+        <a href="CaseManager.html" class="sidebar-projectName" translate="no">
+Case Manager
+        </a>
+        <div class="sidebar-projectVersion" translate="no">
+          v0.1.0
+        </div>
+      </div>
+    </div>
+    <ul id="sidebar-list-nav" class="sidebar-list-nav" role="tablist" data-extras=""></ul>
+  </div>
+</nav>
+
+<output role="status" id="toast"></output>
+
+<main class="content page-extra" id="main" data-type="extras">
+  <div id="content" class="content-inner">
+    <div class="top-search">
+      <div class="search-settings">
+        <form class="search-bar" action="search.html">
+          <label class="search-label">
+            <span class="sr-only">Search documentation of Case Manager</span>
+            <input name="q" type="text" class="search-input" placeholder="Press / to search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          </label>
+          <button type="submit" class="search-button" aria-label="Submit Search" tabindex="-1">
+            <i class="ri-search-2-line ri-lg" aria-hidden="true"></i>
+          </button>
+          <button type="button" tabindex="-1" class="search-close-button" aria-hidden="true">
+            <i class="ri-close-line ri-lg" title="Cancel search"></i>
+          </button>
+        </form>
+        <div class="autocomplete">
+        </div>
+        <button class="icon-settings display-settings">
+          <i class="ri-settings-3-line"></i>
+          <span class="sr-only">Settings</span>
+        </button>
+      </div>
+    </div>
+
+<div id="top-content">
+  <div class="heading-with-actions top-heading">
+    <h1>API Reference <small class="app-vsn">Case Manager v#0.1.0</small></h1>
+
+  </div>
+
+    <section class="details-list">
+      <h2 id="modules" class="section-heading">Modules</h2>
+      <div class="summary">
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.html" translate="no">CaseManager</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>CaseManager keeps the contexts that define your domain
+and business logic.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Configuration.html" translate="no">CaseManager.Configuration</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Domain that controls everything related to app configuration.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Configuration.File.html" translate="no">CaseManager.Configuration.File</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Resource for file uploads.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Configuration.Setting.html" translate="no">CaseManager.Configuration.Setting</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Resource used to store application wide settings in a persitent manner.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.ICM.html" translate="no">CaseManager.ICM</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Incident case management (ICM) represents the domain with the alerts and the related case management
+hereunder the documentation of the investigations.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.ICM.CaseAlert.html" translate="no">CaseManager.ICM.CaseAlert</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Resource for the many-to-many relationship between cases and alerts.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.ICM.CaseView.html" translate="no">CaseManager.ICM.CaseView</a>
+
+  </div>
+
+    <div class="summary-synopsis"></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Release.html" translate="no">CaseManager.Release</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Used for executing DB release tasks when run in production without Mix
+installed.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Repo.html" translate="no">CaseManager.Repo</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.SelectedAlerts.html" translate="no">CaseManager.SelectedAlerts</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>GenServer that holds the state of which alerts a user has selected. This is only meant
+to store data for the mssp users.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Teams.html" translate="no">CaseManager.Teams</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Domain that reprensents teams and their related resources.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Teams.Secrets.html" translate="no">CaseManager.Teams.Secrets</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Helper module to fetch the secret needed for Ash authentication to work.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManager.Teams.Token.html" translate="no">CaseManager.Teams.Token</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Resource representing a user token.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.html" translate="no">CaseManagerWeb</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>The entrypoint for defining your web interface, such
+as controllers, components, channels, and so on.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.AlertModal.html" translate="no">CaseManagerWeb.AlertModal</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a modal displaying an alert.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.AshJsonApiRouter.html" translate="no">CaseManagerWeb.AshJsonApiRouter</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>JsonApi Router for CaseManager</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.AuthController.html" translate="no">CaseManagerWeb.AuthController</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.AuthHTML.html" translate="no">CaseManagerWeb.AuthHTML</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.AuthLive.SignInForm.html" translate="no">CaseManagerWeb.AuthLive.SignInForm</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveComponent to show a form for logging in.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Back.html" translate="no">CaseManagerWeb.Back</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a back navigation link.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.BadgeTemplate.html" translate="no">CaseManagerWeb.BadgeTemplate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a bagde for showing things like severity level.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.BtnTemplate.html" translate="no">CaseManagerWeb.BtnTemplate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a very general button UI component.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Button.html" translate="no">CaseManagerWeb.Button</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a custom button UI component.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.ConfirmationModal.html" translate="no">CaseManagerWeb.ConfirmationModal</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a modal prompting the user for a confirmation of an action.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.CoreJsCmds.html" translate="no">CaseManagerWeb.CoreJsCmds</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides JS Commands that are generic enough to be used by different types of component.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.CreateUserForm.html" translate="no">CaseManagerWeb.CreateUserForm</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>LiveComponent to show a form for creating a user.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.DataList.html" translate="no">CaseManagerWeb.DataList</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a data list</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Endpoint.html" translate="no">CaseManagerWeb.Endpoint</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Error.html" translate="no">CaseManagerWeb.Error</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a generic error message.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.ErrorHTML.html" translate="no">CaseManagerWeb.ErrorHTML</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.ErrorJSON.html" translate="no">CaseManagerWeb.ErrorJSON</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.FileController.html" translate="no">CaseManagerWeb.FileController</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Flash.html" translate="no">CaseManagerWeb.Flash</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides flash notices.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.FlashGroup.html" translate="no">CaseManagerWeb.FlashGroup</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a flash group with standard titles and content.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Gettext.html" translate="no">CaseManagerWeb.Gettext</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>A module providing Internationalization with a gettext-based API.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Header.html" translate="no">CaseManagerWeb.Header</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a header with title</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Helpers.html" translate="no">CaseManagerWeb.Helpers</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Module that defines helper function for the web-based part of the application.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Icon.html" translate="no">CaseManagerWeb.Icon</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Icons are provided by <a>heroicons</a>. See <a><code class="inline">icon/1</code></a> for usage.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.IconBtn.html" translate="no">CaseManagerWeb.IconBtn</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a custom button that only displays an icon.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Input.html" translate="no">CaseManagerWeb.Input</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides insput components with label and error messages. </p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Label.html" translate="no">CaseManagerWeb.Label</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a label</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.LiveUserAuth.html" translate="no">CaseManagerWeb.LiveUserAuth</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Helpers for authenticating users in LiveViews.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.MenuBar.html" translate="no">CaseManagerWeb.MenuBar</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Renders a menubar.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.ModalTemplate.html" translate="no">CaseManagerWeb.ModalTemplate</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides core UI components.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.OnboardingController.html" translate="no">CaseManagerWeb.OnboardingController</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.OnboardingHTML.html" translate="no">CaseManagerWeb.OnboardingHTML</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Plugs.Onboarding.html" translate="no">CaseManagerWeb.Plugs.Onboarding</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Checks if the onboarding workflow should be run,</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.RiskBadge.html" translate="no">CaseManagerWeb.RiskBadge</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a badge showing risk or severity level.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Router.html" translate="no">CaseManagerWeb.Router</a>
+
+  </div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.SimpleForm.html" translate="no">CaseManagerWeb.SimpleForm</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a simple form</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.StatusBadge.html" translate="no">CaseManagerWeb.StatusBadge</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a badge showing risk or severity level.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Table.html" translate="no">CaseManagerWeb.Table</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a table.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.Tooltip.html" translate="no">CaseManagerWeb.Tooltip</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a hoverable item with a tooltip.</p></div>
+
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="CaseManagerWeb.TxtLink.html" translate="no">CaseManagerWeb.TxtLink</a>
+
+  </div>
+
+    <div class="summary-synopsis"><p>Provides a clickable underlined Text.</p></div>
+
+</div>
+
+      </div>
+    </section>
+
+
+</div>
+    <footer class="footer">
+      <p>
+
+        <span class="line">
+          <button class="a-main footer-button display-quick-switch" title="Search HexDocs packages">
+            Search HexDocs
+          </button>
+
+            <a href="Case Manager.epub" title="ePub version">
+              Download ePub version
+            </a>
+
+        </span>
+      </p>
+
+      <p class="built-using">
+        Built using
+        <a href="https://github.com/elixir-lang/ex_doc" title="ExDoc" target="_blank" rel="help noopener" translate="no">ExDoc</a> (v0.38.2) for the
+
+          <a href="https://elixir-lang.org" title="Elixir" target="_blank" translate="no">Elixir programming language</a>
+
+      </p>
+
+    </footer>
+  </div>
+</main>
+</div>
+
+  </body>
+</html>
