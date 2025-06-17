@@ -28,7 +28,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <div>
             <div
               id="alerts"
-              phx-update="stream"
               phx-viewport-top={@page > 1 && JS.push("prev-page", page_loading: true)}
               phx-viewport-bottom={!@end_of_timeline? && JS.push("next-page", page_loading: true)}
               class={[
