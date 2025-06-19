@@ -203,5 +203,42 @@ defmodule CaseManager.Incidents.Case do
       public? true
       sort inserted_at: :desc
     end
+
+    has_many :views, CaseManager.Incidents.CaseView do
+      public? true
+    end
+  end
+
+  aggregates do
+    count :unread_public_comments, :comments do
+      filter expr(
+               visibility == :public and
+                 not exists(
+                   case.views,
+                   visibility == :public and user_id == ^actor(:id) and parent(parent(inserted_at)) <= last_viewed_at
+                 )
+             )
+    end
+
+    count :unread_internal_comments, :comments do
+      filter expr(
+               visibility == :internal and
+                 not exists(
+                   case.views,
+                   visibility == :internal and user_id == ^actor(:id) and parent(parent(inserted_at)) <= last_viewed_at
+                 )
+             )
+    end
+
+    count :total_unread_comments, :comments do
+      filter expr(
+               visibility in [:public, :internal] and
+                 not exists(
+                   case.views,
+                   visibility == parent(parent(visibility)) and user_id == ^actor(:id) and
+                     parent(parent(inserted_at)) <= last_viewed_at
+                 )
+             )
+    end
   end
 end

@@ -60,6 +60,30 @@ defmodule CaseManager.Incidents do
         default_options: [load: :company, query: [sort: [updated_at: :desc]]]
 
       define :list_old_cases, action: :older_than, args: [{:optional, :duration}, {:optional, :unit}]
+
+      define :get_case_with_unread_counts,
+        action: :read,
+        get_by: :id,
+        default_options: [
+          load: [
+            :unread_public_comments,
+            :unread_internal_comments,
+            :total_unread_comments,
+            :company
+          ]
+        ]
+
+      define :list_cases_with_unread_counts,
+        action: :read,
+        default_options: [
+          load: [
+            :unread_public_comments,
+            :unread_internal_comments,
+            :total_unread_comments,
+            :company
+          ],
+          query: [sort: [updated_at: :desc]]
+        ]
     end
 
     resource CaseManager.Incidents.CaseAlert
@@ -72,6 +96,14 @@ defmodule CaseManager.Incidents do
     end
 
     resource CaseManager.Incidents.File
+
+    resource CaseManager.Incidents.CaseView do
+      define :mark_case_as_read, action: :mark_as_read, args: [:case_id, :visibility]
+      define :get_case_read_statuses_for_user_and_case, action: :for_user_and_case, args: [:case_id]
+      define :list_case_read_statuses, action: :read
+      define :update_case_read_status, action: :update
+      define :delete_case_read_status, action: :destroy
+    end
   end
 
   domain do
