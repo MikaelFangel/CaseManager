@@ -330,6 +330,10 @@ defmodule CaseManager.Accounts.User do
     end
   end
 
+  preparations do
+    prepare build(load: [:super_admin?])
+  end
+
   attributes do
     uuid_primary_key :id
 
