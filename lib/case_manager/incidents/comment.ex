@@ -83,6 +83,7 @@ defmodule CaseManager.Incidents.Comment do
     module CaseManagerWeb.Endpoint
     prefix "comment"
     publish :create, [[:case_id, :alert_id], "comments", nil]
+    publish :create, ["comments"]
   end
 
   attributes do

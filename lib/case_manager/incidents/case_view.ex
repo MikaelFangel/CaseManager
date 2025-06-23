@@ -83,7 +83,6 @@ defmodule CaseManager.Incidents.CaseView do
     attribute :last_viewed_at, :utc_datetime_usec do
       allow_nil? false
       public? true
-      default &DateTime.utc_now/0
     end
   end
 

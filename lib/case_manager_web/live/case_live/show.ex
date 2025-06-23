@@ -163,6 +163,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
       )
 
     initial_visibility = :public
+    Incidents.mark_case_as_read!(case.id, initial_visibility, DateTime.utc_now(), actor: user)
 
     comments = Incidents.get_comments_for_case!(id, initial_visibility, actor: user)
 
@@ -207,6 +208,7 @@ defmodule CaseManagerWeb.CaseLive.Show do
   def handle_event("switch_visibility", %{"visibility" => visibility}, socket) do
     visibility_atom = String.to_existing_atom(visibility)
     user = Ash.load!(socket.assigns.current_user, :super_admin?)
+    Incidents.mark_case_as_read!(socket.assigns.case.id, visibility_atom, DateTime.utc_now(), actor: user)
 
     comments =
       Incidents.get_comments_for_case!(socket.assigns.case.id, visibility_atom, actor: user)
@@ -230,6 +232,11 @@ defmodule CaseManagerWeb.CaseLive.Show do
     case AshPhoenix.Form.submit(socket.assigns.comment_form, params: form) do
       {:ok, _comment} ->
         socket = push_event(socket, "clear-textarea", %{})
+
+        Incidents.mark_case_as_read!(socket.assigns.case.id, socket.assigns.active_visibility, DateTime.utc_now(),
+          actor: socket.assigns.current_user
+        )
+
         {:noreply, socket}
 
       {:error, form} ->

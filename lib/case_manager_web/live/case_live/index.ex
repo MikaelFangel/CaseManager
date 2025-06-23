@@ -32,6 +32,10 @@ defmodule CaseManagerWeb.CaseLive.Index do
           {time_ago(case.updated_at)}
         </:col>
 
+        <:col :let={{_id, case}} label="Unread">
+          <.unread_comments_display case={case} />
+        </:col>
+
         <:col :let={{_id, case}} label="Assignee">{case.assignee && case.assignee.full_name}</:col>
       </.table>
 
@@ -53,6 +57,9 @@ defmodule CaseManagerWeb.CaseLive.Index do
 
       Enum.each(user.companies, fn company -> CaseManagerWeb.Endpoint.subscribe("case:#{company.id}") end)
       Enum.each(user.socs, fn soc -> CaseManagerWeb.Endpoint.subscribe("case:#{soc.id}") end)
+
+      # Subscribe to comment events to update unread counts
+      CaseManagerWeb.Endpoint.subscribe("comment:comments")
     end
 
     {:ok,
@@ -79,7 +86,12 @@ defmodule CaseManagerWeb.CaseLive.Index do
     page_results =
       Incidents.search_cases!(
         query,
-        query: [filter_input: filter, sort_input: "-updated_at", load: [:company, assignee: [:full_name]]],
+        query: [
+          load: [:unread_internal_comments, :unread_public_comments],
+          filter_input: filter,
+          sort_input: "-updated_at",
+          load: [:company, assignee: [:full_name]]
+        ],
         page: [limit: limit, offset: offset, count: true],
         actor: user
       )
@@ -163,7 +175,7 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_info(%{event: "create", payload: notification}, socket) do
+  def handle_info(%{topic: "case" <> _rest, event: "create", payload: notification}, socket) do
     case = Ash.load!(notification.data, [:company])
     filter = socket.assigns.filter
     limit = socket.assigns.limit
@@ -188,8 +200,15 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_info(%{event: "update", payload: notification}, socket) do
-    updated_case = Ash.load!(notification.data, [:company, assignee: [:full_name]])
+  def handle_info(%{topic: "case" <> _rest, event: "update", payload: notification}, socket) do
+    updated_case =
+      Ash.load!(notification.data, [
+        :company,
+        :unread_internal_comments,
+        :unread_public_comments,
+        assignee: [:full_name]
+      ])
+
     filter = socket.assigns.filter
     limit = socket.assigns.limit
     user = Ash.load!(socket.assigns.current_user, :super_admin?)
@@ -218,8 +237,15 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   @impl true
-  def handle_info(%{event: "assign_user", payload: notification}, socket) do
-    updated_case = Ash.load!(notification.data, [:company, assignee: [:full_name]])
+  def handle_info(%{topic: "case" <> _rest, event: "assign_user", payload: notification}, socket) do
+    updated_case =
+      Ash.load!(notification.data, [
+        :company,
+        :unread_internal_comments,
+        :unread_public_comments,
+        assignee: [:full_name]
+      ])
+
     filter = socket.assigns.filter
     limit = socket.assigns.limit
     user = Ash.load!(socket.assigns.current_user, :super_admin?)
@@ -245,6 +271,38 @@ defmodule CaseManagerWeb.CaseLive.Index do
       end
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{topic: "comment:comments", event: "create", payload: notification}, socket) do
+    comment_data = notification.data
+    user = Ash.load!(socket.assigns.current_user, :super_admin?)
+
+    # Check if this comment affects a case that's currently displayed
+    if comment_data.case_id && socket.assigns.page_results do
+      case_in_results = Enum.find(socket.assigns.page_results.results, fn case -> case.id == comment_data.case_id end)
+
+      if case_in_results do
+        # Refresh the case with updated unread counts
+        try do
+          updated_case =
+            Incidents.get_case!(comment_data.case_id,
+              load: [:company, :unread_internal_comments, :unread_public_comments, assignee: [:full_name]],
+              actor: user
+            )
+
+          {:noreply, stream_insert(socket, :cases, updated_case)}
+        rescue
+          _error ->
+            # If we can't load the case (permissions, etc.), just ignore the update
+            {:noreply, socket}
+        end
+      else
+        {:noreply, socket}
+      end
+    else
+      {:noreply, socket}
+    end
   end
 
   defp case_matches_filter?(case, %{status: [in: statuses]}) when is_list(statuses), do: case.status in statuses
@@ -346,4 +404,39 @@ defmodule CaseManagerWeb.CaseLive.Index do
   end
 
   defp time_ago(_other), do: "unknown"
+
+  defp unread_comments_display(assigns) do
+    assigns =
+      assign(assigns, :total_unread, assigns.case.unread_public_comments + assigns.case.unread_internal_comments)
+
+    # Current implementation: Separate badges for public/internal
+    ~H"""
+    <div class="flex items-center justify-center gap-1">
+      <%= if @total_unread > 0 do %>
+        <%= if @case.unread_public_comments > 0 do %>
+          <div class="tooltip tooltip-top" data-tip={"#{@case.unread_public_comments} unread public comment#{if @case.unread_public_comments > 1, do: "s"}"}>
+            <.badge type={:success} class="text-xs cursor-help hover:scale-105 transition-all duration-200" aria-label={"#{@case.unread_public_comments} unread public comments"}>
+              <.icon name="hero-globe-alt" class="w-3 h-3 mr-1" />
+              {@case.unread_public_comments}
+            </.badge>
+          </div>
+        <% end %>
+        <%= if @case.unread_internal_comments > 0 do %>
+          <div class="tooltip tooltip-top" data-tip={"#{@case.unread_internal_comments} unread internal comment#{if @case.unread_internal_comments > 1, do: "s"}"}>
+            <.badge type={:warning} class="text-xs cursor-help hover:scale-105 transition-all duration-200" aria-label={"#{@case.unread_internal_comments} unread internal comments"}>
+              <.icon name="hero-building-office" class="w-3 h-3 mr-1" />
+              {@case.unread_internal_comments}
+            </.badge>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="tooltip tooltip-top" data-tip="All comments read">
+          <span class="text-success/60 cursor-help hover:text-success transition-colors duration-200" aria-label="No unread comments">
+            <.icon name="hero-check-circle" class="w-4 h-4" />
+          </span>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
 end

@@ -215,7 +215,7 @@ defmodule CaseManager.Incidents.Case do
                visibility == :public and
                  not exists(
                    case.views,
-                   visibility == :public and user_id == ^actor(:id) and parent(parent(inserted_at)) <= last_viewed_at
+                   visibility == :public and user_id == ^actor(:id) and last_viewed_at >= parent(inserted_at)
                  )
              )
     end
@@ -225,7 +225,7 @@ defmodule CaseManager.Incidents.Case do
                visibility == :internal and
                  not exists(
                    case.views,
-                   visibility == :internal and user_id == ^actor(:id) and parent(parent(inserted_at)) <= last_viewed_at
+                   visibility == :internal and user_id == ^actor(:id) and last_viewed_at >= parent(inserted_at)
                  )
              )
     end
@@ -235,8 +235,8 @@ defmodule CaseManager.Incidents.Case do
                visibility in [:public, :internal] and
                  not exists(
                    case.views,
-                   visibility == parent(parent(visibility)) and user_id == ^actor(:id) and
-                     parent(parent(inserted_at)) <= last_viewed_at
+                   visibility == parent(visibility) and user_id == ^actor(:id) and
+                     last_viewed_at >= parent(inserted_at)
                  )
              )
     end

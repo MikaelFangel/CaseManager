@@ -98,7 +98,7 @@ defmodule CaseManager.Incidents do
     resource CaseManager.Incidents.File
 
     resource CaseManager.Incidents.CaseView do
-      define :mark_case_as_read, action: :mark_as_read, args: [:case_id, :visibility]
+      define :mark_case_as_read, action: :mark_as_read, args: [:case_id, :visibility, :last_viewed_at]
       define :get_case_read_statuses_for_user_and_case, action: :for_user_and_case, args: [:case_id]
       define :list_case_read_statuses, action: :read
       define :update_case_read_status, action: :update
