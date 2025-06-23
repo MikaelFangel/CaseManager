@@ -124,7 +124,7 @@ defmodule CaseManagerWeb.AlertLive.Index do
           <%= if @selected_alert.cases != [] do %>
             <%= for case <- @selected_alert.cases do %>
               <div class="collapse border border-base-300 bg-base-100">
-                <input :if={!@drawer_open} type="radio" name="case-accordion" id={"case-#{case.id}"} />
+                <input type="radio" name="case-accordion" id={"case-#{case.id}"} />
                 <div class="collapse-title text-sm">
                   {case.title}
                   <.badge type={status_to_badge_type(case.status)} modifier={:outline}>

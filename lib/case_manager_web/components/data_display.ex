@@ -611,7 +611,7 @@ defmodule CaseManagerWeb.DataDisplay do
   def drawer(assigns) do
     ~H"""
     <%= if @open do %>
-      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-#{@height}"} bg-base-200 shadow-xl overflow-y-scroll"}>
+      <div class={"fixed bottom-0 right-0 w-full max-w-md #{if @minimized, do: "h-14", else: "h-#{@height}"} bg-base-200 shadow-xl overflow-y-scroll z-50"}>
         <div class="h-full flex flex-col py-4">
           <div class="px-4 sm:px-6 flex justify-between items-center">
             <h2 class="text-lg font-medium">
