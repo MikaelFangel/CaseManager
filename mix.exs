@@ -75,7 +75,7 @@ defmodule CaseManager.MixProject do
       {:ash_authentication_phoenix, "~> 2.1"},
       {:ash_state_machine, "~> 0.2.6"},
       {:ash_admin, github: "ash-project/ash_admin", branch: "live_view_1.0"},
-      {:ash_archival, "~> 1.1.1"},
+      {:ash_archival, "~> 2.0.1"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:html_sanitize_ex, "~> 1.4"},
