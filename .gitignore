@@ -39,6 +39,7 @@ npm-debug.log
 .DS_Store
 *.mmd
 /.elixir_ls/
+mcp-proxy
 
 # Ignore certificates
 /priv/cert/*
