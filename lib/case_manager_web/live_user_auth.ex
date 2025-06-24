@@ -12,6 +12,8 @@ defmodule CaseManagerWeb.LiveUserAuth do
   # This is used for nested liveviews to fetch the current user.
   # To use, place the following at the top of that liveview:
   # on_mount {CaseManagerWeb.LiveUserAuth, :current_user}
+  alias CaseManager.Configuration.Setting
+
   def on_mount(:current_user, _params, session, socket) do
     {:cont, LiveSession.assign_new_resources(socket, session)}
   end
@@ -21,6 +23,13 @@ defmodule CaseManagerWeb.LiveUserAuth do
       {:cont, socket}
     else
       {:cont, assign(socket, :current_user, nil)}
+    end
+  end
+
+  def on_mount(:initial_setup, _params, _session, socket) do
+    case CaseManager.Configuration.get_setting("initial_setup_complete") do
+      {:ok, %Setting{value: "true"}} -> {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      _ -> {:cont, socket}
     end
   end
 

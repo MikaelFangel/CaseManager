@@ -68,7 +68,7 @@ config :case_manager, Oban,
 config :case_manager,
   ecto_repos: [CaseManager.Repo],
   generators: [timestamp_type: :utc_datetime],
-  ash_domains: [CaseManager.Incidents, CaseManager.Organizations, CaseManager.Accounts]
+  ash_domains: [CaseManager.Incidents, CaseManager.Organizations, CaseManager.Accounts, CaseManager.Configuration]
 
 # Configure esbuild (the version is required)
 config :esbuild,

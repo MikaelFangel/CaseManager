@@ -36,6 +36,11 @@ defmodule CaseManagerWeb.Router do
   scope "/", CaseManagerWeb do
     pipe_through(:browser)
 
+    ash_authentication_live_session :no_user,
+      on_mount: {CaseManagerWeb.LiveUserAuth, :initial_setup} do
+      live "/setup", SetupLive.Index, :index
+    end
+
     ash_authentication_live_session :authenticated_routes,
       on_mount: {CaseManagerWeb.LiveUserAuth, :live_user_required} do
       live "/", CaseLive.Index, :index
