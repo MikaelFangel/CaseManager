@@ -14,15 +14,15 @@
     },
     {
       "allow_nil?": false,
-      "default": "\"public\"",
+      "default": "nil",
       "generated?": false,
       "precision": null,
       "primary_key?": false,
       "references": null,
       "scale": null,
       "size": null,
-      "source": "visibility",
-      "type": "text"
+      "source": "api_key_hash",
+      "type": "binary"
     },
     {
       "allow_nil?": false,
@@ -33,11 +33,35 @@
       "references": null,
       "scale": null,
       "size": null,
-      "source": "last_viewed_at",
+      "source": "expires_at",
       "type": "utc_datetime_usec"
     },
     {
       "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "inserted_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": false,
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "generated?": false,
+      "precision": null,
+      "primary_key?": false,
+      "references": null,
+      "scale": null,
+      "size": null,
+      "source": "updated_at",
+      "type": "utc_datetime_usec"
+    },
+    {
+      "allow_nil?": true,
       "default": "nil",
       "generated?": false,
       "precision": null,
@@ -55,7 +79,7 @@
           "global": null,
           "strategy": null
         },
-        "name": "case_views_user_id_fkey",
+        "name": "api_keys_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
@@ -66,37 +90,6 @@
       "size": null,
       "source": "user_id",
       "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "nil",
-      "generated?": false,
-      "precision": null,
-      "primary_key?": false,
-      "references": {
-        "deferrable": false,
-        "destination_attribute": "id",
-        "destination_attribute_default": null,
-        "destination_attribute_generated": null,
-        "index?": false,
-        "match_type": null,
-        "match_with": null,
-        "multitenancy": {
-          "attribute": null,
-          "global": null,
-          "strategy": null
-        },
-        "name": "case_views_case_id_fkey",
-        "on_delete": "delete",
-        "on_update": "update",
-        "primary_key?": true,
-        "schema": "public",
-        "table": "cases"
-      },
-      "scale": null,
-      "size": null,
-      "source": "case_id",
-      "type": "uuid"
     }
   ],
   "base_filter": null,
@@ -104,27 +97,19 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "D2F75322F5C569DD1539A463199BB0066C190C2801D78E216A31289926647DD4",
+  "hash": "D3EE3E77B6F8E9AD499C5D63F5616E1EE2A7FF2D87FA0ACD3CA063899BF11863",
   "identities": [
     {
       "all_tenants?": false,
       "base_filter": null,
-      "index_name": "case_views_unique_user_case_visibility_index",
+      "index_name": "api_keys_unique_api_key_index",
       "keys": [
         {
           "type": "atom",
-          "value": "user_id"
-        },
-        {
-          "type": "atom",
-          "value": "case_id"
-        },
-        {
-          "type": "atom",
-          "value": "visibility"
+          "value": "api_key_hash"
         }
       ],
-      "name": "unique_user_case_visibility",
+      "name": "unique_api_key",
       "nils_distinct?": true,
       "where": null
     }
@@ -136,5 +121,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "case_views"
+  "table": "api_keys"
 }

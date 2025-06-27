@@ -1,4 +1,4 @@
-defmodule CaseManager.Repo.Migrations.InitialMigrationExtensions1 do
+defmodule CaseManager.Repo.Migrations.GenSetupExtensions1 do
   @moduledoc """
   Installs any extensions that are mentioned in the repo's `installed_extensions/0` callback
 

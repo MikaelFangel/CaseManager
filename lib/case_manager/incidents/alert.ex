@@ -10,7 +10,7 @@ defmodule CaseManager.Incidents.Alert do
     domain: CaseManager.Incidents,
     data_layer: AshPostgres.DataLayer,
     authorizers: [Ash.Policy.Authorizer],
-    extensions: [AshJsonApi.Resource],
+    extensions: [AshJsonApi.Resource, AshCloak],
     notifiers: [Ash.Notifier.PubSub]
 
   alias CaseManager.Incidents
@@ -23,6 +23,14 @@ defmodule CaseManager.Incidents.Alert do
   postgres do
     table "alerts"
     repo(CaseManager.Repo)
+  end
+
+  cloak do
+    vault(CaseManager.Vaults.Alert)
+
+    attributes([:additional_data, :description])
+
+    decrypt_by_default([:additional_data, :description])
   end
 
   actions do

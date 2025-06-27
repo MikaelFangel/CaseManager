@@ -1,5 +1,6 @@
 [
   import_deps: [
+    :oban,
     :ash_admin,
     :phoenix,
     :ash_json_api,

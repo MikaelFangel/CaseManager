@@ -1,5 +1,7 @@
 import Config
 
+alias Cloak.Ciphers.AES.GCM
+
 config :ash, :pub_sub, debug?: true
 
 # Configure your database
@@ -17,6 +19,48 @@ config :case_manager, CaseManager.Repo,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
+
+config :case_manager, CaseManager.Vaults.Alert,
+  ciphers: [
+    default: {
+      GCM,
+      # In AES.GCM, it is important to specify 12-byte IV length for
+      # interoperability with other encryption software. See this GitHub
+      # issue for more details:
+      # https://github.com/danielberkompas/cloak/issues/93
+      #
+      # In Cloak 2.0, this will be the default iv length for AES.GCM.
+      tag: "AES.GCM.V1", key: Base.decode64!("aJ7HcM24BcyiwsAvRsa3EG3jcvaFWooyQJ+91OO7bRU="), iv_length: 12
+    }
+  ]
+
+config :case_manager, CaseManager.Vaults.Case,
+  ciphers: [
+    default: {
+      GCM,
+      # In AES.GCM, it is important to specify 12-byte IV length for
+      # interoperability with other encryption software. See this GitHub
+      # issue for more details:
+      # https://github.com/danielberkompas/cloak/issues/93
+      #
+      # In Cloak 2.0, this will be the default iv length for AES.GCM.
+      tag: "AES.GCM.V1", key: Base.decode64!("aJ7HcM24BcyiwsAvRsa3EG3jcvaFWooyQJ+91OO7bRU="), iv_length: 12
+    }
+  ]
+
+config :case_manager, CaseManager.Vaults.Comment,
+  ciphers: [
+    default: {
+      GCM,
+      # In AES.GCM, it is important to specify 12-byte IV length for
+      # interoperability with other encryption software. See this GitHub
+      # issue for more details:
+      # https://github.com/danielberkompas/cloak/issues/93
+      #
+      # In Cloak 2.0, this will be the default iv length for AES.GCM.
+      tag: "AES.GCM.V1", key: Base.decode64!("aJ7HcM24BcyiwsAvRsa3EG3jcvaFWooyQJ+91OO7bRU="), iv_length: 12
+    }
+  ]
 
 config :case_manager, CaseManagerWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.

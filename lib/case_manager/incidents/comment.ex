@@ -5,7 +5,8 @@ defmodule CaseManager.Incidents.Comment do
     domain: CaseManager.Incidents,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
-    authorizers: [Ash.Policy.Authorizer]
+    authorizers: [Ash.Policy.Authorizer],
+    extensions: [AshCloak]
 
   alias CaseManager.Incidents.Visibility
 
@@ -17,6 +18,14 @@ defmodule CaseManager.Incidents.Comment do
       reference(:case, on_delete: :delete, on_update: :update, name: "comments_case_id_fkey")
       reference(:alert, on_delete: :delete, on_update: :update, name: "comments_alert_id_fkey")
     end
+  end
+
+  cloak do
+    vault(CaseManager.Vaults.Comment)
+
+    attributes([:body])
+
+    decrypt_by_default([:body])
   end
 
   actions do

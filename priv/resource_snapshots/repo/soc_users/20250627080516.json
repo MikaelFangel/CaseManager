@@ -1,29 +1,22 @@
 {
   "attributes": [
     {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "allow_nil?": true,
+      "default": "nil",
       "generated?": false,
+      "precision": null,
       "primary_key?": false,
       "references": null,
+      "scale": null,
       "size": null,
-      "source": "inserted_at",
-      "type": "utc_datetime_usec"
-    },
-    {
-      "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "updated_at",
-      "type": "utc_datetime_usec"
+      "source": "user_role",
+      "type": "text"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
+      "precision": null,
       "primary_key?": true,
       "references": {
         "deferrable": false,
@@ -38,21 +31,23 @@
           "global": null,
           "strategy": null
         },
-        "name": "soc_company_accesses_soc_id_fkey",
+        "name": "soc_users_user_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "socs"
+        "table": "users"
       },
+      "scale": null,
       "size": null,
-      "source": "soc_id",
+      "source": "user_id",
       "type": "uuid"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
+      "precision": null,
       "primary_key?": true,
       "references": {
         "deferrable": false,
@@ -67,15 +62,16 @@
           "global": null,
           "strategy": null
         },
-        "name": "soc_company_accesses_company_id_fkey",
+        "name": "soc_users_soc_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "companies"
+        "table": "socs"
       },
+      "scale": null,
       "size": null,
-      "source": "company_id",
+      "source": "soc_id",
       "type": "uuid"
     }
   ],
@@ -84,7 +80,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "6CB098BD298045AF854965EB3BCA90F847BA14F464791E8E41E37D04CB62D3AB",
+  "hash": "E1E85156C38548DDC09D20582F4EAB6F272E9958314D38638B63F0F6A916A6DB",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -93,5 +89,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "soc_company_accesses"
+  "table": "soc_users"
 }

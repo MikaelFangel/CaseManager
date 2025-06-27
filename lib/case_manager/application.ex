@@ -10,6 +10,9 @@ defmodule CaseManager.Application do
     children = [
       CaseManagerWeb.Telemetry,
       CaseManager.Repo,
+      CaseManager.Vaults.Alert,
+      CaseManager.Vaults.Case,
+      CaseManager.Vaults.Comment,
       {Oban, Application.fetch_env!(:case_manager, Oban)},
       {DNSCluster, query: Application.get_env(:case_manager, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: CaseManager.PubSub},

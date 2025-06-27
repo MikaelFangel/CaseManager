@@ -16,6 +16,8 @@ import Config
 #
 # Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
 # script that automatically sets the env var above.
+alias Cloak.Ciphers.AES.GCM
+
 if System.get_env("PHX_SERVER") do
   config :case_manager, CaseManagerWeb.Endpoint, server: true
 end
@@ -53,6 +55,48 @@ if config_env() == :prod do
     # For machines with several cores, consider starting multiple pools of `pool_size`
     # pool_count: 4,
     socket_options: maybe_ipv6
+
+  config :case_manager, CaseManager.Vaults.Alert,
+    ciphers: [
+      default: {
+        GCM,
+        # In AES.GCM, it is important to specify 12-byte IV length for
+        # interoperability with other encryption software. See this GitHub
+        # issue for more details:
+        # https://github.com/danielberkompas/cloak/issues/93
+        #
+        # In Cloak 2.0, this will be the default iv length for AES.GCM.
+        tag: "AES.GCM.V1", key: Base.decode64!("aJ7HcM24BcyiwsAvRsa3EG3jcvaFWooyQJ+91OO7bRU="), iv_length: 12
+      }
+    ]
+
+  config :case_manager, CaseManager.Vaults.Case,
+    ciphers: [
+      default: {
+        GCM,
+        # In AES.GCM, it is important to specify 12-byte IV length for
+        # interoperability with other encryption software. See this GitHub
+        # issue for more details:
+        # https://github.com/danielberkompas/cloak/issues/93
+        #
+        # In Cloak 2.0, this will be the default iv length for AES.GCM.
+        tag: "AES.GCM.V1", key: Base.decode64!("aJ7HcM24BcyiwsAvRsa3EG3jcvaFWooyQJ+91OO7bRU="), iv_length: 12
+      }
+    ]
+
+  config :case_manager, CaseManager.Vaults.Comment,
+    ciphers: [
+      default: {
+        GCM,
+        # In AES.GCM, it is important to specify 12-byte IV length for
+        # interoperability with other encryption software. See this GitHub
+        # issue for more details:
+        # https://github.com/danielberkompas/cloak/issues/93
+        #
+        # In Cloak 2.0, this will be the default iv length for AES.GCM.
+        tag: "AES.GCM.V1", key: Base.decode64!("aJ7HcM24BcyiwsAvRsa3EG3jcvaFWooyQJ+91OO7bRU="), iv_length: 12
+      }
+    ]
 
   config :case_manager, CaseManagerWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],

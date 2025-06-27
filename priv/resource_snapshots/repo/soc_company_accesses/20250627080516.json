@@ -2,27 +2,15 @@
   "attributes": [
     {
       "allow_nil?": false,
-      "default": "fragment(\"gen_random_uuid()\")",
-      "generated?": false,
-      "precision": null,
-      "primary_key?": true,
-      "references": null,
-      "scale": null,
-      "size": null,
-      "source": "id",
-      "type": "uuid"
-    },
-    {
-      "allow_nil?": false,
-      "default": "\"public\"",
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
       "generated?": false,
       "precision": null,
       "primary_key?": false,
       "references": null,
       "scale": null,
       "size": null,
-      "source": "visibility",
-      "type": "text"
+      "source": "inserted_at",
+      "type": "utc_datetime_usec"
     },
     {
       "allow_nil?": false,
@@ -33,7 +21,7 @@
       "references": null,
       "scale": null,
       "size": null,
-      "source": "last_viewed_at",
+      "source": "updated_at",
       "type": "utc_datetime_usec"
     },
     {
@@ -41,7 +29,7 @@
       "default": "nil",
       "generated?": false,
       "precision": null,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -55,16 +43,16 @@
           "global": null,
           "strategy": null
         },
-        "name": "case_views_user_id_fkey",
+        "name": "soc_company_accesses_soc_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "socs"
       },
       "scale": null,
       "size": null,
-      "source": "user_id",
+      "source": "soc_id",
       "type": "uuid"
     },
     {
@@ -72,7 +60,7 @@
       "default": "nil",
       "generated?": false,
       "precision": null,
-      "primary_key?": false,
+      "primary_key?": true,
       "references": {
         "deferrable": false,
         "destination_attribute": "id",
@@ -86,16 +74,16 @@
           "global": null,
           "strategy": null
         },
-        "name": "case_views_case_id_fkey",
+        "name": "soc_company_accesses_company_id_fkey",
         "on_delete": null,
         "on_update": null,
         "primary_key?": true,
         "schema": "public",
-        "table": "cases"
+        "table": "companies"
       },
       "scale": null,
       "size": null,
-      "source": "case_id",
+      "source": "company_id",
       "type": "uuid"
     }
   ],
@@ -104,31 +92,8 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "6775BEB479610D1D7476AA3A208A306AFA2A9AC1D760E3CF03C84D9332B70B42",
-  "identities": [
-    {
-      "all_tenants?": false,
-      "base_filter": null,
-      "index_name": "case_views_unique_user_case_visibility_index",
-      "keys": [
-        {
-          "type": "atom",
-          "value": "user_id"
-        },
-        {
-          "type": "atom",
-          "value": "case_id"
-        },
-        {
-          "type": "atom",
-          "value": "visibility"
-        }
-      ],
-      "name": "unique_user_case_visibility",
-      "nils_distinct?": true,
-      "where": null
-    }
-  ],
+  "hash": "C299138571BDCAF4A5DC64E744BE3EC7C44C6CE2401BF599AA5BC0F6C1CBFB66",
+  "identities": [],
   "multitenancy": {
     "attribute": null,
     "global": null,
@@ -136,5 +101,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "case_views"
+  "table": "soc_company_accesses"
 }

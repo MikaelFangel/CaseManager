@@ -1,4 +1,4 @@
-defmodule CaseManager.Repo.Migrations.InitialMigration do
+defmodule CaseManager.Repo.Migrations.GenSetup do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -63,6 +63,16 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
       add(:company_id, :uuid, null: false, primary_key: true)
     end
 
+    create table(:settings, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:key, :text, null: false)
+      add(:value, :text, null: false)
+      add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+    end
+
+    create unique_index(:settings, [:key], name: "settings_key_index")
+
     create table(:files, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
       add(:filename, :text, null: false)
@@ -111,13 +121,13 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
 
     create table(:comments, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
-      add(:body, :text, null: false)
       add(:visibility, :text, null: false, default: "internal")
       add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:case_id, :uuid)
       add(:alert_id, :uuid)
       add(:user_id, :uuid, null: false)
+      add(:encrypted_body, :binary, null: false)
     end
 
     create table(:cases, primary_key: false) do
@@ -129,12 +139,21 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
     end
 
     alter table(:comments) do
-      modify(:case_id, references(:cases, column: :id, name: "comments_case_id_fkey", type: :uuid, prefix: "public"))
+      modify(
+        :case_id,
+        references(:cases,
+          column: :id,
+          name: "comments_case_id_fkey",
+          type: :uuid,
+          prefix: "public",
+          on_delete: :delete_all,
+          on_update: :update_all
+        )
+      )
     end
 
     alter table(:cases) do
       add(:title, :text, null: false)
-      add(:description, :text)
       add(:status, :text, null: false, default: "new")
       add(:resolution_type, :text)
       add(:severity, :text)
@@ -153,10 +172,48 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
       add(:soc_id, references(:socs, column: :id, name: "cases_soc_id_fkey", type: :uuid, prefix: "public"),
         null: false
       )
+
+      add(:encrypted_description, :binary)
     end
 
+    create table(:case_views, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:visibility, :text, null: false, default: "public")
+      add(:last_viewed_at, :utc_datetime_usec, null: false)
+
+      add(:user_id, references(:users, column: :id, name: "case_views_user_id_fkey", type: :uuid, prefix: "public"),
+        null: false
+      )
+
+      add(
+        :case_id,
+        references(:cases,
+          column: :id,
+          name: "case_views_case_id_fkey",
+          type: :uuid,
+          prefix: "public",
+          on_delete: :delete_all,
+          on_update: :update_all
+        ),
+        null: false
+      )
+    end
+
+    create unique_index(:case_views, [:user_id, :case_id, :visibility],
+             name: "case_views_unique_user_case_visibility_index"
+           )
+
     create table(:case_alerts, primary_key: false) do
-      add(:case_id, references(:cases, column: :id, name: "case_alerts_case_id_fkey", type: :uuid, prefix: "public"),
+      add(
+        :case_id,
+        references(:cases,
+          column: :id,
+          name: "case_alerts_case_id_fkey",
+          type: :uuid,
+          prefix: "public",
+          on_delete: :delete_all,
+          on_update: :update_all
+        ),
         primary_key: true,
         null: false
       )
@@ -164,31 +221,58 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
       add(:alert_id, :uuid, null: false, primary_key: true)
     end
 
+    create table(:api_keys, primary_key: false) do
+      add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
+      add(:api_key_hash, :binary, null: false)
+      add(:expires_at, :utc_datetime_usec, null: false)
+      add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
+      add(:user_id, references(:users, column: :id, name: "api_keys_user_id_fkey", type: :uuid, prefix: "public"))
+    end
+
+    create unique_index(:api_keys, [:api_key_hash], name: "api_keys_unique_api_key_index")
+
     create table(:alerts, primary_key: false) do
       add(:id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true)
     end
 
     alter table(:comments) do
-      modify(:alert_id, references(:alerts, column: :id, name: "comments_alert_id_fkey", type: :uuid, prefix: "public"))
+      modify(
+        :alert_id,
+        references(:alerts,
+          column: :id,
+          name: "comments_alert_id_fkey",
+          type: :uuid,
+          prefix: "public",
+          on_delete: :delete_all,
+          on_update: :update_all
+        )
+      )
+
       modify(:user_id, references(:users, column: :id, name: "comments_user_id_fkey", type: :uuid, prefix: "public"))
     end
 
     alter table(:case_alerts) do
       modify(
         :alert_id,
-        references(:alerts, column: :id, name: "case_alerts_alert_id_fkey", type: :uuid, prefix: "public")
+        references(:alerts,
+          column: :id,
+          name: "case_alerts_alert_id_fkey",
+          type: :uuid,
+          prefix: "public",
+          on_delete: :delete_all,
+          on_update: :update_all
+        )
       )
     end
 
     alter table(:alerts) do
       add(:alert_id, :text, null: false)
       add(:title, :text, null: false)
-      add(:description, :text)
       add(:severity, :text, null: false)
       add(:status, :text, null: false, default: "new")
       add(:creation_time, :utc_datetime, null: false)
       add(:link, :text, null: false)
-      add(:additional_data, :map)
       add(:inserted_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
       add(:updated_at, :utc_datetime_usec, null: false, default: fragment("(now() AT TIME ZONE 'utc')"))
 
@@ -197,22 +281,29 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
         references(:companies, column: :id, name: "alerts_company_id_fkey", type: :uuid, prefix: "public"),
         null: false
       )
+
+      add(:encrypted_additional_data, :binary)
+      add(:encrypted_description, :binary)
     end
+
+    create unique_index(:alerts, [:alert_id, :company_id], name: "alerts_unique_alert_per_company_index")
   end
 
   def down do
+    drop_if_exists(unique_index(:alerts, [:alert_id, :company_id], name: "alerts_unique_alert_per_company_index"))
+
     drop(constraint(:alerts, "alerts_company_id_fkey"))
 
     alter table(:alerts) do
+      remove(:encrypted_description)
+      remove(:encrypted_additional_data)
       remove(:company_id)
       remove(:updated_at)
       remove(:inserted_at)
-      remove(:additional_data)
       remove(:link)
       remove(:creation_time)
       remove(:status)
       remove(:severity)
-      remove(:description)
       remove(:title)
       remove(:alert_id)
     end
@@ -234,9 +325,25 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
 
     drop(table(:alerts))
 
+    drop_if_exists(unique_index(:api_keys, [:api_key_hash], name: "api_keys_unique_api_key_index"))
+
+    drop(constraint(:api_keys, "api_keys_user_id_fkey"))
+
+    drop(table(:api_keys))
+
     drop(constraint(:case_alerts, "case_alerts_case_id_fkey"))
 
     drop(table(:case_alerts))
+
+    drop_if_exists(
+      unique_index(:case_views, [:user_id, :case_id, :visibility], name: "case_views_unique_user_case_visibility_index")
+    )
+
+    drop(constraint(:case_views, "case_views_user_id_fkey"))
+
+    drop(constraint(:case_views, "case_views_case_id_fkey"))
+
+    drop(table(:case_views))
 
     drop(constraint(:cases, "cases_reporter_id_fkey"))
 
@@ -247,6 +354,7 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
     drop(constraint(:cases, "cases_soc_id_fkey"))
 
     alter table(:cases) do
+      remove(:encrypted_description)
       remove(:soc_id)
       remove(:company_id)
       remove(:assignee_id)
@@ -257,7 +365,6 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
       remove(:severity)
       remove(:resolution_type)
       remove(:status)
-      remove(:description)
       remove(:title)
     end
 
@@ -305,6 +412,10 @@ defmodule CaseManager.Repo.Migrations.InitialMigration do
     drop(table(:company_users))
 
     drop(table(:files))
+
+    drop_if_exists(unique_index(:settings, [:key], name: "settings_key_index"))
+
+    drop(table(:settings))
 
     drop(constraint(:soc_company_accesses, "soc_company_accesses_soc_id_fkey"))
 

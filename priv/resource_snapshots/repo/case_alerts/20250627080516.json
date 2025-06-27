@@ -1,19 +1,10 @@
 {
   "attributes": [
     {
-      "allow_nil?": true,
-      "default": "nil",
-      "generated?": false,
-      "primary_key?": false,
-      "references": null,
-      "size": null,
-      "source": "user_role",
-      "type": "text"
-    },
-    {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
+      "precision": null,
       "primary_key?": true,
       "references": {
         "deferrable": false,
@@ -28,21 +19,23 @@
           "global": null,
           "strategy": null
         },
-        "name": "soc_users_user_id_fkey",
-        "on_delete": null,
-        "on_update": null,
+        "name": "case_alerts_case_id_fkey",
+        "on_delete": "delete",
+        "on_update": "update",
         "primary_key?": true,
         "schema": "public",
-        "table": "users"
+        "table": "cases"
       },
+      "scale": null,
       "size": null,
-      "source": "user_id",
+      "source": "case_id",
       "type": "uuid"
     },
     {
       "allow_nil?": false,
       "default": "nil",
       "generated?": false,
+      "precision": null,
       "primary_key?": true,
       "references": {
         "deferrable": false,
@@ -57,15 +50,16 @@
           "global": null,
           "strategy": null
         },
-        "name": "soc_users_soc_id_fkey",
-        "on_delete": null,
-        "on_update": null,
+        "name": "case_alerts_alert_id_fkey",
+        "on_delete": "delete",
+        "on_update": "update",
         "primary_key?": true,
         "schema": "public",
-        "table": "socs"
+        "table": "alerts"
       },
+      "scale": null,
       "size": null,
-      "source": "soc_id",
+      "source": "alert_id",
       "type": "uuid"
     }
   ],
@@ -74,7 +68,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "E84F06D907C7039B91036D3F6DCAE6E05784DADD13FDCDB7FEEAC73D7AEAD86D",
+  "hash": "1427167EA3AA1C5E4F03CBE1376F9BA2A6C731ECE1C9364CADE8DED9FD36926B",
   "identities": [],
   "multitenancy": {
     "attribute": null,
@@ -83,5 +77,5 @@
   },
   "repo": "Elixir.CaseManager.Repo",
   "schema": null,
-  "table": "soc_users"
+  "table": "case_alerts"
 }

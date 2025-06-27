@@ -26,7 +26,7 @@
     },
     {
       "allow_nil?": false,
-      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "default": "nil",
       "generated?": false,
       "precision": null,
       "primary_key?": false,
@@ -104,7 +104,7 @@
   "custom_indexes": [],
   "custom_statements": [],
   "has_create_action": true,
-  "hash": "EFD4F3A80B953C7E552C788DE7E758FEA1D28C8C1D8AB8C88EC9170074B7C30B",
+  "hash": "5054408A95CE80612A2408203474833D90DDE79D29C827B5219687AACB861170",
   "identities": [
     {
       "all_tenants?": false,
