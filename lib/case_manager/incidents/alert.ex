@@ -28,9 +28,9 @@ defmodule CaseManager.Incidents.Alert do
   cloak do
     vault(CaseManager.Vaults.Alert)
 
-    attributes([:additional_data, :description])
+    attributes([:description])
 
-    decrypt_by_default([:additional_data, :description])
+    decrypt_by_default([:description])
   end
 
   actions do
@@ -38,7 +38,7 @@ defmodule CaseManager.Incidents.Alert do
       description "Create a new security alert"
       primary? true
 
-      accept [:alert_id, :title, :description, :severity, :creation_time, :link, :additional_data, :company_id]
+      accept [:alert_id, :title, :description, :severity, :creation_time, :link, :company_id]
     end
 
     read :read do
@@ -82,7 +82,7 @@ defmodule CaseManager.Incidents.Alert do
 
     update :update do
       description "Change the alert data"
-      accept [:title, :description, :severity, :additional_data]
+      accept [:title, :description, :severity]
       primary? true
       require_atomic? false
     end
@@ -195,12 +195,6 @@ defmodule CaseManager.Incidents.Alert do
       allow_nil? false
       public? true
       constraints max_length: 2000
-    end
-
-    attribute :additional_data, :map do
-      description "Additional metadata from the monitoring system"
-      public? true
-      default %{}
     end
 
     timestamps()

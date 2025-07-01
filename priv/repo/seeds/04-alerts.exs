@@ -51,15 +51,7 @@ alerts = [
     severity: :high,
     creation_time: random_past_time.(3),
     link: "https://security-console.example.com/alerts/ALERT-2023-001",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "ip_address" => "203.0.113.45",
-      "location" => "Kyiv, Ukraine",
-      "user_affected" => "john.smith@example.com",
-      "failed_attempts" => 7,
-      "success_time" => "2023-10-15T03:24:00Z",
-      "device_type" => "Unknown Windows Device"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-002",
@@ -69,15 +61,7 @@ alerts = [
     severity: :critical,
     creation_time: random_past_time.(2),
     link: "https://security-console.example.com/alerts/ALERT-2023-002",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "endpoint" => "DEV-LAPTOP-42",
-      "malware_signature" => "Trojan.Emotet.Gen4",
-      "user_affected" => "developer3@example.com",
-      "quarantined_file" => "C:\\Users\\Developer\\Downloads\\invoice-3421.xls",
-      "detection_method" => "Behavioral Analysis",
-      "hash_sha256" => "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-003",
@@ -87,17 +71,7 @@ alerts = [
     severity: :critical,
     creation_time: random_past_time.(5),
     link: "https://security-console.example.com/alerts/ALERT-2023-003",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "source_ip" => "10.0.24.56",
-      "destination_ip" => "198.51.100.23",
-      "data_volume" => "1.7GB",
-      "detected_patterns" => ["SSN", "Credit Card", "Customer Database"],
-      "protocol" => "HTTPS",
-      "port" => 443,
-      "duration" => "23 minutes",
-      "files_count" => 247
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-004",
@@ -107,16 +81,7 @@ alerts = [
     severity: :high,
     creation_time: random_past_time.(1),
     link: "https://security-console.example.com/alerts/ALERT-2023-004",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "username" => "helpdesk2",
-      "added_groups" => ["Domain Admins", "Enterprise Admins"],
-      "command_executed" => "Add-ADGroupMember -Identity 'Domain Admins' -Members 'helpdesk2'",
-      "workstation" => "HELPDESK-PC12",
-      "session_id" => "0x1234ABCD",
-      "previous_privileges" => "Help Desk Operators",
-      "time_of_escalation" => "2023-10-17T14:32:45Z"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-005",
@@ -125,17 +90,7 @@ alerts = [
     severity: :medium,
     creation_time: random_past_time.(2),
     link: "https://security-console.example.com/alerts/ALERT-2023-005",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "api_endpoint" => "/api/v2/customers/records",
-      "request_volume" => 4573,
-      "client_id" => "mobile-app-beta",
-      "authorized_apps" => ["crm-prod", "sales-portal"],
-      "ip_ranges" => ["192.168.10.0/24", "10.50.30.0/24"],
-      "rate" => "76.2 requests/second",
-      "authentication_method" => "OAuth2",
-      "investigation_notes" => "Confirmed as test by development team"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-006",
@@ -144,16 +99,7 @@ alerts = [
     severity: :critical,
     creation_time: random_past_time.(1),
     link: "https://security-console.example.com/alerts/ALERT-2023-006",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "c2_servers" => ["185.112.83.45", "192.87.134.12"],
-      "affected_systems" => ["FILESERVER01", "DC-BACKUP"],
-      "matched_signatures" => ["ALPHV.CnC.2023", "BlackCat.Beacon.TLS"],
-      "traffic_pattern" => "Encrypted beaconing every 300 seconds",
-      "dns_queries" => ["d34ddr0p.io", "l0ck3d0ut.net"],
-      "first_seen" => "2023-10-19T02:15:33Z",
-      "threat_intelligence_source" => "Mandiant"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-007",
@@ -162,17 +108,7 @@ alerts = [
     severity: :high,
     creation_time: random_past_time.(1),
     link: "https://security-console.example.com/alerts/ALERT-2023-007",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "rule_id" => "fw-rule-7842",
-      "modified_by" => "admin@example.com",
-      "rule_details" => "ALLOW TCP ANY:ANY -> 10.0.12.0/24:3306",
-      "change_ticket" => "None",
-      "firewall_device" => "EDGE-FW-01",
-      "previous_rule" => "DENY TCP ANY:ANY -> 10.0.12.0/24:3306",
-      "config_backup" => "2023-10-18-0300-pre-change.cfg",
-      "modification_method" => "Web Administration Console"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-008",
@@ -182,19 +118,7 @@ alerts = [
     severity: :medium,
     creation_time: random_past_time.(4),
     link: "https://security-console.example.com/alerts/ALERT-2023-008",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "affected_users" => 14,
-      "email_subject" => "URGENT: Your invoice requires immediate payment",
-      "sender_domain" => "invoice-billings.com",
-      "attachment_type" => "xls with macros",
-      "sender_ip" => "91.234.56.78",
-      "spoofed_sender" => "accounting@legitimate-partner.com",
-      "similar_campaigns" => "Observed at 3 other companies in finance sector",
-      "email_body_snippet" =>
-        "Please review the attached invoice and process payment within 24 hours to avoid penalties.",
-      "phishing_score" => 9.2
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-009",
@@ -203,19 +127,7 @@ alerts = [
     severity: :high,
     creation_time: random_past_time.(2),
     link: "https://security-console.example.com/alerts/ALERT-2023-009",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "bucket_name" => "example-corp-financial-reports",
-      "user_identity" => "finance-admin@example.com",
-      "location" => "Jakarta, Indonesia",
-      "device_fingerprint" => "Unknown Windows Device",
-      "api_calls" => ["ListObjects", "GetObject", "CopyObject"],
-      "files_accessed" => 23,
-      "total_data_retrieved" => "156 MB",
-      "previous_login_location" => "New York, USA",
-      "time_since_last_login" => "3 hours 24 minutes",
-      "mfa_used" => false
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-010",
@@ -225,18 +137,7 @@ alerts = [
     severity: :medium,
     creation_time: random_past_time.(3),
     link: "https://security-console.example.com/alerts/ALERT-2023-010",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "scanner_ip" => "45.33.192.76",
-      "scan_type" => "TCP SYN scan followed by service enumeration",
-      "scan_duration" => "42 minutes",
-      "targeted_services" => ["HTTPS", "SSH", "RDP", "SQL"],
-      "ports_scanned" => [22, 80, 443, 3389, 1433, 3306],
-      "packets_detected" => 14_253,
-      "country_of_origin" => "Netherlands",
-      "verification" => "Confirmed as authorized pentest by security team",
-      "scan_tool_fingerprint" => "Nessus Professional 10.3.2"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-011",
@@ -245,17 +146,7 @@ alerts = [
     severity: :medium,
     creation_time: random_past_time.(1),
     link: "https://security-console.example.com/alerts/ALERT-2023-011",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "target_hostname" => "dev-srv-03",
-      "target_ip" => "10.20.30.15",
-      "failed_attempts" => 342,
-      "username_patterns" => ["root", "admin", "ubuntu", "ec2-user"],
-      "source_ips_count" => 17,
-      "source_countries" => ["Russia", "China", "Brazil"],
-      "time_window" => "Last 24 hours",
-      "attack_pattern" => "Distributed, coordinated attempts"
-    }
+    company_id: random_company_id.()
   },
   %{
     alert_id: "ALERT-2023-012",
@@ -264,17 +155,7 @@ alerts = [
     severity: :high,
     creation_time: random_past_time.(1),
     link: "https://security-console.example.com/alerts/ALERT-2023-012",
-    company_id: random_company_id.(),
-    additional_data: %{
-      "repository" => "example-corp/customer-portal",
-      "committer" => "dev.jenkins@example.com",
-      "commit_hash" => "a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2",
-      "secrets_found" => ["AWS access key", "Database password", "API token"],
-      "commit_message" => "Fixed configuration for staging environment",
-      "exposure_duration" => "17 minutes",
-      "public_views" => 3,
-      "secret_locations" => ["config/database.yml", "src/main/resources/application.properties"]
-    }
+    company_id: random_company_id.()
   }
 ]
 
