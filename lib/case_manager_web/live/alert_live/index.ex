@@ -506,40 +506,32 @@ defmodule CaseManagerWeb.AlertLive.Index do
     %{per_page: per_page, page: cur_page, query: query} = socket.assigns
     user = Ash.load!(socket.assigns.current_user, [:super_admin?, :socs])
 
-    try do
-      alerts =
-        Incidents.search_alerts!(
-          query,
-          page: [limit: per_page, offset: (new_page - 1) * per_page],
-          actor: user
-        ).results
+    alerts =
+      Incidents.search_alerts!(
+        query,
+        page: [limit: per_page, offset: (new_page - 1) * per_page],
+        actor: user
+      ).results
 
-      {alerts, at, limit} =
-        if new_page >= cur_page do
-          {alerts, -1, per_page * 3 * -1}
-        else
-          {Enum.reverse(alerts), 0, per_page * 3}
-        end
-
-      case alerts do
-        [] ->
-          assign(socket, end_of_timeline?: at == -1)
-
-        [_head | _tail] = alerts ->
-          alert_ids = Enum.map(alerts, & &1.id)
-
-          socket
-          |> assign(end_of_timeline?: false)
-          |> assign(:page, new_page)
-          |> assign(:current_alert_ids, alert_ids)
-          |> stream(:alert_collection, alerts, at: at, limit: limit)
+    {alerts, at, limit} =
+      if new_page >= cur_page do
+        {alerts, -1, per_page * 3 * -1}
+      else
+        {Enum.reverse(alerts), 0, per_page * 3}
       end
-    rescue
-      error ->
+
+    case alerts do
+      [] ->
+        assign(socket, end_of_timeline?: at == -1)
+
+      [_head | _tail] = alerts ->
+        alert_ids = Enum.map(alerts, & &1.id)
+
         socket
-        |> assign(:loading, false)
-        |> put_flash(:error, "Failed to load alerts: #{inspect(error)}")
-        |> dbg()
+        |> assign(end_of_timeline?: false)
+        |> assign(:page, new_page)
+        |> assign(:current_alert_ids, alert_ids)
+        |> stream(:alert_collection, alerts, at: at, limit: limit)
     end
   end
 

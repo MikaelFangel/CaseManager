@@ -58,9 +58,7 @@ defmodule CaseManager.Incidents.Alert do
 
       pagination offset?: true, keyset?: true, required?: false
 
-      filter expr(
-               contains(title, ^arg(:query)) or contains(description, ^arg(:query)) or contains(alert_id, ^arg(:query))
-             )
+      filter expr(contains(title, ^arg(:query)) or contains(alert_id, ^arg(:query)))
     end
 
     read :older_than do
