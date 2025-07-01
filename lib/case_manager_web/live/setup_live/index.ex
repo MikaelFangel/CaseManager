@@ -55,7 +55,7 @@ defmodule CaseManagerWeb.SetupLive.Index do
 
   @impl true
   def handle_event("validate_user", %{"form" => params}, socket) do
-    form = Form.validate(socket.assigns.user_form, params)
+    form = AshPhoenix.Form.validate(socket.assigns.user_form, params)
     {:noreply, assign(socket, user_form: form)}
   end
 
