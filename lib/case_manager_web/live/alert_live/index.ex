@@ -628,22 +628,6 @@ defmodule CaseManagerWeb.AlertLive.Index do
       <.input field={@form[:soc_id]} type="select" label="SOC" options={@soc_options} prompt="Select SOC" required />
       <.input field={@form[:severity]} type="select" label="Severity" options={CaseManager.Incidents.Severity.values() |> Enum.map(&{&1 |> to_string() |> String.capitalize(), &1})} prompt="Select Severity" />
 
-      <div class="mt-4 p-3 bg-base-200 rounded-lg">
-        <h4 class="font-medium mb-2">Selected Alerts (<span class="badge badge-primary">{length(@selected_alerts || [])}</span>)</h4>
-        <%= if length(@selected_alerts || []) > 0 do %>
-          <div class="text-sm text-base-content/70 mb-2">
-            This case will be linked to the selected {length(@selected_alerts)} alert(s).
-          </div>
-          <div class="text-xs text-base-content/50">
-            Alert IDs: {Enum.join(@selected_alerts || [], ", ")}
-          </div>
-        <% else %>
-          <div class="text-sm text-warning">
-            No alerts selected. Please select alerts first.
-          </div>
-        <% end %>
-      </div>
-
       <footer class="mt-4">
         <button class={["btn btn-primary", if(length(@selected_alerts || []) == 0, do: "btn-disabled", else: "")]} phx-disable-with="Creating..." disabled={length(@selected_alerts || []) == 0}>
           Create Case
